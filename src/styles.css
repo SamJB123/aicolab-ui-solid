@@ -1,0 +1,215 @@
+/* @aicolab/ui-solid — structural CSS for the shared primitives.
+   Import from the consuming app's stylesheet:
+
+     @import "@aicolab/ui-solid/styles.css";
+
+   and let the app's Tailwind compile the package's utility classes:
+
+     @source "<relative path to>/packages/ui-solid/src";
+
+   ── The token contract ──────────────────────────────────────────────────
+   Apps define these on a theme root element (NOT defined here — the app owns
+   its palette; primitives and these classes only ever READ them):
+
+     --c-ink, --c-ink-2          page + recessed surfaces
+     --c-panel, --c-panel-2     raised surfaces
+     --c-paper                  primary text
+     --c-muted, --c-faint       secondary / tertiary text
+     --c-accent, --c-live       brand accent / live-positive signal
+     --c-line, --c-line-strong  hairlines — derive from --c-paper:
+                                  color-mix(in oklab, var(--c-paper) 10%, transparent)
+                                  color-mix(in oklab, var(--c-paper) 20%, transparent)
+     --c-accent-soft            accent wash — derive from --c-accent:
+                                  color-mix(in oklab, var(--c-accent) 14%, transparent)
+     --font-display, --font-sans, --font-data   the three font roles
+
+   Everything below is feature-guarded or degrades to a calm static state. */
+
+/* ── Font role helpers ── */
+.font-display {
+	font-family: var(--font-display, Georgia, serif);
+	font-optical-sizing: auto;
+}
+.font-data {
+	font-family: var(--font-data, ui-monospace, "SFMono-Regular", monospace);
+}
+
+/* ── StatusDot ping ── */
+@keyframes ui-ping {
+	0% {
+		transform: scale(1);
+		opacity: 0.55;
+	}
+	80%,
+	100% {
+		transform: scale(2.6);
+		opacity: 0;
+	}
+}
+
+/* ── Entry motion helpers ── */
+@keyframes ui-rise {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+@keyframes ui-in {
+	from {
+		opacity: 0;
+		transform: translateY(-7px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+.ui-rise {
+	animation: ui-rise 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+.ui-in {
+	animation: ui-in 0.45s ease both;
+}
+
+/* ── Thin themed scrollbar ── */
+.ui-scroll {
+	scrollbar-width: thin;
+	scrollbar-color: var(--c-line-strong) transparent;
+}
+.ui-scroll::-webkit-scrollbar {
+	width: 6px;
+}
+.ui-scroll::-webkit-scrollbar-thumb {
+	background: var(--c-line-strong);
+	border-radius: 3px;
+}
+
+/* ── Segmented tab switcher ──
+   Content-sized, horizontally scrollable tabs so labels never truncate or
+   shrink unevenly. The active pill is anchored to the active tab via CSS anchor
+   positioning, so it always matches that tab's real box — any count, any width,
+   even mid-scroll. Fallback: the active tab carries the pill look itself. */
+.seg {
+	position: relative;
+	display: flex;
+	width: fit-content;
+	max-width: 100%;
+	gap: 4px;
+	padding: 4px;
+	border-radius: 999px;
+	background: var(--c-ink-2);
+	box-shadow: inset 0 0 0 1px var(--c-line);
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scrollbar-width: none;
+	scroll-snap-type: x proximity;
+}
+.seg::-webkit-scrollbar {
+	display: none;
+}
+.seg-btn {
+	position: relative;
+	z-index: 1;
+	flex: 0 0 auto;
+	scroll-snap-align: center;
+	white-space: nowrap;
+	border-radius: 999px;
+	padding: 6px 16px;
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--c-faint);
+	transition: color 0.2s;
+}
+.seg-btn:hover {
+	color: var(--c-muted);
+}
+.seg-btn-active {
+	color: var(--c-paper);
+	/* Fallback indicator where anchor positioning is unavailable. */
+	background: var(--c-panel-2);
+	box-shadow: inset 0 0 0 1px var(--c-line-strong);
+}
+.seg-pill {
+	display: none;
+}
+@supports (anchor-name: --x) {
+	.seg-btn-active {
+		anchor-name: --seg-active;
+		background: none;
+		box-shadow: none;
+	}
+	.seg-pill {
+		display: block;
+		position: absolute;
+		z-index: 0;
+		position-anchor: --seg-active;
+		top: anchor(top);
+		left: anchor(left);
+		width: anchor-size(width);
+		height: anchor-size(height);
+		border-radius: 999px;
+		background: var(--c-panel-2);
+		box-shadow: inset 0 0 0 1px var(--c-line-strong);
+		transition:
+			top 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+			left 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+			width 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+			height 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+	}
+}
+
+/* ── Anchored top-layer popover ──
+   A Popover-API panel anchored to its trigger, flipped within the viewport by
+   position-try, animated with @starting-style + allow-discrete. Top-layer
+   means it is never clipped by an ancestor. Set `position-anchor` (and an
+   `anchor-name` on the trigger) inline per instance. */
+.ui-anchored {
+	margin: 0;
+	inset: auto;
+	width: 224px;
+	padding: 14px;
+	border: 0;
+	border-radius: 14px;
+	background: var(--c-panel-2);
+	color: var(--c-paper);
+	outline: 1px solid var(--c-line-strong);
+	box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.7);
+	opacity: 0;
+	transform: translateY(-6px) scale(0.96);
+	transition:
+		opacity 0.2s,
+		transform 0.2s,
+		overlay 0.2s allow-discrete,
+		display 0.2s allow-discrete;
+}
+.ui-anchored:popover-open {
+	opacity: 1;
+	transform: none;
+}
+@starting-style {
+	.ui-anchored:popover-open {
+		opacity: 0;
+		transform: translateY(-6px) scale(0.96);
+	}
+}
+@supports (anchor-name: --a) {
+	.ui-anchored {
+		position-area: block-end span-inline-end;
+		margin-top: 8px;
+		position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ui-rise,
+	.ui-in {
+		animation: none;
+	}
+	.seg-pill {
+		transition: none;
+	}
+}

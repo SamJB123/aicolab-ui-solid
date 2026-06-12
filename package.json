@@ -1,0 +1,25 @@
+{
+	"name": "@aicolab/ui-solid",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./styles.css": "./src/styles.css",
+		"./package.json": "./package.json",
+		"./*": "./src/*.ts"
+	},
+	"scripts": {
+		"check-types": "tsc --noEmit"
+	},
+	"peerDependencies": {
+		"@solidjs/web": "catalog:",
+		"solid-js": "catalog:"
+	},
+	"devDependencies": {
+		"@aicolab/tsconfig": "workspace:^",
+		"@solidjs/web": "catalog:",
+		"solid-js": "catalog:",
+		"typescript": "catalog:"
+	}
+}
