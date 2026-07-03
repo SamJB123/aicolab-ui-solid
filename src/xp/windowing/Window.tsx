@@ -74,12 +74,14 @@ export function Window(props: WindowProps) {
   // --- Drag: document listeners live only while dragging. Two-arg effect
   // tracks isDragging; the apply attaches the listeners and returns the cleanup
   // (Solid's `@solid-primitives/event-listener` is Solid-1 and crashes the
-  // build — it imports removed `batch`/`onMount` — so we use plain DOM). ---
+  // build — it imports removed `batch`/`onMount` — so we use plain DOM).
+  // Pointer events (not mouse) so the same path serves touch; pointercancel
+  // (browser reclaiming the gesture) commits like a release. ---
   createEffect(
     () => isDragging(),
     (dragging) => {
       if (!dragging) return;
-      const onMove = (event: MouseEvent) => {
+      const onMove = (event: PointerEvent) => {
         if (!windowEl) return;
         dragCurrent = {
           x: event.clientX - dragOffset.x,
@@ -97,11 +99,13 @@ export function Window(props: WindowProps) {
           height: props.height,
         });
       };
-      document.addEventListener("mousemove", onMove);
-      document.addEventListener("mouseup", onUp);
+      document.addEventListener("pointermove", onMove);
+      document.addEventListener("pointerup", onUp);
+      document.addEventListener("pointercancel", onUp);
       return () => {
-        document.removeEventListener("mousemove", onMove);
-        document.removeEventListener("mouseup", onUp);
+        document.removeEventListener("pointermove", onMove);
+        document.removeEventListener("pointerup", onUp);
+        document.removeEventListener("pointercancel", onUp);
       };
     },
   );
@@ -111,7 +115,7 @@ export function Window(props: WindowProps) {
     () => isResizing(),
     (resizing) => {
       if (!resizing) return;
-      const onMove = (event: MouseEvent) => {
+      const onMove = (event: PointerEvent) => {
         if (!resizeOrigin || !windowEl) return;
         const deltaX = event.clientX - resizeOrigin.startX;
         const deltaY = event.clientY - resizeOrigin.startY;
@@ -142,11 +146,13 @@ export function Window(props: WindowProps) {
           height: resizeCurrent.height,
         });
       };
-      document.addEventListener("mousemove", onMove);
-      document.addEventListener("mouseup", onUp);
+      document.addEventListener("pointermove", onMove);
+      document.addEventListener("pointerup", onUp);
+      document.addEventListener("pointercancel", onUp);
       return () => {
-        document.removeEventListener("mousemove", onMove);
-        document.removeEventListener("mouseup", onUp);
+        document.removeEventListener("pointermove", onMove);
+        document.removeEventListener("pointerup", onUp);
+        document.removeEventListener("pointercancel", onUp);
       };
     },
   );
@@ -167,8 +173,8 @@ export function Window(props: WindowProps) {
     },
   );
 
-  const onTitleMouseDown = (
-    event: MouseEvent & { currentTarget: HTMLElement },
+  const onTitlePointerDown = (
+    event: PointerEvent & { currentTarget: HTMLElement },
   ) => {
     props.onFocus?.();
     if (!draggable()) return;
@@ -179,7 +185,7 @@ export function Window(props: WindowProps) {
     setIsDragging(true);
   };
 
-  const startResize = (corner: ResizeCorner, event: MouseEvent) => {
+  const startResize = (corner: ResizeCorner, event: PointerEvent) => {
     if (!resizable() || isMaximized()) return;
     event.preventDefault();
     event.stopPropagation();
@@ -216,13 +222,13 @@ export function Window(props: WindowProps) {
         isDragging: isDragging(),
         isResizing: isResizing(),
       })}
-      onMouseDown={() => props.onFocus?.()}
+      onPointerDown={() => props.onFocus?.()}
     >
       <TitleBar
         title={props.title}
         icon={props.icon}
         draggable={draggable()}
-        handleMouseDown={onTitleMouseDown}
+        handlePointerDown={onTitlePointerDown}
         onToggleMaximize={props.onToggleMaximize}
         showCloseButton={props.showCloseButton}
         showMaximizeButton={props.showMaximizeButton}

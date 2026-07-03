@@ -6,7 +6,7 @@ interface TitleBarProps {
   title: string;
   icon?: string;
   draggable: boolean;
-  handleMouseDown: (event: MouseEvent & { currentTarget: HTMLElement }) => void;
+  handlePointerDown: (event: PointerEvent & { currentTarget: HTMLElement }) => void;
   onToggleMaximize?: () => void;
   showCloseButton?: boolean;
   showMaximizeButton?: boolean;
@@ -23,8 +23,11 @@ export function TitleBar(props: TitleBarProps) {
       style={s({
         userSelect: "none",
         cursor: props.draggable ? "move" : "default",
+        // Touch drags must reach our pointermove handlers instead of being
+        // claimed by the browser as a pan/zoom gesture.
+        touchAction: "none",
       })}
-      onMouseDown={props.handleMouseDown}
+      onPointerDown={props.handlePointerDown}
       onDblClick={() => props.onToggleMaximize?.()}
     >
       <div

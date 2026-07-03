@@ -5,6 +5,8 @@ import type { ResizeCorner } from "./useResizing";
 const handleStyle = {
   position: "absolute",
   background: "transparent",
+  // Resize gestures must not be claimed by the browser as pan/zoom.
+  touchAction: "none",
 } as const;
 
 const cornerHandleStyle = {
@@ -14,7 +16,7 @@ const cornerHandleStyle = {
 };
 
 interface ResizeHandlesProps {
-  startResize: (corner: ResizeCorner, event: MouseEvent) => void;
+  startResize: (corner: ResizeCorner, event: PointerEvent) => void;
   resizable?: boolean;
   isMaximized?: boolean;
 }
@@ -24,7 +26,7 @@ export function ResizeHandles(props: ResizeHandlesProps) {
     <Show when={props.resizable && !props.isMaximized}>
       {/* Edges */}
       <div
-        onMouseDown={(event) => props.startResize("top", event)}
+        onPointerDown={(event) => props.startResize("top", event)}
         style={s(handleStyle, {
           top: 0,
           left: "6px",
@@ -34,7 +36,7 @@ export function ResizeHandles(props: ResizeHandlesProps) {
         })}
       />
       <div
-        onMouseDown={(event) => props.startResize("bottom", event)}
+        onPointerDown={(event) => props.startResize("bottom", event)}
         style={s(handleStyle, {
           bottom: 0,
           left: "6px",
@@ -44,7 +46,7 @@ export function ResizeHandles(props: ResizeHandlesProps) {
         })}
       />
       <div
-        onMouseDown={(event) => props.startResize("left", event)}
+        onPointerDown={(event) => props.startResize("left", event)}
         style={s(handleStyle, {
           left: 0,
           top: "6px",
@@ -54,7 +56,7 @@ export function ResizeHandles(props: ResizeHandlesProps) {
         })}
       />
       <div
-        onMouseDown={(event) => props.startResize("right", event)}
+        onPointerDown={(event) => props.startResize("right", event)}
         style={s(handleStyle, {
           right: 0,
           top: "6px",
@@ -65,7 +67,7 @@ export function ResizeHandles(props: ResizeHandlesProps) {
       />
       {/* Corners */}
       <div
-        onMouseDown={(event) => props.startResize("bottom-right", event)}
+        onPointerDown={(event) => props.startResize("bottom-right", event)}
         style={s(cornerHandleStyle, {
           right: 0,
           bottom: 0,
@@ -73,7 +75,7 @@ export function ResizeHandles(props: ResizeHandlesProps) {
         })}
       />
       <div
-        onMouseDown={(event) => props.startResize("bottom-left", event)}
+        onPointerDown={(event) => props.startResize("bottom-left", event)}
         style={s(cornerHandleStyle, {
           left: 0,
           bottom: 0,
@@ -81,11 +83,11 @@ export function ResizeHandles(props: ResizeHandlesProps) {
         })}
       />
       <div
-        onMouseDown={(event) => props.startResize("top-right", event)}
+        onPointerDown={(event) => props.startResize("top-right", event)}
         style={s(cornerHandleStyle, { right: 0, top: 0, cursor: "nesw-resize" })}
       />
       <div
-        onMouseDown={(event) => props.startResize("top-left", event)}
+        onPointerDown={(event) => props.startResize("top-left", event)}
         style={s(cornerHandleStyle, { left: 0, top: 0, cursor: "nwse-resize" })}
       />
     </Show>

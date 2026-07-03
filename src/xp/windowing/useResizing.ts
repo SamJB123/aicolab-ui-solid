@@ -145,3 +145,49 @@ export function applyMinimumConstraints(
 
   return { newWidth, newHeight, newLeft, newTop };
 }
+
+/**
+ * Fit a requested window geometry to the desktop it will open on. Sizes are
+ * capped to the available area (viewport minus a margin and any reserved
+ * bottom strip, e.g. the taskbar) and positions are clamped so the window
+ * opens fully on-screen — on a phone an 800x600 default becomes "as big as
+ * fits", centered. Registry/default sizes stay aspirational; this is the
+ * device-reality pass every launch path goes through.
+ */
+export const WINDOW_FIT_MARGIN = 8;
+
+export function fitWindowToDesktop(
+  requested: { width: number; height: number; x?: number; y?: number },
+  desktop: { width: number; height: number } | null | undefined,
+  options?: { reservedBottom?: number },
+): { x: number; y: number; width: number; height: number } {
+  if (!desktop) {
+    return {
+      width: requested.width,
+      height: requested.height,
+      x: requested.x ?? 60,
+      y: requested.y ?? 40,
+    };
+  }
+  const margin = WINDOW_FIT_MARGIN;
+  const reserved = options?.reservedBottom ?? 0;
+  const clamp = (value: number, lo: number, hi: number) =>
+    Math.min(Math.max(value, lo), Math.max(lo, hi));
+
+  const width = Math.min(requested.width, Math.max(120, desktop.width - margin * 2));
+  const height = Math.min(
+    requested.height,
+    Math.max(120, desktop.height - reserved - margin * 2),
+  );
+  const x = clamp(
+    requested.x ?? (desktop.width - width) / 2,
+    margin,
+    desktop.width - width - margin,
+  );
+  const y = clamp(
+    requested.y ?? (desktop.height - reserved - height) / 2,
+    margin,
+    desktop.height - reserved - height - margin,
+  );
+  return { x, y, width, height };
+}

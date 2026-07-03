@@ -3,6 +3,9 @@ import { StartButton } from "./StartButton";
 import { SystemTray } from "./SystemTray";
 import Box from "../components/Box";
 
+// Fixed bar height — exported so window-fit math can reserve it.
+export const TASKBAR_HEIGHT = 38;
+
 // Presentational taskbar frame: start button + button strip + tray. The
 // reference queried its process list here; the host now supplies the buttons
 // as children (typically a <For> of <TaskbarButton>s).
@@ -22,12 +25,15 @@ export function Taskbar(props: TaskbarProps) {
       class="taskbar"
       style={{
         width: "100%",
-        height: "38px",
+        height: `${TASKBAR_HEIGHT}px`,
         backgroundImage: "var(--xp-taskbar-gradient)",
         display: "flex",
         alignItems: "center",
         justifyContent: "flex-start",
         userSelect: "none",
+        // Taps on chrome must never double-tap-zoom or wait for the
+        // double-tap timeout (iOS).
+        touchAction: "manipulation",
         position: "fixed",
         bottom: 0,
         left: 0,

@@ -47,9 +47,11 @@ export { useWindowStyle } from "./windowing/useWindowStyle";
 export {
   MIN_WINDOW_WIDTH,
   MIN_WINDOW_HEIGHT,
+  WINDOW_FIT_MARGIN,
   calculateNewDimensions,
   applyDesktopBounds,
   applyMinimumConstraints,
+  fitWindowToDesktop,
   type ResizeOrigin,
   type Dimensions,
 } from "./windowing/useResizing";
@@ -62,7 +64,7 @@ export {
 } from "./windowing/WindowHandle";
 
 // Taskbar
-export { Taskbar, type TaskbarProps } from "./taskbar/Taskbar";
+export { Taskbar, TASKBAR_HEIGHT, type TaskbarProps } from "./taskbar/Taskbar";
 export { TaskbarButton, type TaskbarButtonProps } from "./taskbar/TaskbarButton";
 export { StartButton } from "./taskbar/StartButton";
 export { SystemTray } from "./taskbar/SystemTray";

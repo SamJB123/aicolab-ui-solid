@@ -14,7 +14,7 @@ interface WindowControlsProps {
 
 export function WindowControls(props: WindowControlsProps) {
   return (
-    <div class="title-bar-controls" style={{ display: "flex" }}>
+    <div class="title-bar-controls" style={{ display: "flex", "touch-action": "manipulation" }}>
       <Show when={props.showMinimiseButton && props.onMinimize}>
         <Button
           class="minimise"
@@ -24,7 +24,7 @@ export function WindowControls(props: WindowControlsProps) {
             playSound("minimize", 0.3);
             props.onMinimize?.();
           }}
-          onMouseDown={(event) => event.stopPropagation()}
+          onPointerDown={(event) => event.stopPropagation()}
           style={{ minWidth: "20px" }}
         />
       </Show>
@@ -36,7 +36,7 @@ export function WindowControls(props: WindowControlsProps) {
             event.stopPropagation();
             props.onToggleMaximize?.();
           }}
-          onMouseDown={(event) => event.stopPropagation()}
+          onPointerDown={(event) => event.stopPropagation()}
           style={{ minWidth: "20px" }}
         />
       </Show>
@@ -47,7 +47,7 @@ export function WindowControls(props: WindowControlsProps) {
             event.stopPropagation();
             props.onClose?.();
           }}
-          onMouseDown={(event) => event.stopPropagation()}
+          onPointerDown={(event) => event.stopPropagation()}
           style={{ minWidth: "20px" }}
         />
       </Show>

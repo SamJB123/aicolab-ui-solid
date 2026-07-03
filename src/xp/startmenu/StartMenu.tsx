@@ -68,6 +68,8 @@ export function StartMenu(props: StartMenuProps) {
           zIndex: 10002,
           overflow: "hidden",
           fontFamily: "MS Sans Serif, Arial, sans-serif",
+          // No double-tap zoom / tap delay on menu items (iOS).
+          touchAction: "manipulation",
         }}
       >
         <StartMenuUserHeader

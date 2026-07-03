@@ -17,6 +17,35 @@ css = open(SRC).read()
 # strip sourcemap comment
 css = re.sub(r"/\*# sourceMappingURL=.*?\*/\s*$", "", css)
 
+# Selector normalisation: upstream xp.css's SCSS nesting emits a redundant
+# trailing `:not([value])` AFTER pseudo-elements (e.g.
+# `progress:not([value]):after:not([value])`) — invalid per Selectors-4 and
+# rejected by lightningcss. The subject compound already carries the
+# constraint, so dropping the suffix is semantics-preserving and makes the
+# vendored file standards-valid (no cssMinify workaround needed downstream).
+css, n_selfix = re.subn(
+    r"(:(?:before|after)|::-(?:webkit|moz)-[a-z-]+):not\(\[value\]\)", r"\1", css
+)
+if n_selfix < 4:
+    raise SystemExit(f"selector normalisation matched only {n_selfix} — expected ~10")
+
+def dedupe_selector_lists(text: str) -> str:
+    # normalisation can leave duplicate members in a selector list
+    # (`X:before, X:before {`) — collapse them.
+    def fix(m: re.Match) -> str:
+        head = m.group(1)
+        lead = re.match(r"\s*", head).group(0)  # preserve inter-rule whitespace
+        parts = [" ".join(p.split()) for p in head.split(",")]
+        seen: list[str] = []
+        for p in parts:
+            if p not in seen:
+                seen.append(p)
+        return lead + ",\n".join(seen) + " {"
+    return re.sub(r"([^{}@;]+?)\{", fix, text)
+
+css = dedupe_selector_lists(css)
+print(f"selectors normalised: {n_selfix}")
+
 tokens: dict[str, str] = {}   # name -> default value (insertion order preserved)
 counts: Counter = Counter()
 

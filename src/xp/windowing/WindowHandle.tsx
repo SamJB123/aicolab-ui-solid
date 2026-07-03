@@ -32,6 +32,8 @@ export interface WindowHandle {
   isActive: () => boolean;
   viewState: () => WindowViewState;
   geometry: () => WindowGeometry;
+  // The process's app-specific durable props (persisted via updateProps).
+  props: () => Record<string, unknown>;
 
   // Self-management (backed by the host's window-manager ops)
   setTitle: (title: string) => void;
