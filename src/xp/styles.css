@@ -1,0 +1,12 @@
+/*
+ * XP compartment stylesheet. Consumers add to their app css:
+ *   @import "@aicolab/ui-solid/xp/styles.css";
+ * plus the usual `@source ".../packages/ui-solid/src"` they already have for
+ * the base package (it globs recursively, so it covers src/xp too).
+ *
+ * NOTE for consumers: xp.vendor.css uses legacy selectors that lightningcss
+ * rejects — the consuming app's vite build needs `build.cssMinify: "esbuild"`.
+ */
+@import "./xp.tokens.css";
+@import "./xp.glyphs.css";
+@import "./xp.vendor.css";

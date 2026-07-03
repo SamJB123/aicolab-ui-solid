@@ -1,0 +1,122 @@
+/*
+ * Authentic Windows XP defaults for the --xp-* token contract read by
+ * xp.vendor.css (and by XP components via inline styles).
+ * TODO(colab-os): this file IS the reskin surface — a Colab OS theme is a
+ * second file (or subtree class) overriding these values.
+ */
+:root,
+.xp-theme {
+  /* Title bar */
+  --xp-titlebar-gradient: linear-gradient( 180deg, #0997ff, #0053ee 8%, #0050ee 40%, #06f 88%, #06f 93%, #005bff 95%, #003dd7 96%, #003dd7 );
+  --xp-titlebar-fallback: #000;
+  --xp-font-titlebar: Trebuchet MS;
+  /* Control faces & surfaces */
+  --xp-face: #ece9d8;
+  --xp-surface: #fff;
+  --xp-button-face-gradient: linear-gradient(180deg, #fff, #ecebe5 86%, #d8d0c4);
+  --xp-button-active-gradient: linear-gradient( 180deg, #cdcac3, #e3e3db 8%, #e5e5de 94%, #f2f2f1 );
+  --xp-tab-button-gradient: linear-gradient(180deg, #fff, #fafaf9 26%, #f0f0ea 95%, #ecebe5);
+  --xp-tabpanel-gradient: linear-gradient(180deg, #fcfcfe, #f4f3ee);
+  --xp-control-bevel-gradient: linear-gradient(135deg, #dcdcd7, #fff);
+  --xp-control-bevel-active-gradient: linear-gradient(135deg, #b0b0a7, #e3e1d2);
+  /* Bevels (box-shadow 3D borders) */
+  --xp-bevel-light: #fff;
+  --xp-bevel-soft: #dfdfdf;
+  --xp-bevel-mid: #9d9c99;
+  --xp-bevel-dark: #a9a9a9;
+  --xp-bevel-frame: #686868;
+  --xp-bevel-darkest: #0a0a0a;
+  /* Text */
+  --xp-text: #222;
+  --xp-text-strong: #000;
+  --xp-text-inverse: #fff;
+  --xp-disabled-emboss: #fff;
+  /* Fields & focus */
+  --xp-field-border: #7f9db9;
+  --xp-focus-outline: #000;
+  --xp-focus-outline-soft: #222;
+  /* Progress */
+  --xp-progress-gradient: linear-gradient( 180deg, #acedad 0, #7be47d 14%, #4cda50 28%, #2ed330 42%, #42d845 57%, #76e275 71%, #8fe791 85%, #fff );
+  --xp-progress-segments: repeating-linear-gradient( 90deg, #fff 0, #fff 2px, transparent 0, transparent 10px );
+  --xp-progress-mask: repeating-linear-gradient( 90deg, transparent 0, transparent 8px, #fff 0, #fff 10px, transparent 0, transparent 18px, #fff 0, #fff 20px, transparent 0, transparent 28px, #fff 0, #fff );
+  /* Fonts */
+  --xp-font-ui: "Pixelated MS Sans Serif", Arial;
+  /* Window frame (six-stop blue bevel of .window) + title bar */
+  --xp-frame-outer-dark: #00138c;
+  --xp-frame-outer-bright: #0831d9;
+  --xp-frame-mid-dark: #001ea0;
+  --xp-frame-mid-bright: #166aee;
+  --xp-frame-inner-dark: #003bda;
+  --xp-frame-inner-bright: #0855dd;
+  --xp-titlebar-text-shadow: #0f1089;
+  --xp-titlebar-control-bg: #0050ee;
+  /* Selection, links, legend */
+  --xp-selection: #2267cb;
+  --xp-link: #00f;
+  --xp-legend-text: #0046d5;
+  /* Control borders */
+  --xp-button-border: #003c74;
+  --xp-control-border: #1d5281;
+  --xp-control-border-disabled: #cac8bb;
+  --xp-groupbox-border: #d0d0bf;
+  /* Focus / hover glows */
+  --xp-focus-glow-1: #cee7ff;
+  --xp-focus-glow-2: #98b8ea;
+  --xp-focus-glow-3: #bcd4f6;
+  --xp-focus-glow-4: #89ade4;
+  --xp-hover-glow-1: #fff0cf;
+  --xp-hover-glow-2: #fdd889;
+  --xp-hover-glow-3: #fbc761;
+  --xp-hover-glow-4: #e5a01a;
+  --xp-tab-hover-accent: #ffc73c;
+  --xp-tab-hover-border: #e68b2c;
+  --xp-control-hover-glow-dark: #f8b636;
+  --xp-control-hover-glow-light: #fedf9c;
+  /* Tabs */
+  --xp-tab-border: #919b9c;
+  --xp-tab-border-muted: #91a7b4;
+  --xp-tab-face: #fcfcfe;
+  /* Scrollbar thumb */
+  --xp-scrollbar-thumb: #c8d6fb;
+  --xp-scrollbar-thumb-shade1: #bad1fc;
+  --xp-scrollbar-thumb-shade2: #b7caf5;
+  /* Misc */
+  --xp-separator: #f3f2ea;
+  --xp-track: #ecebe4;
+  --xp-range-track-line: #000;
+  --xp-terminal-bg: #000;
+}
+
+/*
+ * Taskbar, start menu & tray — defaults lifted from the reference app's
+ * inline component styles (these surfaces are NOT covered by xp.css).
+ * TODO(colab-os): this whole block is the primary reskin surface.
+ */
+:root,
+.xp-theme {
+  /* Taskbar */
+  --xp-taskbar-gradient: linear-gradient(0deg, #042b8e 0%, #0551f6 6%, #0453ff 51%, #0551f6 63%, #0551f6 81%, #3a8be8 99%, #0453ff 100%);
+  --xp-taskbar-button-active: linear-gradient(0deg, #0a5bc6 0%, #1198e9 100%);
+  --xp-taskbar-button-active-hover: linear-gradient(0deg, #1a6bd6 0%, #20a8f9 100%);
+  --xp-taskbar-button-idle: linear-gradient(0deg, #1943b8 0%, #3370d3 100%);
+  --xp-taskbar-button-idle-hover: linear-gradient(0deg, #2953c8 0%, #4380e3 100%);
+  /* System tray */
+  --xp-tray-gradient: linear-gradient(0deg, #0a5bc6 0%, #1198e9 6%, #1198e9 51%, #1198e9 63%, #1198e9 77%, #19b9f3 95%, #1198e9 97%);
+  --xp-tray-glow: #20e2fc;
+  --xp-tray-border-top: #075dca;
+  --xp-tray-border-bottom: #0a5bc6;
+  /* Start button */
+  --xp-start-button-gradient: linear-gradient(0deg, #0c450c 0%, #308f2f 6%, #308f2f 51%, #308f2f 63%, #308f2f 77%, #97c597 95%, #97c597 99%, #308f2f 97%);
+  --xp-start-button-pressed-gradient: linear-gradient(0deg, #2f892f 0%, #4eb64e 6%, #4eb64e 51%, #4eb64e 63%, #4eb64e 77%, #c4ffc4 85%, #c4ffc4 93%, #2f892f 97%);
+  /* Start menu */
+  --xp-startmenu-bg: #245edc;
+  --xp-startmenu-hover: #316ac5;
+  --xp-startmenu-header-gradient: linear-gradient(to right, #5a8dee 0%, #4577dc 50%, #245edc 100%);
+  --xp-startmenu-accent-gradient: linear-gradient(to right, #ff9500 0%, #ff7a00 100%);
+  --xp-startmenu-accent-border: #d4640a;
+  --xp-startmenu-footer-gradient: linear-gradient(to bottom, #588bf9 0%, #1354e1 30%, #2e5bdc 100%);
+  --xp-startmenu-right-gradient: linear-gradient(to bottom, #e8f4fd 0%, #d6ebfa 100%);
+  --xp-startmenu-right-separator: #9cbee8;
+  --xp-startmenu-left-separator: #c5c5c5;
+  --xp-startmenu-column-border: #bfbfbf;
+}

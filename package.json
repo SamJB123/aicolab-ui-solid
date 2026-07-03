@@ -6,6 +6,8 @@
 	"exports": {
 		".": "./src/index.ts",
 		"./styles.css": "./src/styles.css",
+		"./xp": "./src/xp/index.ts",
+		"./xp/styles.css": "./src/xp/styles.css",
 		"./package.json": "./package.json",
 		"./*": "./src/*.ts"
 	},
@@ -20,6 +22,7 @@
 		"@aicolab/tsconfig": "workspace:^",
 		"@solidjs/web": "catalog:",
 		"solid-js": "catalog:",
-		"typescript": "catalog:"
+		"typescript": "catalog:",
+		"vite": "catalog:"
 	}
 }
