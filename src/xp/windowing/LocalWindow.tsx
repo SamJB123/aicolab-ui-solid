@@ -43,7 +43,7 @@ export function LocalWindow(props: Omit<WindowProps, "x" | "y">) {
     setViewState((vs) =>
       vs.kind === "maximized"
         ? { kind: "open", viewStackOrder: 0, isActive: true }
-        : { kind: "maximized" },
+        : { kind: "maximized", viewStackOrder: 0, isActive: true },
     );
     props.onToggleMaximize?.();
   };

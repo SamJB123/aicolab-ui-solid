@@ -4,10 +4,21 @@
  * plus the usual `@source ".../packages/ui-solid/src"` they already have for
  * the base package (it globs recursively, so it covers src/xp too).
  *
+ * SELF-LAYERED under `xp` (sub-layers tokens < glyphs < vendor): library CSS
+ * in a named layer means a consumer's UNLAYERED rules override xp without
+ * specificity wars, and other layered packages (e.g. an applet's styles)
+ * slot cleanly above or below it. To pin xp's position among your app's
+ * other layers, pre-declare the order before any imports, e.g.:
+ *   @layer theme, base, components, utilities, xp, my-applet;
+ * (the shared layer NAME is the contract — no `layer(...)` import wrapper
+ * needed). The generated files themselves stay unlayered; layer assignment
+ * happens only here, so regeneration never touches it.
+ *
  * All three files are standards-valid CSS (upstream xp.css's invalid
  * pseudo-element selectors are normalised at vendoring time), so any
  * minifier — including lightningcss — handles them.
  */
-@import "./xp.tokens.css";
-@import "./xp.glyphs.css";
-@import "./xp.vendor.css";
+@layer xp.tokens, xp.glyphs, xp.vendor;
+@import "./xp.tokens.css" layer(xp.tokens);
+@import "./xp.glyphs.css" layer(xp.glyphs);
+@import "./xp.vendor.css" layer(xp.vendor);

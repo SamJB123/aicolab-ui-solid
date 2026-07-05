@@ -177,7 +177,9 @@ export function Window(props: WindowProps) {
     event: PointerEvent & { currentTarget: HTMLElement },
   ) => {
     props.onFocus?.();
-    if (!draggable()) return;
+    // No drag while maximized: the window paints from the desktop rect, so a
+    // drag would only (invisibly) corrupt the stored restore position.
+    if (!draggable() || isMaximized()) return;
     event.preventDefault();
     const rect = event.currentTarget.getBoundingClientRect();
     dragOffset = { x: event.clientX - rect.left, y: event.clientY - rect.top };
@@ -217,7 +219,6 @@ export function Window(props: WindowProps) {
         width: props.width,
         height: props.height,
         viewState: props.viewState,
-        desktopRect: desktop.desktopRect(),
         style: props.style,
         isDragging: isDragging(),
         isResizing: isResizing(),

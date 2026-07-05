@@ -25,7 +25,10 @@ export function Taskbar(props: TaskbarProps) {
       class="taskbar"
       style={{
         width: "100%",
-        height: `${TASKBAR_HEIGHT}px`,
+        // Var (set on .xp-theme from TASKBAR_HEIGHT) keeps the bar height and
+        // the maximized-window bottom inset in lockstep; fallback covers use
+        // of the bare Taskbar outside a Desktop.
+        height: `var(--xp-taskbar-height, ${TASKBAR_HEIGHT}px)`,
         backgroundImage: "var(--xp-taskbar-gradient)",
         display: "flex",
         alignItems: "center",

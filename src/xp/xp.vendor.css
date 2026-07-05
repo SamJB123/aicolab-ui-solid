@@ -13,7 +13,7 @@
  *    data-URI. Reskin path: convert to mask-image + background-color: var().
  */
 /*! XP.css v0.2.6 - https://botoxparty.github.io/XP.css/ */
-@font-face {
+@font-face:where(:not(.xp-exempt *)) {
   font-family: "Pixelated MS Sans Serif";
   src: url(./fonts/ms_sans_serif.woff) format("woff");
   src: url(./fonts/ms_sans_serif.woff2) format("woff2");
@@ -33,41 +33,41 @@
   font-weight: 400;
   font-style: normal;
 }
-body {
+body:where(:not(.xp-exempt *)) {
   font-family: Arial;
   font-size: 12px;
   color: var(--xp-text);
 }
-.surface {
+.surface:where(:not(.xp-exempt *)) {
   background: var(--xp-face);
 }
-h1 {
+h1:where(:not(.xp-exempt *)) {
   font-size: 5rem;
 }
-h2 {
+h2:where(:not(.xp-exempt *)) {
   font-size: 2.5rem;
 }
-h3 {
+h3:where(:not(.xp-exempt *)) {
   font-size: 2rem;
 }
-h4 {
+h4:where(:not(.xp-exempt *)) {
   font-size: 1.5rem;
 }
-u {
+u:where(:not(.xp-exempt *)) {
   text-decoration: none;
   border-bottom: 0.5px solid var(--xp-text);
 }
-a {
+a:where(:not(.xp-exempt *)) {
   color: var(--xp-link);
 }
-a:focus {
+a:focus:where(:not(.xp-exempt *)) {
   outline: 1px dotted var(--xp-link);
 }
-code,
-code * {
+code:where(:not(.xp-exempt *)),
+code *:where(:not(.xp-exempt *)) {
   font-family: monospace;
 }
-pre {
+pre:where(:not(.xp-exempt *)) {
   display: block;
   padding: 12px 8px;
   background-color: var(--xp-terminal-bg);
@@ -75,43 +75,43 @@ pre {
   font-size: 1rem;
   margin: 0;
 }
-pre,
-pre * {
+pre:where(:not(.xp-exempt *)),
+pre *:where(:not(.xp-exempt *)) {
   font-family: Perfect DOS VGA\437 Win;
 }
-summary:focus {
+summary:focus:where(:not(.xp-exempt *)) {
   outline: 1px dotted var(--xp-focus-outline);
 }
-::-webkit-scrollbar {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar {
   width: 16px;
 }
-::-webkit-scrollbar:horizontal {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar:horizontal {
   height: 17px;
 }
-::-webkit-scrollbar-track {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-track {
   background-image: var(--xp-glyph-scrollbar-track);
 }
-::-webkit-scrollbar-thumb {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-thumb {
   background-color: var(--xp-bevel-soft);
   box-shadow: inset -1px -1px var(--xp-bevel-darkest), inset 1px 1px var(--xp-bevel-light), inset -2px -2px grey, inset 2px 2px var(--xp-bevel-soft);
 }
-::-webkit-scrollbar-button:horizontal:end:increment,
-::-webkit-scrollbar-button:horizontal:start:decrement,
-::-webkit-scrollbar-button:vertical:end:increment,
-::-webkit-scrollbar-button:vertical:start:decrement {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-button:horizontal:end:increment,
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-button:horizontal:start:decrement,
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-button:vertical:end:increment,
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-button:vertical:start:decrement {
   display: block;
 }
-::-webkit-scrollbar-button:vertical:start {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-button:vertical:start {
 }
-::-webkit-scrollbar-button:vertical:end {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-button:vertical:end {
 }
-::-webkit-scrollbar-button:horizontal:start {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-button:horizontal:start {
   width: 16px;
 }
-::-webkit-scrollbar-button:horizontal:end {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-button:horizontal:end {
   width: 16px;
 }
-button {
+button:where(:not(.xp-exempt *)) {
   border: none;
   background: var(--xp-face);
   box-shadow: inset -1px -1px var(--xp-bevel-darkest), inset 1px 1px var(--xp-bevel-light), inset -2px -2px grey, inset 2px 2px var(--xp-bevel-soft);
@@ -120,26 +120,26 @@ button {
   min-height: 23px;
   padding: 0 12px;
 }
-button:not(:disabled).active,
-button:not(:disabled):active {
+button:not(:disabled).active:where(:not(.xp-exempt *)),
+button:not(:disabled):active:where(:not(.xp-exempt *)) {
   box-shadow: inset -1px -1px var(--xp-bevel-light), inset 1px 1px var(--xp-bevel-darkest), inset -2px -2px var(--xp-bevel-soft), inset 2px 2px grey;
 }
-button.focused,
-button:focus {
+button.focused:where(:not(.xp-exempt *)),
+button:focus:where(:not(.xp-exempt *)) {
   outline: 1px dotted var(--xp-focus-outline);
   outline-offset: -4px;
 }
-label {
+label:where(:not(.xp-exempt *)) {
   display: inline-flex;
   align-items: center;
 }
-input,
-label,
-textarea {
+input:where(:not(.xp-exempt *)),
+label:where(:not(.xp-exempt *)),
+textarea:where(:not(.xp-exempt *)) {
   font-family: var(--xp-font-ui);
   font-size: 11px;
 }
-textarea {
+textarea:where(:not(.xp-exempt *)) {
   padding: 3px 4px;
   border: none;
   background-color: var(--xp-surface);
@@ -149,10 +149,10 @@ textarea {
   appearance: none;
   border-radius: 0;
 }
-textarea:focus {
+textarea:focus:where(:not(.xp-exempt *)) {
   outline: none;
 }
-select {
+select:where(:not(.xp-exempt *)) {
   font-family: var(--xp-font-ui);
   font-size: 11px;
   border: none;
@@ -168,38 +168,38 @@ select {
   background-repeat: no-repeat;
   border-radius: 0;
 }
-select:focus {
+select:focus:where(:not(.xp-exempt *)) {
   outline: none;
   color: var(--xp-text-inverse);
   background-color: var(--xp-selection);
 }
-select:focus option {
+select:focus option:where(:not(.xp-exempt *)) {
   color: var(--xp-text-strong);
   background-color: var(--xp-surface);
 }
-select:active {
+select:active:where(:not(.xp-exempt *)) {
 }
-option {
+option:where(:not(.xp-exempt *)) {
   font-family: var(--xp-font-ui);
   font-size: 11px;
 }
-.vertical-bar {
+.vertical-bar:where(:not(.xp-exempt *)) {
   width: 4px;
   height: 20px;
   background: silver;
   box-shadow: inset -1px -1px var(--xp-bevel-darkest), inset 1px 1px var(--xp-bevel-light), inset -2px -2px grey, inset 2px 2px var(--xp-bevel-soft);
 }
-&:disabled,
-&:disabled + label {
+&:disabled:where(:not(.xp-exempt *)),
+&:disabled + label:where(:not(.xp-exempt *)) {
   color: grey;
   text-shadow: 1px 1px 0 var(--xp-disabled-emboss);
 }
-input[type="radio"] + label {
+input[type="radio"] + label:where(:not(.xp-exempt *)) {
   line-height: 13px;
   position: relative;
   margin-left: 19px;
 }
-input[type="radio"] + label:before {
+input[type="radio"] + label:where(:not(.xp-exempt *)):before {
   content: "";
   position: absolute;
   top: 0;
@@ -209,9 +209,9 @@ input[type="radio"] + label:before {
   height: 13px;
   margin-right: 6px;
 }
-input[type="radio"]:active + label:before {
+input[type="radio"]:active + label:where(:not(.xp-exempt *)):before {
 }
-input[type="radio"]:checked + label:after {
+input[type="radio"]:checked + label:where(:not(.xp-exempt *)):after {
   content: "";
   display: block;
   width: 5px;
@@ -220,7 +220,7 @@ input[type="radio"]:checked + label:after {
   left: -14px;
   position: absolute;
 }
-input[type="checkbox"] {
+input[type="checkbox"]:where(:not(.xp-exempt *)) {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -230,12 +230,12 @@ input[type="checkbox"] {
   opacity: 0;
   border: none;
 }
-input[type="checkbox"] + label {
+input[type="checkbox"] + label:where(:not(.xp-exempt *)) {
   line-height: 13px;
   position: relative;
   margin-left: 19px;
 }
-input[type="checkbox"] + label:before {
+input[type="checkbox"] + label:where(:not(.xp-exempt *)):before {
   content: "";
   position: absolute;
   left: -19px;
@@ -246,13 +246,13 @@ input[type="checkbox"] + label:before {
   box-shadow: inset -1px -1px var(--xp-bevel-light), inset 1px 1px grey, inset -2px -2px var(--xp-bevel-soft), inset 2px 2px var(--xp-bevel-darkest);
   margin-right: 6px;
 }
-input[type="checkbox"]:focus + label {
+input[type="checkbox"]:focus + label:where(:not(.xp-exempt *)) {
   outline: 1px dotted var(--xp-focus-outline);
 }
-input[type="checkbox"]:active + label:before {
+input[type="checkbox"]:active + label:where(:not(.xp-exempt *)):before {
   background: var(--xp-face);
 }
-input[type="checkbox"]:checked + label:after {
+input[type="checkbox"]:checked + label:where(:not(.xp-exempt *)):after {
   content: "";
   display: block;
   width: 11px;
@@ -260,18 +260,18 @@ input[type="checkbox"]:checked + label:after {
   position: absolute;
   top: 1px;
 }
-input[type="radio"][disabled] + label:before {
+input[type="radio"][disabled] + label:where(:not(.xp-exempt *)):before {
 }
-input[type="radio"][disabled]:checked + label:after {
+input[type="radio"][disabled]:checked + label:where(:not(.xp-exempt *)):after {
 }
-input[type="checkbox"][disabled] + label:before {
+input[type="checkbox"][disabled] + label:where(:not(.xp-exempt *)):before {
   background: var(--xp-face);
 }
-input[type="checkbox"][disabled]:checked + label:after {
+input[type="checkbox"][disabled]:checked + label:where(:not(.xp-exempt *)):after {
 }
-input[type="email"],
-input[type="password"],
-input[type="text"] {
+input[type="email"]:where(:not(.xp-exempt *)),
+input[type="password"]:where(:not(.xp-exempt *)),
+input[type="text"]:where(:not(.xp-exempt *)) {
   padding: 3px 4px;
   border: 1px solid var(--xp-field-border);
   background-color: var(--xp-surface);
@@ -283,85 +283,85 @@ input[type="text"] {
   height: 21px;
   line-height: 2;
 }
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="text"]:focus {
+input[type="email"]:focus:where(:not(.xp-exempt *)),
+input[type="password"]:focus:where(:not(.xp-exempt *)),
+input[type="text"]:focus:where(:not(.xp-exempt *)) {
   outline: none;
 }
-input[type="range"] {
+input[type="range"]:where(:not(.xp-exempt *)) {
   -webkit-appearance: none;
   width: 100%;
   background: transparent;
 }
-input[type="range"]:focus {
+input[type="range"]:focus:where(:not(.xp-exempt *)) {
   outline: none;
 }
-input[type="range"]::-webkit-slider-thumb {
+input[type="range"]:where(:not(.xp-exempt *))::-webkit-slider-thumb {
   -webkit-appearance: none;
 }
-input[type="range"]::-moz-range-thumb {
+input[type="range"]:where(:not(.xp-exempt *))::-moz-range-thumb {
 }
-input[type="range"]::-webkit-slider-runnable-track {
+input[type="range"]:where(:not(.xp-exempt *))::-webkit-slider-runnable-track {
   background: var(--xp-range-track-line);
   border-right: 1px solid grey;
   border-bottom: 1px solid grey;
   box-shadow: 1px 0 0 var(--xp-bevel-light), 1px 1px 0 var(--xp-bevel-light), 0 1px 0 var(--xp-bevel-light), -1px 0 0 var(--xp-bevel-dark), -1px -1px 0 var(--xp-bevel-dark), 0 -1px 0 var(--xp-bevel-dark), -1px 1px 0 var(--xp-bevel-light), 1px -1px var(--xp-bevel-dark);
 }
-input[type="range"]::-moz-range-track {
+input[type="range"]:where(:not(.xp-exempt *))::-moz-range-track {
   background: var(--xp-range-track-line);
   border-right: 1px solid grey;
   border-bottom: 1px solid grey;
   box-shadow: 1px 0 0 var(--xp-bevel-light), 1px 1px 0 var(--xp-bevel-light), 0 1px 0 var(--xp-bevel-light), -1px 0 0 var(--xp-bevel-dark), -1px -1px 0 var(--xp-bevel-dark), 0 -1px 0 var(--xp-bevel-dark), -1px 1px 0 var(--xp-bevel-light), 1px -1px var(--xp-bevel-dark);
 }
-input[type="range"].has-box-indicator::-webkit-slider-thumb {
+input[type="range"].has-box-indicator:where(:not(.xp-exempt *))::-webkit-slider-thumb {
 }
-input[type="range"].has-box-indicator::-moz-range-thumb {
+input[type="range"].has-box-indicator:where(:not(.xp-exempt *))::-moz-range-thumb {
 }
-.is-vertical {
+.is-vertical:where(:not(.xp-exempt *)) {
   display: inline-block;
   width: 4px;
   height: 150px;
   transform: translateY(50%);
 }
-.is-vertical > input[type="range"] {
+.is-vertical > input[type="range"]:where(:not(.xp-exempt *)) {
   width: 150px;
   height: 4px;
   margin: 0 16px 0 10px;
   transform-origin: left;
   transform: rotate(270deg) translateX(calc(-50% + 8px));
 }
-.is-vertical > input[type="range"]::-webkit-slider-runnable-track {
+.is-vertical > input[type="range"]:where(:not(.xp-exempt *))::-webkit-slider-runnable-track {
   border-left: 1px solid grey;
   border-bottom: 1px solid grey;
   box-shadow: -1px 0 0 var(--xp-bevel-light), -1px 1px 0 var(--xp-bevel-light), 0 1px 0 var(--xp-bevel-light), 1px 0 0 var(--xp-bevel-dark), 1px -1px 0 var(--xp-bevel-dark), 0 -1px 0 var(--xp-bevel-dark), 1px 1px 0 var(--xp-bevel-light), -1px -1px var(--xp-bevel-dark);
 }
-.is-vertical > input[type="range"]::-moz-range-track {
+.is-vertical > input[type="range"]:where(:not(.xp-exempt *))::-moz-range-track {
   border-left: 1px solid grey;
   border-bottom: 1px solid grey;
   box-shadow: -1px 0 0 var(--xp-bevel-light), -1px 1px 0 var(--xp-bevel-light), 0 1px 0 var(--xp-bevel-light), 1px 0 0 var(--xp-bevel-dark), 1px -1px 0 var(--xp-bevel-dark), 0 -1px 0 var(--xp-bevel-dark), 1px 1px 0 var(--xp-bevel-light), -1px -1px var(--xp-bevel-dark);
 }
-.is-vertical > input[type="range"]::-webkit-slider-thumb {
+.is-vertical > input[type="range"]:where(:not(.xp-exempt *))::-webkit-slider-thumb {
   transform: translateY(-8px) scaleX(-1);
 }
-.is-vertical > input[type="range"]::-moz-range-thumb {
+.is-vertical > input[type="range"]:where(:not(.xp-exempt *))::-moz-range-thumb {
   transform: translateY(2px) scaleX(-1);
 }
-.is-vertical > input[type="range"].has-box-indicator::-webkit-slider-thumb {
+.is-vertical > input[type="range"].has-box-indicator:where(:not(.xp-exempt *))::-webkit-slider-thumb {
   transform: translateY(-10px) scaleX(-1);
 }
-.is-vertical > input[type="range"].has-box-indicator::-moz-range-thumb {
+.is-vertical > input[type="range"].has-box-indicator:where(:not(.xp-exempt *))::-moz-range-thumb {
   transform: translateY(0) scaleX(-1);
 }
-.window {
+.window:where(:not(.xp-exempt *)) {
   font-size: 11px;
   box-shadow: inset -1px -1px var(--xp-bevel-darkest), inset 1px 1px var(--xp-bevel-soft), inset -2px -2px grey, inset 2px 2px var(--xp-bevel-light);
   background: var(--xp-face);
   padding: 3px;
 }
-.window fieldset {
+.window fieldset:where(:not(.xp-exempt *)) {
   margin-bottom: 9px;
 }
-.title-bar {
+.title-bar:where(:not(.xp-exempt *)) {
   font-size: 11px;
   background: var(--xp-titlebar-fallback);
   padding: 3px 2px 3px 3px;
@@ -369,39 +369,39 @@ input[type="range"].has-box-indicator::-moz-range-thumb {
   justify-content: space-between;
   align-items: center;
 }
-.title-bar-text {
+.title-bar-text:where(:not(.xp-exempt *)) {
   font-weight: 700;
   color: var(--xp-text-inverse);
   letter-spacing: 0;
   margin-right: 24px;
 }
-.title-bar-controls button {
+.title-bar-controls button:where(:not(.xp-exempt *)) {
   padding: 0;
   display: block;
   min-width: 16px;
   min-height: 14px;
 }
-.title-bar-controls button:focus {
+.title-bar-controls button:focus:where(:not(.xp-exempt *)) {
   outline: none;
 }
-.window-body {
+.window-body:where(:not(.xp-exempt *)) {
   margin: 8px;
 }
-.window-body pre {
+.window-body pre:where(:not(.xp-exempt *)) {
   margin: -8px;
 }
-.status-bar {
+.status-bar:where(:not(.xp-exempt *)) {
   margin: 0 1px;
   display: flex;
   gap: 1px;
 }
-.status-bar-field {
+.status-bar-field:where(:not(.xp-exempt *)) {
   box-shadow: inset -1px -1px var(--xp-bevel-soft), inset 1px 1px grey;
   flex-grow: 1;
   padding: 2px 3px;
   margin: 0;
 }
-ul.tree-view {
+ul.tree-view:where(:not(.xp-exempt *)) {
   font-family: var(--xp-font-ui);
   font-size: 11px;
   display: block;
@@ -409,28 +409,28 @@ ul.tree-view {
   padding: 6px;
   margin: 0;
 }
-ul.tree-view li {
+ul.tree-view li:where(:not(.xp-exempt *)) {
   list-style-type: none;
   margin-top: 3px;
 }
-ul.tree-view a {
+ul.tree-view a:where(:not(.xp-exempt *)) {
   text-decoration: none;
   color: var(--xp-text-strong);
 }
-ul.tree-view a:focus {
+ul.tree-view a:focus:where(:not(.xp-exempt *)) {
   background-color: var(--xp-selection);
   color: var(--xp-text-inverse);
 }
-ul.tree-view ul {
+ul.tree-view ul:where(:not(.xp-exempt *)) {
   margin-top: 3px;
   margin-left: 16px;
   padding-left: 16px;
   border-left: 1px dotted grey;
 }
-ul.tree-view ul > li {
+ul.tree-view ul > li:where(:not(.xp-exempt *)) {
   position: relative;
 }
-ul.tree-view ul > li:before {
+ul.tree-view ul > li:where(:not(.xp-exempt *)):before {
   content: "";
   display: block;
   position: absolute;
@@ -439,7 +439,7 @@ ul.tree-view ul > li:before {
   width: 12px;
   border-bottom: 1px dotted grey;
 }
-ul.tree-view ul > li:last-child:after {
+ul.tree-view ul > li:last-child:where(:not(.xp-exempt *)):after {
   content: "";
   display: block;
   position: absolute;
@@ -449,15 +449,15 @@ ul.tree-view ul > li:last-child:after {
   width: 8px;
   background: var(--xp-surface);
 }
-ul.tree-view ul details > summary:before {
+ul.tree-view ul details > summary:where(:not(.xp-exempt *)):before {
   margin-left: -22px;
   position: relative;
   z-index: 1;
 }
-ul.tree-view details {
+ul.tree-view details:where(:not(.xp-exempt *)) {
   margin-top: 0;
 }
-ul.tree-view details > summary:before {
+ul.tree-view details > summary:where(:not(.xp-exempt *)):before {
   text-align: center;
   display: block;
   float: left;
@@ -470,22 +470,22 @@ ul.tree-view details > summary:before {
   padding-left: 1px;
   background-color: var(--xp-surface);
 }
-ul.tree-view details[open] summary {
+ul.tree-view details[open] summary:where(:not(.xp-exempt *)) {
   margin-bottom: 0;
 }
-ul.tree-view details[open] > summary:before {
+ul.tree-view details[open] > summary:where(:not(.xp-exempt *)):before {
   content: "-";
 }
-fieldset {
+fieldset:where(:not(.xp-exempt *)) {
   border-image: var(--xp-glyph-groupbox-border) 2;
   padding: 10px;
   padding-block-start: 8px;
   margin: 0;
 }
-legend {
+legend:where(:not(.xp-exempt *)) {
   background: var(--xp-face);
 }
-menu[role="tablist"] {
+menu[role="tablist"]:where(:not(.xp-exempt *)) {
   position: relative;
   margin: 0 0 -2px;
   text-indent: 0;
@@ -493,14 +493,14 @@ menu[role="tablist"] {
   display: flex;
   padding-left: 3px;
 }
-menu[role="tablist"] button {
+menu[role="tablist"] button:where(:not(.xp-exempt *)) {
   z-index: 1;
   display: block;
   color: var(--xp-text);
   text-decoration: none;
   min-width: unset;
 }
-menu[role="tablist"] button[aria-selected="true"] {
+menu[role="tablist"] button[aria-selected="true"]:where(:not(.xp-exempt *)) {
   padding-bottom: 2px;
   margin-top: -2px;
   background-color: var(--xp-face);
@@ -509,15 +509,15 @@ menu[role="tablist"] button[aria-selected="true"] {
   margin-left: -3px;
   margin-bottom: 1px;
 }
-menu[role="tablist"] button:focus {
+menu[role="tablist"] button:focus:where(:not(.xp-exempt *)) {
   outline: 1px dotted var(--xp-focus-outline-soft);
   outline-offset: -4px;
 }
-menu[role="tablist"].justified button {
+menu[role="tablist"].justified button:where(:not(.xp-exempt *)) {
   flex-grow: 1;
   text-align: center;
 }
-[role="tabpanel"] {
+[role="tabpanel"]:where(:not(.xp-exempt *)) {
   padding: 14px;
   clear: both;
   background: var(--xp-tabpanel-gradient);
@@ -526,19 +526,19 @@ menu[role="tablist"].justified button {
   z-index: 2;
   margin-bottom: 9px;
 }
-::-webkit-scrollbar {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar {
   width: 17px;
 }
-::-webkit-scrollbar-corner {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-corner {
   background: var(--xp-bevel-soft);
 }
-::-webkit-scrollbar-track:vertical {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-track:vertical {
   background-image: var(--xp-glyph-scrollbar-track-v);
 }
-::-webkit-scrollbar-track:horizontal {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-track:horizontal {
   background-image: var(--xp-glyph-scrollbar-track-h);
 }
-::-webkit-scrollbar-thumb {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-thumb {
   background-position: 50%;
   background-repeat: no-repeat;
   background-color: var(--xp-scrollbar-thumb);
@@ -547,37 +547,37 @@ menu[role="tablist"].justified button {
   border-radius: 2px;
   box-shadow: inset -3px 0 var(--xp-scrollbar-thumb-shade1), inset 1px 1px var(--xp-scrollbar-thumb-shade2);
 }
-::-webkit-scrollbar-thumb:vertical {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-thumb:vertical {
   background-image: var(--xp-glyph-scrollbar-thumb-ribs-v);
 }
-::-webkit-scrollbar-thumb:horizontal {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-thumb:horizontal {
   background-size: 8px;
   background-image: var(--xp-glyph-scrollbar-thumb-ribs-h);
 }
-::-webkit-scrollbar-button:vertical:start {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-button:vertical:start {
   height: 17px;
   background-image: var(--xp-glyph-scrollbar-up);
 }
-::-webkit-scrollbar-button:vertical:end {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-button:vertical:end {
   height: 17px;
   background-image: var(--xp-glyph-scrollbar-down);
 }
-::-webkit-scrollbar-button:horizontal:start {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-button:horizontal:start {
   width: 17px;
   background-image: var(--xp-glyph-scrollbar-left);
 }
-::-webkit-scrollbar-button:horizontal:end {
+*:where(:not(.xp-exempt *))::-webkit-scrollbar-button:horizontal:end {
   width: 17px;
   background-image: var(--xp-glyph-scrollbar-right);
 }
-.window {
+.window:where(:not(.xp-exempt *)) {
   box-shadow: inset -1px -1px var(--xp-frame-outer-dark), inset 1px 1px var(--xp-frame-outer-bright), inset -2px -2px var(--xp-frame-mid-dark), inset 2px 2px var(--xp-frame-mid-bright), inset -3px -3px var(--xp-frame-inner-dark), inset 3px 3px var(--xp-frame-inner-bright);
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   padding: 0 0 3px;
   -webkit-font-smoothing: antialiased;
 }
-.title-bar {
+.title-bar:where(:not(.xp-exempt *)) {
   font-family: var(--xp-font-titlebar);
   background: var(--xp-titlebar-gradient);
   padding: 3px 5px 3px 3px;
@@ -590,13 +590,13 @@ menu[role="tablist"].justified button {
   text-shadow: 1px 1px var(--xp-titlebar-text-shadow);
   height: 21px;
 }
-.title-bar-text {
+.title-bar-text:where(:not(.xp-exempt *)) {
   padding-left: 3px;
 }
-.title-bar-controls {
+.title-bar-controls:where(:not(.xp-exempt *)) {
   display: flex;
 }
-.title-bar-controls button {
+.title-bar-controls button:where(:not(.xp-exempt *)) {
   min-width: 21px;
   min-height: 21px;
   margin-left: 2px;
@@ -607,63 +607,63 @@ menu[role="tablist"].justified button {
   transition: background 0.1s;
   border: none;
 }
-.title-bar-controls button:active,
-.title-bar-controls button:focus,
-.title-bar-controls button:hover {
+.title-bar-controls button:active:where(:not(.xp-exempt *)),
+.title-bar-controls button:focus:where(:not(.xp-exempt *)),
+.title-bar-controls button:hover:where(:not(.xp-exempt *)) {
   box-shadow: none !important;
 }
-.title-bar-controls button[aria-label="Minimize"] {
+.title-bar-controls button[aria-label="Minimize"]:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-minimize);
 }
-.title-bar-controls button[aria-label="Minimize"]:hover {
+.title-bar-controls button[aria-label="Minimize"]:hover:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-minimize-hover);
 }
-.title-bar-controls button[aria-label="Minimize"]:not(:disabled):active {
+.title-bar-controls button[aria-label="Minimize"]:not(:disabled):active:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-minimize-active);
 }
-.title-bar-controls button[aria-label="Maximize"] {
+.title-bar-controls button[aria-label="Maximize"]:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-maximize);
 }
-.title-bar-controls button[aria-label="Maximize"]:hover {
+.title-bar-controls button[aria-label="Maximize"]:hover:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-maximize-hover);
 }
-.title-bar-controls button[aria-label="Maximize"]:not(:disabled):active {
+.title-bar-controls button[aria-label="Maximize"]:not(:disabled):active:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-maximize-active);
 }
-.title-bar-controls button[aria-label="Restore"] {
+.title-bar-controls button[aria-label="Restore"]:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-restore);
 }
-.title-bar-controls button[aria-label="Restore"]:hover {
+.title-bar-controls button[aria-label="Restore"]:hover:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-restore-hover);
 }
-.title-bar-controls button[aria-label="Restore"]:not(:disabled):active {
+.title-bar-controls button[aria-label="Restore"]:not(:disabled):active:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-restore-active);
 }
-.title-bar-controls button[aria-label="Help"] {
+.title-bar-controls button[aria-label="Help"]:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-help);
 }
-.title-bar-controls button[aria-label="Help"]:hover {
+.title-bar-controls button[aria-label="Help"]:hover:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-help-hover);
 }
-.title-bar-controls button[aria-label="Help"]:not(:disabled):active {
+.title-bar-controls button[aria-label="Help"]:not(:disabled):active:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-help-active);
 }
-.title-bar-controls button[aria-label="Close"] {
+.title-bar-controls button[aria-label="Close"]:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-close);
 }
-.title-bar-controls button[aria-label="Close"]:hover {
+.title-bar-controls button[aria-label="Close"]:hover:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-close-hover);
 }
-.title-bar-controls button[aria-label="Close"]:not(:disabled):active {
+.title-bar-controls button[aria-label="Close"]:not(:disabled):active:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-titlebar-close-active);
 }
-.status-bar {
+.status-bar:where(:not(.xp-exempt *)) {
   margin: 0 3px;
   box-shadow: inset 0 1px 2px grey;
   padding: 2px 1px;
   gap: 0;
 }
-.status-bar-field {
+.status-bar-field:where(:not(.xp-exempt *)) {
   font-family: var(--xp-font-ui);
   -webkit-font-smoothing: antialiased;
   box-shadow: none;
@@ -671,13 +671,13 @@ menu[role="tablist"].justified button {
   border-right: 1px solid rgba(208, 206, 191, 0.75);
   border-left: 1px solid hsla(0, 0%, 100%, 0.75);
 }
-.status-bar-field:first-of-type {
+.status-bar-field:first-of-type:where(:not(.xp-exempt *)) {
   border-left: none;
 }
-.status-bar-field:last-of-type {
+.status-bar-field:last-of-type:where(:not(.xp-exempt *)) {
   border-right: none;
 }
-button {
+button:where(:not(.xp-exempt *)) {
   font-family: var(--xp-font-ui);
   -webkit-font-smoothing: antialiased;
   font-size: 11px;
@@ -687,43 +687,43 @@ button {
   box-shadow: none;
   border-radius: 3px;
 }
-button:not(:disabled).active,
-button:not(:disabled):active {
+button:not(:disabled).active:where(:not(.xp-exempt *)),
+button:not(:disabled):active:where(:not(.xp-exempt *)) {
   box-shadow: none;
   background: var(--xp-button-active-gradient);
 }
-button:not(:disabled):hover {
+button:not(:disabled):hover:where(:not(.xp-exempt *)) {
   box-shadow: inset -1px 1px var(--xp-hover-glow-1), inset 1px 2px var(--xp-hover-glow-2), inset -2px 2px var(--xp-hover-glow-3), inset 2px -2px var(--xp-hover-glow-4);
 }
-button.focused,
-button:focus {
+button.focused:where(:not(.xp-exempt *)),
+button:focus:where(:not(.xp-exempt *)) {
   box-shadow: inset -1px 1px var(--xp-focus-glow-1), inset 1px 2px var(--xp-focus-glow-2), inset -2px 2px var(--xp-focus-glow-3), inset 1px -1px var(--xp-focus-glow-4), inset 2px -2px var(--xp-focus-glow-4);
 }
-button::-moz-focus-inner {
+button:where(:not(.xp-exempt *))::-moz-focus-inner {
   border: 0;
 }
-input,
-label,
-option,
-select,
-textarea {
+input:where(:not(.xp-exempt *)),
+label:where(:not(.xp-exempt *)),
+option:where(:not(.xp-exempt *)),
+select:where(:not(.xp-exempt *)),
+textarea:where(:not(.xp-exempt *)) {
   -webkit-font-smoothing: antialiased;
 }
-select {
+select:where(:not(.xp-exempt *)) {
   border: 1px solid var(--xp-field-border);
   background-image: var(--xp-glyph-select-arrow);
   background-size: 15px;
 }
-select:focus {
+select:focus:where(:not(.xp-exempt *)) {
   box-shadow: inset 2px 2px var(--xp-bevel-light), inset -2px -2px var(--xp-bevel-light);
 }
-select:hover {
+select:hover:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-select-arrow-hover);
 }
-select:active {
+select:active:where(:not(.xp-exempt *)) {
   background-image: var(--xp-glyph-select-arrow-active);
 }
-input[type="radio"] {
+input[type="radio"]:where(:not(.xp-exempt *)) {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -733,76 +733,76 @@ input[type="radio"] {
   opacity: 0;
   border: none;
 }
-input[type="radio"] + label {
+input[type="radio"] + label:where(:not(.xp-exempt *)) {
   line-height: 16px;
 }
-input[type="radio"] + label:before {
+input[type="radio"] + label:where(:not(.xp-exempt *)):before {
   background: var(--xp-control-bevel-gradient);
   border-radius: 50%;
   border: 1px solid var(--xp-control-border);
 }
-input[type="radio"]:not([disabled]):not(:active) + label:hover:before {
+input[type="radio"]:not([disabled]):not(:active) + label:hover:where(:not(.xp-exempt *)):before {
   box-shadow: inset -2px -2px var(--xp-control-hover-glow-dark), inset 2px 2px var(--xp-control-hover-glow-light);
 }
-input[type="radio"]:active + label:before {
+input[type="radio"]:active + label:where(:not(.xp-exempt *)):before {
   background: var(--xp-control-bevel-active-gradient);
 }
-input[type="radio"]:checked + label:after {
+input[type="radio"]:checked + label:where(:not(.xp-exempt *)):after {
   background: var(--xp-glyph-radio-dot);
 }
-input[type="radio"]:focus + label {
+input[type="radio"]:focus + label:where(:not(.xp-exempt *)) {
   outline: 1px dotted var(--xp-focus-outline);
 }
-input[type="radio"][disabled] + label:before {
+input[type="radio"][disabled] + label:where(:not(.xp-exempt *)):before {
   border: 1px solid var(--xp-control-border-disabled);
   background: var(--xp-surface);
 }
-input[type="radio"][disabled]:checked + label:after {
+input[type="radio"][disabled]:checked + label:where(:not(.xp-exempt *)):after {
   background: var(--xp-glyph-radio-dot-disabled);
 }
-input[type="checkbox"] + label:before {
+input[type="checkbox"] + label:where(:not(.xp-exempt *)):before {
   box-shadow: none;
   border: 1px solid var(--xp-control-border);
   background: var(--xp-control-bevel-gradient);
 }
-input[type="checkbox"]:checked + label:after {
+input[type="checkbox"]:checked + label:where(:not(.xp-exempt *)):after {
   background: var(--xp-glyph-checkbox-check);
   left: -17px;
 }
-input[type="checkbox"]:not([disabled]):not(:active) + label:hover:before {
+input[type="checkbox"]:not([disabled]):not(:active) + label:hover:where(:not(.xp-exempt *)):before {
   box-shadow: inset -2px -2px var(--xp-control-hover-glow-dark), inset 2px 2px var(--xp-control-hover-glow-light);
 }
-input[type="checkbox"]:active + label:before {
+input[type="checkbox"]:active + label:where(:not(.xp-exempt *)):before {
   background: var(--xp-control-bevel-active-gradient);
 }
-input[type="checkbox"][disabled] + label:before {
+input[type="checkbox"][disabled] + label:where(:not(.xp-exempt *)):before {
   background: var(--xp-surface);
   border: 1px solid var(--xp-control-border-disabled);
 }
-input[type="checkbox"][disabled]:checked + label:after {
+input[type="checkbox"][disabled]:checked + label:where(:not(.xp-exempt *)):after {
   background: var(--xp-glyph-checkbox-check-disabled);
 }
-input[type="email"],
-input[type="password"],
-input[type="text"],
-select {
+input[type="email"]:where(:not(.xp-exempt *)),
+input[type="password"]:where(:not(.xp-exempt *)),
+input[type="text"]:where(:not(.xp-exempt *)),
+select:where(:not(.xp-exempt *)) {
   height: 23px;
 }
-input::selection {
+input:where(:not(.xp-exempt *))::selection {
   background: var(--xp-selection);
   color: var(--xp-text-inverse);
 }
-textarea::selection {
+textarea:where(:not(.xp-exempt *))::selection {
   background: var(--xp-selection);
   color: var(--xp-text-inverse);
 }
-input[type="range"]::-webkit-slider-thumb {
+input[type="range"]:where(:not(.xp-exempt *))::-webkit-slider-thumb {
   height: 21px;
   width: 11px;
   background: var(--xp-glyph-range-thumb);
   transform: translateY(-8px);
 }
-input[type="range"]::-moz-range-thumb {
+input[type="range"]:where(:not(.xp-exempt *))::-moz-range-thumb {
   height: 21px;
   width: 11px;
   border: 0;
@@ -810,7 +810,7 @@ input[type="range"]::-moz-range-thumb {
   background: var(--xp-glyph-range-thumb);
   transform: translateY(2px);
 }
-input[type="range"]::-webkit-slider-runnable-track {
+input[type="range"]:where(:not(.xp-exempt *))::-webkit-slider-runnable-track {
   width: 100%;
   height: 2px;
   box-sizing: border-box;
@@ -820,7 +820,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   border-radius: 2px;
   box-shadow: 1px 0 0 var(--xp-bevel-light), 1px 1px 0 var(--xp-bevel-light), 0 1px 0 var(--xp-bevel-light), -1px 0 0 var(--xp-bevel-mid), -1px -1px 0 var(--xp-bevel-mid), 0 -1px 0 var(--xp-bevel-mid), -1px 1px 0 var(--xp-bevel-light), 1px -1px var(--xp-bevel-mid);
 }
-input[type="range"]::-moz-range-track {
+input[type="range"]:where(:not(.xp-exempt *))::-moz-range-track {
   width: 100%;
   height: 2px;
   box-sizing: border-box;
@@ -830,55 +830,55 @@ input[type="range"]::-moz-range-track {
   border-radius: 2px;
   box-shadow: 1px 0 0 var(--xp-bevel-light), 1px 1px 0 var(--xp-bevel-light), 0 1px 0 var(--xp-bevel-light), -1px 0 0 var(--xp-bevel-mid), -1px -1px 0 var(--xp-bevel-mid), 0 -1px 0 var(--xp-bevel-mid), -1px 1px 0 var(--xp-bevel-light), 1px -1px var(--xp-bevel-mid);
 }
-input[type="range"].has-box-indicator::-webkit-slider-thumb {
+input[type="range"].has-box-indicator:where(:not(.xp-exempt *))::-webkit-slider-thumb {
   background: var(--xp-glyph-range-thumb-box);
   transform: translateY(-10px);
 }
-input[type="range"].has-box-indicator::-moz-range-thumb {
+input[type="range"].has-box-indicator:where(:not(.xp-exempt *))::-moz-range-thumb {
   background: var(--xp-glyph-range-thumb-box);
   transform: translateY(0);
 }
-.is-vertical > input[type="range"]::-webkit-slider-runnable-track {
+.is-vertical > input[type="range"]:where(:not(.xp-exempt *))::-webkit-slider-runnable-track {
   border-left: 1px solid var(--xp-separator);
   border-right: 0;
   border-bottom: 1px solid var(--xp-separator);
   box-shadow: -1px 0 0 var(--xp-bevel-light), -1px 1px 0 var(--xp-bevel-light), 0 1px 0 var(--xp-bevel-light), 1px 0 0 var(--xp-bevel-mid), 1px -1px 0 var(--xp-bevel-mid), 0 -1px 0 var(--xp-bevel-mid), 1px 1px 0 var(--xp-bevel-light), -1px -1px var(--xp-bevel-mid);
 }
-.is-vertical > input[type="range"]::-moz-range-track {
+.is-vertical > input[type="range"]:where(:not(.xp-exempt *))::-moz-range-track {
   border-left: 1px solid var(--xp-separator);
   border-right: 0;
   border-bottom: 1px solid var(--xp-separator);
   box-shadow: -1px 0 0 var(--xp-bevel-light), -1px 1px 0 var(--xp-bevel-light), 0 1px 0 var(--xp-bevel-light), 1px 0 0 var(--xp-bevel-mid), 1px -1px 0 var(--xp-bevel-mid), 0 -1px 0 var(--xp-bevel-mid), 1px 1px 0 var(--xp-bevel-light), -1px -1px var(--xp-bevel-mid);
 }
-fieldset {
+fieldset:where(:not(.xp-exempt *)) {
   box-shadow: none;
   background: var(--xp-surface);
   border: 1px solid var(--xp-groupbox-border);
   border-radius: 4px;
   padding-top: 10px;
 }
-legend {
+legend:where(:not(.xp-exempt *)) {
   background: transparent;
   color: var(--xp-legend-text);
 }
-.field-row {
+.field-row:where(:not(.xp-exempt *)) {
   display: flex;
   align-items: center;
 }
-.field-row > * + * {
+.field-row > * + *:where(:not(.xp-exempt *)) {
   margin-left: 6px;
 }
-[class^="field-row"] + [class^="field-row"] {
+[class^="field-row"] + [class^="field-row"]:where(:not(.xp-exempt *)) {
   margin-top: 6px;
 }
-.field-row-stacked {
+.field-row-stacked:where(:not(.xp-exempt *)) {
   display: flex;
   flex-direction: column;
 }
-.field-row-stacked * + * {
+.field-row-stacked * + *:where(:not(.xp-exempt *)) {
   margin-top: 6px;
 }
-menu[role="tablist"] button {
+menu[role="tablist"] button:where(:not(.xp-exempt *)) {
   background: var(--xp-tab-button-gradient);
   margin-left: -1px;
   margin-right: 2px;
@@ -888,12 +888,12 @@ menu[role="tablist"] button {
   border-top-left-radius: 3px;
   padding: 0 12px 3px;
 }
-menu[role="tablist"] button:hover {
+menu[role="tablist"] button:hover:where(:not(.xp-exempt *)) {
   box-shadow: unset;
   border-top: 1px solid var(--xp-tab-hover-border);
   box-shadow: inset 0 2px var(--xp-tab-hover-accent);
 }
-menu[role="tablist"] button[aria-selected="true"] {
+menu[role="tablist"] button[aria-selected="true"]:where(:not(.xp-exempt *)) {
   background: var(--xp-tab-face);
   border-color: var(--xp-tab-border);
   margin-right: -1px;
@@ -901,7 +901,7 @@ menu[role="tablist"] button[aria-selected="true"] {
   border-top: 1px solid var(--xp-tab-hover-border);
   box-shadow: inset 0 2px var(--xp-tab-hover-accent);
 }
-menu[role="tablist"] button[aria-selected="true"]:first-of-type:before {
+menu[role="tablist"] button[aria-selected="true"]:first-of-type:where(:not(.xp-exempt *)):before {
   content: "";
   display: block;
   position: absolute;
@@ -912,23 +912,23 @@ menu[role="tablist"] button[aria-selected="true"]:first-of-type:before {
   width: 0;
   border-left: 1px solid var(--xp-tab-border);
 }
-[role="tabpanel"] {
+[role="tabpanel"]:where(:not(.xp-exempt *)) {
   box-shadow: inset 1px 1px var(--xp-tab-face), inset -1px -1px var(--xp-tab-face), 1px 2px 2px 0 rgba(208, 206, 191, 0.75);
 }
-ul.tree-view {
+ul.tree-view:where(:not(.xp-exempt *)) {
   -webkit-font-smoothing: auto;
   border: 1px solid var(--xp-field-border);
   padding: 2px 5px;
 }
 @keyframes sliding {
-  0% {
+  0%:where(:not(.xp-exempt *)) {
     transform: translateX(-30px);
   }
-  to {
+  to:where(:not(.xp-exempt *)) {
     transform: translateX(100%);
   }
 }
-progress {
+progress:where(:not(.xp-exempt *)) {
   box-sizing: border-box;
   appearance: none;
   -webkit-appearance: none;
@@ -942,39 +942,39 @@ progress {
   -webkit-box-shadow: inset 0 0 1px 0 var(--xp-bevel-frame);
   -moz-box-shadow: inset 0 0 1px 0 var(--xp-bevel-frame);
 }
-progress,
-progress:not([value]) {
+progress:where(:not(.xp-exempt *)),
+progress:not([value]):where(:not(.xp-exempt *)) {
   box-shadow: inset 0 0 1px 0 var(--xp-bevel-frame);
 }
-progress:not([value]) {
+progress:not([value]):where(:not(.xp-exempt *)) {
   -moz-box-shadow: inset 0 0 1px 0 var(--xp-bevel-frame);
   -webkit-box-shadow: inset 0 0 1px 0 var(--xp-bevel-frame);
   height: 14px;
 }
-progress[value]::-webkit-progress-bar {
+progress[value]:where(:not(.xp-exempt *))::-webkit-progress-bar {
   background-color: transparent;
 }
-progress[value]::-webkit-progress-value {
+progress[value]:where(:not(.xp-exempt *))::-webkit-progress-value {
   border-radius: 2px;
   background: var(--xp-progress-segments), var(--xp-progress-gradient);
 }
-progress[value]::-moz-progress-bar {
+progress[value]:where(:not(.xp-exempt *))::-moz-progress-bar {
   border-radius: 2px;
   background: var(--xp-progress-segments), var(--xp-progress-gradient);
 }
-progress:not([value])::-webkit-progress-bar {
+progress:not([value]):where(:not(.xp-exempt *))::-webkit-progress-bar {
   width: 100%;
   background: var(--xp-progress-mask), var(--xp-progress-gradient);
   animation: sliding 2s linear 0s infinite;
 }
-progress:not([value])::-webkit-progress-bar {
+progress:not([value]):where(:not(.xp-exempt *))::-webkit-progress-bar {
   animation: sliding 2s linear 0s infinite;
   background: var(--xp-progress-mask), var(--xp-progress-gradient);
 }
-progress:not([value]) {
+progress:not([value]):where(:not(.xp-exempt *)) {
   position: relative;
 }
-progress:not([value]):before {
+progress:not([value]):where(:not(.xp-exempt *)):before {
   box-sizing: border-box;
   content: "";
   position: absolute;
@@ -986,14 +986,14 @@ progress:not([value]):before {
   -webkit-box-shadow: inset 0 0 1px 0 var(--xp-bevel-frame);
   -moz-box-shadow: inset 0 0 1px 0 var(--xp-bevel-frame);
 }
-progress:not([value]):before {
+progress:not([value]):where(:not(.xp-exempt *)):before {
   box-shadow: inset 0 0 1px 0 var(--xp-bevel-frame);
 }
-progress:not([value]):before {
+progress:not([value]):where(:not(.xp-exempt *)):before {
   -moz-box-shadow: inset 0 0 1px 0 var(--xp-bevel-frame);
   -webkit-box-shadow: inset 0 0 1px 0 var(--xp-bevel-frame);
 }
-progress:not([value]):after {
+progress:not([value]):where(:not(.xp-exempt *)):after {
   box-sizing: border-box;
   content: "";
   position: absolute;
@@ -1005,18 +1005,18 @@ progress:not([value]):after {
   border-radius: 2px;
   background: var(--xp-progress-mask), var(--xp-progress-gradient);
 }
-progress:not([value]):after {
+progress:not([value]):where(:not(.xp-exempt *)):after {
   animation: sliding 2s linear 0s infinite;
 }
-progress:not([value]):after {
+progress:not([value]):where(:not(.xp-exempt *)):after {
   background: var(--xp-progress-mask), var(--xp-progress-gradient);
 }
-progress:not([value])::-moz-progress-bar {
+progress:not([value]):where(:not(.xp-exempt *))::-moz-progress-bar {
   width: 100%;
   background: var(--xp-progress-mask), var(--xp-progress-gradient);
   animation: sliding 2s linear 0s infinite;
 }
-progress:not([value])::-moz-progress-bar {
+progress:not([value]):where(:not(.xp-exempt *))::-moz-progress-bar {
   animation: sliding 2s linear 0s infinite;
   background: var(--xp-progress-mask), var(--xp-progress-gradient);
 }

@@ -10,7 +10,6 @@ interface UseWindowStyleProps {
   width: number;
   height: number;
   viewState: WindowViewState;
-  desktopRect: DOMRect | null;
   style?: StyleObject;
   isDragging?: boolean;
   isResizing?: boolean;
@@ -25,24 +24,27 @@ export function useWindowStyle({
   width,
   height,
   viewState,
-  desktopRect,
   style,
   isDragging = false,
   isResizing = false,
 }: UseWindowStyleProps): StyleObject {
+  const isMaximized = viewState.kind === "maximized";
   const baseStyle: StyleObject = {
     position: "absolute",
-    left: viewState.kind === "maximized" ? 0 : x,
-    top: viewState.kind === "maximized" ? 0 : y,
-    width:
-      viewState.kind === "maximized" && desktopRect ? desktopRect.width : width,
-    height:
-      viewState.kind === "maximized" && desktopRect
-        ? desktopRect.height
-        : height,
+    // Maximized: pin all four edges to the desktop and let the layout engine
+    // derive width/height — the bottom edge stops at the taskbar via the
+    // --xp-taskbar-height inset, so no viewport measuring or height
+    // subtraction is involved (the window can never slide under the taskbar).
+    left: isMaximized ? 0 : x,
+    top: isMaximized ? 0 : y,
+    ...(isMaximized
+      ? { right: 0, bottom: "var(--xp-taskbar-height, 0px)" }
+      : { width, height }),
     zIndex: iife(() => {
-      if (viewState.kind === "maximized") return 9999;
-      if (viewState.kind === "open") return 1000 + viewState.viewStackOrder;
+      // Maximized stacks like open (`?? 0` tolerates rows persisted before
+      // maximized carried a viewStackOrder).
+      if (viewState.kind === "open" || viewState.kind === "maximized")
+        return 1000 + (viewState.viewStackOrder ?? 0);
       return undefined;
     }),
     display: "flex",

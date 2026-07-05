@@ -1,6 +1,7 @@
 import { createEffect, createSignal } from "solid-js";
 import type { JSX } from "@solidjs/web";
 import { Wallpaper } from "../components/Wallpaper";
+import { TASKBAR_HEIGHT } from "../taskbar/Taskbar";
 import { DesktopContext } from "./DesktopContext";
 import Box from "../components/Box";
 
@@ -40,6 +41,10 @@ export function Desktop(props: { children: JSX.Element }) {
       <Box
         class="xp-theme"
         style={{
+          // Single source of truth for the taskbar's height: the taskbar reads
+          // it for its own `height`, and maximized windows inset their bottom
+          // edge by it (see useWindowStyle) so they stop exactly at its top.
+          "--xp-taskbar-height": `${TASKBAR_HEIGHT}px`,
           width: "100vw",
           height: "100vh",
           display: "flex",

@@ -366,6 +366,38 @@ for name, uri in glyphs.items():
 glyph_lines.append("}")
 open(f"{PKG}/xp.glyphs.css", "w").write("\n".join(glyph_lines) + "\n")
 
+# ---------- applet quarantine: xp.css themes RAW elements (select, input,
+# button...), so it bleeds into any embedded foreign UI (native applets) that
+# doesn't re-declare every property. Layer order can't help — only xp sets
+# e.g. the select arrow glyph. Guard every rule's subject with
+# :where(:not(.xp-exempt *)) — zero added specificity; hosts mark foreign
+# applet containers with class="xp-exempt". Pseudo-elements keep the guard
+# BEFORE the pseudo-element part.
+import re as _re
+def guard_selectors(css: str) -> str:
+    GUARD = ":where(:not(.xp-exempt *))"
+    def fix_rule(m: _re.Match) -> str:
+        header, body = m.group(1), m.group(2)
+        if header.lstrip().startswith("@"):  # @font-face etc.
+            return m.group(0)
+        lead = _re.match(r"\s*", header).group(0)
+        parts = []
+        for sel in header.split(","):
+            s = sel.strip()
+            if not s:
+                continue
+            pm = _re.search(r"(::?(?:-webkit-|-moz-)[a-z-]+|::?(?:before|after|selection))(.*)$", s)
+            if pm and not s.endswith(")"):
+                idx = pm.start(1)
+                base = s[:idx]
+                parts.append((base if base else "*") + GUARD + s[idx:])
+            else:
+                parts.append(s + GUARD)
+        return lead + ",\n".join(parts) + " {" + body + "}"
+    return _re.sub(r"([^{}]+)\{([^{}]*)\}", fix_rule, css)
+
+out = guard_selectors(out)
+
 HEADER = """/*
  * Vendored from xp.css v0.2.6 (MIT) — https://github.com/botoxparty/XP.css
  * Copyright (c) botoxparty and contributors. See LICENSE in the upstream repo.
