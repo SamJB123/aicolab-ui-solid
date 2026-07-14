@@ -29,6 +29,8 @@
 //     `Status` key (apps bind their own status metadata and wrap if they want
 //     the keyed form). `Avatar`'s `status` prop follows.
 //   - The ping animation is `ui-ping` (shipped in this package's styles.css).
+//   - `Avatar` mixes its 20% tint over `ring` (the surface behind it) instead
+//     of transparent, so overlapped avatars (AvatarStack) are opaque.
 //   - `Logo` stayed in the playground — it is COMMONS-brand-specific.
 
 import type { JSX } from '@solidjs/web'
@@ -111,7 +113,7 @@ export function Avatar(props: {
 				style={{
 					'font-size': `${Math.round(size() * 0.34)}px`,
 					color: props.color,
-					background: `color-mix(in oklab, ${props.color} 20%, transparent)`,
+					background: `color-mix(in oklab, ${props.color} 20%, ${props.ring ?? 'var(--c-panel)'})`,
 					'box-shadow': `inset 0 0 0 1px color-mix(in oklab, ${props.color} 55%, transparent)`,
 					'letter-spacing': '0.02em',
 				}}
@@ -156,7 +158,7 @@ export function AvatarStack(props: {
 							'border-radius': '999px',
 						}}
 					>
-						<Avatar name={p.name} color={p.color} size={size()} />
+						<Avatar name={p.name} color={p.color} size={size()} ring={props.ring ?? 'var(--c-ink)'} />
 					</span>
 				)}
 			</For>

@@ -1,0 +1,33 @@
+{
+	"projectId": "6ed295cc-c679-4cae-8341-de19fe44385a",
+	"pkg": "@aicolab/ui-solid",
+	"globalName": "AicolabUiSolid",
+	"shape": "package",
+	"framework": "solid",
+	"frameworkNote": "OFF-SCRIPT: SolidJS 2.0.0-beta.17 design system. The stock converter (React/esbuild) cannot compile Solid JSX — the bundle and preview cards are built by .design-sync/scripts/ using vite-plugin-solid. The design agent is instructed via readmeHeader + guidelines/ to write Solid v2, not React (user-directed override, 2026-07-14).",
+	"srcDir": "src",
+	"scope": "main-entry-only",
+	"themeSources": {
+		"light": "../../playground/template/src/styles.css",
+		"dark": "../../playground/audit-corpus/src/styles.css"
+	},
+	"readmeHeader": ".design-sync/conventions.md",
+	"runtimeFontPrefixes": ["Iowan Old Style", "Palatino"],
+	"descriptions": {
+		"Eyebrow": "Small-caps monospace kicker label for section headings.",
+		"StatusDot": "Coloured presence dot; optional live ping animation.",
+		"Avatar": "Initials avatar tinted from a person colour; optional status dot.",
+		"AvatarStack": "Overlapping avatar row with a +N overflow bubble.",
+		"Chip": "Small uppercase pill badge; plain / accent / live tones.",
+		"Button": "Rounded-pill button; primary (accent-filled) or ghost (outlined).",
+		"Panel": "Titled card section with optional index, kicker, action slot, and accent glow.",
+		"Counter": "Animated number that tweens between values (rAF).",
+		"Sparkline": "Mini SVG trend line with soft area fill and end dot.",
+		"Waveform": "Audio-style vertical bar meter.",
+		"Meter": "Thin horizontal capacity/occupancy bar.",
+		"Rule": "Hairline divider, optionally with a centred small-caps label.",
+		"Segmented": "Sliding segmented tab switcher (CSS anchor-positioned pill).",
+		"IconButton": "Round 36px outlined icon button with hover/active states.",
+		"Field": "Labelled form-field wrapper (small-caps label above content)."
+	}
+}
