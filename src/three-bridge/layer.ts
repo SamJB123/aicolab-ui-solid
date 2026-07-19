@@ -79,9 +79,16 @@ export interface DepthPanelHandle {
 
 interface Face {
 	el: HTMLElement
+	/** Context wrapper — the captured direct canvas child (carries the anchor's
+	 *  classes so the component's scoped CSS applies in captures). */
+	wrapper: HTMLElement
 	mesh: THREE.Mesh
 	texture: HtmlTexture
 	material: THREE.MeshBasicNodeMaterial
+	/** Slide accumulators — PER capture element (the delta method's "prior
+	 *  value is baked into the measured rect" invariant). */
+	slideTx: number
+	slideTy: number
 }
 
 interface Panel {
@@ -101,8 +108,6 @@ interface Panel {
 	targetFlip: number
 	ringLevel: number
 	hover: boolean
-	slideTx: number
-	slideTy: number
 }
 
 export interface DepthLayer {
@@ -277,7 +282,9 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 		const changed = paintChangedElements(event)
 		for (const p of panels) {
 			for (const f of p.faces) {
-				if (changed && !changed.has(f.el)) continue
+				// The provider reports the CAPTURED element — the wrapper; a change
+				// inside the face dirties its wrapper.
+				if (changed && !changed.has(f.wrapper)) continue
 				f.texture.update()
 			}
 		}
@@ -382,6 +389,10 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 		}
 		for (const p of panels) {
 			for (const f of p.faces) {
+				// The polyfill forces inline pointer-events:auto on ADOPTED elements —
+				// which is now the wrapper. Own it like everything else, or the
+				// invisible wrapper intercepts hit-testing (dead cursor, blocked page).
+				if (f.wrapper.style.pointerEvents !== 'none') f.wrapper.style.pointerEvents = 'none'
 				const want = f === armed ? 'auto' : 'none'
 				if (f.el.style.pointerEvents !== want) f.el.style.pointerEvents = want
 			}
@@ -392,21 +403,22 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 	}
 	const arm = (hit: Hit, slide: boolean): void => {
 		armed = hit.face
-		// Slide the face so the hit UV's DOM point sits under the cursor
-		// (containing-block-agnostic delta method — works under the polyfill's
-		// relocated host too). V flip: texture V=0 is the element's bottom.
-		// Gated on pointer intent and written ONLY on change ("write-on-change
-		// only, so we don't churn the element's style (or risk a polyfill
-		// re-capture) per frame" — curved-slide-scene's discipline).
+		// Slide the WRAPPER so the hit UV's DOM point sits under the cursor.
+		// CRITICAL: the wrapper is the CAPTURED element — the spec ignores the
+		// captured element's own transform, so sliding it never shows in the
+		// texture; sliding the face (a capture CHILD) would translate the card's
+		// content out of the capture box. Delta method + write-on-change per
+		// curved-slide's discipline; accumulators per face.
 		if (!slide) return
 		const p = hit.panel
+		const f = hit.face
 		const localX = hit.uv.x * p.w
 		const localY = (1 - hit.uv.y) * p.h
-		const rect = hit.face.el.getBoundingClientRect()
-		p.slideTx += pointer.x - (rect.left + localX)
-		p.slideTy += pointer.y - (rect.top + localY)
-		const next = `translate(${p.slideTx}px, ${p.slideTy}px)`
-		if (hit.face.el.style.transform !== next) hit.face.el.style.transform = next
+		const rect = f.wrapper.getBoundingClientRect()
+		f.slideTx += pointer.x - (rect.left + localX)
+		f.slideTy += pointer.y - (rect.top + localY)
+		const next = `translate(${f.slideTx}px, ${f.slideTy}px)`
+		if (f.wrapper.style.transform !== next) f.wrapper.style.transform = next
 	}
 
 	// ── Frame loop ─────────────────────────────────────────────────────────────
@@ -477,15 +489,33 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 		const faces: Face[] = []
 		const faceEls = init.back ? [init.front, init.back] : [init.front]
 		faceEls.forEach((el, i) => {
-			// Adopt into the canvas subtree (html-in-canvas requirement). Fixed
-			// sizing so layout inside the canvas matches the anchor box.
+			// ── CONTEXT WRAPPER (the systemic fix for ancestor-scoped CSS) ──
+			// The face is adopted into the canvas subtree (html-in-canvas requires
+			// a direct canvas child) INSIDE a wrapper that reconstructs the
+			// component's scope: the wrapper carries the anchor's classes (minus
+			// bridge state classes), so `.depth-card .dc-face { border-radius;
+			// overflow; background; … }` — and any consumer's scoped rules —
+			// match in the capture exactly as authored. No branching CSS anywhere.
+			// The wrapper is the CAPTURE TARGET (the spec's direct-child rule
+			// constrains what is captured, not what surrounds the face).
+			const wrapper = document.createElement('div')
+			wrapper.className = Array.from(init.anchor.classList)
+				.filter((c) => c !== 'depth-card-enhanced' && c !== 'depth-card-flipped')
+				.join(' ')
+			wrapper.style.width = `${w}px`
+			wrapper.style.height = `${h}px`
+			wrapper.style.pointerEvents = 'none'
 			el.dataset.depthFace = ''
-			el.style.width = `${w}px`
-			el.style.height = `${h}px`
+			// Neutralize context-restored BEHAVIOR rules on the face itself: the
+			// back face's authored rotateY(180) (+ backface-visibility:hidden)
+			// would blank its capture. Inline transform outranks any selector,
+			// and the bridge already owns this property for the arming slide.
+			el.style.transform = 'none'
 			el.style.pointerEvents = 'none'
-			canvas.appendChild(el)
+			wrapper.appendChild(el)
+			canvas.appendChild(wrapper)
 			const texture = new HtmlTexture(
-				el,
+				wrapper,
 				renderer,
 				Math.round(w * window.devicePixelRatio * CAPTURE_SCALE),
 				Math.round(h * window.devicePixelRatio * CAPTURE_SCALE),
@@ -495,7 +525,7 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 			if (i === 1) mesh.rotation.y = Math.PI
 			mesh.position.z = i === 1 ? -0.5 : 0.5
 			group.add(mesh)
-			const face: Face = { el, mesh, texture, material }
+			const face: Face = { el, wrapper, mesh, texture, material, slideTx: 0, slideTy: 0 }
 			faces.push(face)
 
 			// Tap-to-flip on the ARMED element (clicks on real controls pass through).
@@ -541,8 +571,6 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 			targetFlip: 0,
 			ringLevel: 0,
 			hover: false,
-			slideTx: 0,
-			slideTy: 0,
 		}
 		scene.add(group)
 		panels.add(panel)
@@ -568,9 +596,8 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 					f.mesh.geometry.dispose()
 					f.el.style.pointerEvents = ''
 					f.el.style.transform = ''
-					f.el.style.width = ''
-					f.el.style.height = ''
 					init.anchor.appendChild(f.el) // give the face back to the page
+					f.wrapper.remove()
 				}
 				ringMaterial.dispose()
 				ringGeometry.dispose()
