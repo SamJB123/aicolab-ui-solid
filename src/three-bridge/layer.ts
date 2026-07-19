@@ -24,7 +24,22 @@
 //
 // Client-only module: import dynamically after mount (never on the server).
 
-import { atan, clamp, float, fract, fwidth, length, max, min, smoothstep, uniform, uv, vec2 } from 'three/tsl'
+import {
+	atan,
+	clamp,
+	colorSpaceToWorking,
+	float,
+	fract,
+	fwidth,
+	length,
+	max,
+	min,
+	smoothstep,
+	texture as textureNode,
+	uniform,
+	uv,
+	vec2,
+} from 'three/tsl'
 import * as THREE from 'three/webgpu'
 import { POLYFILL_HOST_SELECTOR } from './html-in-canvas'
 import { HtmlTexture } from './html-texture'
@@ -512,6 +527,11 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 			// and the bridge already owns this property for the arming slide.
 			el.style.transform = 'none'
 			el.style.pointerEvents = 'none'
+			// `.depth-card { cursor: pointer }` on the wrapper INHERITS onto all
+			// face content (cursor is inherited), killing contextual resolution
+			// (text I-beam, control cursors). Reset to auto at the face root so
+			// content under the pointer resolves its own cursor again.
+			el.style.cursor = 'auto'
 			wrapper.appendChild(el)
 			canvas.appendChild(wrapper)
 			const texture = new HtmlTexture(
@@ -520,7 +540,16 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 				Math.round(w * window.devicePixelRatio * CAPTURE_SCALE),
 				Math.round(h * window.devicePixelRatio * CAPTURE_SCALE),
 			)
-			const material = new THREE.MeshBasicNodeMaterial({ map: texture, transparent: true })
+			// EXPLICIT sRGB→working decode at the sampling node: the capture's
+			// bytes are sRGB, and on this path the texture's colorSpace flag was
+			// not being applied — sampling-as-linear + output re-encode lifted
+			// every dark value (#1a160f → ~#5a5148: the "washed out" cards).
+			// updateMatrix carries the texture's V-flip repeat/offset transform.
+			const sample = textureNode(texture)
+			sample.updateMatrix = true
+			const material = new THREE.MeshBasicNodeMaterial({ transparent: true })
+			material.colorNode = colorSpaceToWorking(sample, THREE.SRGBColorSpace)
+			material.opacityNode = sample.a
 			const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h), material)
 			if (i === 1) mesh.rotation.y = Math.PI
 			mesh.position.z = i === 1 ? -0.5 : 0.5
