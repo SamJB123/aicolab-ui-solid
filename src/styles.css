@@ -518,6 +518,98 @@
 	}
 }
 
+/* ── DepthCard — DOM face (CSS tilt / flip / conic glow) ──
+      The three face replaces all of this at runtime where the depth layer is
+      installed (.depth-card-enhanced): faces leave the anchor, motion moves
+      to the GPU. Here: perspective tilt via --dc-tx/--dc-ty (set by JS),
+      flip on the inner wrapper, pointer-angled conic edge glow. ── */
+@property --dc-angle {
+	syntax: "<angle>";
+	inherits: true;
+	initial-value: 0deg;
+}
+.depth-card {
+	--dc-tx: 0deg;
+	--dc-ty: 0deg;
+	position: relative;
+	perspective: 1400px;
+	cursor: pointer;
+}
+.dc-inner {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	transform-style: preserve-3d;
+	transform: rotateX(var(--dc-tx)) rotateY(var(--dc-ty));
+	transition: transform 0.18s ease-out;
+}
+.depth-card .dc-face {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	border-radius: 18px;
+	background: var(--c-panel);
+	box-shadow: inset 0 0 0 1px var(--c-line);
+	backface-visibility: hidden;
+	transform-style: preserve-3d;
+	transition: transform 0.6s cubic-bezier(0.4, 0.1, 0.2, 1);
+}
+.depth-card .dc-back {
+	transform: rotateY(180deg);
+}
+.depth-card-flipped .dc-front {
+	transform: rotateY(-180deg);
+}
+.depth-card-flipped .dc-back {
+	transform: rotateY(0deg);
+}
+/* Pointer-angled conic edge glow (the GlowingEffect heir): a masked ring that
+   brightens on hover, its bright arc facing the cursor. */
+.depth-card .dc-face::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	padding: 1.5px;
+	background: conic-gradient(
+		from var(--dc-angle),
+		transparent 12%,
+		var(--dc-glow, var(--c-accent)) 50%,
+		transparent 88%
+	);
+	mask:
+		linear-gradient(#000 0 0) content-box,
+		linear-gradient(#000 0 0);
+	mask-composite: exclude;
+	opacity: 0;
+	transition: opacity 0.3s;
+	pointer-events: none;
+}
+.depth-card:hover .dc-face::after {
+	opacity: 1;
+}
+/* Enhanced: the faces live in the depth layer's canvas now; the anchor is
+   just the layout slot. Kill the CSS motion so nothing fights the GPU. */
+.depth-card-enhanced {
+	cursor: default;
+	perspective: none;
+}
+.depth-card-enhanced .dc-inner {
+	transform: none;
+	transition: none;
+}
+/* Faces adopted by the layer keep their own look but must not paint hover
+   glow (the layer's glow plane owns it) — and stay transparent-cornered. */
+[data-depth-face]::after {
+	display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+	.dc-inner,
+	.depth-card .dc-face {
+		transition: none;
+	}
+}
+
 /* ── DocsShell ── */
 .docs-progress {
 	display: none;
