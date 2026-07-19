@@ -204,6 +204,437 @@
 	}
 }
 
+/* ══ Marketing ═══════════════════════════════════════════════════════════
+   Structural CSS for marketing.tsx (PageHero, Section, DocsShell, Accordion,
+   Carousel, Mark, reveal utility, prose rhythm). CSS-first: scroll-driven
+   animations, ::details-content, native carousel pseudo-elements — all
+   behind graceful fallbacks. */
+
+/* ── Scroll reveal — fades/rises as the element enters the viewport.
+      Fallback: fully visible, no animation. ── */
+@supports (animation-timeline: view()) {
+	@media (prefers-reduced-motion: no-preference) {
+		.ui-reveal {
+			animation: ui-rise linear both;
+			animation-timeline: view();
+			animation-range: entry 0% entry 60%;
+		}
+	}
+}
+
+/* ── Mark — inline emphasis (heir to rough-notation) ── */
+.ui-mark {
+	background: none;
+	color: inherit;
+	font-style: inherit;
+}
+.ui-mark-underline {
+	background-image: linear-gradient(
+		to right,
+		color-mix(in oklab, var(--c-accent) 75%, transparent),
+		var(--c-accent)
+	);
+	background-repeat: no-repeat;
+	background-position: 0 96%;
+	background-size: 100% 0.12em;
+}
+.ui-mark-highlight {
+	background: var(--c-accent-soft);
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+	border-radius: 0.2em;
+	padding-inline: 0.15em;
+}
+
+/* ── Accordion — native <details> animated via ::details-content ── */
+.ui-acc {
+	border-bottom: 1px solid var(--c-line);
+	interpolate-size: allow-keywords;
+}
+.ui-acc summary {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 1.1rem 0;
+	cursor: pointer;
+	list-style: none;
+	color: var(--c-paper);
+	font-weight: 500;
+}
+.ui-acc summary::-webkit-details-marker {
+	display: none;
+}
+.ui-acc .ui-acc-icon {
+	position: relative;
+	flex: 0 0 auto;
+	width: 0.85rem;
+	height: 0.85rem;
+	align-self: center;
+	color: var(--c-accent);
+}
+.ui-acc .ui-acc-icon::before,
+.ui-acc .ui-acc-icon::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	margin: auto;
+	background: currentColor;
+	transition: transform 0.25s ease;
+}
+.ui-acc .ui-acc-icon::before {
+	width: 100%;
+	height: 2px;
+}
+.ui-acc .ui-acc-icon::after {
+	width: 2px;
+	height: 100%;
+}
+.ui-acc[open] .ui-acc-icon::after {
+	transform: rotate(90deg) scaleY(0);
+}
+.ui-acc::details-content {
+	height: 0;
+	overflow: clip;
+	transition:
+		height 0.3s ease,
+		content-visibility 0.3s allow-discrete;
+}
+.ui-acc[open]::details-content {
+	height: auto;
+}
+.ui-acc .ui-acc-body {
+	padding: 0 0 1.25rem;
+	color: var(--c-muted);
+	line-height: 1.65;
+}
+
+/* ── Carousel — scroll-snap strip; buttons/markers are a Chromium/Safari
+      enhancement, elsewhere it's a swipeable scroller. ── */
+.ui-carousel {
+	display: flex;
+	gap: 1rem;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+	padding: 0.25rem;
+	scroll-marker-group: after;
+}
+.ui-carousel::-webkit-scrollbar {
+	display: none;
+}
+.ui-carousel > * {
+	flex: 0 0 min(26rem, 85%);
+	scroll-snap-align: center;
+}
+.ui-carousel > *::scroll-marker {
+	content: "";
+	width: 8px;
+	height: 8px;
+	border-radius: 999px;
+	background: var(--c-line-strong);
+	transition: background 0.2s;
+}
+.ui-carousel > *::scroll-marker:target-current {
+	background: var(--c-accent);
+}
+.ui-carousel::scroll-marker-group {
+	display: flex;
+	justify-content: center;
+	gap: 0.6rem;
+	margin-top: 1rem;
+}
+.ui-carousel::scroll-button(left),
+.ui-carousel::scroll-button(right) {
+	position: absolute;
+	align-self: center;
+	width: 2.4rem;
+	height: 2.4rem;
+	border-radius: 999px;
+	border: 1px solid var(--c-line-strong);
+	background: var(--c-panel);
+	color: var(--c-paper);
+	cursor: pointer;
+}
+.ui-carousel::scroll-button(left) {
+	content: "←" / "Previous";
+}
+.ui-carousel::scroll-button(right) {
+	content: "→" / "Next";
+}
+.ui-carousel::scroll-button(*):disabled {
+	opacity: 0.3;
+	cursor: default;
+}
+
+/* ── Facets — tabs + glyph rail + swapped pane (facets.tsx) ── */
+.facets {
+	border-radius: 18px;
+	background: var(--c-panel);
+	box-shadow: inset 0 0 0 1px var(--c-line);
+	overflow: hidden;
+}
+.facets-tabs {
+	position: relative;
+	display: flex;
+	border-bottom: 1px solid var(--c-line);
+}
+.facets-tab {
+	position: relative;
+	z-index: 1;
+	cursor: pointer;
+	border: 0;
+	background: none;
+	font: inherit;
+	font-size: 0.9rem;
+	color: var(--c-muted);
+	transition: color 0.2s, background 0.2s;
+}
+.facets-tab:hover {
+	color: var(--c-paper);
+}
+
+/* Variant: full-width divided bar (legacy-faithful). */
+.facets-tabs-bar .facets-tab {
+	flex: 1;
+	padding: 0.85rem 1rem;
+	text-align: center;
+}
+.facets-tabs-bar .facets-tab + .facets-tab {
+	border-inline-start: 1px solid var(--c-line);
+}
+.facets-tabs-bar .facets-tab-active {
+	background: var(--c-ink-2);
+	color: var(--c-paper);
+	font-weight: 600;
+}
+
+/* Variants: sliding pill (content-hugging) and stretched pill. */
+.facets-tabs-pill,
+.facets-tabs-stretch {
+	gap: 4px;
+	padding: 0.55rem 0.65rem;
+}
+.facets-tabs-pill .facets-tab,
+.facets-tabs-stretch .facets-tab {
+	border-radius: 999px;
+	padding: 0.45rem 1rem;
+	white-space: nowrap;
+}
+.facets-tabs-stretch .facets-tab {
+	flex: 1;
+	text-align: center;
+}
+.facets-tabs-pill .facets-tab-active,
+.facets-tabs-stretch .facets-tab-active {
+	color: var(--c-paper);
+	/* Fallback indicator where anchor positioning is unavailable. */
+	background: var(--c-panel-2);
+	box-shadow: inset 0 0 0 1px var(--c-line-strong);
+}
+.facets-pill {
+	display: none;
+}
+@supports (anchor-name: --x) {
+	.facets-tabs-pill .facets-tab-active,
+	.facets-tabs-stretch .facets-tab-active {
+		background: none;
+		box-shadow: none;
+	}
+	.facets-tabs-pill .facets-pill,
+	.facets-tabs-stretch .facets-pill {
+		display: block;
+		position: absolute;
+		z-index: 0;
+		top: anchor(top);
+		left: anchor(left);
+		width: anchor-size(width);
+		height: anchor-size(height);
+		border-radius: 999px;
+		background: var(--c-panel-2);
+		box-shadow: inset 0 0 0 1px var(--c-line-strong);
+		transition:
+			top 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+			left 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+			width 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+			height 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+	}
+}
+
+.facets-body {
+	display: flex;
+	align-items: stretch;
+}
+.facets-rail {
+	display: flex;
+	flex-direction: column;
+	flex: 0 0 auto;
+	width: 5rem;
+	border-inline-end: 1px solid var(--c-line);
+}
+.facets-rail-btn {
+	display: grid;
+	place-items: center;
+	height: 5rem;
+	border: 0;
+	border-bottom: 1px solid var(--c-line);
+	background: none;
+	font-size: 1.75rem;
+	cursor: pointer;
+	filter: grayscale(1);
+	opacity: 0.45;
+	transition: filter 0.25s, opacity 0.25s, background 0.25s;
+}
+.facets-rail-btn:hover {
+	background: color-mix(in oklab, var(--c-ink-2) 55%, transparent);
+	opacity: 0.75;
+}
+.facets-rail-active,
+.facets-rail-active:hover {
+	background: var(--c-ink-2);
+	filter: none;
+	opacity: 1;
+}
+.facets-pane {
+	flex: 1;
+	min-width: 0;
+	padding: 1.5rem 2rem 2rem;
+}
+@media (max-width: 40rem) {
+	.facets-rail {
+		width: 3.25rem;
+	}
+	.facets-rail-btn {
+		height: 3.25rem;
+		font-size: 1.2rem;
+	}
+	.facets-pane {
+		padding: 1.1rem 1.2rem 1.4rem;
+	}
+	.facets-tabs-bar .facets-tab {
+		padding: 0.7rem 0.4rem;
+		font-size: 0.78rem;
+	}
+}
+
+/* ── DocsShell ── */
+.docs-progress {
+	display: none;
+}
+@supports (animation-timeline: scroll()) {
+	.docs-progress {
+		display: block;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 60;
+		width: 100%;
+		height: 3px;
+		background: var(--c-accent);
+		transform-origin: 0 50%;
+		transform: scaleX(0);
+		animation: docs-progress linear both;
+		animation-timeline: scroll(root block);
+	}
+	@keyframes docs-progress {
+		from {
+			transform: scaleX(0);
+		}
+		to {
+			transform: scaleX(1);
+		}
+	}
+}
+.docs-nav-link,
+.docs-toc-link {
+	display: block;
+	padding: 0.3rem 0.6rem;
+	border-radius: 8px;
+	font-size: 0.85rem;
+	color: var(--c-muted);
+	text-decoration: none;
+	transition:
+		color 0.15s,
+		background 0.15s;
+}
+.docs-nav-link:hover,
+.docs-toc-link:hover {
+	color: var(--c-paper);
+	background: var(--c-ink-2);
+}
+.docs-nav-sub,
+.docs-toc-sub {
+	padding-left: 1.4rem;
+	font-size: 0.8rem;
+}
+.docs-nav-current,
+.docs-toc-current {
+	color: var(--c-accent);
+	background: var(--c-accent-soft);
+}
+
+/* ── Prose — long-form document rhythm for DocsShell articles ── */
+.ui-prose {
+	font-size: 1.02rem;
+	line-height: 1.7;
+	color: var(--c-paper);
+}
+.ui-prose h1 {
+	font-family: var(--font-display);
+	font-weight: 500;
+	font-size: 2.6rem;
+	line-height: 1.1;
+	letter-spacing: -0.015em;
+	margin: 0 0 1rem;
+}
+.ui-prose h2 {
+	font-family: var(--font-display);
+	font-weight: 500;
+	font-size: 1.8rem;
+	line-height: 1.2;
+	margin: 2.75rem 0 0.9rem;
+	scroll-margin-top: 6rem;
+}
+.ui-prose h3 {
+	font-family: var(--font-display);
+	font-weight: 500;
+	font-size: 1.25rem;
+	margin: 2rem 0 0.6rem;
+	scroll-margin-top: 6rem;
+}
+.ui-prose p {
+	margin: 0 0 1.1rem;
+	color: color-mix(in oklab, var(--c-paper) 88%, transparent);
+}
+.ui-prose ul,
+.ui-prose ol {
+	margin: 0 0 1.1rem;
+	padding-left: 1.4rem;
+	display: grid;
+	gap: 0.4rem;
+	color: color-mix(in oklab, var(--c-paper) 84%, transparent);
+}
+.ui-prose li::marker {
+	color: var(--c-accent);
+}
+.ui-prose blockquote {
+	margin: 1.5rem 0;
+	padding: 0.2rem 0 0.2rem 1.2rem;
+	border-left: 3px solid var(--c-accent);
+	color: var(--c-muted);
+	font-style: italic;
+}
+.ui-prose a {
+	color: var(--c-accent);
+	text-decoration: underline;
+	text-decoration-color: color-mix(in oklab, var(--c-accent) 40%, transparent);
+	text-underline-offset: 0.2em;
+}
+.ui-prose a:hover {
+	text-decoration-color: var(--c-accent);
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.ui-rise,
 	.ui-in {
@@ -211,5 +642,11 @@
 	}
 	.seg-pill {
 		transition: none;
+	}
+	.ui-acc::details-content {
+		transition: none;
+	}
+	.docs-progress {
+		display: none;
 	}
 }

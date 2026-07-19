@@ -28,4 +28,22 @@ export {
 
 export { dismissOnOutside, Field, IconButton, Segmented, type SegOption } from './controls'
 
+export {
+	AccordionItem,
+	Carousel,
+	DocsShell,
+	type DocsNavItem,
+	type Feature,
+	FeatureGrid,
+	type LogoItem,
+	LogoCloud,
+	Mark,
+	PageHero,
+	Section,
+	type Step,
+	Steps,
+} from './marketing'
+
+export { type FacetItem, Facets, type FacetTabStyle } from './facets'
+
 export { withScopedViewTransition, withViewTransition } from './vt'
