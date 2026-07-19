@@ -195,7 +195,6 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 
 	const scene = new THREE.Scene()
 	const camera = new THREE.PerspectiveCamera(50, 1, PERSPECTIVE / 10, PERSPECTIVE * 10)
-	const glowTexture = makeGlowTexture()
 	const raycaster = new THREE.Raycaster()
 	const panels = new Set<Panel>()
 
@@ -242,7 +241,12 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 			polyfillHost.classList.toggle('theme-dark', themeDark)
 			changed = true
 		}
-		if (changed) canvas.requestPaint?.()
+		if (changed) {
+			// Rings hold the accent as a GPU uniform — re-resolve it per theme
+			// (the CSS face gets this for free from var(--c-accent)).
+			for (const p of panels) p.ring.color.value.copy(resolveRingColor(p.init))
+			canvas.requestPaint?.()
+		}
 	}
 	syncTheme()
 	themeQuery.addEventListener('change', syncTheme)
@@ -440,10 +444,15 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 			p.flip += (p.targetFlip - p.flip) * FLIP_LERP
 			p.group.rotation.set(p.tiltX, p.tiltY + p.flip, 0)
 
-			const targetGlow = isHit ? 1 : 0
-			p.glowLevel += (targetGlow - p.glowLevel) * GLOW_LERP
-			p.glowMaterial.opacity = p.glowLevel * 0.55
-			p.glow.visible = p.glowLevel > 0.02
+			// Ring: hover fade + pointer angle, exactly the CSS face's variables
+			// (--dc-angle = atan2(ny, nx) + 90°, in turns for the shader).
+			p.ringLevel += ((isHit ? 1 : 0) - p.ringLevel) * RING_LERP
+			p.ring.level.value = p.ringLevel
+			if (isHit) {
+				const dx = pointer.x - (anchorRect.left + anchorRect.width / 2)
+				const dy = pointer.y - (anchorRect.top + anchorRect.height / 2)
+				p.ring.turn.value = (Math.atan2(dy, dx) + Math.PI / 2) / TURN
+			}
 		}
 
 		const pointerMoved = pointer.moved
@@ -499,25 +508,29 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 			disposers.push(() => el.removeEventListener('click', onClick))
 		})
 
-		const glowMaterial = new THREE.MeshBasicNodeMaterial({
-			map: glowTexture,
-			transparent: true,
-			opacity: 0,
-			depthWrite: false,
-			color: new THREE.Color(init.glowColor ?? '#ffffff'),
-			blending: THREE.AdditiveBlending,
-		})
-		const glow = new THREE.Mesh(new THREE.PlaneGeometry(w * 1.35, h * 1.35), glowMaterial)
-		glow.position.z = -14
-		glow.visible = false
-		group.add(glow)
+		// The ::after ring, one plane per face side (front-side culling makes
+		// exactly the ring of the visible face render — each face's own ring,
+		// as in CSS). Shared material/uniforms; slightly proud of the faces.
+		const ring = createRingUniforms(resolveRingColor(init))
+		const ringMaterial = makeRingMaterial(w, h, ring)
+		const ringGeometry = new THREE.PlaneGeometry(w, h)
+		const ringFront = new THREE.Mesh(ringGeometry, ringMaterial)
+		ringFront.position.z = 1
+		group.add(ringFront)
+		if (init.back) {
+			const ringBack = new THREE.Mesh(ringGeometry, ringMaterial)
+			ringBack.rotation.y = Math.PI
+			ringBack.position.z = -1
+			group.add(ringBack)
+		}
 
 		const panel: Panel = {
 			init,
 			group,
 			faces,
-			glow,
-			glowMaterial,
+			ring,
+			ringMaterial,
+			ringGeometry,
 			w,
 			h,
 			tiltX: 0,
@@ -526,7 +539,7 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 			targetTiltY: 0,
 			flip: 0,
 			targetFlip: 0,
-			glowLevel: 0,
+			ringLevel: 0,
 			hover: false,
 			slideTx: 0,
 			slideTy: 0,
@@ -559,8 +572,8 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 					f.el.style.height = ''
 					init.anchor.appendChild(f.el) // give the face back to the page
 				}
-				glowMaterial.dispose()
-				glow.geometry.dispose()
+				ringMaterial.dispose()
+				ringGeometry.dispose()
 			},
 		}
 	}
@@ -579,7 +592,6 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 			canvas.removeEventListener('paint', onPaint)
 			themeQuery.removeEventListener('change', syncTheme)
 			docObserver.disconnect()
-			glowTexture.dispose()
 			renderer.dispose()
 			canvas.remove()
 		},

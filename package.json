@@ -22,6 +22,7 @@
 		"solid-js": "catalog:"
 	},
 	"dependencies": {
+		"@aicolab/kolo": "workspace:^",
 		"three": "catalog:",
 		"three-html-render": "catalog:"
 	},
