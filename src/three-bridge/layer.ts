@@ -154,6 +154,14 @@ export interface DepthLayerOptions {
 	 *  to cycle) and enable backend timestamp queries. Same wiring as the
 	 *  playground's insights-spatial engine. */
 	stats?: boolean
+	/** Lifted-plane projection. 'natural' (default): raw single-eye
+	 *  perspective — planes render slightly larger and fan outward from the
+	 *  viewport center (honest geometry; diverges subtly from the CSS face's
+	 *  per-card projection, and rest-drift beyond LIFT_PAD near viewport
+	 *  edges can let the base copy peek). 'compensated': planes are scale/
+	 *  offset-corrected to cover their base exactly at rest, matching the
+	 *  CSS face front-on. */
+	liftProjection?: 'natural' | 'compensated'
 }
 
 /** Uniforms driving one panel's ring (shared by its front/back ring planes). */
@@ -645,7 +653,10 @@ export async function createDepthLayer(options: DepthLayerOptions = {}): Promise
 					const cssZ = Number.parseFloat(liftEl.dataset.depthLift ?? '')
 					if (!Number.isFinite(cssZ) || cssZ <= 0) continue
 					const z = cssZ * LIFT_DEPTH_SCALE
-					const k = (PERSPECTIVE - z) / PERSPECTIVE
+					// natural (default): k=1 neutralises the compensation everywhere
+					// (the per-frame correction degenerates to the identity).
+					const k =
+						options.liftProjection === 'compensated' ? (PERSPECTIVE - z) / PERSPECTIVE : 1
 					const faceRect = el.getBoundingClientRect()
 					const liftRect = liftEl.getBoundingClientRect()
 					if (liftRect.width <= 0 || liftRect.height <= 0) continue
