@@ -13,7 +13,7 @@
 // Structural CSS lives in styles.css under "── Facets ──".
 
 import type { JSX } from '@solidjs/web'
-import { createSignal, createUniqueId, For } from 'solid-js'
+import { createEffect, createSignal, createUniqueId, For } from 'solid-js'
 import type { ClassProp } from './primitives'
 import { withScopedViewTransition } from './vt'
 
@@ -84,24 +84,32 @@ export function Facets(props: {
 				onKeyDown={onKeyDown}
 			>
 				<For each={props.items}>
-					{(item, i) => (
-						<button
-							type="button"
-							role="tab"
-							id={`facets-${uid}-tab-${i()}`}
-							aria-selected={active() === i() ? 'true' : 'false'}
-							aria-controls={`facets-${uid}-panel`}
-							tabindex={active() === i() ? 0 : -1}
-							class={{ 'facets-tab': true, 'facets-tab-active': active() === i() }}
-							style={active() === i() && isPill() ? `anchor-name:${anchor}` : undefined}
-							ref={(el) => {
-								tabEls[i()] = el
-							}}
-							onClick={() => select(i())}
-						>
-							{item.label}
-						</button>
-					)}
+					{(item, i) => {
+						// Registering the element under its index is a reactive concern —
+						// ref callbacks run in <For>'s untracked map scope, so a bare i()
+						// there would go stale on reorder (and trips STRICT_READ_UNTRACKED).
+						// Tracking i in an effect keeps the slot map correct for free.
+						let el!: HTMLButtonElement
+						createEffect(i, (idx) => {
+							tabEls[idx] = el
+						})
+						return (
+							<button
+								type="button"
+								role="tab"
+								id={`facets-${uid}-tab-${i()}`}
+								aria-selected={active() === i() ? 'true' : 'false'}
+								aria-controls={`facets-${uid}-panel`}
+								tabindex={active() === i() ? 0 : -1}
+								class={{ 'facets-tab': true, 'facets-tab-active': active() === i() }}
+								style={active() === i() && isPill() ? `anchor-name:${anchor}` : undefined}
+								ref={el}
+								onClick={() => select(i())}
+							>
+								{item.label}
+							</button>
+						)
+					}}
 				</For>
 				{/* Sliding indicator for the pill variants — anchor-positioned to the
 				    active tab; where unsupported the active tab carries the pill look. */}

@@ -548,6 +548,12 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 			const sample = textureNode(texture)
 			sample.updateMatrix = true
 			const material = new THREE.MeshBasicNodeMaterial({ transparent: true })
+			// @ts-expect-error @types/three gap: colorSpaceToWorking() is typed as
+			// bare ColorSpaceNode, missing the branded vec4 node surface colorNode
+			// requires (__TypeScript_NODE_TYPE__ stays `unknown`, and the brand
+			// defeats interface-merge augmentation). The runtime accepts it — this
+			// exact assignment is how three's own examples drive decoded texture
+			// color. Verified working in-browser; do NOT wrap to appease the types.
 			material.colorNode = colorSpaceToWorking(sample, THREE.SRGBColorSpace)
 			material.opacityNode = sample.a
 			const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h), material)

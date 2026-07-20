@@ -241,14 +241,25 @@ export function LogoCloud(props: { logos: LogoItem[]; class?: ClassProp }) {
 // ── Accordion — native <details>, animated by ::details-content ─────────────
 
 /** One disclosure row. Pass the same `group` to siblings for exclusive-open
- *  behaviour (native `name` attribute). */
+ *  behaviour (native `name` attribute).
+ *
+ *  Element summaries must be lazy slots (see Panel.action): a pre-created
+ *  element from the caller's scope hydrates with mismatched keys and is left
+ *  as dead, unclaimed server DOM — handlers and refs inside it never attach.
+ *  Plain strings are hydration-safe and stay ergonomic. */
 export function AccordionItem(
-	props: ParentProps<{ summary: JSX.Element; group?: string; open?: boolean }>,
+	props: ParentProps<{
+		summary: string | (() => JSX.Element)
+		group?: string
+		open?: boolean
+	}>,
 ) {
 	return (
 		<details class="ui-acc" name={props.group} open={props.open}>
 			<summary>
-				<span class="ui-acc-title">{props.summary}</span>
+				<span class="ui-acc-title">
+					{typeof props.summary === 'function' ? props.summary() : props.summary}
+				</span>
 				<span class="ui-acc-icon" aria-hidden="true" />
 			</summary>
 			<div class="ui-acc-body">{props.children}</div>
