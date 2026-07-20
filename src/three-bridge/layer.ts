@@ -52,15 +52,15 @@ const PERSPECTIVE = 1400
 const CAPTURE_SCALE = 1.5
 /** Max radians of pointer tilt around each axis. */
 const MAX_TILT = 0.12
-/** Z-lift (CSS px) for a structured card's [data-depth-lift] media block —
- *  the real-plane counterpart of the CSS face's translateZ(50px) (halved:
- *  the layer's tilt reads deeper than the CSS preview at equal z). */
-const MEDIA_LIFT_Z = 24
-/** Projection compensation for the lift plane: a point at z projects scaled
- *  by P/(P−z) about the camera axis; scaling the plane (and correcting its
- *  offset per frame) by the inverse keeps it exactly over the base media at
- *  rest, so the lift shows only under tilt parallax. */
-const LIFT_K = (PERSPECTIVE - MEDIA_LIFT_Z) / PERSPECTIVE
+/** Layer z per CSS translateZ px for [data-depth-lift] regions (the layer's
+ *  tilt reads deeper than the CSS preview at equal z, so roughly halve:
+ *  the media's authored 50px lands on the verified 24). */
+const LIFT_DEPTH_SCALE = 0.48
+/** Quiet padding sampled around each lift region (CSS px): the lifted plane
+ *  carries this margin of face background, so under tilt it keeps covering
+ *  its own base copy in the texture (no ghost edges). Regions must not sit
+ *  closer than 2× this to each other. */
+const LIFT_PAD = 8
 /** Per-frame lerp factors (60fps-tuned; frame-rate drift is acceptable here). */
 const TILT_LERP = 0.14
 const FLIP_LERP = 0.16
@@ -134,11 +134,12 @@ interface Panel {
 	targetFlip: number
 	ringLevel: number
 	hover: boolean
-	/** Lifted media plane (structured fronts): base local offset, corrected
-	 *  per frame so the plane's projection covers the base media exactly at
-	 *  rest (a z-lifted plane otherwise enlarges by P/(P−z) about the CAMERA
-	 *  axis, drifting off the base for off-center cards). */
-	lift?: { mesh: THREE.Mesh; x: number; y: number }
+	/** Lifted planes (structured fronts): base local offset + projection
+	 *  factor per region, corrected per frame so each plane's projection
+	 *  covers its base exactly at rest (a z-lifted plane otherwise enlarges
+	 *  by P/(P−z) about the CAMERA axis, drifting off the base for
+	 *  off-center cards). */
+	lifts: { mesh: THREE.Mesh; x: number; y: number; k: number }[]
 }
 
 export interface DepthLayer {
@@ -498,11 +499,11 @@ export async function createDepthLayer(options: DepthLayerOptions = {}): Promise
 			const onScreen = anchorRect.bottom > -100 && anchorRect.top < vh + 100
 			p.group.visible = onScreen
 			p.group.position.set(_rect.x, _rect.y, 0)
-			if (p.lift) {
-				// Keep the lifted plane's projection exactly over the base media at
+			for (const lift of p.lifts) {
+				// Keep each lifted plane's projection exactly over its base at
 				// rest — the correction depends on the group's screen offset.
-				p.lift.mesh.position.x = p.lift.x * LIFT_K - _rect.x * (1 - LIFT_K)
-				p.lift.mesh.position.y = p.lift.y * LIFT_K - _rect.y * (1 - LIFT_K)
+				lift.mesh.position.x = lift.x * lift.k - _rect.x * (1 - lift.k)
+				lift.mesh.position.y = lift.y * lift.k - _rect.y * (1 - lift.k)
 			}
 
 			const isHit = hit?.panel === p
@@ -570,7 +571,7 @@ export async function createDepthLayer(options: DepthLayerOptions = {}): Promise
 		const disposers: (() => void)[] = []
 
 		const faces: Face[] = []
-		let panelLift: Panel['lift']
+		const panelLifts: Panel['lifts'] = []
 		const faceEls = init.back ? [init.front, init.back] : [init.front]
 		faceEls.forEach((el, i) => {
 			// ── CONTEXT WRAPPER (the systemic fix for ancestor-scoped CSS) ──
@@ -632,44 +633,49 @@ export async function createDepthLayer(options: DepthLayerOptions = {}): Promise
 			const face: Face = { el, wrapper, mesh, texture, material, slideTx: 0, slideTy: 0 }
 			faces.push(face)
 
-			// ── Lifted media plane (structured fronts) — real parallax ─────────
-			// Captures flatten CSS translateZ, so the front's [data-depth-lift]
-			// block gets a REAL plane: the same face texture sampled over the
-			// block's subrect, floating MEDIA_LIFT_Z above the face (approved
-			// same-texture approach — no second capture; the lifted copy overlays
-			// the base pixels, leaving at most a px-scale sliver under full tilt,
-			// which reads as the shadow edge).
+			// ── Lifted planes (structured fronts) — real parallax ──────────────
+			// Captures flatten CSS translateZ, so every front [data-depth-lift]
+			// region gets a REAL plane: the same face texture sampled over the
+			// region's subrect (padded by LIFT_PAD of quiet face background so
+			// the opaque plane keeps covering its own base copy under tilt),
+			// floating at the region's declared z (approved same-texture
+			// approach — no extra captures).
 			if (i === 0) {
-				const liftEl = el.querySelector<HTMLElement>('[data-depth-lift]')
-				if (liftEl) {
+				for (const liftEl of el.querySelectorAll<HTMLElement>('[data-depth-lift]')) {
+					const cssZ = Number.parseFloat(liftEl.dataset.depthLift ?? '')
+					if (!Number.isFinite(cssZ) || cssZ <= 0) continue
+					const z = cssZ * LIFT_DEPTH_SCALE
+					const k = (PERSPECTIVE - z) / PERSPECTIVE
 					const faceRect = el.getBoundingClientRect()
 					const liftRect = liftEl.getBoundingClientRect()
-					const lw = liftRect.width
-					const lh = liftRect.height
-					if (lw > 0 && lh > 0) {
-						const x = liftRect.left - faceRect.left
-						const y = liftRect.top - faceRect.top
-						const geo = new THREE.PlaneGeometry(lw, lh)
-						// PlaneGeometry vertex order TL,TR,BL,BR; face-UV convention
-						// v=1 at DOM top (the texture matrix's V-flip applies to both
-						// planes identically).
-						const u0 = x / w
-						const u1 = (x + lw) / w
-						const vTop = 1 - y / h
-						const vBot = 1 - (y + lh) / h
-						geo.setAttribute(
-							'uv',
-							new THREE.Float32BufferAttribute([u0, vTop, u1, vTop, u0, vBot, u1, vBot], 2),
-						)
-						const liftMesh = new THREE.Mesh(geo, material)
-						const lx = x + lw / 2 - w / 2
-						const ly = h / 2 - (y + lh / 2)
-						liftMesh.scale.set(LIFT_K, LIFT_K, 1)
-						liftMesh.position.set(lx * LIFT_K, ly * LIFT_K, MEDIA_LIFT_Z)
-						mesh.add(liftMesh)
-						panelLift = { mesh: liftMesh, x: lx, y: ly }
-						disposers.push(() => geo.dispose())
-					}
+					if (liftRect.width <= 0 || liftRect.height <= 0) continue
+					// Padded region, clamped to the face.
+					const x0 = Math.max(0, liftRect.left - faceRect.left - LIFT_PAD)
+					const y0 = Math.max(0, liftRect.top - faceRect.top - LIFT_PAD)
+					const x1 = Math.min(w, liftRect.right - faceRect.left + LIFT_PAD)
+					const y1 = Math.min(h, liftRect.bottom - faceRect.top + LIFT_PAD)
+					const lw = x1 - x0
+					const lh = y1 - y0
+					const geo = new THREE.PlaneGeometry(lw, lh)
+					// PlaneGeometry vertex order TL,TR,BL,BR; face-UV convention
+					// v=1 at DOM top (the texture matrix's V-flip applies to both
+					// planes identically).
+					const u0 = x0 / w
+					const u1 = x1 / w
+					const vTop = 1 - y0 / h
+					const vBot = 1 - y1 / h
+					geo.setAttribute(
+						'uv',
+						new THREE.Float32BufferAttribute([u0, vTop, u1, vTop, u0, vBot, u1, vBot], 2),
+					)
+					const liftMesh = new THREE.Mesh(geo, material)
+					const lx = (x0 + x1) / 2 - w / 2
+					const ly = h / 2 - (y0 + y1) / 2
+					liftMesh.scale.set(k, k, 1)
+					liftMesh.position.set(lx * k, ly * k, z)
+					mesh.add(liftMesh)
+					panelLifts.push({ mesh: liftMesh, x: lx, y: ly, k })
+					disposers.push(() => geo.dispose())
 				}
 			}
 
@@ -716,7 +722,7 @@ export async function createDepthLayer(options: DepthLayerOptions = {}): Promise
 			targetFlip: 0,
 			ringLevel: 0,
 			hover: false,
-			lift: panelLift,
+			lifts: panelLifts,
 		}
 		scene.add(group)
 		panels.add(panel)

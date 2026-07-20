@@ -194,9 +194,16 @@ function StructuredFront(props: { content: DepthCardContent; enhanced: () => boo
 
 	return (
 		<div class="dc-sf">
-			<h4 class="dc-sf-title">{c.title}</h4>
-			<p class="dc-sf-desc">{c.description}</p>
-			<div class="dc-sf-media" data-depth-lift="">
+			{/* One lift REGION for the text block (the layer samples the face
+			    texture per region and needs ~8px of quiet padding around each;
+			    separate title/desc regions would overlap). z 55 splits the
+			    legacy 50/60 pair; the CSS face keeps the exact per-element map
+			    via its own translateZ. */}
+			<div class="dc-sf-text" data-depth-lift="55">
+				<h4 class="dc-sf-title">{c.title}</h4>
+				<p class="dc-sf-desc">{c.description}</p>
+			</div>
+			<div class="dc-sf-media" data-depth-lift="50">
 				<Show
 					when={c.image}
 					fallback={
