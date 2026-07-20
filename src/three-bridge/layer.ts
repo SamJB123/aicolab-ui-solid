@@ -40,6 +40,8 @@ import {
 	uv,
 	vec2,
 } from 'three/tsl'
+import { mountStatsPanel } from '@aicolab/kolo/rendering/stats-panel'
+import { setBackendTrackTimestamp } from '@aicolab/kolo/webgpu'
 import * as THREE from 'three/webgpu'
 import { POLYFILL_HOST_SELECTOR } from './html-in-canvas'
 import { HtmlTexture } from './html-texture'
@@ -50,6 +52,15 @@ const PERSPECTIVE = 1400
 const CAPTURE_SCALE = 1.5
 /** Max radians of pointer tilt around each axis. */
 const MAX_TILT = 0.12
+/** Z-lift (CSS px) for a structured card's [data-depth-lift] media block —
+ *  the real-plane counterpart of the CSS face's translateZ(50px) (halved:
+ *  the layer's tilt reads deeper than the CSS preview at equal z). */
+const MEDIA_LIFT_Z = 24
+/** Projection compensation for the lift plane: a point at z projects scaled
+ *  by P/(P−z) about the camera axis; scaling the plane (and correcting its
+ *  offset per frame) by the inverse keeps it exactly over the base media at
+ *  rest, so the lift shows only under tilt parallax. */
+const LIFT_K = (PERSPECTIVE - MEDIA_LIFT_Z) / PERSPECTIVE
 /** Per-frame lerp factors (60fps-tuned; frame-rate drift is acceptable here). */
 const TILT_LERP = 0.14
 const FLIP_LERP = 0.16
@@ -123,6 +134,11 @@ interface Panel {
 	targetFlip: number
 	ringLevel: number
 	hover: boolean
+	/** Lifted media plane (structured fronts): base local offset, corrected
+	 *  per frame so the plane's projection covers the base media exactly at
+	 *  rest (a z-lifted plane otherwise enlarges by P/(P−z) about the CAMERA
+	 *  axis, drifting off the base for off-center cards). */
+	lift?: { mesh: THREE.Mesh; x: number; y: number }
 }
 
 export interface DepthLayer {
@@ -130,6 +146,13 @@ export interface DepthLayer {
 	/** True once the renderer initialised (WebGPU or WebGL2 backend). */
 	ready(): boolean
 	dispose(): void
+}
+
+export interface DepthLayerOptions {
+	/** Mount the kolo stats panel (FPS → CPU ms → heap → measured GPU ms; click
+	 *  to cycle) and enable backend timestamp queries. Same wiring as the
+	 *  playground's insights-spatial engine. */
+	stats?: boolean
 }
 
 /** Uniforms driving one panel's ring (shared by its front/back ring planes). */
@@ -199,7 +222,7 @@ function isInteractiveTarget(el: EventTarget | null): boolean {
  * canvas appended to `document.body`. Panels are added/removed at any time;
  * the render loop only runs while panels exist.
  */
-export async function createDepthLayer(): Promise<DepthLayer> {
+export async function createDepthLayer(options: DepthLayerOptions = {}): Promise<DepthLayer> {
 	const canvas = document.createElement('canvas')
 	canvas.dataset.depthLayer = ''
 	// html-in-canvas contract: captured elements must be children of a
@@ -212,6 +235,28 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 	const renderer = new THREE.WebGPURenderer({ canvas, alpha: true, antialias: true })
 	await renderer.init() // picks WebGPU, falls back to WebGL2 on its own
 	renderer.setClearColor(0x000000, 0)
+
+	// ── Stats (opt-in) — insights-spatial's wiring, verbatim ───────────────────
+	// The layer canvas is pointer-events:none, so the panel gets its own tiny
+	// fixed host (clicks cycle FPS → CPU ms → heap → GPU ms). Timestamp
+	// resolution is a GPU readback, not a passive counter read: drain the query
+	// pools four times per second, never overlapping readbacks, and only enable
+	// backend instrumentation at all when the panel is up (it adds commands and
+	// bookkeeping even when nobody resolves the results).
+	let statsHost: HTMLElement | null = null
+	let stats: ReturnType<typeof mountStatsPanel> | null = null
+	let gpuTimestamps = false
+	const GPU_SAMPLE_INTERVAL_MS = 250
+	let lastGpuSampleAt = -Infinity
+	let gpuSamplePending = false
+	if (options.stats) {
+		statsHost = document.createElement('div')
+		statsHost.style.cssText = 'position:fixed;top:0;left:0;z-index:60;pointer-events:auto;'
+		document.body.appendChild(statsHost)
+		stats = mountStatsPanel(statsHost, { panels: [{ name: 'GPU' }] })
+		gpuTimestamps = renderer.hasFeature('timestamp-query')
+		if (gpuTimestamps) setBackendTrackTimestamp(renderer.backend, true)
+	}
 
 	const scene = new THREE.Scene()
 	const camera = new THREE.PerspectiveCamera(50, 1, PERSPECTIVE / 10, PERSPECTIVE * 10)
@@ -453,6 +498,12 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 			const onScreen = anchorRect.bottom > -100 && anchorRect.top < vh + 100
 			p.group.visible = onScreen
 			p.group.position.set(_rect.x, _rect.y, 0)
+			if (p.lift) {
+				// Keep the lifted plane's projection exactly over the base media at
+				// rest — the correction depends on the group's screen offset.
+				p.lift.mesh.position.x = p.lift.x * LIFT_K - _rect.x * (1 - LIFT_K)
+				p.lift.mesh.position.y = p.lift.y * LIFT_K - _rect.y * (1 - LIFT_K)
+			}
 
 			const isHit = hit?.panel === p
 			if (isHit !== p.hover) {
@@ -489,6 +540,23 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 		enforcePointerEvents()
 
 		void renderer.render(scene, camera)
+		if (stats) {
+			stats.update()
+			const now = performance.now()
+			if (gpuTimestamps && !gpuSamplePending && now - lastGpuSampleAt >= GPU_SAMPLE_INTERVAL_MS) {
+				lastGpuSampleAt = now
+				gpuSamplePending = true
+				void (async () => {
+					// Match Three's inspector ordering and serialize the two mapAsync
+					// operations rather than making two simultaneous readbacks.
+					await renderer.resolveTimestampsAsync(THREE.TimestampQuery.COMPUTE)
+					const ms = await renderer.resolveTimestampsAsync(THREE.TimestampQuery.RENDER)
+					if (ms !== undefined) stats?.setPanelValue('GPU', ms, 33)
+				})().finally(() => {
+					gpuSamplePending = false
+				})
+			}
+		}
 		schedule()
 	}
 	const schedule = (): void => {
@@ -502,6 +570,7 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 		const disposers: (() => void)[] = []
 
 		const faces: Face[] = []
+		let panelLift: Panel['lift']
 		const faceEls = init.back ? [init.front, init.back] : [init.front]
 		faceEls.forEach((el, i) => {
 			// ── CONTEXT WRAPPER (the systemic fix for ancestor-scoped CSS) ──
@@ -563,6 +632,47 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 			const face: Face = { el, wrapper, mesh, texture, material, slideTx: 0, slideTy: 0 }
 			faces.push(face)
 
+			// ── Lifted media plane (structured fronts) — real parallax ─────────
+			// Captures flatten CSS translateZ, so the front's [data-depth-lift]
+			// block gets a REAL plane: the same face texture sampled over the
+			// block's subrect, floating MEDIA_LIFT_Z above the face (approved
+			// same-texture approach — no second capture; the lifted copy overlays
+			// the base pixels, leaving at most a px-scale sliver under full tilt,
+			// which reads as the shadow edge).
+			if (i === 0) {
+				const liftEl = el.querySelector<HTMLElement>('[data-depth-lift]')
+				if (liftEl) {
+					const faceRect = el.getBoundingClientRect()
+					const liftRect = liftEl.getBoundingClientRect()
+					const lw = liftRect.width
+					const lh = liftRect.height
+					if (lw > 0 && lh > 0) {
+						const x = liftRect.left - faceRect.left
+						const y = liftRect.top - faceRect.top
+						const geo = new THREE.PlaneGeometry(lw, lh)
+						// PlaneGeometry vertex order TL,TR,BL,BR; face-UV convention
+						// v=1 at DOM top (the texture matrix's V-flip applies to both
+						// planes identically).
+						const u0 = x / w
+						const u1 = (x + lw) / w
+						const vTop = 1 - y / h
+						const vBot = 1 - (y + lh) / h
+						geo.setAttribute(
+							'uv',
+							new THREE.Float32BufferAttribute([u0, vTop, u1, vTop, u0, vBot, u1, vBot], 2),
+						)
+						const liftMesh = new THREE.Mesh(geo, material)
+						const lx = x + lw / 2 - w / 2
+						const ly = h / 2 - (y + lh / 2)
+						liftMesh.scale.set(LIFT_K, LIFT_K, 1)
+						liftMesh.position.set(lx * LIFT_K, ly * LIFT_K, MEDIA_LIFT_Z)
+						mesh.add(liftMesh)
+						panelLift = { mesh: liftMesh, x: lx, y: ly }
+						disposers.push(() => geo.dispose())
+					}
+				}
+			}
+
 			// Tap-to-flip on the ARMED element (clicks on real controls pass through).
 			const onClick = (e: MouseEvent): void => {
 				if (isInteractiveTarget(e.target)) return
@@ -606,6 +716,7 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 			targetFlip: 0,
 			ringLevel: 0,
 			hover: false,
+			lift: panelLift,
 		}
 		scene.add(group)
 		panels.add(panel)
@@ -654,6 +765,8 @@ export async function createDepthLayer(): Promise<DepthLayer> {
 			canvas.removeEventListener('paint', onPaint)
 			themeQuery.removeEventListener('change', syncTheme)
 			docObserver.disconnect()
+			stats?.dispose()
+			statsHost?.remove()
 			renderer.dispose()
 			canvas.remove()
 		},

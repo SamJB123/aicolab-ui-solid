@@ -13,6 +13,7 @@ export { HtmlTexture } from './html-texture'
 export {
 	createDepthLayer,
 	type DepthLayer,
+	type DepthLayerOptions,
 	type DepthPanelHandle,
 	type DepthPanelInit,
 } from './layer'

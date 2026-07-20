@@ -3,10 +3,16 @@
 // own export) so importing this index never pulls three into a bundle.
 
 export {
+	type BackgroundStyle,
+	type ColorScheme,
+	presetColorSchemes,
+} from './backgrounds'
+export {
 	DepthCardCore,
 	type DepthCardEnhancement,
 	type DepthCardEnhanceRequest,
 	type DepthCardEnhancer,
 	depthCardEnhancer,
 } from './core'
-export { DepthCard } from './dom'
+export { DepthCard, type DepthCardContent } from './dom'
+export { CardIcon, type CardIconName } from './icons'

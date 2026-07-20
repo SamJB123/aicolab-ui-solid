@@ -9,11 +9,13 @@
 // DOM-face DepthCard watches; each face then lifts itself into the layer.
 
 import { createEffect, createRoot } from 'solid-js'
-import { createDepthLayer, type DepthLayer } from '../three-bridge'
+import { createDepthLayer, type DepthLayer, type DepthLayerOptions } from '../three-bridge'
 import { type DepthCardEnhancer, publishDepthCardEnhancer } from './core'
 
-export async function installDepthCardEnhancer(): Promise<() => void> {
-	const layer: DepthLayer = await createDepthLayer()
+export async function installDepthCardEnhancer(
+	options: DepthLayerOptions = {},
+): Promise<() => void> {
+	const layer: DepthLayer = await createDepthLayer(options)
 
 	const enhancer: DepthCardEnhancer = (req) => {
 		const handle = layer.addPanel({
