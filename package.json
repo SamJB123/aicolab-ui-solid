@@ -9,8 +9,6 @@
 		"./xp": "./src/xp/index.ts",
 		"./xp/styles.css": "./src/xp/styles.css",
 		"./depth-card": "./src/depth-card/index.ts",
-		"./depth-card/three": "./src/depth-card/three.tsx",
-		"./three-bridge": "./src/three-bridge/index.ts",
 		"./package.json": "./package.json",
 		"./*": "./src/*.ts"
 	},
@@ -22,9 +20,7 @@
 		"solid-js": "catalog:"
 	},
 	"dependencies": {
-		"@aicolab/kolo": "workspace:^",
-		"three": "catalog:",
-		"three-html-render": "catalog:"
+		"three": "catalog:"
 	},
 	"devDependencies": {
 		"@aicolab/tsconfig": "workspace:^",

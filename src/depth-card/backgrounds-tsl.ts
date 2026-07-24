@@ -21,7 +21,7 @@ import {
 	vec2,
 } from 'three/tsl'
 import * as THREE from 'three/webgpu'
-import type { BackgroundStyle, CardBackgroundHandle, ColorScheme } from '../depth-card/backgrounds'
+import type { BackgroundStyle, CardBackgroundHandle, ColorScheme } from './backgrounds'
 
 // The legacy shaders' hash — inlined as a plain expression-tree helper (no Fn:
 // nothing here needs argument inference, and the tree is tiny). The parameter
@@ -173,10 +173,6 @@ export async function mountTslCardBackground(
 	await renderInto(s, target, performance.now() * 0.001)
 	if (raf === 0) raf = requestAnimationFrame(tick)
 	return {
-		async bake(): Promise<string> {
-			await renderInto(s, target, performance.now() * 0.001)
-			return canvas.toDataURL('image/png')
-		},
 		dispose(): void {
 			targets.delete(target)
 			if (targets.size === 0 && raf) {

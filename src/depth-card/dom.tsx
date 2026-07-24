@@ -1,15 +1,13 @@
 /** @jsxImportSource @solidjs/web */
-// DepthCard — DOM face. Ships everywhere (SSR-safe): CSS perspective tilt,
-// click-to-flip, pointer-tracked conic edge glow. When an app publishes an
-// enhancer (see depth-card/three), the face upgrades IN PLACE: its two face
-// elements are adopted into the depth layer's canvas and rendered as real
-// 3D panels; the anchor keeps the layout slot. State lives in the core, so
-// the upgrade (and any downgrade) never loses it.
+// DepthCard — the CSS representation (SSR-safe): perspective tilt,
+// click-to-flip, pointer-tracked conic edge glow, real translateZ parallax.
+// State lives in DepthCardCore (see core.ts) so alternative representations
+// can share an instance via the `core` prop.
 //
 // Structural CSS lives in styles.css under "── DepthCard ──".
 
 import type { JSX } from '@solidjs/web'
-import { createEffect, createSignal, onCleanup, Show } from 'solid-js'
+import { onCleanup, Show } from 'solid-js'
 import type { ClassProp } from '../primitives'
 import {
 	type BackgroundStyle,
@@ -17,7 +15,7 @@ import {
 	type ColorScheme,
 	mountCardBackground,
 } from './backgrounds'
-import { DepthCardCore, type DepthCardEnhancement, depthCardEnhancer } from './core'
+import { DepthCardCore } from './core'
 import { CardIcon, type CardIconName } from './icons'
 
 /** Structured content — the legacy Glowing3DCardFlip design: front is
@@ -46,29 +44,22 @@ export function DepthCard(props: {
 	/** Face content — render functions (lazy slots; hydration-safe). */
 	front?: () => JSX.Element
 	back?: () => JSX.Element
-	/** Fixed card height in px (legacy cards were 400). Fixed — not content-
-	 *  driven — so the layout slot survives the faces' adoption into the layer. */
+	/** Fixed card height in px (legacy cards were 400). */
 	height?: number
 	/** Glow accent; defaults to the theme accent. */
 	glowColor?: string
-	/** Arm the real DOM inside the 3D texture (links/buttons stay clickable). */
-	interactive?: boolean
 	core?: DepthCardCore
 	class?: ClassProp
 }) {
 	const core = props.core ?? new DepthCardCore()
 	const height = () => props.height ?? 400
-	const [enhanced, setEnhanced] = createSignal(false)
 	const hasBack = () => Boolean(props.back ?? props.content?.back)
 
 	let anchor: HTMLDivElement | undefined
-	let front: HTMLDivElement | undefined
-	let back: HTMLDivElement | undefined
 
-	// CSS-face pointer handlers (tilt + glow angle). Inert while enhanced —
-	// the layer owns motion then, and the faces aren't under the anchor anyway.
+	// Pointer handlers: tilt + glow angle as CSS custom properties.
 	const onPointerMove = (e: PointerEvent): void => {
-		if (enhanced() || !anchor) return
+		if (!anchor) return
 		const r = anchor.getBoundingClientRect()
 		const nx = (e.clientX - r.left) / r.width - 0.5
 		const ny = (e.clientY - r.top) / r.height - 0.5
@@ -84,55 +75,33 @@ export function DepthCard(props: {
 		anchor?.style.setProperty('--dc-ty', '0deg')
 	}
 	const onClick = (e: MouseEvent): void => {
-		if (enhanced() || !hasBack()) return
+		if (!hasBack()) return
 		const t = e.target
 		if (t instanceof Element && t.closest('a,button,input,select,textarea,[data-depth-no-tap]'))
 			return
 		core.flip()
 	}
 
-	// Upgrade in place when an enhancer is (or becomes) available.
-	createEffect(
-		() => depthCardEnhancer(),
-		(enhance) => {
-			if (!enhance || !anchor || !front) return
-			const enhancement: DepthCardEnhancement = enhance({
-				core,
-				anchor,
-				front,
-				back,
-				glowColor: props.glowColor,
-				interactive: props.interactive,
-			})
-			setEnhanced(true)
-			return () => {
-				enhancement.dispose()
-				setEnhanced(false)
-			}
-		},
-	)
-
 	return (
 		<div
 			ref={anchor}
-			class={[
-				'depth-card',
-				{ 'depth-card-enhanced': enhanced(), 'depth-card-flipped': core.flipped() },
-				props.class,
-			]}
-			style={{ height: `${height()}px` }}
+			class={['depth-card', { 'depth-card-flipped': core.flipped() }, props.class]}
+			style={{
+				height: `${height()}px`,
+				...(props.glowColor ? { '--dc-glow': props.glowColor } : {}),
+			}}
 			onPointerMove={onPointerMove}
 			onPointerLeave={onPointerLeave}
 			onClick={onClick}
 		>
 			<div class="dc-inner">
-				<div ref={front} class="dc-face dc-front">
+				<div class="dc-face dc-front">
 					<Show when={props.content} fallback={props.front?.()}>
-						{(c) => <StructuredFront content={c()} enhanced={enhanced} />}
+						{(c) => <StructuredFront content={c()} />}
 					</Show>
 				</div>
 				<Show when={hasBack()}>
-					<div ref={back} class="dc-face dc-back">
+					<div class="dc-face dc-back">
 						<Show when={props.content} fallback={props.back?.()}>
 							{(c) => <StructuredBack content={c()} core={core} />}
 						</Show>
@@ -145,82 +114,35 @@ export function DepthCard(props: {
 
 // ── Structured faces — the legacy Glowing3DCardFlip design ──────────────────
 
-function StructuredFront(props: { content: DepthCardContent; enhanced: () => boolean }) {
+function StructuredFront(props: { content: DepthCardContent }) {
 	const c = props.content
-	const [baked, setBaked] = createSignal<string | null>(null)
-	let bgCanvas: HTMLCanvasElement | undefined
-	let bgPromise: Promise<CardBackgroundHandle | null> | null = null
-
-	// Generated-background lifecycle (imageless fronts): live animated canvas
-	// on the CSS face; on enhancement bake a frame into <img> — the polyfill's
-	// SVG snapshots serialise canvases BLANK, a data-URL img captures fine.
-	// The handle is a promise (the TSL renderer chunk loads lazily); the bake
-	// consumes whatever mount is in flight — including the fresh-load-with-
-	// layer case, where it mounts just long enough to render one frame.
-	if (!c.image) {
-		const ensureBg = (): Promise<CardBackgroundHandle | null> => {
-			if (!bgPromise && bgCanvas) {
-				bgPromise = mountCardBackground(
-					bgCanvas,
-					c.backgroundStyle ?? 'gradient',
-					c.colorScheme ?? 'emerald',
-				)
-			}
-			return bgPromise ?? Promise.resolve(null)
-		}
-		createEffect(
-			() => props.enhanced(),
-			(on) => {
-				if (on) {
-					const pending = ensureBg()
-					// A later CSS-path stint gets a fresh mount on its re-created canvas.
-					bgPromise = null
-					void pending.then(async (bg) => {
-						if (!bg) return
-						setBaked(await bg.bake())
-						bg.dispose()
-					})
-				} else {
-					void ensureBg()
-				}
-			},
-		)
-		onCleanup(() => {
-			const pending = bgPromise
-			bgPromise = null
-			void pending?.then((bg) => bg?.dispose())
-		})
-	}
+	let bgHandle: Promise<CardBackgroundHandle | null> | null = null
 
 	return (
 		<div class="dc-sf">
-			{/* One lift REGION for the text block (the layer samples the face
-			    texture per region and needs ~8px of quiet padding around each;
-			    separate title/desc regions would overlap). z 55 splits the
-			    legacy 50/60 pair; the CSS face keeps the exact per-element map
-			    via its own translateZ. */}
-			<div class="dc-sf-text" data-depth-lift="55">
-				<h4 class="dc-sf-title">{c.title}</h4>
-				<p class="dc-sf-desc">{c.description}</p>
-			</div>
-			<div class="dc-sf-media" data-depth-lift="50">
+			<h4 class="dc-sf-title">{c.title}</h4>
+			<p class="dc-sf-desc">{c.description}</p>
+			<div class="dc-sf-media">
 				<Show
 					when={c.image}
 					fallback={
 						<>
-							<Show
-								when={props.enhanced() && baked()}
-								fallback={
-									<canvas
-										class="dc-sf-bgc"
-										ref={(el) => {
-											bgCanvas = el
-										}}
-									/>
-								}
-							>
-								{(url) => <img class="dc-sf-img" src={url()} alt="" />}
-							</Show>
+							<canvas
+								class="dc-sf-bgc"
+								ref={(el) => {
+									// Animated generated background (client-only mount; the
+									// TSL renderer chunk loads lazily on first card).
+									bgHandle = mountCardBackground(
+										el,
+										c.backgroundStyle ?? 'gradient',
+										c.colorScheme ?? 'emerald',
+									)
+									onCleanup(() => {
+										void bgHandle?.then((bg) => bg?.dispose())
+										bgHandle = null
+									})
+								}}
+							/>
 							<Show when={c.icon}>
 								{(name) => (
 									<span class="dc-sf-bg-icon" aria-hidden="true">

@@ -1,12 +1,8 @@
 // Generated card backgrounds — the three-free FACADE. Types, preset schemes
 // and the mount entry point live here so the depth-card index keeps its
 // no-three contract; the actual renderer (WebGPURenderer + TSL, the house
-// stack — see three-bridge/card-backgrounds.ts) arrives via dynamic import,
-// so it rides the same lazily-loaded three chunk as the depth layer itself.
-//
-// Captures: the polyfill's SVG rasteriser serialises <canvas> as BLANK, so
-// enhanced (three-path) faces must swap the live canvas for a baked <img> —
-// `bake()` returns a data-URL frame for exactly that (see dom.tsx).
+// stack — see backgrounds-tsl.ts) arrives via dynamic import, so three loads
+// lazily and never enters the index's static graph.
 //
 // Client-only: touches DOM/GPU. Never call during SSR.
 
@@ -24,9 +20,6 @@ export const presetColorSchemes: Record<string, ColorScheme> = {
 }
 
 export interface CardBackgroundHandle {
-	/** One frame as a data URL (for captures — canvases rasterise blank in the
-	 *  polyfill's SVG snapshots; a baked <img> rides them fine). */
-	bake(): Promise<string>
 	dispose(): void
 }
 
@@ -47,6 +40,6 @@ export async function mountCardBackground(
 			? (presetColorSchemes[colorScheme] ?? presetColorSchemes.emerald)
 			: colorScheme
 	const phase = (epoch++ % 7) * 1.7
-	const { mountTslCardBackground } = await import('../three-bridge/card-backgrounds')
+	const { mountTslCardBackground } = await import('./backgrounds-tsl')
 	return mountTslCardBackground(canvas, style, colors, phase)
 }
