@@ -212,6 +212,9 @@ export function Button(
 	props: ParentProps<{
 		variant?: 'primary' | 'ghost'
 		onClick?: () => void
+		/** Real native disabled — event suppression, focus exclusion and aria
+		 *  semantics come from the <button> attribute, not a class hack. */
+		disabled?: boolean
 		class?: ClassProp
 	}>,
 ) {
@@ -219,13 +222,17 @@ export function Button(
 	return (
 		<button
 			type="button"
-			onClick={() => props.onClick?.()}
+			disabled={props.disabled}
+			onClick={() => {
+				if (!props.disabled) props.onClick?.()
+			}}
 			class={[
 				'inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-medium transition-all duration-200 active:scale-[0.97]',
+				'disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100',
 				{
-					'bg-[var(--c-accent)] text-[var(--c-ink)] hover:brightness-110 hover:shadow-[0_4px_24px_-6px_var(--c-accent)]':
+					'bg-[var(--c-accent)] text-[var(--c-ink)] hover:brightness-110 hover:shadow-[0_4px_24px_-6px_var(--c-accent)] disabled:hover:brightness-100 disabled:hover:shadow-none':
 						variant() === 'primary',
-					'text-[var(--c-paper)] ring-1 ring-[var(--c-line-strong)] hover:bg-[var(--c-panel-2)] hover:ring-[var(--c-muted)]':
+					'text-[var(--c-paper)] ring-1 ring-[var(--c-line-strong)] hover:bg-[var(--c-panel-2)] hover:ring-[var(--c-muted)] disabled:hover:bg-transparent disabled:hover:ring-[var(--c-line-strong)]':
 						variant() === 'ghost',
 				},
 				props.class,
