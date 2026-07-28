@@ -163,50 +163,169 @@ export function FeatureGrid(props: { items: Feature[]; columns?: 2 | 3; class?: 
 	)
 }
 
-// ── Steps — vertical staged rail (e.g. "Model for Change") ──────────────────
+// ── Steps — staged progression (the legacy "Model for Change" heir) ─────────
+// Two layouts: 'zigzag' (default) is the legacy design — a central gradient
+// spine with stages alternating sides, medallion nodes hugging the spine;
+// 'rail' is a compact left rail with a connector line. Node discs carry a
+// per-step accent (house ember by default), a gradient wash, and — at md/lg —
+// the legacy rotating shimmer, ported to CSS keyframes behind
+// prefers-reduced-motion (see the Steps section of styles.css).
 
 export type Step = {
 	title: string
 	body: JSX.Element
 	bullets?: string[]
-	icon?: JSX.Element
+	/** Lazy slot (invoked in Steps' scope — a pre-created element from the
+	 *  caller's scope would desync hydration keys under <For>). Size the glyph
+	 *  yourself (~48 for lg, ~28 for md, ~16 for sm nodes). Falls back to the
+	 *  step number. */
+	icon?: () => JSX.Element
+	/** Per-step hue for the title + node. Defaults to the house accent. */
 	accent?: string
 }
 
-export function Steps(props: { steps: Step[] }) {
+export type StepNodeSize = 'sm' | 'md' | 'lg'
+
+const NODE_SIZE: Record<StepNodeSize, string> = { sm: '2.75rem', md: '5rem', lg: '10rem' }
+const NODE_NUM_TEXT: Record<StepNodeSize, string> = {
+	sm: 'text-sm',
+	md: 'text-xl',
+	lg: 'text-3xl',
+}
+
+function StepNode(props: { step: Step; index: number; size: StepNodeSize }) {
+	const accent = () => props.step.accent ?? 'var(--c-accent)'
 	return (
-		<ol class="ui-steps m-0 grid list-none gap-10 p-0">
-			<For each={props.steps}>
-				{(step, i) => (
-					<li class="ui-reveal relative grid gap-5 pl-16 sm:pl-20">
-						<span
-							class="ui-step-node font-data absolute left-0 top-0 grid h-11 w-11 place-items-center rounded-full text-sm"
-							style={{
-								background: `color-mix(in oklab, ${step.accent ?? 'var(--c-accent)'} 12%, transparent)`,
-								color: step.accent ?? 'var(--c-accent)',
-								'box-shadow': `inset 0 0 0 1px color-mix(in oklab, ${step.accent ?? 'var(--c-accent)'} 40%, transparent)`,
-							}}
-						>
-							{step.icon ?? i() + 1}
-						</span>
-						<div>
-							<h3
-								class="font-display m-0 text-2xl font-medium"
-								style={{ color: step.accent ?? 'var(--c-paper)' }}
+		<div
+			class="ui-step-disc relative aspect-square w-full shrink-0"
+			style={{ 'max-width': NODE_SIZE[props.size], '--step-accent': accent() }}
+		>
+			<Show when={props.size !== 'sm'}>
+				<span class="ui-step-wash" aria-hidden="true" />
+				<span class="ui-step-shimmer" aria-hidden="true" />
+			</Show>
+			<div
+				class={[
+					'font-data relative flex h-full items-center justify-center',
+					NODE_NUM_TEXT[props.size],
+				]}
+				style={{ color: accent() }}
+			>
+				{props.step.icon ? props.step.icon() : props.index + 1}
+			</div>
+		</div>
+	)
+}
+
+export function Steps(props: {
+	steps: Step[]
+	/** 'zigzag' (default): central spine, alternating sides. 'rail': left rail. */
+	variant?: 'zigzag' | 'rail'
+	/** Node size; defaults to 'lg' for zigzag, 'sm' for rail. */
+	node?: StepNodeSize
+}) {
+	const variant = () => props.variant ?? 'zigzag'
+	const size = () => props.node ?? (variant() === 'zigzag' ? 'lg' : 'sm')
+	return (
+		<Show
+			when={variant() === 'zigzag'}
+			fallback={
+				<ol class="ui-steps relative m-0 grid list-none gap-10 p-0">
+					<span
+						class="ui-steps-line absolute w-px"
+						style={{
+							left: `calc(${NODE_SIZE[size()]} / 2)`,
+							top: `calc(${NODE_SIZE[size()]} / 2)`,
+							bottom: `calc(${NODE_SIZE[size()]} / 2)`,
+						}}
+						aria-hidden="true"
+					/>
+					<For each={props.steps}>
+						{(step, i) => (
+							<li
+								class="ui-reveal relative grid gap-5"
+								style={{ 'padding-left': `calc(${NODE_SIZE[size()]} + 1.25rem)` }}
 							>
-								{step.title}
-							</h3>
-							<div class="mt-2 leading-relaxed text-[var(--c-muted)]">{step.body}</div>
-							<Show when={step.bullets?.length}>
-								<ul class="mt-3 grid gap-1.5 pl-5 text-[15px] text-[var(--c-muted)]">
-									<For each={step.bullets}>{(b) => <li>{b}</li>}</For>
-								</ul>
-							</Show>
-						</div>
-					</li>
-				)}
-			</For>
-		</ol>
+								<div class="absolute left-0 top-0" style={{ width: NODE_SIZE[size()] }}>
+									<StepNode step={step} index={i()} size={size()} />
+								</div>
+								<div>
+									<h3
+										class="font-display m-0 text-2xl font-medium"
+										style={{ color: step.accent ?? 'var(--c-paper)' }}
+									>
+										{step.title}
+									</h3>
+									<div class="mt-2 leading-relaxed text-[var(--c-muted)]">{step.body}</div>
+									<Show when={step.bullets?.length}>
+										<ul class="mt-3 grid gap-1.5 pl-5 text-[15px] text-[var(--c-muted)]">
+											<For each={step.bullets}>{(b) => <li>{b}</li>}</For>
+										</ul>
+									</Show>
+								</div>
+							</li>
+						)}
+					</For>
+				</ol>
+			}
+		>
+			<ol class="ui-steps relative m-0 grid list-none gap-16 p-0">
+				<span
+					class="ui-steps-line absolute left-1/2 hidden w-px -translate-x-1/2 md:block"
+					style={{ top: '2rem', bottom: '2rem' }}
+					aria-hidden="true"
+				/>
+				<For each={props.steps}>
+					{(step, i) => {
+						const flip = () => i() % 2 === 1
+						return (
+							<li class="ui-reveal relative flex items-center gap-8 md:grid md:grid-cols-2 md:gap-8">
+								<Show when={!flip()}>
+									<div class="relative z-10 flex-1 md:text-right">
+										<h3
+											class="font-display m-0 text-2xl font-medium"
+											style={{ color: step.accent ?? 'var(--c-paper)' }}
+										>
+											{step.title}
+										</h3>
+										<div class="mt-3 leading-relaxed text-[var(--c-muted)]">{step.body}</div>
+										<Show when={step.bullets?.length}>
+											<ul class="m-0 mt-4 grid list-none gap-2 p-0 text-sm text-[var(--c-muted)]">
+												<For each={step.bullets}>{(b) => <li>{b}</li>}</For>
+											</ul>
+										</Show>
+									</div>
+								</Show>
+								<div
+									class={[
+										'flex flex-1 items-center',
+										{ 'justify-start md:justify-end': flip(), 'justify-start': !flip() },
+									]}
+								>
+									<StepNode step={step} index={i()} size={size()} />
+								</div>
+								<Show when={flip()}>
+									<div class="relative z-10 flex-1">
+										<h3
+											class="font-display m-0 text-2xl font-medium"
+											style={{ color: step.accent ?? 'var(--c-paper)' }}
+										>
+											{step.title}
+										</h3>
+										<div class="mt-3 leading-relaxed text-[var(--c-muted)]">{step.body}</div>
+										<Show when={step.bullets?.length}>
+											<ul class="m-0 mt-4 grid list-none gap-2 p-0 text-sm text-[var(--c-muted)]">
+												<For each={step.bullets}>{(b) => <li>{b}</li>}</For>
+											</ul>
+										</Show>
+									</div>
+								</Show>
+							</li>
+						)
+					}}
+				</For>
+			</ol>
+		</Show>
 	)
 }
 
