@@ -137,7 +137,9 @@ export function MonthCalendar(props: {
 
 	return (
 		<div class={['flex flex-col', props.class]}>
-			<div class="mb-4 flex items-center justify-between gap-3">
+			{/* flex-wrap: at extreme narrowness the controls drop to a second row
+			    instead of forcing the whole calendar past its container. */}
+			<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
 				<div class="flex items-baseline gap-3">
 					<h2 class="font-display text-2xl font-medium text-[var(--c-paper)]">
 						{MONTHS[props.month.m]}
