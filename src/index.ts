@@ -10,6 +10,42 @@
  */
 
 export {
+	addMonths,
+	daysInMonth,
+	firstWeekday,
+	fmtRange,
+	fmtTime,
+	longWeekday,
+	MONTHS,
+	MonthCalendar,
+	monthCells,
+	monthIndex,
+	sameDay,
+	todayYMD,
+	WEEKDAYS,
+	weekdayOf,
+	type YM,
+	type YMD,
+} from './calendar'
+export { dismissOnOutside, Field, IconButton, Segmented, type SegOption } from './controls'
+export { type FacetItem, Facets, type FacetTabStyle } from './facets'
+export {
+	AccordionItem,
+	Carousel,
+	type DocsNavItem,
+	DocsShell,
+	type Feature,
+	FeatureGrid,
+	LogoCloud,
+	type LogoItem,
+	Mark,
+	PageHero,
+	Section,
+	type Step,
+	Steps,
+} from './marketing'
+export { DatePicker, TimePicker } from './pickers'
+export {
 	Avatar,
 	AvatarStack,
 	Button,
@@ -25,25 +61,5 @@ export {
 	type StatusVisual,
 	Waveform,
 } from './primitives'
-
-export { dismissOnOutside, Field, IconButton, Segmented, type SegOption } from './controls'
-
-export {
-	AccordionItem,
-	Carousel,
-	DocsShell,
-	type DocsNavItem,
-	type Feature,
-	FeatureGrid,
-	type LogoItem,
-	LogoCloud,
-	Mark,
-	PageHero,
-	Section,
-	type Step,
-	Steps,
-} from './marketing'
-
-export { type FacetItem, Facets, type FacetTabStyle } from './facets'
 
 export { withScopedViewTransition, withViewTransition } from './vt'

@@ -207,6 +207,115 @@
 	}
 }
 
+/* ── Date/time pickers (pickers.tsx) ──
+   Same convention as `.ui-anchored`: a top-layer popover (Popover API)
+   anchored to its trigger, flipped within the viewport by position-try.
+   Deliberately standalone rather than composed with `.ui-anchored`: this
+   sheet is unlayered, so any padding declared here would defeat the
+   component's layered `p-3` utility — the panel declares NO padding.
+   The wheels are scroll-snap columns with hidden scrollbars and a fade mask. */
+.ui-picker-pop {
+	margin: 0;
+	inset: auto;
+	width: 268px;
+	max-width: calc(100vw - 1.5rem);
+	border: 0;
+	border-radius: 14px;
+	background: var(--c-panel-2);
+	color: var(--c-paper);
+	outline: 1px solid var(--c-line-strong);
+	box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.7);
+	opacity: 0;
+	transform: translateY(-6px) scale(0.98);
+	transition:
+		opacity 0.18s,
+		transform 0.18s,
+		overlay 0.18s allow-discrete,
+		display 0.18s allow-discrete;
+}
+.ui-picker-pop:popover-open {
+	opacity: 1;
+	transform: none;
+}
+@starting-style {
+	.ui-picker-pop:popover-open {
+		opacity: 0;
+		transform: translateY(-6px) scale(0.98);
+	}
+}
+@supports (anchor-name: --x) {
+	.ui-picker-pop {
+		position-area: block-end span-inline-end;
+		margin-top: 8px;
+		position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+	}
+}
+.ui-wheel {
+	scrollbar-width: none;
+	scroll-snap-type: y proximity;
+}
+.ui-wheel::-webkit-scrollbar {
+	display: none;
+}
+.ui-wheel > button {
+	scroll-snap-align: center;
+}
+/* fade the top/bottom of the hour/minute wheels into the panel */
+.ui-wheel-mask {
+	background: linear-gradient(
+		var(--c-panel-2) 2%,
+		transparent 34%,
+		transparent 66%,
+		var(--c-panel-2) 98%
+	);
+	border-radius: 12px;
+}
+
+/* ── MonthCalendar grid morph (calendar.tsx) ──
+   The grid carries view-transition-name: cal-grid; month navigation passes a
+   `forward`/`back` view-transition *type*, branching the same transition into
+   a directional slide. The Today button passes no type — plain cross-fade. */
+::view-transition-old(cal-grid),
+::view-transition-new(cal-grid) {
+	animation-duration: 0.32s;
+}
+@keyframes ui-cal-out-left {
+	to {
+		opacity: 0;
+		transform: translateX(-26px);
+	}
+}
+@keyframes ui-cal-out-right {
+	to {
+		opacity: 0;
+		transform: translateX(26px);
+	}
+}
+@keyframes ui-cal-in-left {
+	from {
+		opacity: 0;
+		transform: translateX(-26px);
+	}
+}
+@keyframes ui-cal-in-right {
+	from {
+		opacity: 0;
+		transform: translateX(26px);
+	}
+}
+:root:active-view-transition-type(forward)::view-transition-old(cal-grid) {
+	animation-name: ui-cal-out-left;
+}
+:root:active-view-transition-type(forward)::view-transition-new(cal-grid) {
+	animation-name: ui-cal-in-right;
+}
+:root:active-view-transition-type(back)::view-transition-old(cal-grid) {
+	animation-name: ui-cal-out-right;
+}
+:root:active-view-transition-type(back)::view-transition-new(cal-grid) {
+	animation-name: ui-cal-in-left;
+}
+
 /* ══ Marketing ═══════════════════════════════════════════════════════════
    Structural CSS for marketing.tsx (PageHero, Section, DocsShell, Accordion,
    Carousel, Mark, reveal utility, prose rhythm). CSS-first: scroll-driven

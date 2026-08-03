@@ -47,15 +47,21 @@ export function Segmented<T extends string>(props: {
 }
 
 export function IconButton(
-	props: ParentProps<{ onClick?: () => void; label: string; class?: ClassProp }>,
+	props: ParentProps<{
+		onClick?: () => void
+		label: string
+		disabled?: boolean
+		class?: ClassProp
+	}>,
 ) {
 	return (
 		<button
 			type="button"
 			aria-label={props.label}
+			disabled={props.disabled}
 			onClick={() => props.onClick?.()}
 			class={[
-				'grid h-9 w-9 place-items-center rounded-full text-[var(--c-muted)] ring-1 ring-[var(--c-line)] transition-all duration-200 hover:bg-[var(--c-panel-2)] hover:text-[var(--c-paper)] active:scale-90',
+				'grid h-9 w-9 place-items-center rounded-full text-[var(--c-muted)] ring-1 ring-[var(--c-line)] transition-all duration-200 enabled:hover:bg-[var(--c-panel-2)] enabled:hover:text-[var(--c-paper)] enabled:active:scale-90 disabled:opacity-35',
 				props.class,
 			]}
 		>
