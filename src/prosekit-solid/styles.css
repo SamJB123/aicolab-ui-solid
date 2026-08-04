@@ -1,0 +1,418 @@
+/*
+ * ProseKit Solid 2 baseline.
+ * Structural and typographic rules are adapted from ProseKit (MIT, ocavue).
+ * See THIRD_PARTY_NOTICES.md. Component styling is @aicolab/ui-solid.
+ */
+
+@import "@prosekit/pm/view/style/prosemirror.css";
+@import "@prosekit/extensions/list/style.css";
+
+@property --aic-prosekit-ring {
+	syntax: "<percentage>";
+	inherits: false;
+	initial-value: 0%;
+}
+
+@property --aic-prosekit-lift {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
+}
+
+.aic-prosekit {
+	color-scheme: light dark;
+	container: aic-prosekit / inline-size;
+	interpolate-size: allow-keywords;
+
+	/* Override this compact semantic palette at any ancestor or instance. */
+	--aic-prosekit-accent: light-dark(oklch(0.58 0.21 255), oklch(0.76 0.17 255));
+	--aic-prosekit-surface: light-dark(oklch(0.985 0.006 255), oklch(0.19 0.018 255));
+	--aic-prosekit-surface-raised: light-dark(white, oklch(0.235 0.02 255));
+	--aic-prosekit-ink: light-dark(oklch(0.22 0.025 255), oklch(0.94 0.012 255));
+	--aic-prosekit-muted: color-mix(in oklab, var(--aic-prosekit-ink) 62%, transparent);
+	--aic-prosekit-line: color-mix(in oklab, var(--aic-prosekit-ink) 14%, transparent);
+	--aic-prosekit-line-strong: color-mix(in oklab, var(--aic-prosekit-ink) 25%, transparent);
+	--aic-prosekit-accent-soft: color-mix(in oklab, var(--aic-prosekit-accent) 16%, transparent);
+	--aic-prosekit-font: ui-sans-serif, system-ui, sans-serif;
+	--aic-prosekit-font-editor:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--aic-prosekit-font-data: ui-monospace, "SFMono-Regular", Consolas, monospace;
+	--aic-prosekit-radius: 0.9rem;
+	--aic-prosekit-toolbar-height: 3.25rem;
+
+	position: relative;
+	isolation: isolate;
+	color: var(--aic-prosekit-ink);
+	font-family: var(--aic-prosekit-font);
+	background: var(--aic-prosekit-surface);
+	border: 1px solid var(--aic-prosekit-line);
+	border-radius: var(--aic-prosekit-radius);
+	corner-shape: squircle;
+	overflow: clip;
+	box-shadow:
+		0 1px 0 color-mix(in oklab, white 45%, transparent) inset,
+		0 18px 55px -38px color-mix(in oklab, var(--aic-prosekit-ink) 52%, transparent);
+}
+
+.aic-prosekit:focus-within {
+	border-color: color-mix(in oklab, var(--aic-prosekit-accent) 48%, var(--aic-prosekit-line));
+	box-shadow:
+		0 0 0 3px var(--aic-prosekit-accent-soft),
+		0 24px 65px -40px color-mix(in oklab, var(--aic-prosekit-accent) 45%, transparent);
+}
+
+.aic-prosekit-toolbar {
+	position: sticky;
+	top: 0;
+	z-index: 4;
+	container-type: scroll-state;
+	border-block-end: 1px solid var(--aic-prosekit-line);
+}
+
+.aic-prosekit-toolbar-track {
+	display: flex;
+	align-items: center;
+	gap: 0.3rem;
+	min-height: var(--aic-prosekit-toolbar-height);
+	padding: 0.45rem 0.55rem;
+	overflow-x: auto;
+	overscroll-behavior-inline: contain;
+	scrollbar-width: thin;
+	background: color-mix(in oklab, var(--aic-prosekit-surface-raised) 88%, transparent);
+	backdrop-filter: blur(18px) saturate(1.25);
+	transition:
+		box-shadow 180ms ease,
+		background 180ms ease;
+	reading-flow: flex-visual;
+}
+
+.aic-prosekit-toolbar-separator {
+	flex: 0 0 auto;
+	inline-size: 1px;
+	block-size: 1.45rem;
+	margin-inline: 0.2rem;
+	background: var(--aic-prosekit-line);
+}
+
+.aic-prosekit-toolbar-spacer {
+	flex: 1 1 1rem;
+}
+
+.aic-prosekit-toolbar-action {
+	flex: 0 0 auto;
+	border: 0;
+	background: transparent;
+	color: var(--aic-prosekit-muted);
+	font: 500 0.72rem / 1.2 var(--aic-prosekit-font-data);
+	text-decoration: underline;
+	text-decoration-color: var(--aic-prosekit-line-strong);
+	text-underline-offset: 0.2em;
+	cursor: pointer;
+}
+
+.aic-prosekit-toolbar-action:hover {
+	color: var(--aic-prosekit-accent);
+}
+.aic-prosekit-toolbar-action:focus-visible {
+	outline: 2px solid var(--aic-prosekit-accent);
+	outline-offset: 3px;
+}
+
+@container scroll-state(stuck: top) {
+	.aic-prosekit-toolbar-track {
+		background: color-mix(in oklab, var(--aic-prosekit-surface-raised) 94%, transparent);
+		box-shadow: 0 14px 30px -24px color-mix(in oklab, var(--aic-prosekit-ink) 70%, transparent);
+	}
+}
+
+.aic-prosekit-tool {
+	--aic-prosekit-lift: 0px;
+	--aic-prosekit-ring: 0%;
+	display: inline-grid;
+	place-items: center;
+	flex: 0 0 auto;
+	min-inline-size: 2.2rem;
+	block-size: 2.2rem;
+	padding-inline: 0.62rem;
+	border: 1px solid
+		color-mix(in oklab, var(--aic-prosekit-line) var(--aic-prosekit-ring), transparent);
+	border-radius: 0.68rem;
+	corner-shape: squircle;
+	background: color-mix(
+		in oklab,
+		var(--aic-prosekit-accent-soft) var(--aic-prosekit-ring),
+		transparent
+	);
+	color: var(--aic-prosekit-muted);
+	font: 600 0.8rem / 1 var(--aic-prosekit-font);
+	translate: 0 var(--aic-prosekit-lift);
+	cursor: pointer;
+	transition:
+		--aic-prosekit-ring 180ms ease,
+		--aic-prosekit-lift 180ms ease,
+		color 180ms ease,
+		filter 180ms ease;
+}
+
+.aic-prosekit-tool:hover:not(:disabled) {
+	--aic-prosekit-ring: 42%;
+	--aic-prosekit-lift: -1px;
+	color: var(--aic-prosekit-ink);
+}
+
+.aic-prosekit-tool[data-state="on"] {
+	--aic-prosekit-ring: 100%;
+	color: var(--aic-prosekit-accent);
+}
+
+.aic-prosekit-tool:active:not(:disabled) {
+	--aic-prosekit-lift: 1px;
+	filter: saturate(1.15);
+}
+
+.aic-prosekit-tool:focus-visible {
+	outline: 2px solid var(--aic-prosekit-accent);
+	outline-offset: 2px;
+}
+
+.aic-prosekit-tool:disabled {
+	cursor: not-allowed;
+	opacity: 0.38;
+}
+
+.aic-prosekit-sr-only {
+	position: absolute;
+	inline-size: 1px;
+	block-size: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+.aic-prosekit-editor.ProseMirror {
+	--prosekit-hue: 255;
+	--prosekit-outline-color: var(--aic-prosekit-accent);
+	--prosekit-node-selection-color: var(--aic-prosekit-accent-soft);
+	--prosekit-border-color: var(--aic-prosekit-line);
+	--prosekit-blockquote-color: var(--aic-prosekit-line-strong);
+
+	min-block-size: 16rem;
+	padding: clamp(1rem, 4cqi, 2.25rem);
+	outline: none;
+	font-family: var(--aic-prosekit-font-editor);
+	font-size: clamp(1rem, 0.96rem + 0.16cqi, 1.08rem);
+	line-height: 1.68;
+	text-wrap: pretty;
+	caret-color: var(--aic-prosekit-accent);
+}
+
+.aic-prosekit-editor.ProseMirror :is(h1, h2, h3, h4, h5, h6) {
+	font-family: var(--aic-prosekit-font);
+	font-weight: 680;
+	font-variation-settings: "opsz" 32;
+	letter-spacing: -0.035em;
+	text-wrap: balance;
+}
+
+.aic-prosekit-editor.ProseMirror h1 {
+	font-size: clamp(2rem, 1.4rem + 3cqi, 3.35rem);
+	line-height: 1.05;
+	margin: 1.1em 0 0.35em;
+}
+.aic-prosekit-editor.ProseMirror h2 {
+	font-size: clamp(1.55rem, 1.3rem + 1.5cqi, 2.25rem);
+	line-height: 1.12;
+	margin: 1em 0 0.3em;
+}
+.aic-prosekit-editor.ProseMirror h3 {
+	font-size: clamp(1.2rem, 1.08rem + 0.7cqi, 1.55rem);
+	line-height: 1.2;
+	margin: 0.9em 0 0.25em;
+}
+.aic-prosekit-editor.ProseMirror p {
+	margin: 0.28em 0;
+}
+.aic-prosekit-editor.ProseMirror a {
+	color: var(--aic-prosekit-accent);
+	text-decoration-thickness: 0.08em;
+	text-underline-offset: 0.16em;
+}
+.aic-prosekit-editor.ProseMirror blockquote {
+	margin: 0.8em 0;
+	padding-inline-start: 1.15em;
+	border-inline-start: 0.22em solid var(--aic-prosekit-line-strong);
+	color: var(--aic-prosekit-muted);
+}
+.aic-prosekit-editor.ProseMirror code {
+	font-family: var(--aic-prosekit-font-data);
+	font-size: 0.88em;
+}
+.aic-prosekit-editor.ProseMirror ::selection {
+	background: var(--aic-prosekit-accent-soft);
+	color: var(--aic-prosekit-ink);
+}
+
+.aic-prosekit-callout {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	margin-block: 0.75rem;
+	padding: 0.6rem;
+	border: 1px solid;
+	border-radius: 0.8rem;
+	corner-shape: squircle;
+	background: color-mix(in oklab, var(--aic-prosekit-surface-raised) 82%, transparent);
+}
+
+.aic-prosekit-block-select,
+.aic-prosekit-block-input {
+	min-block-size: 2.25rem;
+	border: 1px solid var(--aic-prosekit-line);
+	border-radius: 0.58rem;
+	background: color-mix(in oklab, var(--aic-prosekit-surface) 72%, transparent);
+	color: var(--aic-prosekit-ink);
+	font: 500 0.82rem / 1.3 var(--aic-prosekit-font);
+	outline: none;
+}
+
+.aic-prosekit-block-select {
+	flex: 0 0 auto;
+	padding: 0.5rem 0.65rem;
+	line-height: 1.2;
+	vertical-align: middle;
+}
+
+.aic-prosekit-block-input {
+	flex: 1 1 auto;
+	min-inline-size: 0;
+	padding: 0.52rem 0.72rem;
+	field-sizing: content;
+}
+
+.aic-prosekit-block-select:focus-visible,
+.aic-prosekit-block-input:focus-visible {
+	border-color: var(--aic-prosekit-accent);
+	box-shadow: 0 0 0 3px var(--aic-prosekit-accent-soft);
+}
+
+@container aic-prosekit (width < 34rem) {
+	.aic-prosekit-toolbar-track {
+		gap: 0.2rem;
+		padding-inline: 0.35rem;
+	}
+	.aic-prosekit-tool {
+		min-inline-size: 2rem;
+		block-size: 2rem;
+		padding-inline: 0.48rem;
+	}
+}
+
+@supports (appearance: base-select) {
+	.aic-prosekit select,
+	.aic-prosekit select::picker(select) {
+		appearance: base-select;
+	}
+	.aic-prosekit select {
+		display: inline-flex;
+		align-items: center;
+	}
+	.aic-prosekit select::picker(select) {
+		margin-block-start: 0.4rem;
+		padding: 0.35rem;
+		border: 1px solid var(--aic-prosekit-line-strong);
+		border-radius: 0.8rem;
+		corner-shape: squircle;
+		background: var(--aic-prosekit-surface-raised);
+		color: var(--aic-prosekit-ink);
+		box-shadow: 0 24px 65px -28px color-mix(in oklab, var(--aic-prosekit-ink) 70%, transparent);
+		opacity: 0;
+		translate: 0 -0.35rem;
+		transition:
+			opacity 160ms,
+			translate 160ms,
+			overlay 160ms allow-discrete,
+			display 160ms allow-discrete;
+	}
+	.aic-prosekit select:open::picker(select) {
+		opacity: 1;
+		translate: 0;
+	}
+	@starting-style {
+		.aic-prosekit select:open::picker(select) {
+			opacity: 0;
+			translate: 0 -0.35rem;
+		}
+	}
+	.aic-prosekit option {
+		padding: 0.5rem 0.65rem;
+		border-radius: 0.55rem;
+	}
+	.aic-prosekit option:checked {
+		color: var(--aic-prosekit-accent);
+		background: var(--aic-prosekit-accent-soft);
+	}
+	.aic-prosekit select::picker-icon {
+		transition: rotate 160ms;
+	}
+	.aic-prosekit select:open::picker-icon {
+		rotate: 180deg;
+	}
+}
+
+/* Formatting commands replace ProseMirror block DOM nodes. Element-scoped
+ * View Transitions let the browser interpolate the before/after rendering;
+ * unsupported engines retain the normal synchronous command behavior. */
+@supports (view-transition-name: match-element) {
+	.aic-prosekit-editor.ProseMirror > * {
+		view-transition-name: match-element;
+		view-transition-class: aic-prosekit-block;
+	}
+
+	/* Persistent document identity pairs replacement DOM nodes—such as a <p>
+	 * becoming an <h1>—so size and position morph instead of cross-fading. */
+	@supports (view-transition-name: attr(data-block-id type(<custom-ident>), none)) {
+		.aic-prosekit-editor.ProseMirror [data-block-id] {
+			view-transition-name: attr(data-block-id type(<custom-ident>), none);
+			view-transition-class: aic-prosekit-block;
+		}
+	}
+
+	::view-transition-group(.aic-prosekit-block) {
+		animation-duration: 220ms;
+		animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+	}
+}
+
+/* Graceful entry motion for engines with starting-style but without scoped
+ * transitions, and for blocks inserted by keyboard commands. */
+.aic-prosekit-editor.ProseMirror > :is(p, h1, h2, h3, blockquote) {
+	transition:
+		opacity 180ms ease,
+		translate 180ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@starting-style {
+	.aic-prosekit-editor.ProseMirror > :is(p, h1, h2, h3, blockquote) {
+		opacity: 0.72;
+		translate: 0 0.16em;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.aic-prosekit *,
+	.aic-prosekit *::before,
+	.aic-prosekit *::after {
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+	}
+	::view-transition-group(.aic-prosekit-block),
+	::view-transition-old(.aic-prosekit-block),
+	::view-transition-new(.aic-prosekit-block) {
+		animation: none !important;
+	}
+}

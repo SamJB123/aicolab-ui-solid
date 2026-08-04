@@ -9,6 +9,9 @@
 		"./xp": "./src/xp/index.ts",
 		"./xp/styles.css": "./src/xp/styles.css",
 		"./depth-card": "./src/depth-card/index.ts",
+		"./prosekit-solid": "./src/prosekit-solid/index.ts",
+		"./prosekit-solid/block-identity": "./src/prosekit-solid/block-identity.ts",
+		"./prosekit-solid/styles.css": "./src/prosekit-solid/styles.css",
 		"./package.json": "./package.json",
 		"./*": "./src/*.ts"
 	},
@@ -20,6 +23,10 @@
 		"solid-js": "catalog:"
 	},
 	"dependencies": {
+		"@aicolab/solid": "workspace:^",
+		"@prosekit/core": "0.13.0-beta.7",
+		"@prosekit/extensions": "0.18.0-beta.19",
+		"@prosekit/pm": "0.1.19-beta.4",
 		"three": "catalog:"
 	},
 	"devDependencies": {
