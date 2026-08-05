@@ -154,10 +154,28 @@
 		filter 180ms ease;
 }
 
-.aic-prosekit-tool:hover:not(:disabled) {
-	--aic-prosekit-ring: 42%;
-	--aic-prosekit-lift: -1px;
-	color: var(--aic-prosekit-ink);
+/* Hover is a persistent state after taps in touch browsers. Only expose it
+ * on devices with a real hover-capable, fine pointer; touch still gets the
+ * short-lived :active press feedback below. Keep the enabled appearance
+ * authoritative while a desktop pointer remains over the button. */
+@media (hover: hover) and (pointer: fine) {
+	.aic-prosekit-tool[data-state="off"]:hover:not(:disabled) {
+		--aic-prosekit-ring: 42%;
+		--aic-prosekit-lift: -1px;
+		color: var(--aic-prosekit-ink);
+	}
+
+	.aic-prosekit-tool[data-state="on"]:hover:not(:disabled) {
+		--aic-prosekit-ring: 100%;
+		--aic-prosekit-lift: -1px;
+		/* Compose the two existing states: full on-state fill/ring, ordinary
+		 * hover lift, and a foreground mixed from on-accent + hover-ink. */
+		color: color-mix(
+			in oklab,
+			var(--aic-prosekit-accent) 72%,
+			var(--aic-prosekit-ink)
+		);
+	}
 }
 
 .aic-prosekit-tool[data-state="on"] {

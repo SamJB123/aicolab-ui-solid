@@ -32,10 +32,20 @@ function hasElementViewTransitions(
 	return 'startViewTransition' in element && typeof element.startViewTransition === 'function'
 }
 
+function hasDesktopPointer(): boolean {
+	return (
+		typeof window !== 'undefined' &&
+		window.matchMedia('(hover: hover) and (pointer: fine)').matches
+	)
+}
+
 function runToolbarCommand(event: MouseEvent, command: () => void): void {
 	const editor =
 		event.currentTarget instanceof Element ? event.currentTarget.closest('.aic-prosekit') : null
-	if (editor && hasElementViewTransitions(editor)) {
+	// Chromium's experimental element-scoped transition can misplace the
+	// editor snapshot on touch devices for the first composited frame. Keep the
+	// block morph animation on desktop pointers, and run touch commands directly.
+	if (editor && hasDesktopPointer() && hasElementViewTransitions(editor)) {
 		editor.startViewTransition(command)
 		return
 	}
