@@ -1,29 +1,118 @@
-/* @aicolab/ui-solid — structural CSS for the shared primitives.
-   Import from the consuming app's stylesheet:
+/* @aicolab/ui-solid — the package's COMPLETE stylesheet. Import once from
+   the consuming app:
 
      @import "@aicolab/ui-solid/styles.css";
 
-   and let the app's Tailwind compile the package's utility classes:
-
-     @source "<relative path to>/packages/ui-solid/src";
+   No Tailwind, no @source, no build step: components style themselves from
+   the semantic classes below (scoped with @scope — Baseline) plus the token
+   contract. (Migrated off utility classes 2026-08-07.)
 
    ── The token contract ──────────────────────────────────────────────────
-   Apps define these on a theme root element (NOT defined here — the app owns
-   its palette; primitives and these classes only ever READ them):
+   Every token is REGISTERED below with @property (Baseline): typed, so a
+   malformed app value falls back to the canonical initial instead of
+   breaking color-mix chains; inherited; and ANIMATABLE — `transition:
+   --c-panel 0.3s` crossfades a theme change. The registered initials are
+   the canonical LIGHT gold-trim values, so the package renders styled even
+   before an app defines its palette; apps override on a theme root,
+   ideally as single light-dark() declarations (see .design-sync/theme).
 
-     --c-ink, --c-ink-2          page + recessed surfaces
+     --c-page, --c-page-2         page + recessed surfaces
      --c-panel, --c-panel-2     raised surfaces
-     --c-paper                  primary text
+     --c-text                  primary text
      --c-muted, --c-faint       secondary / tertiary text
-     --c-accent, --c-live       brand accent / live-positive signal
-     --c-line, --c-line-strong  hairlines — derive from --c-paper:
-                                  color-mix(in oklab, var(--c-paper) 10%, transparent)
-                                  color-mix(in oklab, var(--c-paper) 20%, transparent)
-     --c-accent-soft            accent wash — derive from --c-accent:
-                                  color-mix(in oklab, var(--c-accent) 14%, transparent)
-     --font-display, --font-sans, --font-data   the three font roles
+     --c-accent, --c-live       brand accent (gold trim) / live signal
+     --c-line, --c-line-strong  hairlines — derive from --c-text
+     --c-accent-soft            accent wash — derive from --c-accent
+     --font-display, --font-sans, --font-data   the three core font roles
+     --font-label                micro-label voice (eyebrows/chips/kickers/field
+                                labels/weekday heads); OPTIONAL — falls back
+                                to the data stack when unset
+
+   Optional cascading knobs (style-query/if() enhanced, gated):
+     --ui-density: cozy | compact   subtree-wide density for panels
 
    Everything below is feature-guarded or degrades to a calm static state. */
+
+/* ── Registered token contract (typed, animatable, canonical initials) ── */
+@property --c-page {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #f7f5f0;
+}
+@property --c-page-2 {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #efece4;
+}
+@property --c-panel {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #ffffff;
+}
+@property --c-panel-2 {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #f5f2ea;
+}
+@property --c-text {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #1f1b12;
+}
+@property --c-muted {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #6b6558;
+}
+@property --c-faint {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #a29b8a;
+}
+@property --c-accent {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #a06f1c;
+}
+@property --c-live {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #16a34a;
+}
+@property --c-line {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #e5e1d6;
+}
+@property --c-line-strong {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #d0cabb;
+}
+@property --c-accent-soft {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #f0e2c4;
+}
+@property --font-display {
+	syntax: "*";
+	inherits: true;
+}
+@property --font-sans {
+	syntax: "*";
+	inherits: true;
+}
+@property --font-data {
+	syntax: "*";
+	inherits: true;
+}
+/* Micro-label voice (uppercase letterspaced 9-11px labels). Optional: every
+   usage falls back to --font-data, so an app that never sets it sees no
+   change — but it CAN be themed independently of numeric/data text. */
+@property --font-label {
+	syntax: "*";
+	inherits: true;
+}
 
 /* ── Font role helpers ── */
 .font-display {
@@ -101,7 +190,7 @@
 	gap: 4px;
 	padding: 4px;
 	border-radius: 999px;
-	background: var(--c-ink-2);
+	background: var(--c-page-2);
 	box-shadow: inset 0 0 0 1px var(--c-line);
 	overflow-x: auto;
 	overscroll-behavior-x: contain;
@@ -128,7 +217,7 @@
 	color: var(--c-muted);
 }
 .seg-btn-active {
-	color: var(--c-paper);
+	color: var(--c-text);
 	/* Fallback indicator where anchor positioning is unavailable. */
 	background: var(--c-panel-2);
 	box-shadow: inset 0 0 0 1px var(--c-line-strong);
@@ -175,7 +264,7 @@
 	border: 0;
 	border-radius: 14px;
 	background: var(--c-panel-2);
-	color: var(--c-paper);
+	color: var(--c-text);
 	outline: 1px solid var(--c-line-strong);
 	box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.7);
 	opacity: 0;
@@ -222,7 +311,7 @@
 	border: 0;
 	border-radius: 14px;
 	background: var(--c-panel-2);
-	color: var(--c-paper);
+	color: var(--c-text);
 	outline: 1px solid var(--c-line-strong);
 	box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.7);
 	opacity: 0;
@@ -430,7 +519,7 @@
 	padding: 1.1rem 0;
 	cursor: pointer;
 	list-style: none;
-	color: var(--c-paper);
+	color: var(--c-text);
 	font-weight: 500;
 }
 .ui-acc summary::-webkit-details-marker {
@@ -525,7 +614,7 @@
 	border-radius: 999px;
 	border: 1px solid var(--c-line-strong);
 	background: var(--c-panel);
-	color: var(--c-paper);
+	color: var(--c-text);
 	cursor: pointer;
 }
 .ui-carousel::scroll-button(left) {
@@ -565,7 +654,7 @@
 		background 0.2s;
 }
 .facets-tab:hover {
-	color: var(--c-paper);
+	color: var(--c-text);
 }
 
 /* Variant: full-width divided bar (legacy-faithful). */
@@ -578,8 +667,8 @@
 	border-inline-start: 1px solid var(--c-line);
 }
 .facets-tabs-bar .facets-tab-active {
-	background: var(--c-ink-2);
-	color: var(--c-paper);
+	background: var(--c-page-2);
+	color: var(--c-text);
 	font-weight: 600;
 }
 
@@ -601,7 +690,7 @@
 }
 .facets-tabs-pill .facets-tab-active,
 .facets-tabs-stretch .facets-tab-active {
-	color: var(--c-paper);
+	color: var(--c-text);
 	/* Fallback indicator where anchor positioning is unavailable. */
 	background: var(--c-panel-2);
 	box-shadow: inset 0 0 0 1px var(--c-line-strong);
@@ -663,12 +752,12 @@
 		background 0.25s;
 }
 .facets-rail-btn:hover {
-	background: color-mix(in oklab, var(--c-ink-2) 55%, transparent);
+	background: color-mix(in oklab, var(--c-page-2) 55%, transparent);
 	opacity: 0.75;
 }
 .facets-rail-active,
 .facets-rail-active:hover {
-	background: var(--c-ink-2);
+	background: var(--c-page-2);
 	filter: none;
 	opacity: 1;
 }
@@ -799,7 +888,7 @@
 	font-size: 1.25rem;
 	font-weight: 500;
 	line-height: 1.7;
-	color: var(--c-paper);
+	color: var(--c-text);
 	transform: translateZ(50px);
 	backface-visibility: hidden;
 }
@@ -869,7 +958,7 @@
 	inset: 0;
 	display: grid;
 	place-items: center;
-	color: var(--c-paper);
+	color: var(--c-text);
 	opacity: 0.1;
 	pointer-events: none;
 }
@@ -882,7 +971,7 @@
 	justify-content: space-between;
 	gap: 0.75rem;
 	padding: 1rem 1.5rem;
-	background: var(--c-ink-2);
+	background: var(--c-page-2);
 	border-radius: 18px 18px 0 0;
 }
 .depth-card .dc-sb-title {
@@ -891,7 +980,7 @@
 	font-size: 1.25rem;
 	font-weight: 500;
 	line-height: 1.7;
-	color: var(--c-paper);
+	color: var(--c-text);
 }
 .dc-sb-return {
 	border: 0;
@@ -904,7 +993,7 @@
 	transition: color 0.15s;
 }
 .dc-sb-return:hover {
-	color: var(--c-paper);
+	color: var(--c-text);
 }
 .depth-card .dc-sb-body {
 	flex: 1;
@@ -967,8 +1056,8 @@
 }
 .docs-nav-link:hover,
 .docs-toc-link:hover {
-	color: var(--c-paper);
-	background: var(--c-ink-2);
+	color: var(--c-text);
+	background: var(--c-page-2);
 }
 .docs-nav-sub,
 .docs-toc-sub {
@@ -985,7 +1074,7 @@
 .ui-prose {
 	font-size: 1.02rem;
 	line-height: 1.7;
-	color: var(--c-paper);
+	color: var(--c-text);
 }
 .ui-prose h1 {
 	font-family: var(--font-display);
@@ -1012,7 +1101,7 @@
 }
 .ui-prose p {
 	margin: 0 0 1.1rem;
-	color: color-mix(in oklab, var(--c-paper) 88%, transparent);
+	color: color-mix(in oklab, var(--c-text) 88%, transparent);
 }
 .ui-prose ul,
 .ui-prose ol {
@@ -1020,7 +1109,7 @@
 	padding-left: 1.4rem;
 	display: grid;
 	gap: 0.4rem;
-	color: color-mix(in oklab, var(--c-paper) 84%, transparent);
+	color: color-mix(in oklab, var(--c-text) 84%, transparent);
 }
 .ui-prose li::marker {
 	color: var(--c-accent);
@@ -1056,4 +1145,1057 @@
 	.docs-progress {
 		display: none;
 	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PRIMITIVES — semantic component styles (de-Tailwinded 2026-08-07).
+   Each component is one root class; interiors are styled through @scope
+   (Baseline) so bare elements and part classes can never leak into app
+   content or nested components. Dynamic values (sizes, data colours)
+   arrive as inline styles or data-* attributes from the component.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Eyebrow ── */
+.ui-eyebrow {
+	font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+	font-size: 10px;
+	text-transform: uppercase;
+	letter-spacing: 0.32em;
+	color: var(--c-faint);
+}
+
+/* ── StatusDot ── */
+.ui-dot {
+	position: relative;
+	display: inline-grid;
+	place-items: center;
+}
+@scope (.ui-dot) {
+	:scope > .ui-dot-ping {
+		position: absolute;
+		inset: 0;
+		border-radius: 999px;
+		animation: ui-ping 1.8s ease-out infinite;
+	}
+	:scope > .ui-dot-core {
+		position: relative;
+		border-radius: 999px;
+	}
+}
+
+/* ── Avatar ── */
+.ui-avatar {
+	position: relative;
+	display: inline-block;
+	flex-shrink: 0;
+}
+@scope (.ui-avatar) {
+	:scope > .ui-avatar-face {
+		display: grid;
+		place-items: center;
+		width: 100%;
+		height: 100%;
+		border-radius: 999px;
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.02em;
+	}
+	:scope > .ui-avatar-badge {
+		position: absolute;
+		bottom: -2px;
+		right: -2px;
+		display: grid;
+		place-items: center;
+		border-radius: 999px;
+		padding: 2px;
+	}
+}
+
+/* ── AvatarStack ── */
+.ui-avatar-stack {
+	display: flex;
+	align-items: center;
+}
+@scope (.ui-avatar-stack) {
+	:scope > .ui-avatar-stack-item {
+		position: relative;
+		border-radius: 999px;
+	}
+	:scope > .ui-avatar-stack-extra {
+		position: relative;
+		z-index: 0;
+		display: grid;
+		place-items: center;
+		border-radius: 999px;
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: 11px;
+		color: var(--c-muted);
+		background: var(--c-panel-2);
+	}
+}
+
+/* ── Chip — tone via data attribute (cascading, semantic) ── */
+.ui-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	border-radius: 999px;
+	padding: 4px 10px;
+	font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+	font-size: 10px;
+	text-transform: uppercase;
+	letter-spacing: 0.16em;
+	background: var(--c-panel-2);
+	color: var(--c-muted);
+	box-shadow: 0 0 0 1px var(--c-line);
+}
+.ui-chip[data-tone="accent"] {
+	background: var(--c-accent-soft);
+	color: var(--c-accent);
+	box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-accent) 35%, transparent);
+}
+.ui-chip[data-tone="live"] {
+	background: color-mix(in oklab, var(--c-live) 15%, transparent);
+	color: var(--c-live);
+	box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-live) 30%, transparent);
+}
+
+/* ── Button ── */
+.ui-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	border: 0;
+	border-radius: 999px;
+	padding: 8px 16px;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 500;
+	cursor: pointer;
+	background: transparent;
+	transition: all 0.2s;
+}
+.ui-btn:active:not(:disabled) {
+	transform: scale(0.97);
+}
+.ui-btn:disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+.ui-btn[data-variant="primary"] {
+	background: var(--c-accent);
+	color: var(--c-page);
+}
+.ui-btn[data-variant="primary"]:hover:not(:disabled) {
+	filter: brightness(1.1);
+	box-shadow: 0 4px 24px -6px var(--c-accent);
+}
+.ui-btn[data-variant="ghost"] {
+	color: var(--c-text);
+	box-shadow: 0 0 0 1px var(--c-line-strong);
+}
+.ui-btn[data-variant="ghost"]:hover:not(:disabled) {
+	background: var(--c-panel-2);
+	box-shadow: 0 0 0 1px var(--c-muted);
+}
+
+/* ── Panel ── */
+.ui-panel {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border-radius: 16px;
+	background: var(--c-panel);
+	padding: 20px;
+	box-shadow: 0 0 0 1px var(--c-line);
+}
+.ui-panel::before {
+	content: "";
+	pointer-events: none;
+	position: absolute;
+	inset: 0 0 auto 0;
+	height: 1px;
+	background: linear-gradient(to right, transparent, var(--c-line-strong), transparent);
+}
+@scope (.ui-panel) {
+	:scope > .ui-panel-glow {
+		pointer-events: none;
+		position: absolute;
+		right: -64px;
+		top: -80px;
+		width: 176px;
+		height: 176px;
+		border-radius: 999px;
+		background: var(--c-accent);
+		opacity: 0.07;
+		filter: blur(48px);
+	}
+	:scope > header {
+		margin-bottom: 16px;
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 12px;
+	}
+	:scope > header .ui-panel-head-left {
+		display: flex;
+		align-items: baseline;
+		gap: 10px;
+	}
+	:scope > header .ui-panel-index {
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: 11px;
+		letter-spacing: 0.1em;
+		color: var(--c-faint);
+	}
+	:scope > header h2 {
+		margin: 0;
+		font-family: var(--font-display, Georgia, serif);
+		font-optical-sizing: auto;
+		font-size: 19px;
+		font-weight: 500;
+		line-height: 1;
+		color: var(--c-text);
+	}
+	:scope > header .ui-panel-kicker {
+		margin: 6px 0 0;
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: 10px;
+		text-transform: uppercase;
+		letter-spacing: 0.2em;
+		color: var(--c-faint);
+	}
+}
+/* Cascading density knob — if()/style-query enhanced (gated); the base
+   19px title above is the always-correct fallback. Set --ui-density:
+   compact on any ancestor to tighten every panel beneath it. */
+@supports (color: if(style(--x: 1): red; else: blue)) {
+	.ui-panel > header h2 {
+		font-size: if(style(--ui-density: compact): 16px; else: 19px);
+	}
+	.ui-panel {
+		padding: if(style(--ui-density: compact): 14px; else: 20px);
+	}
+}
+
+/* ── Counter ── */
+.ui-counter {
+	font-variant-numeric: tabular-nums;
+}
+
+/* ── Sparkline ── */
+.ui-sparkline {
+	overflow: visible;
+}
+
+/* ── Waveform ── */
+.ui-waveform {
+	display: flex;
+	height: 100%;
+	align-items: center;
+	gap: 3px;
+}
+@scope (.ui-waveform) {
+	:scope > .ui-waveform-bar {
+		flex: 1;
+		border-radius: 999px;
+	}
+}
+
+/* ── Meter — typed-attr() exemplar ──
+   The fill width is data-driven: the component sets data-pct and, where
+   typed attr() is supported (detected in JS via CSS.supports), omits its
+   inline-style fallback so this rule owns the width — the browser animates
+   the change through the transition below. */
+.ui-meter {
+	height: 4px;
+	width: 100%;
+	overflow: hidden;
+	border-radius: 999px;
+	background: var(--c-line);
+}
+@scope (.ui-meter) {
+	:scope > .ui-meter-fill {
+		height: 100%;
+		border-radius: 999px;
+		background: var(--c-text);
+		transition: width 0.5s;
+	}
+}
+@supports (width: attr(data-pct type(<percentage>), 0%)) {
+	.ui-meter > .ui-meter-fill {
+		width: attr(data-pct type(<percentage>), 0%);
+	}
+}
+
+/* ── Rule ── */
+.ui-rule {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+@scope (.ui-rule) {
+	:scope > .ui-rule-line {
+		height: 1px;
+		flex: 1;
+		background: var(--c-line);
+	}
+}
+
+/* ── IconButton ── */
+.ui-iconbtn {
+	display: grid;
+	place-items: center;
+	width: 36px;
+	height: 36px;
+	border: 0;
+	border-radius: 999px;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	background: transparent;
+	color: var(--c-muted);
+	box-shadow: 0 0 0 1px var(--c-line);
+	transition: all 0.2s;
+}
+.ui-iconbtn:hover:not(:disabled) {
+	background: var(--c-panel-2);
+	color: var(--c-text);
+}
+.ui-iconbtn:active:not(:disabled) {
+	transform: scale(0.9);
+}
+.ui-iconbtn:disabled {
+	cursor: not-allowed;
+	opacity: 0.35;
+}
+
+/* ── Field ── */
+.ui-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+@scope (.ui-field) {
+	:scope > .ui-field-label {
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: 10px;
+		text-transform: uppercase;
+		letter-spacing: 0.2em;
+		color: var(--c-faint);
+	}
+}
+/* Opt-in content-hugging controls (field-sizing, Chromium/FF-beta; a plain
+   no-op elsewhere): <Field class="ui-autosize"> lets inputs/textareas grow
+   with their content instead of a fixed default. */
+.ui-autosize :is(input, textarea, select) {
+	field-sizing: content;
+	min-width: 4ch;
+}
+
+/* ── MonthCalendar ── */
+.ui-cal {
+	display: flex;
+	flex-direction: column;
+}
+@scope (.ui-cal) {
+	/* flex-wrap: at extreme narrowness the controls drop to a second row
+	   instead of forcing the whole calendar past its container. */
+	:scope > .ui-cal-head {
+		margin-bottom: 16px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+	}
+	.ui-cal-head-left {
+		display: flex;
+		align-items: baseline;
+		gap: 12px;
+	}
+	.ui-cal-head h2 {
+		margin: 0;
+		font-family: var(--font-display, Georgia, serif);
+		font-optical-sizing: auto;
+		font-size: 24px;
+		font-weight: 500;
+		color: var(--c-text);
+	}
+	.ui-cal-year {
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: 15px;
+		font-variant-numeric: tabular-nums;
+		color: var(--c-faint);
+	}
+	.ui-cal-head-controls {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+	.ui-cal-today-btn {
+		border: 0;
+		border-radius: 999px;
+		padding: 6px 12px;
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: 0.16em;
+		cursor: pointer;
+		background: transparent;
+		color: var(--c-muted);
+		box-shadow: 0 0 0 1px var(--c-line);
+		transition: color 0.2s, background-color 0.2s;
+	}
+	.ui-cal-today-btn:hover {
+		background: var(--c-panel-2);
+		color: var(--c-text);
+	}
+	:scope > .ui-cal-weekdays {
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+		gap: 4px;
+		border-bottom: 1px solid var(--c-line);
+		padding-bottom: 8px;
+	}
+	.ui-cal-weekday {
+		text-align: center;
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: 10px;
+		text-transform: uppercase;
+		letter-spacing: 0.16em;
+		color: var(--c-faint);
+	}
+	:scope > .ui-cal-grid {
+		margin-top: 4px;
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+		gap: 4px;
+	}
+	.ui-cal-blank {
+		min-height: 84px;
+	}
+	.ui-cal-day {
+		display: flex;
+		min-height: 84px;
+		flex-direction: column;
+		gap: 4px;
+		border: 1px solid transparent;
+		border-radius: 12px;
+		padding: 6px;
+		text-align: left;
+		font: inherit;
+		cursor: pointer;
+		background: transparent;
+		color: inherit;
+		transition: background-color 0.2s, border-color 0.2s;
+	}
+	.ui-cal-day:hover:not([data-selected]) {
+		background: var(--c-panel-2);
+	}
+	.ui-cal-day[data-selected] {
+		border-color: color-mix(in oklab, var(--c-accent) 45%, transparent);
+		background: var(--c-accent-soft);
+	}
+	.ui-cal-daynum {
+		display: grid;
+		width: 24px;
+		height: 24px;
+		place-items: center;
+		border-radius: 999px;
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: 12px;
+		font-variant-numeric: tabular-nums;
+		color: var(--c-muted);
+	}
+	.ui-cal-daynum[data-today] {
+		background: var(--c-accent);
+		font-weight: 600;
+		color: var(--c-page);
+	}
+}
+
+/* ── Pickers (semantic classes, 2026-08-07) ──
+   .ui-picker-pop now carries its own padding: the old "no padding here"
+   note guarded against fighting a package-side Tailwind utility, which no
+   longer exists. */
+.ui-picker-pop {
+	padding: 12px;
+}
+.ui-picker-trigger {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	border: 0;
+	border-radius: 12px;
+	padding: 10px 14px;
+	font: inherit;
+	font-size: 14px;
+	cursor: pointer;
+	background: var(--c-page-2);
+	color: var(--c-text);
+	box-shadow: 0 0 0 1px var(--c-line);
+	transition: box-shadow 0.2s;
+}
+.ui-picker-trigger:hover {
+	box-shadow: 0 0 0 1px var(--c-line-strong);
+}
+@scope (.ui-picker-trigger) {
+	:scope > .ui-picker-trigger-icon {
+		color: var(--c-muted);
+	}
+	:scope > .ui-picker-trigger-value {
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-variant-numeric: tabular-nums;
+	}
+}
+@scope (.ui-picker-pop) {
+	.ui-dp-head {
+		margin-bottom: 8px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	.ui-dp-nav {
+		display: grid;
+		width: 28px;
+		height: 28px;
+		place-items: center;
+		border: 0;
+		border-radius: 8px;
+		font: inherit;
+		cursor: pointer;
+		background: transparent;
+		color: var(--c-muted);
+	}
+	.ui-dp-nav:hover {
+		background: var(--c-panel);
+	}
+	.ui-dp-title {
+		font-family: var(--font-display, Georgia, serif);
+		font-size: 15px;
+		color: var(--c-text);
+	}
+	.ui-dp-grid {
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+		gap: 2px;
+	}
+	.ui-dp-wd {
+		display: grid;
+		height: 28px;
+		place-items: center;
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: 9px;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--c-faint);
+	}
+	.ui-dp-day {
+		display: grid;
+		height: 32px;
+		place-items: center;
+		border: 0;
+		border-radius: 8px;
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: 13px;
+		font-variant-numeric: tabular-nums;
+		cursor: pointer;
+		background: transparent;
+		color: var(--c-text);
+		transition: background-color 0.2s, color 0.2s;
+	}
+	.ui-dp-day:hover:not([data-selected]) {
+		background: var(--c-accent-soft);
+		color: var(--c-accent);
+	}
+	.ui-dp-day[data-selected] {
+		background: var(--c-accent);
+		font-weight: 600;
+		color: var(--c-page);
+	}
+	.ui-dp-day[data-today]:not([data-selected]) {
+		box-shadow: 0 0 0 1px var(--c-line-strong);
+	}
+	.ui-tp-readout {
+		margin-bottom: 12px;
+		text-align: center;
+		font-family: var(--font-display, Georgia, serif);
+		font-size: 24px;
+		font-variant-numeric: tabular-nums;
+		color: var(--c-text);
+	}
+	.ui-tp-row {
+		display: flex;
+		gap: 8px;
+	}
+	.ui-tp-wheels {
+		position: relative;
+		display: flex;
+		flex: 1;
+		gap: 4px;
+	}
+	.ui-tp-band {
+		pointer-events: none;
+		position: absolute;
+		inset-inline: 0;
+		top: 50%;
+		height: 36px;
+		transform: translateY(-50%);
+		border-radius: 8px;
+		background: var(--c-accent-soft);
+		box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-accent) 28%, transparent);
+	}
+	.ui-tp-colon {
+		z-index: 10;
+		display: grid;
+		place-items: center;
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: 15px;
+		color: var(--c-faint);
+	}
+	.ui-wheel-item {
+		display: flex;
+		height: 36px;
+		width: 100%;
+		align-items: center;
+		justify-content: center;
+		border: 0;
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: 15px;
+		font-variant-numeric: tabular-nums;
+		cursor: pointer;
+		background: transparent;
+		color: var(--c-faint);
+		transition: all 0.2s;
+	}
+	.ui-wheel-item:hover:not([data-active]) {
+		color: var(--c-text);
+	}
+	.ui-wheel-item[data-active] {
+		transform: scale(1.1);
+		font-weight: 600;
+		color: var(--c-accent);
+	}
+	.ui-tp-ampm-col {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 6px;
+	}
+	.ui-tp-ampm {
+		border: 0;
+		border-radius: 8px;
+		padding: 8px 12px;
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.025em;
+		cursor: pointer;
+		background: transparent;
+		color: var(--c-faint);
+		box-shadow: 0 0 0 1px var(--c-line);
+		transition: background-color 0.2s, color 0.2s;
+	}
+	.ui-tp-ampm:hover:not([data-active]) {
+		background: var(--c-panel);
+		color: var(--c-muted);
+	}
+	.ui-tp-ampm[data-active] {
+		background: var(--c-accent-soft);
+		color: var(--c-accent);
+		box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-accent) 38%, transparent);
+	}
+	.ui-tp-presets {
+		margin-top: 12px;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		border-top: 1px solid var(--c-line);
+		padding-top: 12px;
+	}
+	.ui-tp-preset {
+		border: 0;
+		border-radius: 999px;
+		padding: 4px 10px;
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: 11px;
+		cursor: pointer;
+		background: transparent;
+		color: var(--c-muted);
+		box-shadow: 0 0 0 1px var(--c-line);
+		transition: background-color 0.2s, color 0.2s;
+	}
+	.ui-tp-preset:hover {
+		background: var(--c-panel);
+		color: var(--c-text);
+	}
+}
+/* Wheel sizing (was package-side utilities; scroll/mask styling for
+   .ui-wheel/.ui-wheel-mask lives earlier in this sheet). */
+.ui-wheel {
+	position: relative;
+	height: 160px;
+	flex: 1;
+	overflow-y: auto;
+	padding-block: 64px;
+}
+.ui-wheel-mask {
+	pointer-events: none;
+	position: absolute;
+	inset: 0;
+	z-index: 20;
+}
+
+/* ── Marketing scaffolding (semantic classes, 2026-08-07) ──
+   Breakpoints match the former utility tiers: 640 / 768 / 1024 / 1280. */
+.ui-accent-ink {
+	color: var(--c-accent);
+}
+
+.ui-hero {
+	margin-inline: auto;
+	display: flex;
+	width: 100%;
+	max-width: 56rem;
+	flex-direction: column;
+	gap: 24px;
+	padding: 80px 24px 64px;
+}
+.ui-hero[data-align="center"] {
+	align-items: center;
+	text-align: center;
+}
+.ui-hero[data-align="start"] {
+	align-items: flex-start;
+}
+@media (min-width: 640px) {
+	.ui-hero {
+		padding-top: 112px;
+	}
+}
+@scope (.ui-hero) {
+	:scope > h1 {
+		margin: 0;
+		font-family: var(--font-display, Georgia, serif);
+		font-optical-sizing: auto;
+		font-size: 2.25rem;
+		font-weight: 500;
+		line-height: 1.08;
+		letter-spacing: -0.015em;
+		color: var(--c-text);
+		text-wrap: balance;
+	}
+	:scope > .ui-hero-lede {
+		margin: 0;
+		max-width: 42rem;
+		font-size: 1.125rem;
+		line-height: 1.625;
+		color: var(--c-muted);
+		text-wrap: pretty;
+	}
+	:scope > .ui-hero-actions {
+		margin-top: 8px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 12px;
+	}
+}
+@media (min-width: 640px) {
+	.ui-hero > h1 {
+		font-size: 3.75rem;
+	}
+}
+
+.ui-section {
+	margin-inline: auto;
+	width: 100%;
+	max-width: 48rem;
+	padding: 56px 24px;
+}
+.ui-section[data-wide] {
+	max-width: 72rem;
+}
+@media (min-width: 640px) {
+	.ui-section {
+		padding-block: 80px;
+	}
+}
+@scope (.ui-section) {
+	:scope > .ui-section-head {
+		margin-bottom: 40px;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+	:scope > .ui-section-head[data-center] {
+		align-items: center;
+		text-align: center;
+	}
+	.ui-section-head h2 {
+		margin: 0;
+		font-family: var(--font-display, Georgia, serif);
+		font-optical-sizing: auto;
+		font-size: 1.875rem;
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		color: var(--c-text);
+		text-wrap: balance;
+	}
+	.ui-section-head .ui-section-lede {
+		margin: 0;
+		max-width: 42rem;
+		font-size: 1rem;
+		line-height: 1.625;
+		color: var(--c-muted);
+		text-wrap: pretty;
+	}
+}
+@media (min-width: 640px) {
+	.ui-section > .ui-section-head h2 {
+		font-size: 2.25rem;
+	}
+}
+
+.ui-feature-grid {
+	display: grid;
+	gap: 20px;
+}
+@media (min-width: 640px) {
+	.ui-feature-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+@media (min-width: 1024px) {
+	.ui-feature-grid[data-columns="3"] {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+@scope (.ui-feature-grid) {
+	:scope > .ui-feature-card {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		border-radius: 16px;
+		background: var(--c-panel);
+		padding: 24px;
+		box-shadow: 0 0 0 1px var(--c-line);
+	}
+	.ui-feature-icon {
+		display: inline-grid;
+		width: 40px;
+		height: 40px;
+		place-items: center;
+		border-radius: 12px;
+		font-size: 1.125rem;
+	}
+	.ui-feature-card h3 {
+		margin: 0;
+		font-family: var(--font-display, Georgia, serif);
+		font-size: 1.125rem;
+		font-weight: 500;
+		color: var(--c-text);
+	}
+	.ui-feature-body {
+		font-size: 15px;
+		line-height: 1.625;
+		color: var(--c-muted);
+	}
+}
+
+/* Steps layout (the node disc/wash/shimmer visuals live earlier in this
+   sheet under the legacy Steps section). */
+.ui-step-disc {
+	position: relative;
+	aspect-ratio: 1;
+	width: 100%;
+	flex-shrink: 0;
+}
+.ui-step-num {
+	position: relative;
+	display: flex;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--font-data, ui-monospace, monospace);
+}
+.ui-step-num[data-size="sm"] {
+	font-size: 0.875rem;
+}
+.ui-step-num[data-size="md"] {
+	font-size: 1.25rem;
+}
+.ui-step-num[data-size="lg"] {
+	font-size: 1.875rem;
+}
+.ui-steps {
+	position: relative;
+	margin: 0;
+	display: grid;
+	list-style: none;
+	padding: 0;
+}
+.ui-steps[data-variant="rail"] {
+	gap: 40px;
+}
+.ui-steps[data-variant="zigzag"] {
+	gap: 64px;
+}
+@scope (.ui-steps) {
+	:scope > .ui-steps-line {
+		position: absolute;
+		width: 1px;
+	}
+	:scope[data-variant="zigzag"] > .ui-steps-line {
+		left: 50%;
+		display: none;
+		transform: translateX(-50%);
+	}
+	:scope > .ui-step {
+		position: relative;
+	}
+	:scope[data-variant="rail"] > .ui-step {
+		display: grid;
+		gap: 20px;
+	}
+	:scope[data-variant="zigzag"] > .ui-step {
+		display: flex;
+		align-items: center;
+		gap: 32px;
+	}
+	.ui-step-node-anchor {
+		position: absolute;
+		left: 0;
+		top: 0;
+	}
+	.ui-step-node-cell {
+		display: flex;
+		flex: 1;
+		align-items: center;
+		justify-content: flex-start;
+	}
+	.ui-step-text {
+		position: relative;
+		z-index: 10;
+		flex: 1;
+	}
+	.ui-step-text h3 {
+		margin: 0;
+		font-family: var(--font-display, Georgia, serif);
+		font-size: 1.5rem;
+		font-weight: 500;
+	}
+	.ui-step-body {
+		margin-top: 12px;
+		line-height: 1.625;
+		color: var(--c-muted);
+	}
+	:scope[data-variant="rail"] .ui-step-body {
+		margin-top: 8px;
+	}
+	.ui-step-bullets {
+		margin: 16px 0 0;
+		display: grid;
+		list-style: none;
+		gap: 8px;
+		padding: 0;
+		font-size: 0.875rem;
+		color: var(--c-muted);
+	}
+	:scope[data-variant="rail"] .ui-step-bullets {
+		margin-top: 12px;
+		list-style: disc;
+		padding-left: 20px;
+		gap: 6px;
+		font-size: 15px;
+	}
+}
+@media (min-width: 768px) {
+	.ui-steps[data-variant="zigzag"] > .ui-steps-line {
+		display: block;
+	}
+	.ui-steps[data-variant="zigzag"] > .ui-step {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 32px;
+	}
+	.ui-steps[data-variant="zigzag"] > .ui-step:not([data-flip]) .ui-step-text {
+		text-align: right;
+	}
+	.ui-steps[data-variant="zigzag"] > .ui-step[data-flip] .ui-step-node-cell {
+		justify-content: flex-end;
+	}
+}
+
+.ui-logo-cloud {
+	margin: 0;
+	display: flex;
+	list-style: none;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	column-gap: 48px;
+	row-gap: 32px;
+	padding: 0;
+}
+@scope (.ui-logo-cloud) {
+	.ui-logo-name {
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: 0.875rem;
+		color: var(--c-faint);
+	}
+	.ui-logo-item img {
+		max-height: 40px;
+		width: auto;
+		max-width: 9rem;
+	}
+}
+
+.docs-shell {
+	margin-inline: auto;
+	display: grid;
+	width: 100%;
+	max-width: 80rem;
+	gap: 40px;
+	padding: 48px 24px;
+}
+@media (min-width: 1024px) {
+	.docs-shell {
+		grid-template-columns: 13rem minmax(0, 1fr);
+	}
+}
+@media (min-width: 1280px) {
+	.docs-shell {
+		grid-template-columns: 13rem minmax(0, 1fr) 13rem;
+	}
+}
+.docs-nav,
+.docs-toc {
+	display: none;
+}
+@media (min-width: 1024px) {
+	.docs-nav {
+		display: block;
+	}
+}
+@media (min-width: 1280px) {
+	.docs-toc {
+		display: block;
+	}
+}
+.docs-side {
+	position: sticky;
+	top: 96px;
+	display: grid;
+	gap: 4px;
+}
+.docs-side > .ui-eyebrow {
+	margin-bottom: 8px;
+}
+.docs-article {
+	min-width: 0;
 }

@@ -24,7 +24,7 @@ function BellIcon() {
 
 export function Pair() {
 	return (
-		<div class="flex items-center gap-2">
+		<div style={{ display: 'flex', 'align-items': 'center', gap: '8px' }}>
 			<IconButton label="Add item">
 				<PlusIcon />
 			</IconButton>

@@ -20,7 +20,7 @@ export function ThreeTabs() {
 export function ManyTabs() {
 	const [tab, setTab] = createSignal('signals')
 	return (
-		<div class="max-w-md">
+		<div style={{ 'max-width': '28rem' }}>
 			<Segmented
 				options={[
 					{ id: 'signals', label: 'Signals' },

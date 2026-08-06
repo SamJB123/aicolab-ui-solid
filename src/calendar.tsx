@@ -136,25 +136,15 @@ export function MonthCalendar(props: {
 		(props.showTodayButton ?? true) && inRange(monthIndex({ y: today().y, m: today().m }))
 
 	return (
-		<div class={['flex flex-col', props.class]}>
-			{/* flex-wrap: at extreme narrowness the controls drop to a second row
-			    instead of forcing the whole calendar past its container. */}
-			<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-				<div class="flex items-baseline gap-3">
-					<h2 class="font-display text-2xl font-medium text-[var(--c-paper)]">
-						{MONTHS[props.month.m]}
-					</h2>
-					<span class="font-data text-[15px] tabular-nums text-[var(--c-faint)]">
-						{props.month.y}
-					</span>
+		<div class={['ui-cal', props.class]}>
+			<div class="ui-cal-head">
+				<div class="ui-cal-head-left">
+					<h2>{MONTHS[props.month.m]}</h2>
+					<span class="ui-cal-year">{props.month.y}</span>
 				</div>
-				<div class="flex items-center gap-2">
+				<div class="ui-cal-head-controls">
 					<Show when={showToday()}>
-						<button
-							type="button"
-							onClick={goToday}
-							class="rounded-full px-3 py-1.5 font-data text-[11px] uppercase tracking-[0.16em] text-[var(--c-muted)] ring-1 ring-[var(--c-line)] transition-colors hover:bg-[var(--c-panel-2)] hover:text-[var(--c-paper)]"
-						>
+						<button type="button" onClick={goToday} class="ui-cal-today-btn">
 							Today
 						</button>
 					</Show>
@@ -171,24 +161,18 @@ export function MonthCalendar(props: {
 				</div>
 			</div>
 
-			<div class="grid grid-cols-7 gap-1 border-b border-[var(--c-line)] pb-2">
-				<For each={WEEKDAYS}>
-					{(w) => (
-						<span class="text-center font-data text-[10px] uppercase tracking-[0.16em] text-[var(--c-faint)]">
-							{w}
-						</span>
-					)}
-				</For>
+			<div class="ui-cal-weekdays">
+				<For each={WEEKDAYS}>{(w) => <span class="ui-cal-weekday">{w}</span>}</For>
 			</div>
 
 			{/* The grid morphs across months via this named element. */}
 			<div
-				class="mt-1 grid grid-cols-7 gap-1"
+				class="ui-cal-grid"
 				style={{ 'view-transition-name': props.transitionName ?? 'cal-grid' }}
 			>
 				<For each={cells()} keyed={false}>
 					{(cell) => (
-						<Show when={cell()} fallback={<div class="min-h-[84px]" />}>
+						<Show when={cell()} fallback={<div class="ui-cal-blank" />}>
 							{(d) => {
 								const date = () => ({ y: props.month.y, m: props.month.m, d: d() })
 								const isToday = () => sameDay(today(), date())
@@ -197,21 +181,10 @@ export function MonthCalendar(props: {
 									<button
 										type="button"
 										onClick={() => props.onSelectDay?.(date())}
-										class={[
-											'flex min-h-[84px] flex-col gap-1 rounded-xl border p-1.5 text-left transition-colors',
-											isSel()
-												? 'border-[color-mix(in_oklab,var(--c-accent)_45%,transparent)] bg-[var(--c-accent-soft)]'
-												: 'border-transparent hover:bg-[var(--c-panel-2)]',
-										]}
+										class="ui-cal-day"
+										data-selected={isSel() ? '' : undefined}
 									>
-										<span
-											class={[
-												'grid h-6 w-6 place-items-center rounded-full font-data text-[12px] tabular-nums',
-												isToday()
-													? 'bg-[var(--c-accent)] font-semibold text-[var(--c-ink)]'
-													: 'text-[var(--c-muted)]',
-											]}
-										>
+										<span class="ui-cal-daynum" data-today={isToday() ? '' : undefined}>
 											{d()}
 										</span>
 										{props.day?.(date)}

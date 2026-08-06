@@ -4,14 +4,25 @@ import { Field, Segmented } from '@aicolab/ui-solid'
 
 export function WithInput() {
 	return (
-		<Field label="studio name" class="w-64">
-			<input
-				type="text"
-				value="Atrium West"
-				class="rounded-lg bg-[var(--c-panel)] px-3 py-2 text-sm text-[var(--c-paper)] ring-1 ring-[var(--c-line-strong)]"
-				style={{ border: 'none', outline: 'none' }}
-			/>
-		</Field>
+		<div style={{ width: '16rem' }}>
+			<Field label="studio name">
+				<input
+					type="text"
+					value="Atrium West"
+					style={{
+						'border-radius': '8px',
+						background: 'var(--c-panel)',
+						padding: '8px 12px',
+						'font-size': '0.875rem',
+						'line-height': '1.25rem',
+						color: 'var(--c-text)',
+						'box-shadow': '0 0 0 1px var(--c-line-strong)',
+						border: 'none',
+						outline: 'none',
+					}}
+				/>
+			</Field>
+		</div>
 	)
 }
 

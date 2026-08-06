@@ -4,24 +4,30 @@
 //
 // ## The token contract
 //
-// Every primitive styles itself exclusively from the nine-colour token set the
-// consuming app defines on a root element (see styles.css for the full list):
+// Every primitive styles itself exclusively from the token set the consuming
+// app defines on a root element — see styles.css, where the full contract is
+// REGISTERED with @property (typed, animatable, canonical gold-trim
+// initials, so the package renders styled even without an app palette):
 //
-//   --c-ink / --c-ink-2      page + recessed surfaces
+//   --c-page / --c-page-2      page + recessed surfaces
 //   --c-panel / --c-panel-2  raised surfaces
-//   --c-paper                primary text
+//   --c-text                primary text
 //   --c-muted / --c-faint    secondary / tertiary text
-//   --c-accent               brand accent
+//   --c-accent               brand accent (gold trim)
 //   --c-live                 "live"/positive signal
-//   --c-line / --c-line-strong  hairlines (DERIVE from --c-paper via color-mix)
+//   --c-line / --c-line-strong  hairlines (DERIVE from --c-text via color-mix)
 //   --c-accent-soft             accent wash (DERIVE from --c-accent)
 //
-// plus three font roles: --font-display / --font-sans / --font-data (the
-// `.font-display` / `.font-data` helper classes in styles.css read them).
+// plus three font roles: --font-display / --font-sans / --font-data.
 //
-// Apps own their palette VALUES; this package owns only the contract and the
-// components. Tailwind utility classes used here compile in the consuming app
-// — add `@source "<relative path to>/packages/ui-solid/src";` to its CSS.
+// ## Styling model (de-Tailwinded 2026-08-07)
+//
+// Components carry ONE semantic root class (`.ui-*`) whose interior is
+// styled through @scope blocks in styles.css — no utility classes, no
+// consumer `@source`, no build step. Dynamic values (sizes, data colours)
+// remain inline styles or data-* attributes. Variants ride data attributes
+// (`data-tone`, `data-variant`). Where typed attr() is supported, Meter's
+// fill is fully data-driven (see below).
 //
 // ## Differences from the COMMONS originals
 //
@@ -34,28 +40,27 @@
 //   - `Logo` stayed in the playground — it is COMMONS-brand-specific.
 
 import type { JSX } from '@solidjs/web'
-import { createEffect, createMemo, For, type ParentProps, Show, untrack } from 'solid-js'
+import {
+	createEffect,
+	createMemo,
+	createSignal,
+	For,
+	onSettled,
+	type ParentProps,
+	Show,
+	untrack,
+} from 'solid-js'
 
 /** What a component `class` prop accepts: anything that can sit INSIDE a
  *  Solid class array (the components splice it into their own arrays, and
  *  `JSX.ClassValue` arrays don't nest). A string for the simple case; one
- *  `Record<string, boolean>` covers conditional mixes —
- *  `class={{ 'justify-center': true, 'opacity-50': busy() }}`. */
+ *  `Record<string, boolean>` covers conditional mixes. */
 export type ClassProp = string | Record<string, boolean>
 
 // ── Type ────────────────────────────────────────────────────────────────────
 
 export function Eyebrow(props: ParentProps<{ class?: ClassProp }>) {
-	return (
-		<span
-			class={[
-				'font-data text-[10px] uppercase tracking-[0.32em] text-[var(--c-faint)]',
-				props.class,
-			]}
-		>
-			{props.children}
-		</span>
-	)
+	return <span class={['ui-eyebrow', props.class]}>{props.children}</span>
 }
 
 // ── Status dot ────────────────────────────────────────────────────────────────
@@ -67,18 +72,12 @@ export type StatusVisual = { color: string; live?: boolean }
 export function StatusDot(props: { status: StatusVisual; size?: number }) {
 	const size = () => props.size ?? 8
 	return (
-		<span
-			class="relative inline-grid place-items-center"
-			style={{ width: `${size()}px`, height: `${size()}px` }}
-		>
+		<span class="ui-dot" style={{ width: `${size()}px`, height: `${size()}px` }}>
 			<Show when={props.status.live}>
-				<span
-					class="absolute inset-0 rounded-full"
-					style={{ background: props.status.color, animation: 'ui-ping 1.8s ease-out infinite' }}
-				/>
+				<span class="ui-dot-ping" style={{ background: props.status.color }} />
 			</Show>
 			<span
-				class="relative rounded-full"
+				class="ui-dot-core"
 				style={{ width: `${size()}px`, height: `${size()}px`, background: props.status.color }}
 			/>
 		</span>
@@ -104,28 +103,21 @@ export function Avatar(props: {
 }) {
 	const size = () => props.size ?? 36
 	return (
-		<span
-			class="relative inline-block shrink-0"
-			style={{ width: `${size()}px`, height: `${size()}px` }}
-		>
+		<span class="ui-avatar" style={{ width: `${size()}px`, height: `${size()}px` }}>
 			<span
-				class="grid h-full w-full place-items-center rounded-full font-data font-medium uppercase"
+				class="ui-avatar-face"
 				style={{
 					'font-size': `${Math.round(size() * 0.34)}px`,
 					color: props.color,
 					background: `color-mix(in oklab, ${props.color} 20%, ${props.ring ?? 'var(--c-panel)'})`,
 					'box-shadow': `inset 0 0 0 1px color-mix(in oklab, ${props.color} 55%, transparent)`,
-					'letter-spacing': '0.02em',
 				}}
 			>
 				{initials(props.name)}
 			</span>
 			<Show when={props.status}>
 				{(s) => (
-					<span
-						class="absolute -bottom-0.5 -right-0.5 grid place-items-center rounded-full"
-						style={{ padding: '2px', background: props.ring ?? 'var(--c-panel)' }}
-					>
+					<span class="ui-avatar-badge" style={{ background: props.ring ?? 'var(--c-panel)' }}>
 						<StatusDot status={s()} size={Math.max(7, Math.round(size() * 0.2))} />
 					</span>
 				)}
@@ -145,34 +137,29 @@ export function AvatarStack(props: {
 	const shown = createMemo(() => props.people.slice(0, max()))
 	const extra = createMemo(() => props.people.length - shown().length)
 	return (
-		<div class="flex items-center">
+		<div class="ui-avatar-stack">
 			<For each={shown()}>
 				{(p, i) => (
 					<span
-						class="rounded-full"
+						class="ui-avatar-stack-item"
 						style={{
 							'margin-left': i() === 0 ? '0' : `-${Math.round(size() * 0.32)}px`,
-							'box-shadow': `0 0 0 2px ${props.ring ?? 'var(--c-ink)'}`,
+							'box-shadow': `0 0 0 2px ${props.ring ?? 'var(--c-page)'}`,
 							'z-index': String(shown().length - i()),
-							position: 'relative',
-							'border-radius': '999px',
 						}}
 					>
-						<Avatar name={p.name} color={p.color} size={size()} ring={props.ring ?? 'var(--c-ink)'} />
+						<Avatar name={p.name} color={p.color} size={size()} ring={props.ring ?? 'var(--c-page)'} />
 					</span>
 				)}
 			</For>
 			<Show when={extra() > 0}>
 				<span
-					class="grid place-items-center rounded-full font-data text-[11px] text-[var(--c-muted)]"
+					class="ui-avatar-stack-extra"
 					style={{
 						'margin-left': `-${Math.round(size() * 0.32)}px`,
 						width: `${size()}px`,
 						height: `${size()}px`,
-						background: 'var(--c-panel-2)',
-						'box-shadow': `0 0 0 2px ${props.ring ?? 'var(--c-ink)'}, inset 0 0 0 1px var(--c-line)`,
-						'z-index': '0',
-						position: 'relative',
+						'box-shadow': `0 0 0 2px ${props.ring ?? 'var(--c-page)'}, inset 0 0 0 1px var(--c-line)`,
 					}}
 				>
 					+{extra()}
@@ -188,18 +175,8 @@ export function Chip(props: ParentProps<{ tone?: 'plain' | 'accent' | 'live'; cl
 	const tone = () => props.tone ?? 'plain'
 	return (
 		<span
-			class={[
-				'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-data text-[10px] uppercase tracking-[0.16em]',
-				{
-					'bg-[var(--c-panel-2)] text-[var(--c-muted)] ring-1 ring-[var(--c-line)]':
-						tone() === 'plain',
-					'bg-[var(--c-accent-soft)] text-[var(--c-accent)] ring-1 ring-[color-mix(in_oklab,var(--c-accent)_35%,transparent)]':
-						tone() === 'accent',
-					'bg-[color-mix(in_oklab,var(--c-live)_15%,transparent)] text-[var(--c-live)] ring-1 ring-[color-mix(in_oklab,var(--c-live)_30%,transparent)]':
-						tone() === 'live',
-				},
-				props.class,
-			]}
+			class={['ui-chip', props.class]}
+			data-tone={tone() === 'plain' ? undefined : tone()}
 		>
 			{props.children}
 		</span>
@@ -218,7 +195,6 @@ export function Button(
 		class?: ClassProp
 	}>,
 ) {
-	const variant = () => props.variant ?? 'ghost'
 	return (
 		<button
 			type="button"
@@ -226,17 +202,8 @@ export function Button(
 			onClick={() => {
 				if (!props.disabled) props.onClick?.()
 			}}
-			class={[
-				'inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-medium transition-all duration-200 active:scale-[0.97]',
-				'disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100',
-				{
-					'bg-[var(--c-accent)] text-[var(--c-ink)] hover:brightness-110 hover:shadow-[0_4px_24px_-6px_var(--c-accent)] disabled:hover:brightness-100 disabled:hover:shadow-none':
-						variant() === 'primary',
-					'text-[var(--c-paper)] ring-1 ring-[var(--c-line-strong)] hover:bg-[var(--c-panel-2)] hover:ring-[var(--c-muted)] disabled:hover:bg-transparent disabled:hover:ring-[var(--c-line-strong)]':
-						variant() === 'ghost',
-				},
-				props.class,
-			]}
+			class={['ui-btn', props.class]}
+			data-variant={props.variant ?? 'ghost'}
 		>
 			{props.children}
 		</button>
@@ -260,32 +227,20 @@ export function Panel(
 	}>,
 ) {
 	return (
-		<section
-			class={[
-				'group relative flex flex-col overflow-hidden rounded-2xl bg-[var(--c-panel)] p-5 ring-1 ring-[var(--c-line)]',
-				'before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-[var(--c-line-strong)] before:to-transparent',
-				props.class,
-			]}
-			style={props.style}
-		>
+		// `group` is kept as a marker class for consumers' group-hover styling.
+		<section class={['ui-panel group', props.class]} style={props.style}>
 			<Show when={props.glow}>
-				<span class="pointer-events-none absolute -right-16 -top-20 h-44 w-44 rounded-full bg-[var(--c-accent)] opacity-[0.07] blur-3xl" />
+				<span class="ui-panel-glow" />
 			</Show>
-			<header class="mb-4 flex items-start justify-between gap-3">
-				<div class="flex items-baseline gap-2.5">
+			<header>
+				<div class="ui-panel-head-left">
 					<Show when={props.index}>
-						<span class="font-data text-[11px] tracking-[0.1em] text-[var(--c-faint)]">
-							{props.index}
-						</span>
+						<span class="ui-panel-index">{props.index}</span>
 					</Show>
 					<div>
-						<h2 class="font-display text-[19px] font-medium leading-none text-[var(--c-paper)]">
-							{props.title}
-						</h2>
+						<h2>{props.title}</h2>
 						<Show when={props.kicker}>
-							<p class="mt-1.5 font-data text-[10px] uppercase tracking-[0.2em] text-[var(--c-faint)]">
-								{props.kicker}
-							</p>
+							<p class="ui-panel-kicker">{props.kicker}</p>
 						</Show>
 					</div>
 				</div>
@@ -330,7 +285,7 @@ export function Counter(props: { value: number; format?: (n: number) => string; 
 		},
 	)
 	return (
-		<span ref={el} class={['tabular-nums', props.class]} data-v={String(props.value)}>
+		<span ref={el} class={['ui-counter', props.class]} data-v={String(props.value)}>
 			{fmt(props.value)}
 		</span>
 	)
@@ -358,7 +313,7 @@ export function Sparkline(props: { data: number[]; w?: number; h?: number; color
 			viewBox={`0 0 ${geo().w} ${geo().h}`}
 			width={geo().w}
 			height={geo().h}
-			class="overflow-visible"
+			class="ui-sparkline"
 			preserveAspectRatio="none"
 			aria-hidden="true"
 		>
@@ -381,11 +336,11 @@ export function Sparkline(props: { data: number[]; w?: number; h?: number; color
 export function Waveform(props: { bars: number[]; color?: string; class?: ClassProp }) {
 	const color = () => props.color ?? 'var(--c-accent)'
 	return (
-		<div class={['flex h-full items-center gap-[3px]', props.class]}>
+		<div class={['ui-waveform', props.class]}>
 			<For each={props.bars}>
 				{(v) => (
 					<div
-						class="flex-1 rounded-full"
+						class="ui-waveform-bar"
 						style={{
 							height: `${Math.max(8, v * 100)}%`,
 							background: color(),
@@ -398,15 +353,31 @@ export function Waveform(props: { bars: number[]; color?: string; class?: ClassP
 	)
 }
 
-// ── Meter — occupancy / capacity bar ──────────────────────────────────────────
+// ── Meter — occupancy / capacity bar (typed-attr() exemplar) ─────────────────
+// The fill publishes its percentage as `data-pct`. Where typed attr() is
+// supported, the CSS rule `width: attr(data-pct type(<percentage>), 0%)`
+// owns the width and the inline fallback is dropped AFTER settle (SSR and
+// hydration always carry the inline width, so markup stays stable); the
+// 0.5s width transition makes the ownership handoff invisible.
+
+const supportsTypedAttr = (): boolean =>
+	typeof CSS !== 'undefined' && CSS.supports('width', 'attr(data-pct type(<percentage>), 0%)')
 
 export function Meter(props: { value: number; max: number; color?: string }) {
 	const pct = () => Math.min(100, Math.round((props.value / props.max) * 100))
+	const [cssOwnsWidth, setCssOwnsWidth] = createSignal(false)
+	onSettled(() => {
+		if (supportsTypedAttr()) setCssOwnsWidth(true)
+	})
 	return (
-		<div class="h-1 w-full overflow-hidden rounded-full bg-[var(--c-line)]">
+		<div class="ui-meter">
 			<div
-				class="h-full rounded-full transition-[width] duration-500"
-				style={{ width: `${pct()}%`, background: props.color ?? 'var(--c-paper)' }}
+				class="ui-meter-fill"
+				data-pct={`${pct()}%`}
+				style={{
+					width: cssOwnsWidth() ? undefined : `${pct()}%`,
+					background: props.color ?? 'var(--c-text)',
+				}}
 			/>
 		</div>
 	)
@@ -416,11 +387,11 @@ export function Meter(props: { value: number; max: number; color?: string }) {
 
 export function Rule(props: { label?: string }) {
 	return (
-		<div class="flex items-center gap-3">
-			<span class="h-px flex-1 bg-[var(--c-line)]" />
+		<div class="ui-rule">
+			<span class="ui-rule-line" />
 			<Show when={props.label}>
 				<Eyebrow>{props.label}</Eyebrow>
-				<span class="h-px flex-1 bg-[var(--c-line)]" />
+				<span class="ui-rule-line" />
 			</Show>
 		</div>
 	)

@@ -13,7 +13,9 @@
  *    data-URI. Reskin path: convert to mask-image + background-color: var().
  */
 /*! XP.css v0.2.6 - https://botoxparty.github.io/XP.css/ */
-@font-face:where(:not(.xp-exempt *)) {
+/* At-rules take no selector — the .xp-exempt scope stamp applies to style
+   rules only. */
+@font-face {
   font-family: "Pixelated MS Sans Serif";
   src: url(./fonts/ms_sans_serif.woff) format("woff");
   src: url(./fonts/ms_sans_serif.woff2) format("woff2");

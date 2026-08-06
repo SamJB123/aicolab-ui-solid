@@ -9,7 +9,8 @@
 // carousels, @starting-style) behind graceful fallbacks; the only JS is the
 // DocsShell table-of-contents observer, which CSS cannot express yet.
 //
-// Structural CSS lives in styles.css under "── Marketing ──".
+// Structural CSS lives in styles.css (semantic classes + @scope — the
+// package carries no utility classes since 2026-08-07).
 
 import type { JSX } from '@solidjs/web'
 import { createSignal, For, onSettled, type ParentProps, Show } from 'solid-js'
@@ -29,26 +30,17 @@ export function PageHero(props: {
 	align?: 'center' | 'start'
 	class?: ClassProp
 }) {
-	const align = () => props.align ?? 'center'
 	return (
-		<div
-			class={[
-				'mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 pb-16 pt-20 sm:pt-28',
-				{ 'items-center text-center': align() === 'center', 'items-start': align() === 'start' },
-				props.class,
-			]}
-		>
+		<div class={['ui-hero', props.class]} data-align={props.align ?? 'center'}>
 			<Show when={props.eyebrow}>
-				<Eyebrow class="text-[var(--c-accent)]">{props.eyebrow}</Eyebrow>
+				<Eyebrow class="ui-accent-ink">{props.eyebrow}</Eyebrow>
 			</Show>
-			<h1 class="font-display m-0 text-4xl font-medium leading-[1.08] tracking-[-0.015em] text-[var(--c-paper)] sm:text-6xl">
-				{props.title}
-			</h1>
+			<h1>{props.title}</h1>
 			<Show when={props.lede}>
-				<p class="m-0 max-w-2xl text-lg leading-relaxed text-[var(--c-muted)]">{props.lede}</p>
+				<p class="ui-hero-lede">{props.lede}</p>
 			</Show>
 			<Show when={props.actions}>
-				<div class="mt-2 flex flex-wrap items-center justify-center gap-3">{props.actions?.()}</div>
+				<div class="ui-hero-actions">{props.actions?.()}</div>
 			</Show>
 		</div>
 	)
@@ -57,7 +49,7 @@ export function PageHero(props: {
 // ── Section ──────────────────────────────────────────────────────────────────
 
 /** A titled page section with consistent width/rhythm. `wide` spans to 72rem
- *  for grids; default column is 56rem. */
+ *  for grids; default column is 48rem. */
 export function Section(props: {
 	id?: string
 	eyebrow?: string
@@ -71,28 +63,19 @@ export function Section(props: {
 	return (
 		<section
 			id={props.id}
-			class={[
-				'mx-auto w-full px-6 py-14 sm:py-20',
-				{ 'max-w-6xl': !!props.wide, 'max-w-3xl': !props.wide },
-				props.class,
-			]}
+			class={['ui-section', props.class]}
+			data-wide={props.wide ? '' : undefined}
 		>
 			<Show when={props.eyebrow || props.title || props.lede}>
-				<header
-					class={['mb-10 flex flex-col gap-3', { 'items-center text-center': !!props.center }]}
-				>
+				<header class="ui-section-head" data-center={props.center ? '' : undefined}>
 					<Show when={props.eyebrow}>
-						<Eyebrow class="text-[var(--c-accent)]">{props.eyebrow}</Eyebrow>
+						<Eyebrow class="ui-accent-ink">{props.eyebrow}</Eyebrow>
 					</Show>
 					<Show when={props.title}>
-						<h2 class="font-display m-0 text-3xl font-medium tracking-[-0.01em] text-[var(--c-paper)] sm:text-4xl">
-							{props.title}
-						</h2>
+						<h2>{props.title}</h2>
 					</Show>
 					<Show when={props.lede}>
-						<p class="m-0 max-w-2xl text-base leading-relaxed text-[var(--c-muted)]">
-							{props.lede}
-						</p>
+						<p class="ui-section-lede">{props.lede}</p>
 					</Show>
 				</header>
 			</Show>
@@ -131,21 +114,15 @@ export type Feature = {
 export function FeatureGrid(props: { items: Feature[]; columns?: 2 | 3; class?: ClassProp }) {
 	return (
 		<div
-			class={[
-				'grid gap-5',
-				{
-					'sm:grid-cols-2': (props.columns ?? 3) === 2,
-					'sm:grid-cols-2 lg:grid-cols-3': (props.columns ?? 3) === 3,
-				},
-				props.class,
-			]}
+			class={['ui-feature-grid', props.class]}
+			data-columns={String(props.columns ?? 3)}
 		>
 			<For each={props.items}>
 				{(item) => (
-					<article class="ui-reveal flex flex-col gap-3 rounded-2xl bg-[var(--c-panel)] p-6 ring-1 ring-[var(--c-line)]">
+					<article class="ui-feature-card ui-reveal">
 						<Show when={item.icon}>
 							<span
-								class="inline-grid h-10 w-10 place-items-center rounded-xl text-lg"
+								class="ui-feature-icon"
 								style={{
 									background: `color-mix(in oklab, ${item.accent ?? 'var(--c-accent)'} 12%, transparent)`,
 									color: item.accent ?? 'var(--c-accent)',
@@ -154,8 +131,8 @@ export function FeatureGrid(props: { items: Feature[]; columns?: 2 | 3; class?: 
 								{item.icon}
 							</span>
 						</Show>
-						<h3 class="font-display m-0 text-lg font-medium text-[var(--c-paper)]">{item.title}</h3>
-						<div class="text-[15px] leading-relaxed text-[var(--c-muted)]">{item.body}</div>
+						<h3>{item.title}</h3>
+						<div class="ui-feature-body">{item.body}</div>
 					</article>
 				)}
 			</For>
@@ -187,32 +164,35 @@ export type Step = {
 export type StepNodeSize = 'sm' | 'md' | 'lg'
 
 const NODE_SIZE: Record<StepNodeSize, string> = { sm: '2.75rem', md: '5rem', lg: '10rem' }
-const NODE_NUM_TEXT: Record<StepNodeSize, string> = {
-	sm: 'text-sm',
-	md: 'text-xl',
-	lg: 'text-3xl',
-}
 
 function StepNode(props: { step: Step; index: number; size: StepNodeSize }) {
 	const accent = () => props.step.accent ?? 'var(--c-accent)'
 	return (
 		<div
-			class="ui-step-disc relative aspect-square w-full shrink-0"
+			class="ui-step-disc"
 			style={{ 'max-width': NODE_SIZE[props.size], '--step-accent': accent() }}
 		>
 			<Show when={props.size !== 'sm'}>
 				<span class="ui-step-wash" aria-hidden="true" />
 				<span class="ui-step-shimmer" aria-hidden="true" />
 			</Show>
-			<div
-				class={[
-					'font-data relative flex h-full items-center justify-center',
-					NODE_NUM_TEXT[props.size],
-				]}
-				style={{ color: accent() }}
-			>
+			<div class="ui-step-num" data-size={props.size} style={{ color: accent() }}>
 				{props.step.icon ? props.step.icon() : props.index + 1}
 			</div>
+		</div>
+	)
+}
+
+function StepText(props: { step: Step }) {
+	return (
+		<div class="ui-step-text">
+			<h3 style={{ color: props.step.accent ?? 'var(--c-text)' }}>{props.step.title}</h3>
+			<div class="ui-step-body">{props.step.body}</div>
+			<Show when={props.step.bullets?.length}>
+				<ul class="ui-step-bullets">
+					<For each={props.step.bullets}>{(b) => <li>{b}</li>}</For>
+				</ul>
+			</Show>
 		</div>
 	)
 }
@@ -230,9 +210,9 @@ export function Steps(props: {
 		<Show
 			when={variant() === 'zigzag'}
 			fallback={
-				<ol class="ui-steps relative m-0 grid list-none gap-10 p-0">
+				<ol class="ui-steps" data-variant="rail">
 					<span
-						class="ui-steps-line absolute w-px"
+						class="ui-steps-line"
 						style={{
 							left: `calc(${NODE_SIZE[size()]} / 2)`,
 							top: `calc(${NODE_SIZE[size()]} / 2)`,
@@ -243,82 +223,34 @@ export function Steps(props: {
 					<For each={props.steps}>
 						{(step, i) => (
 							<li
-								class="ui-reveal relative grid gap-5"
+								class="ui-step ui-reveal"
 								style={{ 'padding-left': `calc(${NODE_SIZE[size()]} + 1.25rem)` }}
 							>
-								<div class="absolute left-0 top-0" style={{ width: NODE_SIZE[size()] }}>
+								<div class="ui-step-node-anchor" style={{ width: NODE_SIZE[size()] }}>
 									<StepNode step={step} index={i()} size={size()} />
 								</div>
-								<div>
-									<h3
-										class="font-display m-0 text-2xl font-medium"
-										style={{ color: step.accent ?? 'var(--c-paper)' }}
-									>
-										{step.title}
-									</h3>
-									<div class="mt-2 leading-relaxed text-[var(--c-muted)]">{step.body}</div>
-									<Show when={step.bullets?.length}>
-										<ul class="mt-3 grid gap-1.5 pl-5 text-[15px] text-[var(--c-muted)]">
-											<For each={step.bullets}>{(b) => <li>{b}</li>}</For>
-										</ul>
-									</Show>
-								</div>
+								<StepText step={step} />
 							</li>
 						)}
 					</For>
 				</ol>
 			}
 		>
-			<ol class="ui-steps relative m-0 grid list-none gap-16 p-0">
-				<span
-					class="ui-steps-line absolute left-1/2 hidden w-px -translate-x-1/2 md:block"
-					style={{ top: '2rem', bottom: '2rem' }}
-					aria-hidden="true"
-				/>
+			<ol class="ui-steps" data-variant="zigzag">
+				<span class="ui-steps-line" style={{ top: '2rem', bottom: '2rem' }} aria-hidden="true" />
 				<For each={props.steps}>
 					{(step, i) => {
 						const flip = () => i() % 2 === 1
 						return (
-							<li class="ui-reveal relative flex items-center gap-8 md:grid md:grid-cols-2 md:gap-8">
+							<li class="ui-step ui-reveal" data-flip={flip() ? '' : undefined}>
 								<Show when={!flip()}>
-									<div class="relative z-10 flex-1 md:text-right">
-										<h3
-											class="font-display m-0 text-2xl font-medium"
-											style={{ color: step.accent ?? 'var(--c-paper)' }}
-										>
-											{step.title}
-										</h3>
-										<div class="mt-3 leading-relaxed text-[var(--c-muted)]">{step.body}</div>
-										<Show when={step.bullets?.length}>
-											<ul class="m-0 mt-4 grid list-none gap-2 p-0 text-sm text-[var(--c-muted)]">
-												<For each={step.bullets}>{(b) => <li>{b}</li>}</For>
-											</ul>
-										</Show>
-									</div>
+									<StepText step={step} />
 								</Show>
-								<div
-									class={[
-										'flex flex-1 items-center',
-										{ 'justify-start md:justify-end': flip(), 'justify-start': !flip() },
-									]}
-								>
+								<div class="ui-step-node-cell">
 									<StepNode step={step} index={i()} size={size()} />
 								</div>
 								<Show when={flip()}>
-									<div class="relative z-10 flex-1">
-										<h3
-											class="font-display m-0 text-2xl font-medium"
-											style={{ color: step.accent ?? 'var(--c-paper)' }}
-										>
-											{step.title}
-										</h3>
-										<div class="mt-3 leading-relaxed text-[var(--c-muted)]">{step.body}</div>
-										<Show when={step.bullets?.length}>
-											<ul class="m-0 mt-4 grid list-none gap-2 p-0 text-sm text-[var(--c-muted)]">
-												<For each={step.bullets}>{(b) => <li>{b}</li>}</For>
-											</ul>
-										</Show>
-									</div>
+									<StepText step={step} />
 								</Show>
 							</li>
 						)
@@ -335,20 +267,12 @@ export type LogoItem = { name: string; src?: string }
 
 export function LogoCloud(props: { logos: LogoItem[]; class?: ClassProp }) {
 	return (
-		<ul
-			class={[
-				'm-0 flex list-none flex-wrap items-center justify-center gap-x-12 gap-y-8 p-0',
-				props.class,
-			]}
-		>
+		<ul class={['ui-logo-cloud', props.class]}>
 			<For each={props.logos}>
 				{(logo) => (
 					<li class="ui-logo-item">
-						<Show
-							when={logo.src}
-							fallback={<span class="font-data text-sm text-[var(--c-faint)]">{logo.name}</span>}
-						>
-							<img src={logo.src} alt={logo.name} loading="lazy" class="max-h-10 w-auto max-w-36" />
+						<Show when={logo.src} fallback={<span class="ui-logo-name">{logo.name}</span>}>
+							<img src={logo.src} alt={logo.name} loading="lazy" />
 						</Show>
 					</li>
 				)}
@@ -448,12 +372,12 @@ export function DocsShell(props: ParentProps<{ nav?: DocsNavItem[]; navLabel?: s
 	})
 
 	return (
-		<div class="docs-shell mx-auto grid w-full max-w-7xl gap-10 px-6 py-12 lg:grid-cols-[13rem_minmax(0,1fr)] xl:grid-cols-[13rem_minmax(0,1fr)_13rem]">
+		<div class="docs-shell">
 			<div class="docs-progress" aria-hidden="true" />
 			<Show when={props.nav?.length}>
-				<nav class="docs-nav hidden lg:block" aria-label={props.navLabel ?? 'Chapters'}>
-					<div class="sticky top-24 grid gap-1">
-						<Eyebrow class="mb-2">{props.navLabel ?? 'Chapters'}</Eyebrow>
+				<nav class="docs-nav" aria-label={props.navLabel ?? 'Chapters'}>
+					<div class="docs-side">
+						<Eyebrow>{props.navLabel ?? 'Chapters'}</Eyebrow>
 						<For each={props.nav}>
 							{(item) => (
 								<a
@@ -472,13 +396,13 @@ export function DocsShell(props: ParentProps<{ nav?: DocsNavItem[]; navLabel?: s
 					</div>
 				</nav>
 			</Show>
-			<article ref={article} class="ui-prose min-w-0">
+			<article ref={article} class="ui-prose docs-article">
 				{props.children}
 			</article>
-			<nav class="docs-toc hidden xl:block" aria-label="On this page">
-				<div class="sticky top-24 grid gap-1">
+			<nav class="docs-toc" aria-label="On this page">
+				<div class="docs-side">
 					<Show when={toc().length}>
-						<Eyebrow class="mb-2">On this page</Eyebrow>
+						<Eyebrow>On this page</Eyebrow>
 						<For each={toc()}>
 							{(item) => (
 								<a

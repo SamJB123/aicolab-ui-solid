@@ -21,7 +21,14 @@ export function Small() {
 
 export function OnPanel() {
 	return (
-		<div class="rounded-2xl bg-[var(--c-panel)] p-4 ring-1 ring-[var(--c-line)]">
+		<div
+			style={{
+				'border-radius': '16px',
+				background: 'var(--c-panel)',
+				padding: '16px',
+				'box-shadow': '0 0 0 1px var(--c-line)',
+			}}
+		>
 			<AvatarStack people={PEOPLE.slice(0, 4)} ring="var(--c-panel)" />
 		</div>
 	)

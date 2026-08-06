@@ -3,7 +3,7 @@ import { Rule } from '@aicolab/ui-solid'
 
 export function Plain() {
 	return (
-		<div class="w-72">
+		<div style={{ width: '18rem' }}>
 			<Rule />
 		</div>
 	)
@@ -11,7 +11,7 @@ export function Plain() {
 
 export function Labelled() {
 	return (
-		<div class="w-72">
+		<div style={{ width: '18rem' }}>
 			<Rule label="earlier today" />
 		</div>
 	)

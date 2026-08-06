@@ -24,8 +24,7 @@ import {
 
 const sameDay = (a: YMD, b: YMD) => a.y === b.y && a.m === b.m && a.d === b.d
 
-const triggerClass =
-	'flex items-center gap-2 rounded-xl bg-[var(--c-ink-2)] px-3.5 py-2.5 text-[14px] text-[var(--c-paper)] ring-1 ring-[var(--c-line)] transition-colors hover:ring-[var(--c-line-strong)]'
+const triggerClass = 'ui-picker-trigger'
 
 // ── Date picker ───────────────────────────────────────────────────────────────
 
@@ -62,17 +61,17 @@ export function DatePicker(props: {
 	}
 
 	return (
-		<div class="relative">
+		<div class="ui-picker">
 			<button
 				type="button"
 				popovertarget={popId}
 				class={triggerClass}
 				style={{ 'anchor-name': anchor }}
 			>
-				<span aria-hidden="true" class="text-[var(--c-muted)]">
+				<span aria-hidden="true" class="ui-picker-trigger-icon">
 					◷
 				</span>
-				<span class="font-data tabular-nums">
+				<span class="ui-picker-trigger-value">
 					{WEEKDAYS[weekdayOf(props.value.y, props.value.m, props.value.d)]} {props.value.d}{' '}
 					{MONTHS[props.value.m].slice(0, 3)}
 				</span>
@@ -84,38 +83,27 @@ export function DatePicker(props: {
 				}}
 				id={popId}
 				popover="auto"
-				class="ui-picker-pop p-3"
+				class="ui-picker-pop"
 				style={{ 'position-anchor': anchor }}
 			>
-				<div class="mb-2 flex items-center justify-between">
+				<div class="ui-dp-head">
 					<button
 						type="button"
 						aria-label="Previous month"
 						onClick={() => shift(-1)}
-						class="grid h-7 w-7 place-items-center rounded-lg text-[var(--c-muted)] hover:bg-[var(--c-panel)]"
+						class="ui-dp-nav"
 					>
 						‹
 					</button>
-					<span class="font-display text-[15px] text-[var(--c-paper)]">
+					<span class="ui-dp-title">
 						{MONTHS[view().m]} {view().y}
 					</span>
-					<button
-						type="button"
-						aria-label="Next month"
-						onClick={() => shift(1)}
-						class="grid h-7 w-7 place-items-center rounded-lg text-[var(--c-muted)] hover:bg-[var(--c-panel)]"
-					>
+					<button type="button" aria-label="Next month" onClick={() => shift(1)} class="ui-dp-nav">
 						›
 					</button>
 				</div>
-				<div class="grid grid-cols-7 gap-0.5">
-					<For each={WEEKDAYS}>
-						{(w) => (
-							<span class="grid h-7 place-items-center font-data text-[9px] uppercase tracking-wider text-[var(--c-faint)]">
-								{w[0]}
-							</span>
-						)}
-					</For>
+				<div class="ui-dp-grid">
+					<For each={WEEKDAYS}>{(w) => <span class="ui-dp-wd">{w[0]}</span>}</For>
 					<For each={cells()} keyed={false}>
 						{(cell) => (
 							<Show when={cell()} fallback={<span />}>
@@ -130,13 +118,9 @@ export function DatePicker(props: {
 												props.onChange(cur())
 												pop?.hidePopover()
 											}}
-											class={[
-												'grid h-8 place-items-center rounded-lg font-data text-[13px] tabular-nums transition-colors',
-												isSel()
-													? 'bg-[var(--c-accent)] font-semibold text-[var(--c-ink)]'
-													: 'text-[var(--c-paper)] hover:bg-[var(--c-accent-soft)] hover:text-[var(--c-accent)]',
-												{ 'ring-1 ring-[var(--c-line-strong)]': isToday() && !isSel() },
-											]}
+											class="ui-dp-day"
+											data-selected={isSel() ? '' : undefined}
+											data-today={isToday() ? '' : undefined}
 										>
 											{d()}
 										</button>
@@ -191,7 +175,7 @@ function Wheel(props: {
 		},
 	)
 	return (
-		<div ref={box} class="ui-wheel relative h-40 flex-1 overflow-y-auto py-16">
+		<div ref={box} class="ui-wheel">
 			<For each={props.items}>
 				{(it) => {
 					const active = () => it === props.value
@@ -200,12 +184,7 @@ function Wheel(props: {
 							type="button"
 							data-active={active() ? 'true' : undefined}
 							onClick={() => props.onPick(it)}
-							class={[
-								'flex h-9 w-full items-center justify-center font-data text-[15px] tabular-nums transition-all duration-200',
-								active()
-									? 'scale-110 font-semibold text-[var(--c-accent)]'
-									: 'text-[var(--c-faint)] hover:text-[var(--c-paper)]',
-							]}
+							class="ui-wheel-item"
 						>
 							{props.pad ? String(it).padStart(2, '0') : it}
 						</button>
@@ -227,17 +206,17 @@ export function TimePicker(props: { value: number; onChange: (min: number) => vo
 	}
 
 	return (
-		<div class="relative">
+		<div class="ui-picker">
 			<button
 				type="button"
 				popovertarget={popId}
 				class={triggerClass}
 				style={{ 'anchor-name': anchor }}
 			>
-				<span aria-hidden="true" class="text-[var(--c-muted)]">
+				<span aria-hidden="true" class="ui-picker-trigger-icon">
 					◔
 				</span>
-				<span class="font-data tabular-nums">{fmtTime(props.value)}</span>
+				<span class="ui-picker-trigger-value">{fmtTime(props.value)}</span>
 			</button>
 			<div
 				ref={(el) => {
@@ -247,27 +226,23 @@ export function TimePicker(props: { value: number; onChange: (min: number) => vo
 				}}
 				id={popId}
 				popover="auto"
-				class="ui-picker-pop p-3"
+				class="ui-picker-pop"
 				style={{ 'position-anchor': anchor }}
 			>
-				<div class="mb-3 text-center font-display text-2xl tabular-nums text-[var(--c-paper)]">
-					{fmtTime(props.value)}
-				</div>
-				<div class="flex gap-2">
+				<div class="ui-tp-readout">{fmtTime(props.value)}</div>
+				<div class="ui-tp-row">
 					{/* Wheels share a centre band; AM·PM sits outside it. */}
-					<div class="relative flex flex-1 gap-1">
-						<div class="pointer-events-none absolute inset-x-0 top-1/2 h-9 -translate-y-1/2 rounded-lg bg-[var(--c-accent-soft)] ring-1 ring-[color-mix(in_oklab,var(--c-accent)_28%,transparent)]" />
+					<div class="ui-tp-wheels">
+						<div class="ui-tp-band" />
 						{/* fade the wheel edges so off-centre values recede */}
-						<div class="ui-wheel-mask pointer-events-none absolute inset-0 z-20" />
+						<div class="ui-wheel-mask" />
 						<Wheel
 							items={HOURS}
 							value={parts().h12}
 							open={open}
 							onPick={(h) => setPart({ h12: h })}
 						/>
-						<span class="z-10 grid place-items-center font-data text-[15px] text-[var(--c-faint)]">
-							:
-						</span>
+						<span class="ui-tp-colon">:</span>
 						<Wheel
 							items={MINUTES}
 							value={parts().min}
@@ -276,18 +251,14 @@ export function TimePicker(props: { value: number; onChange: (min: number) => vo
 							onPick={(m) => setPart({ min: m })}
 						/>
 					</div>
-					<div class="flex flex-col justify-center gap-1.5">
+					<div class="ui-tp-ampm-col">
 						<For each={[false, true]}>
 							{(pm) => (
 								<button
 									type="button"
 									onClick={() => setPart({ pm })}
-									class={[
-										'rounded-lg px-3 py-2 font-data text-[12px] font-semibold tracking-wide transition-colors',
-										parts().pm === pm
-											? 'bg-[var(--c-accent-soft)] text-[var(--c-accent)] ring-1 ring-[color-mix(in_oklab,var(--c-accent)_38%,transparent)]'
-											: 'text-[var(--c-faint)] ring-1 ring-[var(--c-line)] hover:bg-[var(--c-panel)] hover:text-[var(--c-muted)]',
-									]}
+									class="ui-tp-ampm"
+									data-active={parts().pm === pm ? '' : undefined}
 								>
 									{pm ? 'PM' : 'AM'}
 								</button>
@@ -295,14 +266,10 @@ export function TimePicker(props: { value: number; onChange: (min: number) => vo
 						</For>
 					</div>
 				</div>
-				<div class="mt-3 flex flex-wrap gap-1.5 border-t border-[var(--c-line)] pt-3">
+				<div class="ui-tp-presets">
 					<For each={PRESETS}>
 						{(p) => (
-							<button
-								type="button"
-								onClick={() => props.onChange(p)}
-								class="rounded-full px-2.5 py-1 font-data text-[11px] text-[var(--c-muted)] ring-1 ring-[var(--c-line)] transition-colors hover:bg-[var(--c-panel)] hover:text-[var(--c-paper)]"
-							>
+							<button type="button" onClick={() => props.onChange(p)} class="ui-tp-preset">
 								{fmtTime(p)}
 							</button>
 						)}

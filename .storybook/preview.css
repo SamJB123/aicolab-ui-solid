@@ -1,0 +1,60 @@
+/* Storybook preview chrome for @aicolab/ui-solid.
+   The canvas sits on the REAL page surface (--c-page / --c-text from the
+   token contract) instead of Storybook's default white/dark, in both
+   colour schemes — theme.css sets body, this covers the docs blocks and
+   the split-view panes. */
+
+html {
+	background: var(--c-page);
+	color: var(--c-text);
+}
+
+/* Consuming apps set their page font from the token contract; mirror that
+   here so body copy rides --font-sans (and the Sans toolbar pick shows
+   everywhere). body.sb-show-main outranks Storybook's own body rule. */
+body.sb-show-main {
+	font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+}
+
+/* Docs pages: story frames + code toolbars ride the token surface too. */
+.docs-story {
+	background: var(--c-page);
+	color: var(--c-text);
+}
+
+/* ── Side-by-side light/dark compare (theme toolbar → "Split") ──────────
+   Each pane forces a colour scheme via the theme.css classes; every
+   light-dark() token below it resolves per-pane, so the same story renders
+   pixel-for-pixel in both modes at once. */
+.sb-theme-split {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1rem;
+	align-items: start;
+}
+@media (min-width: 56rem) {
+	.sb-theme-split {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.sb-theme-pane {
+	position: relative;
+	min-width: 0;
+	padding: 2.25rem 1.25rem 1.25rem;
+	border-radius: 10px;
+	background: var(--c-page);
+	color: var(--c-text);
+	box-shadow: inset 0 0 0 1px var(--c-line-strong);
+}
+
+.sb-theme-pane-tag {
+	position: absolute;
+	top: 0.6rem;
+	right: 0.75rem;
+	font-family: var(--font-data, ui-monospace, monospace);
+	font-size: 10px;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--c-faint);
+}

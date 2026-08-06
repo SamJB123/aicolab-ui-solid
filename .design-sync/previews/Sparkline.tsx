@@ -14,10 +14,27 @@ export function LiveColour() {
 
 export function InStatRow() {
 	return (
-		<div class="flex items-center gap-4">
-			<div class="flex flex-col">
-				<span class="font-data text-2xl text-[var(--c-paper)]">1,204</span>
-				<span class="font-data text-[10px] uppercase tracking-[0.2em] text-[var(--c-faint)]">
+		<div style={{ display: 'flex', 'align-items': 'center', gap: '16px' }}>
+			<div style={{ display: 'flex', 'flex-direction': 'column' }}>
+				<span
+					style={{
+						'font-family': 'var(--font-data)',
+						'font-size': '1.5rem',
+						'line-height': '2rem',
+						color: 'var(--c-text)',
+					}}
+				>
+					1,204
+				</span>
+				<span
+					style={{
+						'font-family': 'var(--font-data)',
+						'font-size': '10px',
+						'text-transform': 'uppercase',
+						'letter-spacing': '0.2em',
+						color: 'var(--c-faint)',
+					}}
+				>
 					visits this week
 				</span>
 			</div>

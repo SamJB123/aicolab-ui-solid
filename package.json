@@ -6,6 +6,7 @@
 	"exports": {
 		".": "./src/index.ts",
 		"./styles.css": "./src/styles.css",
+		"./reset.css": "./src/reset.css",
 		"./xp": "./src/xp/index.ts",
 		"./xp/styles.css": "./src/xp/styles.css",
 		"./depth-card": "./src/depth-card/index.ts",
@@ -16,7 +17,11 @@
 		"./*": "./src/*.ts"
 	},
 	"scripts": {
-		"check-types": "tsc --noEmit"
+		"check-types": "tsc --noEmit",
+		"check-types:stories": "tsc -p stories/tsconfig.json --noEmit",
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build",
+		"deploy-storybook": "storybook build && wrangler deploy"
 	},
 	"peerDependencies": {
 		"@solidjs/web": "catalog:",
@@ -32,10 +37,16 @@
 	"devDependencies": {
 		"@aicolab/tsconfig": "workspace:^",
 		"@solidjs/web": "catalog:",
+		"@storybook/addon-docs": "^10.5.7",
+		"@storybook/addon-mcp": "^0.7.0",
 		"@types/three": "catalog:",
 		"@webgpu/types": "catalog:",
 		"solid-js": "catalog:",
+		"storybook": "^10.5.7",
+		"storybook-solidjs-vite": "^10.6.0",
 		"typescript": "catalog:",
-		"vite": "catalog:"
+		"vite": "catalog:",
+		"vite-plugin-solid": "catalog:",
+		"wrangler": "catalog:"
 	}
 }

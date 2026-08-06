@@ -28,8 +28,13 @@
   `moduleName: "@solidjs/web"` — correct, no options needed.
 - `typescript@5.9.3` — validate's .d.ts parse check silently skips on
   typescript@7 (Go preview, no classic JS API).
-- `tailwindcss@4.3.2` + `@tailwindcss/cli@4.3.2`; solid-js/@solidjs/web resolve
-  from the package's own node_modules (2.0.0-beta.17, pnpm workspace catalog).
+- ~~`tailwindcss@4.3.2` + `@tailwindcss/cli@4.3.2`~~ — OBSOLETE since the
+  2026-08-07 Tailwind removal: src/styles.css is plain CSS (semantic classes,
+  @scope/@property) and previews use inline styles, so the next re-sync must
+  DROP the tailwind CLI step from `.ds-sync/solid-build.mjs` and emit
+  `_ds_bundle.css` as essentially src/styles.css verbatim (the leading
+  block-comment strip still applies). solid-js/@solidjs/web resolve from the
+  package's own node_modules (2.0.0-beta.17, pnpm workspace catalog).
 - Render check/capture: no playwright chromium download needed —
   `DS_CHROMIUM_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`.
 
@@ -43,11 +48,12 @@
   curated into `.design-sync/theme/theme.css`: light = playground/template,
   dark = playground/audit-corpus (minus its app-specific severity ramp),
   selector `.theme-dark` / `[data-theme="dark"]`.
-- Tailwind v4 compiles the package src classes + a curated `@source inline`
-  safelist (layout vocabulary for the design agent, incl. every
-  `{bg,text,ring,border,fill,stroke,divide,outline}-[var(--c-*)]`). Tailwind
-  does NOT run at design render time — conventions.md tells the agent to stay
-  inside the compiled vocabulary or use inline styles.
+- NO utility vocabulary (2026-08-07): the package migrated off Tailwind to
+  semantic `.ui-*` classes + the token contract, and the previews were
+  rewritten to inline `style={{}}` glue. conventions.md now tells the design
+  agent: components style themselves, tokens for colours/fonts, inline styles
+  for layout — utility classes don't exist. The old curated `@source inline`
+  safelist is gone with the tailwind build step.
 - src/styles.css's leading block comment is stripped in `_ds_bundle.css` — it
   contains a documentation `@import "@aicolab/ui-solid/styles.css"` line that
   validate's scanner flags as `[CSS_IMPORT_MISSING]`.
@@ -74,6 +80,12 @@
 
 ## Re-sync risks
 
+- **A re-sync is REQUIRED and PENDING after the 2026-08-07 Tailwind removal**:
+  the uploaded bundle still carries the old utility-compiled CSS + inverted
+  token names; previews/conventions/theme in this repo are already the new
+  world. Next re-sync: strip the tailwind step from solid-build.mjs (see
+  toolchain pins above), rebuild, re-validate, re-capture (preview sources
+  changed → sourceKeys move → grades will NOT carry; re-grade), upload.
 - **solid-build.mjs is gitignored state**: it must exist in `.ds-sync/` for any
   re-sync. If missing, restage skill scripts + recreate it (this file + the
   config describe everything it does).

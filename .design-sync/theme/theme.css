@@ -2,48 +2,53 @@
    The package itself defines NO palette (apps own their values); this file
    provides the token contract's default values so designs render styled.
 
-   Light (default) — from playground/template/src/styles.css.
-   Dark — from playground/audit-corpus/src/styles.css (app-specific severity
-   ramp omitted; it is not part of the ui-solid contract).
+   DUAL-MODE, ONE DECLARATION (2026-08-07): every colour token is a single
+   light-dark() pair selected by `color-scheme` — no duplicated theme block.
+   Accent is the AI CoLab GOLD TRIM (the hive/bees identity): deep harbour
+   gold on light surfaces (AA on paper), lantern gold after dark.
 
-   Switch themes by putting class="theme-dark" (or data-theme="dark") on any
-   ancestor — typically <body>. */
+   TOKEN SEMANTICS (canonical — do not invert):
+     --c-page    = the PAGE surface        --c-text = PRIMARY TEXT
+     --c-page-2  = recessed surface        --c-panel = raised surface
+   Derived tokens are color-mix over text/accent, so they adapt free.
+
+   Mode switching: the browser follows the OS via `color-scheme: light dark`;
+   force a mode by putting class="theme-dark"/"theme-light" (or
+   data-theme="dark"/"light") on any ancestor — typically <body>. */
 
 :root {
-	--c-ink: #f6f6f4; /* page */
-	--c-ink-2: #eeeeec; /* recessed */
-	--c-panel: #ffffff; /* raised */
-	--c-panel-2: #f5f5f3;
-	--c-paper: #18181b; /* primary text */
-	--c-muted: color-mix(in oklab, var(--c-paper) 58%, transparent);
-	--c-faint: color-mix(in oklab, var(--c-paper) 36%, transparent);
-	--c-accent: #4f46e5; /* indigo brand accent */
-	--c-live: #16a34a; /* live-positive */
-	--c-line: color-mix(in oklab, var(--c-paper) 10%, transparent);
-	--c-line-strong: color-mix(in oklab, var(--c-paper) 20%, transparent);
+	color-scheme: light dark;
+	--c-page: light-dark(#f7f5f0, #12100b); /* page */
+	--c-page-2: light-dark(#efece4, #191610); /* recessed */
+	--c-panel: light-dark(#ffffff, #1e1a12); /* raised */
+	--c-panel-2: light-dark(#f5f2ea, #262117);
+	--c-text: light-dark(#1f1b12, #ede7da); /* primary text */
+	--c-muted: color-mix(in oklab, var(--c-text) 58%, transparent);
+	--c-faint: color-mix(in oklab, var(--c-text) 36%, transparent);
+	--c-accent: light-dark(#a06f1c, #e8b04c); /* gold trim (hive) */
+	--c-live: light-dark(#16a34a, #5aa179); /* live-positive */
+	--c-line: color-mix(in oklab, var(--c-text) 10%, transparent);
+	--c-line-strong: color-mix(in oklab, var(--c-text) 20%, transparent);
 	--c-accent-soft: color-mix(in oklab, var(--c-accent) 14%, transparent);
 	--font-display: ui-sans-serif, system-ui, sans-serif;
 	--font-sans: ui-sans-serif, system-ui, sans-serif;
 	--font-data: ui-monospace, "SFMono-Regular", monospace;
+	/* --font-label (micro-labels: eyebrows/chips/kickers/field labels) is
+	   deliberately unset — it falls back to --font-data. Declare it to give
+	   the label voice its own family. */
 }
 
+/* Forcing a mode is now ONE property — light-dark() does the rest. */
 .theme-dark,
 [data-theme="dark"] {
-	--c-ink: #0f1319; /* page */
-	--c-ink-2: #141a21; /* recessed */
-	--c-panel: #171d25; /* raised */
-	--c-panel-2: #1d2530;
-	--c-paper: #e9ebe4; /* primary text */
-	--c-muted: color-mix(in oklab, var(--c-paper) 60%, transparent);
-	--c-faint: color-mix(in oklab, var(--c-paper) 38%, transparent);
-	--c-accent: #3ba2ae; /* petrol teal */
-	--c-live: #5aa179; /* live-positive green */
-	--c-line: color-mix(in oklab, var(--c-paper) 12%, transparent);
-	--c-line-strong: color-mix(in oklab, var(--c-paper) 22%, transparent);
-	--c-accent-soft: color-mix(in oklab, var(--c-accent) 16%, transparent);
-	--font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-	--font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-	--font-data: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, monospace;
-	color: var(--c-paper);
-	background: var(--c-ink);
+	color-scheme: dark;
+}
+.theme-light,
+[data-theme="light"] {
+	color-scheme: light;
+}
+
+body {
+	color: var(--c-text);
+	background: var(--c-page);
 }

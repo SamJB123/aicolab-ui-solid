@@ -7,9 +7,18 @@ export function Basic() {
 
 export function AboveHeading() {
 	return (
-		<div class="flex flex-col gap-1.5">
+		<div style={{ display: 'flex', 'flex-direction': 'column', gap: '6px' }}>
 			<Eyebrow>residency programme</Eyebrow>
-			<h3 class="m-0 font-display text-2xl font-medium text-[var(--c-paper)]">
+			<h3
+				style={{
+					margin: '0',
+					'font-family': 'var(--font-display)',
+					'font-size': '1.5rem',
+					'line-height': '2rem',
+					'font-weight': '500',
+					color: 'var(--c-text)',
+				}}
+			>
 				Autumn cohort
 			</h3>
 		</div>

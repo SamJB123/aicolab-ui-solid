@@ -27,10 +27,14 @@ function App() {
   return (
     <Panel title="Broadcast" kicker="channel two" glow
            action={() => <Chip tone="live">on air</Chip>}>
-      <p class="m-0 mb-4 text-sm text-[var(--c-muted)]">Streaming to 312 listeners.</p>
-      <Button variant="primary" class="self-start" onClick={() => setOpen(!open())}>
-        Open studio view
-      </Button>
+      <p style={{ margin: '0 0 16px', 'font-size': '0.875rem', color: 'var(--c-muted)' }}>
+        Streaming to 312 listeners.
+      </p>
+      <div style={{ 'align-self': 'flex-start' }}>
+        <Button variant="primary" onClick={() => setOpen(!open())}>
+          Open studio view
+        </Button>
+      </div>
     </Panel>
   );
 }
@@ -44,35 +48,41 @@ at call sites (`value={count()}`, not `count`); `createEffect(compute, apply)`
 takes two functions; `onSettled` replaces `onMount`; `<Loading>`/`<Errored>`
 replace `Suspense`/`ErrorBoundary`; `<For>` replaces `.map()`.
 
-## Styling: token contract + compiled utility classes
+## Styling: token contract + semantic classes + inline styles (NO Tailwind)
 
-Never hard-code colours or fonts. The palette is a CSS-variable contract
-(defined in `tokens/theme.css`, light `:root` default, dark via
-`class="theme-dark"` on any ancestor):
+There are **no utility classes** in this system (Tailwind was removed
+2026-08-07). Classes like `flex`, `p-4`, `text-sm`, `bg-[var(--c-panel)]` do
+not exist and will silently do nothing. Three styling surfaces exist:
 
-- surfaces `--c-ink` / `--c-ink-2` (page/recessed), `--c-panel` / `--c-panel-2` (raised)
-- text `--c-paper` / `--c-muted` / `--c-faint`
-- signals `--c-accent` / `--c-accent-soft` / `--c-live`
-- hairlines `--c-line` / `--c-line-strong`
-- font roles `--font-display` / `--font-sans` / `--font-data` (helper classes `.font-display`, `.font-data`)
-
-Layout glue uses the **precompiled** Tailwind subset in `_ds_bundle.css` —
-Tailwind does NOT run at render time, so only classes already in that file
-exist. Available families: display/flex/grid (`flex`, `items-center`,
-`justify-between`, `grid-cols-{1..6,12}`), `gap-*`/`p-*`/`m-*` (steps
-0–12,16), `w-*`/`h-*`/`max-w-*`, `text-{xs..5xl}`, `font-{normal..bold}`,
-`tracking-*`, `rounded-*`, `border`/`ring-{1,2}`, `shadow-*`, `opacity-*`,
-positioning/overflow/z, `transition`/`duration-*`, and every
-`{bg,text,ring,border,fill,stroke,divide,outline}-[var(--c-*)]` token colour.
-For anything outside that vocabulary use inline `style={{ ... }}` (kebab-case
-keys: `'font-size'`, `'box-shadow'`). Component-internal arbitrary classes
-(e.g. `text-[10px]`) are compiled too and safe to reuse.
+1. **The components style themselves.** Every component carries its own
+   semantic CSS (`.ui-*` classes in `_ds_bundle.css`) — spacing, typography,
+   colours, variants (via props like `tone`/`variant`) are built in. Don't
+   restyle their interiors.
+2. **The token contract** for every colour/font you write yourself. Never
+   hard-code colours or fonts. Defined in `tokens/theme.css` as
+   `light-dark()` pairs — dark mode via `class="theme-dark"` (or
+   `data-theme="dark"`) on any ancestor:
+   - surfaces `--c-page` / `--c-page-2` (page/recessed), `--c-panel` / `--c-panel-2` (raised)
+   - text `--c-text` / `--c-muted` / `--c-faint`
+   - signals `--c-accent` / `--c-accent-soft` / `--c-live`
+   - hairlines `--c-line` / `--c-line-strong`
+   - font roles `--font-display` / `--font-sans` / `--font-data`, plus
+     optional `--font-label` for the micro-label voice (eyebrows, chips,
+     panel kickers, field labels) — unset it falls back to `--font-data`
+3. **Inline `style={{ ... }}` for layout glue and one-off text styling** —
+   kebab-case keys (`'font-size'`, `'align-items'`, `'box-shadow'`), values
+   referencing the tokens (`color: 'var(--c-muted)'`). Flex/grid wrappers,
+   widths, gaps, ad-hoc labels: all inline. Components accept `class` but
+   only for classes that actually exist — when a component needs one-off
+   placement (e.g. keep a Button from stretching in Panel's flex column),
+   wrap it: `<div style={{ 'align-self': 'flex-start' }}><Button …/></div>`.
 
 ## Where the truth lives
 
 - `guidelines/solid-cheatsheet.md` — Solid 2 API + the 1.x/React footgun list. Read first.
 - `components/<Group>/<Name>/<Name>.prompt.md` — verified Solid usage examples per component (each example rendered and reviewed).
-- `styles.css` → `tokens/theme.css` + `_ds_bundle.css` — the complete styling surface.
+- `styles.css` → `tokens/theme.css` + `_ds_bundle.css` — the complete styling surface (semantic component classes only; no utilities).
 - Composition tips learned building the previews: `Panel` children are a flex
-  column (give inline children `self-start`); `Waveform` needs an explicit-height
-  parent (`h-10 w-48`); `Counter`/`Sparkline`/`Meter` size from props or wrappers.
+  column (wrap inline children in an `align-self: flex-start` div); `Waveform`
+  needs an explicit-height parent (e.g. `style={{ height: '2.5rem', width:
+  '12rem' }}`); `Counter`/`Sparkline`/`Meter` size from props or wrappers.

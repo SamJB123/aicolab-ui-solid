@@ -60,10 +60,7 @@ export function IconButton(
 			aria-label={props.label}
 			disabled={props.disabled}
 			onClick={() => props.onClick?.()}
-			class={[
-				'grid h-9 w-9 place-items-center rounded-full text-[var(--c-muted)] ring-1 ring-[var(--c-line)] transition-all duration-200 enabled:hover:bg-[var(--c-panel-2)] enabled:hover:text-[var(--c-paper)] enabled:active:scale-90 disabled:opacity-35',
-				props.class,
-			]}
+			class={['ui-iconbtn', props.class]}
 		>
 			{props.children}
 		</button>
@@ -92,10 +89,8 @@ export function dismissOnOutside(getRoot: () => HTMLElement | undefined, close: 
 export function Field(props: ParentProps<{ label: string; class?: ClassProp }>) {
 	const child = (): JSX.Element => props.children
 	return (
-		<div class={['flex flex-col gap-1.5', props.class]}>
-			<span class="font-data text-[10px] uppercase tracking-[0.2em] text-[var(--c-faint)]">
-				{props.label}
-			</span>
+		<div class={['ui-field', props.class]}>
+			<span class="ui-field-label">{props.label}</span>
 			{child()}
 		</div>
 	)

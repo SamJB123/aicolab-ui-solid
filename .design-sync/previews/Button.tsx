@@ -11,7 +11,7 @@ export function Ghost() {
 
 export function Pair() {
 	return (
-		<div class="flex items-center gap-3">
+		<div style={{ display: 'flex', 'align-items': 'center', gap: '12px' }}>
 			<Button variant="primary">Publish changes</Button>
 			<Button>Discard</Button>
 		</div>

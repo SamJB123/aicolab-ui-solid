@@ -1,0 +1,12 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	// Assets-only worker serving the built Storybook (no worker code): run
+	// `pnpm deploy-storybook` from this package to rebuild + publish.
+	// NOTE: the URL is public (workers.dev) — it exposes the component
+	// gallery only, no app data.
+	"name": "aicolab-ui-storybook",
+	"compatibility_date": "2026-08-01",
+	"assets": {
+		"directory": "./storybook-static"
+	}
+}
