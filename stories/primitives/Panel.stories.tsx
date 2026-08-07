@@ -42,7 +42,7 @@ export const IndexActionGlow: Story = {
 }
 
 export const CompactDensity: Story = {
-	name: 'Density knob (--ui-density: compact)',
+	name: 'Density knob (data-density="compact")',
 	render: () => (
 		<div
 			style={{
@@ -55,8 +55,8 @@ export const CompactDensity: Story = {
 			<Panel title="Cozy (default)" kicker="No knob set">
 				Default 20px padding, 19px title.
 			</Panel>
-			<div style={{ '--ui-density': 'compact' }}>
-				<Panel title="Compact" kicker="--ui-density: compact on an ancestor">
+			<div data-density="compact">
+				<Panel title="Compact" kicker='data-density="compact" on an ancestor'>
 					Subtree-wide density: 14px padding, 16px title.
 				</Panel>
 			</div>

@@ -36,8 +36,45 @@
                                 labels/weekday heads); OPTIONAL — falls back
                                 to the data stack when unset
 
-   Optional cascading knobs (style-query/if() enhanced, gated):
-     --ui-density: cozy | compact   subtree-wide density for panels
+   ── The type scale ──────────────────────────────────────────────────────
+   Ten steps, and EVERY font-size in this sheet now sits on one of them —
+   no loose literals. Apps size their own text from the same ladder rather
+   than inventing a parallel one.
+
+     --t-2xs   10px   micro-labels (eyebrows, chips, kickers, weekday heads)
+     --t-xs    11px   small labels, indices, breadcrumbs
+     --t-sm    13px   button / tab text, dense numerics
+     --t-md    14px   default control text, in-component body
+     --t-lg    16px   prose body, wheel readouts, feature body
+     --t-xl    19px   panel + card titles, hero lede
+     --t-2xl   24px   calendar month head, step headings
+     --t-3xl   30px   section headings, prose h2
+     --t-4xl   36px   page / prose h1
+     --t-5xl   60px   hero display
+
+   ── The radius ladder ───────────────────────────────────────────────────
+     --r-xs     6px   inline links, key caps
+     --r-sm     8px   small controls (nav buttons, day cells, bands)
+     --r-md    12px   inputs, tiles, day cards, media insets
+     --r-lg    16px   panels, feature cards, popovers
+     --r-xl    20px   large surfaces (facets shell, depth-card faces)
+     --r-pill 999px   fully rounded — pills, dots, discs, circular buttons
+
+   WHY THE LENGTH LADDERS REGISTER IN px, NOT rem: @property requires a
+   COMPUTATIONALLY INDEPENDENT initial-value, so `1rem`, `1em` and `var(…)`
+   make the whole @property rule invalid — the token would silently end up
+   unregistered and every `var(--t-…)` would resolve to nothing. The px
+   initials equal the intended rem values at the default 16px root. An app
+   that wants root-relative scaling simply redeclares the ladder in rem on
+   its theme root: DECLARATIONS, unlike initials, may use any unit.
+
+   Optional cascading knobs:
+     --ui-panel-pad, --ui-panel-title   panel padding + panel title size.
+       Density is opt-in through a plain attribute: put
+       `data-density="compact"` on any ancestor and every panel beneath it
+       tightens. This REPLACES the old `--ui-density` + `if()` knob, which
+       only ever worked in Chromium; the two registered tokens above work
+       everywhere and stay animatable.
 
    Everything below is feature-guarded or degrades to a calm static state. */
 
@@ -127,6 +164,105 @@
 	inherits: true;
 }
 
+/* ── The type scale (see the contract note above on px initials) ── */
+@property --t-2xs {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 10px;
+}
+@property --t-xs {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 11px;
+}
+@property --t-sm {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 13px;
+}
+@property --t-md {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 14px;
+}
+@property --t-lg {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 16px;
+}
+@property --t-xl {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 19px;
+}
+@property --t-2xl {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 24px;
+}
+@property --t-3xl {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 30px;
+}
+@property --t-4xl {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 36px;
+}
+@property --t-5xl {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 60px;
+}
+
+/* ── The radius ladder ── */
+@property --r-xs {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 6px;
+}
+@property --r-sm {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 8px;
+}
+@property --r-md {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 12px;
+}
+@property --r-lg {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 16px;
+}
+@property --r-xl {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 20px;
+}
+@property --r-pill {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 999px;
+}
+
+/* ── Panel density (the durable replacement for the old --ui-density if()
+      knob; the opt-in selector lives with .ui-panel further down) ── */
+@property --ui-panel-pad {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 20px;
+}
+@property --ui-panel-title {
+	syntax: "<length>";
+	inherits: true;
+	/* = --t-xl. A var() initial-value is invalid for @property (it is not
+	   computationally independent), so the step is spelled out here. */
+	initial-value: 19px;
+}
+
 /* ── Font role helpers ── */
 .font-display {
 	font-family: var(--font-display, Georgia, serif);
@@ -187,6 +323,8 @@
 }
 .ui-scroll::-webkit-scrollbar-thumb {
 	background: var(--c-line-strong);
+	/* OFF-LADDER ON PURPOSE: half the 6px track above — structural (it makes
+	   the thumb a capsule), not a design radius. */
 	border-radius: 3px;
 }
 
@@ -202,7 +340,7 @@
 	max-width: 100%;
 	gap: 4px;
 	padding: 4px;
-	border-radius: 999px;
+	border-radius: var(--r-pill);
 	background: var(--c-page-2);
 	box-shadow: inset 0 0 0 1px var(--c-line);
 	overflow-x: auto;
@@ -219,9 +357,9 @@
 	flex: 0 0 auto;
 	scroll-snap-align: center;
 	white-space: nowrap;
-	border-radius: 999px;
+	border-radius: var(--r-pill);
 	padding: 6px 16px;
-	font-size: 13px;
+	font-size: var(--t-sm);
 	font-weight: 500;
 	color: var(--c-faint);
 	transition: color 0.2s;
@@ -253,7 +391,7 @@
 		left: anchor(left);
 		width: anchor-size(width);
 		height: anchor-size(height);
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 		background: var(--c-panel-2);
 		box-shadow: inset 0 0 0 1px var(--c-line-strong);
 		transition:
@@ -275,7 +413,7 @@
 	width: 224px;
 	padding: 14px;
 	border: 0;
-	border-radius: 14px;
+	border-radius: var(--r-lg);
 	background: var(--c-panel-2);
 	color: var(--c-text);
 	outline: 1px solid var(--c-line-strong);
@@ -322,7 +460,7 @@
 	width: 268px;
 	max-width: calc(100vw - 1.5rem);
 	border: 0;
-	border-radius: 14px;
+	border-radius: var(--r-lg);
 	background: var(--c-panel-2);
 	color: var(--c-text);
 	outline: 1px solid var(--c-line-strong);
@@ -373,7 +511,7 @@
 		transparent 66%,
 		var(--c-panel-2) 98%
 	);
-	border-radius: 12px;
+	border-radius: var(--r-md);
 }
 
 /* ── MonthCalendar grid morph (calendar.tsx) ──
@@ -454,14 +592,14 @@
 }
 .ui-step-disc {
 	overflow: hidden;
-	border-radius: 999px;
+	border-radius: var(--r-pill);
 	background: color-mix(in oklab, var(--step-accent) 8%, transparent);
 	box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--step-accent) 40%, transparent);
 }
 .ui-step-wash {
 	position: absolute;
 	inset: 0;
-	border-radius: 999px;
+	border-radius: var(--r-pill);
 	background: linear-gradient(
 		to bottom right,
 		color-mix(in oklab, var(--step-accent) 14%, transparent),
@@ -471,7 +609,7 @@
 .ui-step-shimmer {
 	position: absolute;
 	inset: 0;
-	border-radius: 999px;
+	border-radius: var(--r-pill);
 	background: linear-gradient(
 		to bottom right,
 		color-mix(in oklab, var(--step-accent) 28%, transparent),
@@ -518,6 +656,8 @@
 	background: var(--c-accent-soft);
 	box-decoration-break: clone;
 	-webkit-box-decoration-break: clone;
+	/* OFF-LADDER ON PURPOSE: an inline highlight must scale with the text it
+	   wraps (any font-size, any nesting), so it stays em-relative. */
 	border-radius: 0.2em;
 	padding-inline: 0.15em;
 }
@@ -608,7 +748,7 @@
 	content: "";
 	width: 8px;
 	height: 8px;
-	border-radius: 999px;
+	border-radius: var(--r-pill);
 	background: var(--c-line-strong);
 	transition: background 0.2s;
 }
@@ -627,7 +767,7 @@
 	align-self: center;
 	width: 2.4rem;
 	height: 2.4rem;
-	border-radius: 999px;
+	border-radius: var(--r-pill);
 	border: 1px solid var(--c-line-strong);
 	background: var(--c-panel);
 	color: var(--c-text);
@@ -646,7 +786,7 @@
 
 /* ── Facets — tabs + glyph rail + swapped pane (facets.tsx) ── */
 .facets {
-	border-radius: 18px;
+	border-radius: var(--r-xl);
 	background: var(--c-panel);
 	box-shadow: inset 0 0 0 1px var(--c-line);
 	overflow: hidden;
@@ -663,7 +803,7 @@
 	border: 0;
 	background: none;
 	font: inherit;
-	font-size: 0.9rem;
+	font-size: var(--t-md);
 	color: var(--c-muted);
 	transition:
 		color 0.2s,
@@ -696,7 +836,7 @@
 }
 .facets-tabs-pill .facets-tab,
 .facets-tabs-stretch .facets-tab {
-	border-radius: 999px;
+	border-radius: var(--r-pill);
 	padding: 0.45rem 1rem;
 	white-space: nowrap;
 }
@@ -729,7 +869,7 @@
 		left: anchor(left);
 		width: anchor-size(width);
 		height: anchor-size(height);
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 		background: var(--c-panel-2);
 		box-shadow: inset 0 0 0 1px var(--c-line-strong);
 		transition:
@@ -758,7 +898,7 @@
 	border: 0;
 	border-bottom: 1px solid var(--c-line);
 	background: none;
-	font-size: 1.75rem;
+	font-size: var(--t-3xl);
 	cursor: pointer;
 	filter: grayscale(1);
 	opacity: 0.45;
@@ -788,14 +928,14 @@
 	}
 	.facets-rail-btn {
 		height: 3.25rem;
-		font-size: 1.2rem;
+		font-size: var(--t-xl);
 	}
 	.facets-pane {
 		padding: 1.1rem 1.2rem 1.4rem;
 	}
 	.facets-tabs-bar .facets-tab {
 		padding: 0.7rem 0.4rem;
-		font-size: 0.78rem;
+		font-size: var(--t-sm);
 	}
 }
 
@@ -831,7 +971,7 @@
 	   corners come from border-radius alone, and face content is INSET (own
 	   radii), so nothing needs clipping. Free-form slot consumers with
 	   full-bleed content must round/clip it themselves. */
-	border-radius: 18px;
+	border-radius: var(--r-xl);
 	background: var(--c-panel);
 	box-shadow: inset 0 0 0 1px var(--c-line);
 	backface-visibility: hidden;
@@ -901,7 +1041,7 @@
 .depth-card .dc-sf-title {
 	margin: 0;
 	font-family: var(--font-display);
-	font-size: 1.25rem;
+	font-size: var(--t-xl);
 	font-weight: 500;
 	line-height: 1.7;
 	color: var(--c-text);
@@ -910,7 +1050,7 @@
 }
 .depth-card .dc-sf-desc {
 	margin: 0 0 1.1rem;
-	font-size: 0.875rem;
+	font-size: var(--t-md);
 	line-height: 1.55;
 	color: var(--c-muted);
 	transform: translateZ(60px);
@@ -920,7 +1060,7 @@
 	position: relative;
 	margin-top: 1rem;
 	height: 12rem;
-	border-radius: 12px;
+	border-radius: var(--r-md);
 	overflow: hidden;
 	transform: translateZ(50px);
 	backface-visibility: hidden;
@@ -988,12 +1128,12 @@
 	gap: 0.75rem;
 	padding: 1rem 1.5rem;
 	background: var(--c-page-2);
-	border-radius: 18px 18px 0 0;
+	border-radius: var(--r-xl) var(--r-xl) 0 0;
 }
 .depth-card .dc-sb-title {
 	margin: 0;
 	font-family: var(--font-display);
-	font-size: 1.25rem;
+	font-size: var(--t-xl);
 	font-weight: 500;
 	line-height: 1.7;
 	color: var(--c-text);
@@ -1002,8 +1142,8 @@
 	border: 0;
 	background: transparent;
 	padding: 0;
-	font-family: var(--font-data);
-	font-size: 11px;
+	font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+	font-size: var(--t-xs);
 	color: var(--c-faint);
 	cursor: pointer;
 	transition: color 0.15s;
@@ -1016,7 +1156,7 @@
 	min-height: 0;
 	overflow-y: auto;
 	padding: 1rem 1.5rem 1.5rem;
-	font-size: 0.875rem;
+	font-size: var(--t-md);
 	line-height: 1.7;
 	color: var(--c-muted);
 }
@@ -1062,8 +1202,8 @@
 .docs-toc-link {
 	display: block;
 	padding: 0.3rem 0.6rem;
-	border-radius: 8px;
-	font-size: 0.85rem;
+	border-radius: var(--r-sm);
+	font-size: var(--t-md);
 	color: var(--c-muted);
 	text-decoration: none;
 	transition:
@@ -1078,7 +1218,7 @@
 .docs-nav-sub,
 .docs-toc-sub {
 	padding-left: 1.4rem;
-	font-size: 0.8rem;
+	font-size: var(--t-sm);
 }
 .docs-nav-current,
 .docs-toc-current {
@@ -1088,14 +1228,14 @@
 
 /* ── Prose — long-form document rhythm for DocsShell articles ── */
 .ui-prose {
-	font-size: 1.02rem;
+	font-size: var(--t-lg);
 	line-height: 1.7;
 	color: var(--c-text);
 }
 .ui-prose h1 {
 	font-family: var(--font-display);
 	font-weight: 500;
-	font-size: 2.6rem;
+	font-size: var(--t-4xl);
 	line-height: 1.1;
 	letter-spacing: -0.015em;
 	margin: 0 0 1rem;
@@ -1103,7 +1243,7 @@
 .ui-prose h2 {
 	font-family: var(--font-display);
 	font-weight: 500;
-	font-size: 1.8rem;
+	font-size: var(--t-3xl);
 	line-height: 1.2;
 	margin: 2.75rem 0 0.9rem;
 	scroll-margin-top: 6rem;
@@ -1111,7 +1251,7 @@
 .ui-prose h3 {
 	font-family: var(--font-display);
 	font-weight: 500;
-	font-size: 1.25rem;
+	font-size: var(--t-xl);
 	margin: 2rem 0 0.6rem;
 	scroll-margin-top: 6rem;
 }
@@ -1174,7 +1314,7 @@
 /* ── Eyebrow ── */
 .ui-eyebrow {
 	font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-	font-size: 10px;
+	font-size: var(--t-2xs);
 	text-transform: uppercase;
 	letter-spacing: 0.32em;
 	color: var(--c-faint);
@@ -1190,12 +1330,12 @@
 	:scope > .ui-dot-ping {
 		position: absolute;
 		inset: 0;
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 		animation: ui-ping 1.8s ease-out infinite;
 	}
 	:scope > .ui-dot-core {
 		position: relative;
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 	}
 }
 
@@ -1211,7 +1351,7 @@
 		place-items: center;
 		width: 100%;
 		height: 100%;
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 		font-family: var(--font-data, ui-monospace, monospace);
 		font-weight: 500;
 		text-transform: uppercase;
@@ -1223,7 +1363,7 @@
 		right: -2px;
 		display: grid;
 		place-items: center;
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 		padding: 2px;
 	}
 }
@@ -1236,16 +1376,16 @@
 @scope (.ui-avatar-stack) {
 	:scope > .ui-avatar-stack-item {
 		position: relative;
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 	}
 	:scope > .ui-avatar-stack-extra {
 		position: relative;
 		z-index: 0;
 		display: grid;
 		place-items: center;
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 		font-family: var(--font-data, ui-monospace, monospace);
-		font-size: 11px;
+		font-size: var(--t-xs);
 		color: var(--c-muted);
 		background: var(--c-panel-2);
 	}
@@ -1256,10 +1396,10 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
-	border-radius: 999px;
+	border-radius: var(--r-pill);
 	padding: 4px 10px;
 	font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-	font-size: 10px;
+	font-size: var(--t-2xs);
 	text-transform: uppercase;
 	letter-spacing: 0.16em;
 	background: var(--c-panel-2);
@@ -1281,7 +1421,7 @@
       a clean nav>ol>li list ── */
 .ui-breadcrumb {
 	font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-	font-size: 11px;
+	font-size: var(--t-xs);
 	text-transform: uppercase;
 	letter-spacing: 0.14em;
 }
@@ -1311,7 +1451,7 @@
 		border: 0;
 		margin: 0;
 		padding: 2px 4px;
-		border-radius: 6px;
+		border-radius: var(--r-xs);
 		background: none;
 		font: inherit;
 		letter-spacing: inherit;
@@ -1392,8 +1532,10 @@
 .ui-radial::backdrop {
 	/* The veil is the CONTRAST GUARANTEE: whatever the page or a live
 	   canvas shows, the fan opens over a reliably dark backdrop — warm
-	   ink-tinted in light mode, deep space in dark (light-dark()). */
-	background: light-dark(rgb(28 22 10 / 0.55), rgb(2 2 8 / 0.6));
+	   ink-tinted in light mode, deep space in dark (light-dark()). Deep
+	   enough to read as intentional dusk: at 0.55 a warm tint over
+	   parchment came out an indeterminate olive rather than a dimmed page. */
+	background: light-dark(rgb(18 14 8 / 0.72), rgb(2 2 8 / 0.72));
 	backdrop-filter: blur(8px);
 }
 @scope (.ui-radial) {
@@ -1422,7 +1564,24 @@
 			var(--radial-label-lines) *
 			var(--radial-label-line)
 		);
-		--r: max(var(--radial-radius), max(var(--lane), var(--card-h)) / (2 * sin(var(--pitch) / 2)));
+		/* Clearance between NEIGHBOURS: the chord 2R·sin(pitch/2) must span
+		   the wider of the label lane and the card height. */
+		--r-clear: max(
+			var(--radial-radius),
+			max(var(--lane), var(--card-h)) /
+			(2 * sin(var(--pitch) / 2))
+		);
+		/* Clearance against the VIEWPORT: the outermost card sits
+		   R·sin(sweep/2) from the centre plus half its own lane, and that
+		   has to fit the half-width. Without this the fan is analytically
+		   perfect and still runs off the side of a small phone. */
+		--r-edge: calc(
+			(50vw - var(--radial-margin, 0.75rem) - var(--lane) / 2) /
+			sin(var(--radial-sweep) / 2)
+		);
+		/* The floor wins ties: a viewport too narrow for the ideal fan
+		   tightens it (labels wrap in-lane) rather than clipping it. */
+		--r: max(var(--radial-chip), min(var(--r-clear), var(--r-edge)));
 
 		position: absolute;
 		left: 0;
@@ -1451,7 +1610,7 @@
 		place-items: center;
 		width: var(--radial-chip);
 		height: var(--radial-chip);
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 		background: var(--c-panel);
 		color: var(--c-text);
 		box-shadow:
@@ -1470,7 +1629,7 @@
 		   colour schemes, so contrast is against the veil, never the page. */
 		max-width: var(--lane);
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-		font-size: 0.58rem;
+		font-size: var(--t-2xs);
 		letter-spacing: 0.12em;
 		line-height: var(--radial-label-line);
 		text-transform: uppercase;
@@ -1497,6 +1656,25 @@
 .ui-radial:not(:popover-open) .ui-radial-item {
 	opacity: 0;
 }
+/* Five chips launching outward on an overshoot curve is exactly the
+   vestibular pattern this query exists for: keep the fade, drop the
+   flight (and the stagger that draws the eye across it). */
+@media (prefers-reduced-motion: reduce) {
+	/* Scoped through .ui-radial so it doesn't descend below the
+	   :not(:popover-open) rule above it. */
+	.ui-radial .ui-radial-item {
+		transition:
+			opacity 120ms ease,
+			display 120ms allow-discrete;
+		transition-delay: 0s;
+	}
+	@starting-style {
+		.ui-radial:popover-open .ui-radial-item {
+			translate: calc(cos(var(--a)) * var(--r) - 50%)
+				calc(sin(var(--a)) * var(--r) - var(--radial-chip) / 2);
+		}
+	}
+}
 
 /* ── Button ── */
 .ui-btn {
@@ -1504,10 +1682,10 @@
 	align-items: center;
 	gap: 8px;
 	border: 0;
-	border-radius: 999px;
+	border-radius: var(--r-pill);
 	padding: 8px 16px;
 	font: inherit;
-	font-size: 13px;
+	font-size: var(--t-sm);
 	font-weight: 500;
 	cursor: pointer;
 	background: transparent;
@@ -1543,9 +1721,9 @@
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	border-radius: 16px;
+	border-radius: var(--r-lg);
 	background: var(--c-panel);
-	padding: 20px;
+	padding: var(--ui-panel-pad);
 	box-shadow: 0 0 0 1px var(--c-line);
 }
 .ui-panel::before {
@@ -1564,7 +1742,7 @@
 		top: -80px;
 		width: 176px;
 		height: 176px;
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 		background: var(--c-accent);
 		opacity: 0.07;
 		filter: blur(48px);
@@ -1582,8 +1760,11 @@
 		gap: 10px;
 	}
 	:scope > header .ui-panel-index {
-		font-family: var(--font-data, ui-monospace, monospace);
-		font-size: 11px;
+		/* Label voice, like the kicker on the same baseline beside it —
+		   this used to hardcode the data font, so declaring --font-label
+		   changed one and not the other. */
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: var(--t-xs);
 		letter-spacing: 0.1em;
 		color: var(--c-faint);
 	}
@@ -1591,7 +1772,7 @@
 		margin: 0;
 		font-family: var(--font-display, Georgia, serif);
 		font-optical-sizing: auto;
-		font-size: 19px;
+		font-size: var(--ui-panel-title);
 		font-weight: 500;
 		line-height: 1;
 		color: var(--c-text);
@@ -1599,22 +1780,26 @@
 	:scope > header .ui-panel-kicker {
 		margin: 6px 0 0;
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-		font-size: 10px;
+		font-size: var(--t-2xs);
 		text-transform: uppercase;
 		letter-spacing: 0.2em;
 		color: var(--c-faint);
 	}
 }
-/* Cascading density knob — if()/style-query enhanced (gated); the base
-   19px title above is the always-correct fallback. Set --ui-density:
-   compact on any ancestor to tighten every panel beneath it. */
-@supports (color: if(style(--x: 1): red; else: blue)) {
-	.ui-panel > header h2 {
-		font-size: if(style(--ui-density: compact): 16px; else: 19px);
-	}
-	.ui-panel {
-		padding: if(style(--ui-density: compact): 14px; else: 20px);
-	}
+/* Cascading density knob. The panel reads two REGISTERED tokens
+   (--ui-panel-pad / --ui-panel-title, both inherited), so density is just
+   a pair of inherited values — no feature gate, works in every engine, and
+   both tokens animate. Put `data-density="compact"` on any ancestor and
+   every panel beneath it tightens.
+
+   This REPLACES the previous `--ui-density` + `if()` implementation, which
+   only ever resolved in Chromium AND would have shadowed the tokens here
+   (the if() declarations win in Chromium whether or not --ui-density is
+   set, so keeping both would have made the attribute a no-op there).
+   Apps still setting --ui-density should move to the attribute. */
+[data-density="compact"] {
+	--ui-panel-pad: 14px;
+	--ui-panel-title: var(--t-lg);
 }
 
 /* ── Counter ── */
@@ -1637,7 +1822,7 @@
 @scope (.ui-waveform) {
 	:scope > .ui-waveform-bar {
 		flex: 1;
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 	}
 }
 
@@ -1650,13 +1835,13 @@
 	height: 4px;
 	width: 100%;
 	overflow: hidden;
-	border-radius: 999px;
+	border-radius: var(--r-pill);
 	background: var(--c-line);
 }
 @scope (.ui-meter) {
 	:scope > .ui-meter-fill {
 		height: 100%;
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 		background: var(--c-text);
 		transition: width 0.5s;
 	}
@@ -1688,7 +1873,7 @@
 	width: 36px;
 	height: 36px;
 	border: 0;
-	border-radius: 999px;
+	border-radius: var(--r-pill);
 	padding: 0;
 	font: inherit;
 	cursor: pointer;
@@ -1718,7 +1903,7 @@
 @scope (.ui-field) {
 	:scope > .ui-field-label {
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-		font-size: 10px;
+		font-size: var(--t-2xs);
 		text-transform: uppercase;
 		letter-spacing: 0.2em;
 		color: var(--c-faint);
@@ -1757,13 +1942,13 @@
 		margin: 0;
 		font-family: var(--font-display, Georgia, serif);
 		font-optical-sizing: auto;
-		font-size: 24px;
+		font-size: var(--t-2xl);
 		font-weight: 500;
 		color: var(--c-text);
 	}
 	.ui-cal-year {
 		font-family: var(--font-data, ui-monospace, monospace);
-		font-size: 15px;
+		font-size: var(--t-lg);
 		font-variant-numeric: tabular-nums;
 		color: var(--c-faint);
 	}
@@ -1774,10 +1959,10 @@
 	}
 	.ui-cal-today-btn {
 		border: 0;
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 		padding: 6px 12px;
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-		font-size: 11px;
+		font-size: var(--t-xs);
 		text-transform: uppercase;
 		letter-spacing: 0.16em;
 		cursor: pointer;
@@ -1802,7 +1987,7 @@
 	.ui-cal-weekday {
 		text-align: center;
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-		font-size: 10px;
+		font-size: var(--t-2xs);
 		text-transform: uppercase;
 		letter-spacing: 0.16em;
 		color: var(--c-faint);
@@ -1822,7 +2007,7 @@
 		flex-direction: column;
 		gap: 4px;
 		border: 1px solid transparent;
-		border-radius: 12px;
+		border-radius: var(--r-md);
 		padding: 6px;
 		text-align: left;
 		font: inherit;
@@ -1845,9 +2030,9 @@
 		width: 24px;
 		height: 24px;
 		place-items: center;
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 		font-family: var(--font-data, ui-monospace, monospace);
-		font-size: 12px;
+		font-size: var(--t-sm);
 		font-variant-numeric: tabular-nums;
 		color: var(--c-muted);
 	}
@@ -1870,10 +2055,10 @@
 	align-items: center;
 	gap: 8px;
 	border: 0;
-	border-radius: 12px;
+	border-radius: var(--r-md);
 	padding: 10px 14px;
 	font: inherit;
-	font-size: 14px;
+	font-size: var(--t-md);
 	cursor: pointer;
 	background: var(--c-page-2);
 	color: var(--c-text);
@@ -1905,7 +2090,7 @@
 		height: 28px;
 		place-items: center;
 		border: 0;
-		border-radius: 8px;
+		border-radius: var(--r-sm);
 		font: inherit;
 		cursor: pointer;
 		background: transparent;
@@ -1916,7 +2101,7 @@
 	}
 	.ui-dp-title {
 		font-family: var(--font-display, Georgia, serif);
-		font-size: 15px;
+		font-size: var(--t-lg);
 		color: var(--c-text);
 	}
 	.ui-dp-grid {
@@ -1929,7 +2114,7 @@
 		height: 28px;
 		place-items: center;
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-		font-size: 9px;
+		font-size: var(--t-2xs);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		color: var(--c-faint);
@@ -1939,9 +2124,9 @@
 		height: 32px;
 		place-items: center;
 		border: 0;
-		border-radius: 8px;
+		border-radius: var(--r-sm);
 		font-family: var(--font-data, ui-monospace, monospace);
-		font-size: 13px;
+		font-size: var(--t-sm);
 		font-variant-numeric: tabular-nums;
 		cursor: pointer;
 		background: transparent;
@@ -1966,7 +2151,7 @@
 		margin-bottom: 12px;
 		text-align: center;
 		font-family: var(--font-display, Georgia, serif);
-		font-size: 24px;
+		font-size: var(--t-2xl);
 		font-variant-numeric: tabular-nums;
 		color: var(--c-text);
 	}
@@ -1987,7 +2172,7 @@
 		top: 50%;
 		height: 36px;
 		transform: translateY(-50%);
-		border-radius: 8px;
+		border-radius: var(--r-sm);
 		background: var(--c-accent-soft);
 		box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-accent) 28%, transparent);
 	}
@@ -1996,7 +2181,7 @@
 		display: grid;
 		place-items: center;
 		font-family: var(--font-data, ui-monospace, monospace);
-		font-size: 15px;
+		font-size: var(--t-lg);
 		color: var(--c-faint);
 	}
 	.ui-wheel-item {
@@ -2007,7 +2192,7 @@
 		justify-content: center;
 		border: 0;
 		font-family: var(--font-data, ui-monospace, monospace);
-		font-size: 15px;
+		font-size: var(--t-lg);
 		font-variant-numeric: tabular-nums;
 		cursor: pointer;
 		background: transparent;
@@ -2030,10 +2215,10 @@
 	}
 	.ui-tp-ampm {
 		border: 0;
-		border-radius: 8px;
+		border-radius: var(--r-sm);
 		padding: 8px 12px;
 		font-family: var(--font-data, ui-monospace, monospace);
-		font-size: 12px;
+		font-size: var(--t-sm);
 		font-weight: 600;
 		letter-spacing: 0.025em;
 		cursor: pointer;
@@ -2063,10 +2248,10 @@
 	}
 	.ui-tp-preset {
 		border: 0;
-		border-radius: 999px;
+		border-radius: var(--r-pill);
 		padding: 4px 10px;
 		font-family: var(--font-data, ui-monospace, monospace);
-		font-size: 11px;
+		font-size: var(--t-xs);
 		cursor: pointer;
 		background: transparent;
 		color: var(--c-muted);
@@ -2128,7 +2313,7 @@
 		margin: 0;
 		font-family: var(--font-display, Georgia, serif);
 		font-optical-sizing: auto;
-		font-size: 2.25rem;
+		font-size: var(--t-4xl);
 		font-weight: 500;
 		line-height: 1.08;
 		letter-spacing: -0.015em;
@@ -2138,7 +2323,7 @@
 	:scope > .ui-hero-lede {
 		margin: 0;
 		max-width: 42rem;
-		font-size: 1.125rem;
+		font-size: var(--t-xl);
 		line-height: 1.625;
 		color: var(--c-muted);
 		text-wrap: pretty;
@@ -2154,7 +2339,7 @@
 }
 @media (min-width: 640px) {
 	.ui-hero > h1 {
-		font-size: 3.75rem;
+		font-size: var(--t-5xl);
 	}
 }
 
@@ -2187,7 +2372,7 @@
 		margin: 0;
 		font-family: var(--font-display, Georgia, serif);
 		font-optical-sizing: auto;
-		font-size: 1.875rem;
+		font-size: var(--t-3xl);
 		font-weight: 500;
 		letter-spacing: -0.01em;
 		color: var(--c-text);
@@ -2196,7 +2381,7 @@
 	.ui-section-head .ui-section-lede {
 		margin: 0;
 		max-width: 42rem;
-		font-size: 1rem;
+		font-size: var(--t-lg);
 		line-height: 1.625;
 		color: var(--c-muted);
 		text-wrap: pretty;
@@ -2204,7 +2389,7 @@
 }
 @media (min-width: 640px) {
 	.ui-section > .ui-section-head h2 {
-		font-size: 2.25rem;
+		font-size: var(--t-4xl);
 	}
 }
 
@@ -2227,7 +2412,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
-		border-radius: 16px;
+		border-radius: var(--r-lg);
 		background: var(--c-panel);
 		padding: 24px;
 		box-shadow: 0 0 0 1px var(--c-line);
@@ -2237,18 +2422,18 @@
 		width: 40px;
 		height: 40px;
 		place-items: center;
-		border-radius: 12px;
-		font-size: 1.125rem;
+		border-radius: var(--r-md);
+		font-size: var(--t-xl);
 	}
 	.ui-feature-card h3 {
 		margin: 0;
 		font-family: var(--font-display, Georgia, serif);
-		font-size: 1.125rem;
+		font-size: var(--t-xl);
 		font-weight: 500;
 		color: var(--c-text);
 	}
 	.ui-feature-body {
-		font-size: 15px;
+		font-size: var(--t-lg);
 		line-height: 1.625;
 		color: var(--c-muted);
 	}
@@ -2271,13 +2456,13 @@
 	font-family: var(--font-data, ui-monospace, monospace);
 }
 .ui-step-num[data-size="sm"] {
-	font-size: 0.875rem;
+	font-size: var(--t-md);
 }
 .ui-step-num[data-size="md"] {
-	font-size: 1.25rem;
+	font-size: var(--t-xl);
 }
 .ui-step-num[data-size="lg"] {
-	font-size: 1.875rem;
+	font-size: var(--t-3xl);
 }
 .ui-steps {
 	position: relative;
@@ -2333,7 +2518,7 @@
 	.ui-step-text h3 {
 		margin: 0;
 		font-family: var(--font-display, Georgia, serif);
-		font-size: 1.5rem;
+		font-size: var(--t-2xl);
 		font-weight: 500;
 	}
 	.ui-step-body {
@@ -2350,7 +2535,7 @@
 		list-style: none;
 		gap: 8px;
 		padding: 0;
-		font-size: 0.875rem;
+		font-size: var(--t-md);
 		color: var(--c-muted);
 	}
 	:scope[data-variant="rail"] .ui-step-bullets {
@@ -2358,7 +2543,7 @@
 		list-style: disc;
 		padding-left: 20px;
 		gap: 6px;
-		font-size: 15px;
+		font-size: var(--t-lg);
 	}
 }
 @media (min-width: 768px) {
@@ -2392,7 +2577,7 @@
 @scope (.ui-logo-cloud) {
 	.ui-logo-name {
 		font-family: var(--font-data, ui-monospace, monospace);
-		font-size: 0.875rem;
+		font-size: var(--t-md);
 		color: var(--c-faint);
 	}
 	.ui-logo-item img {
