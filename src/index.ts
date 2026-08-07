@@ -63,5 +63,6 @@ export {
 	type StatusVisual,
 	Waveform,
 } from './primitives'
+export { RadialMenu, type RadialMenuItem } from './radial-menu'
 
 export { withScopedViewTransition, withViewTransition } from './vt'

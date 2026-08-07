@@ -1340,6 +1340,164 @@
 	}
 }
 
+/* ── RadialMenu — a fan of chips around its TRIGGER (Popover API + anchor
+      positioning + @starting-style; see radial-menu.tsx).
+
+      DERIVED GEOMETRY, no per-item styles: sibling-count()/sibling-index()
+      give each item its pitch and angle; labels live in a fixed-width LANE
+      centred under their chips (wrapping to the lane, never resizing); and
+      the radius has an ANALYTIC FLOOR — adjacent items are separated by
+      the chord 2R·sin(pitch/2), so requiring
+
+        R ≥ max(laneWidth, cardHeight) / (2·sin(pitch/2))
+
+      guarantees neighbouring cards (chip + gap + label block) clear each
+      other in every direction, at any token values. Resize the tokens and
+      the clearance re-derives itself. ── */
+.ui-radial-trigger {
+	border: 0;
+	background: none;
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
+	padding: 0;
+}
+.ui-radial {
+	/* Design tokens — the ONLY authored quantities; everything else is
+	   derived. (--radial-radius/--radial-sweep/--radial-down arrive from
+	   the component as its public props.) */
+	--radial-chip: 3rem; /* chip diameter */
+	--radial-label-gap: 0.4rem; /* chip edge ↔ label breathing room */
+	--radial-label-line: 0.8rem; /* one label line box */
+	--radial-label-lines: 2; /* wrap budget within the lane */
+	/* Static fallback: bottom-centre of the viewport (bars live there). */
+	position: fixed;
+	inset: auto auto 5.5rem 50%;
+	width: 0;
+	height: 0;
+	margin: 0;
+	border: 0;
+	padding: 0;
+	overflow: visible;
+	background: none;
+}
+@supports (anchor-name: --x) {
+	/* position-anchor arrives inline from the component (per-instance). */
+	.ui-radial {
+		inset: auto;
+		left: anchor(center);
+		top: anchor(center);
+	}
+}
+.ui-radial::backdrop {
+	/* The veil is the CONTRAST GUARANTEE: whatever the page or a live
+	   canvas shows, the fan opens over a reliably dark backdrop — warm
+	   ink-tinted in light mode, deep space in dark (light-dark()). */
+	background: light-dark(rgb(28 22 10 / 0.55), rgb(2 2 8 / 0.6));
+	backdrop-filter: blur(8px);
+}
+@scope (.ui-radial) {
+	:scope > .ui-radial-item {
+		/* The derivation chain — count → pitch → angle → radius floor.
+		   --radial-i / --radial-count are structural integers supplied by
+		   the component; `sibling-index()`/`sibling-count()` should replace
+		   them once stable (2026-08: using them here — inside the custom-
+		   property → translate/allow-discrete-transition chain — crashes
+		   Chromium's renderer; Tier-4 exactly as the platform doc warns). */
+		--n: max(var(--radial-count), 2);
+		--pitch: calc(var(--radial-sweep) / (var(--n) - 1));
+		--a: calc(
+			-90deg +
+			var(--radial-down) *
+			180deg -
+			var(--radial-sweep) /
+			2 +
+			var(--pitch) *
+			var(--radial-i)
+		);
+		--lane: calc(var(--radial-chip) + 2 * var(--radial-label-gap));
+		--card-h: calc(
+			var(--radial-chip) +
+			var(--radial-label-gap) +
+			var(--radial-label-lines) *
+			var(--radial-label-line)
+		);
+		--r: max(var(--radial-radius), max(var(--lane), var(--card-h)) / (2 * sin(var(--pitch) / 2)));
+
+		position: absolute;
+		left: 0;
+		top: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--radial-label-gap);
+		border: 0;
+		background: none;
+		font: inherit;
+		cursor: pointer;
+		padding: 0;
+		/* Polar → cartesian with native CSS trig; -50% centres the CHIP on
+		   the fan point (the label block hangs below within the card). */
+		translate: calc(cos(var(--a)) * var(--r) - 50%)
+			calc(sin(var(--a)) * var(--r) - var(--radial-chip) / 2);
+		transition:
+			translate 260ms cubic-bezier(0.34, 1.3, 0.5, 1),
+			opacity 200ms ease,
+			display 260ms allow-discrete;
+		transition-delay: calc(var(--radial-i) * 35ms);
+	}
+	.ui-radial-chip {
+		display: grid;
+		place-items: center;
+		width: var(--radial-chip);
+		height: var(--radial-chip);
+		border-radius: 999px;
+		background: var(--c-panel);
+		color: var(--c-text);
+		box-shadow:
+			0 0 0 1px var(--c-line-strong),
+			0 10px 24px -8px rgb(0 0 0 / 0.45);
+	}
+	.ui-radial-chip > * {
+		width: 1.5rem;
+		height: 1.5rem;
+	}
+	.ui-radial-label {
+		/* Labels ALWAYS sit centred under their chip, confined to the lane
+		   the radius floor was solved for: they wrap (balanced) instead of
+		   ever growing the card sideways. Ink is deliberately MODE-INVARIANT
+		   light: the ::backdrop veil guarantees a dark backdrop in BOTH
+		   colour schemes, so contrast is against the veil, never the page. */
+		max-width: var(--lane);
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: 0.58rem;
+		letter-spacing: 0.12em;
+		line-height: var(--radial-label-line);
+		text-transform: uppercase;
+		text-align: center;
+		text-wrap: balance;
+		color: rgb(255 255 255 / 0.94);
+		text-shadow: 0 1px 4px rgb(0 0 0 / 0.5);
+	}
+}
+@media (hover: hover) {
+	.ui-radial .ui-radial-item:hover .ui-radial-chip {
+		box-shadow:
+			0 0 0 2px color-mix(in oklab, var(--c-accent) 70%, transparent),
+			0 10px 24px -8px rgb(0 0 0 / 0.45);
+	}
+}
+/* Entrance: chips launch from the trigger, staggered along the fan. */
+@starting-style {
+	.ui-radial:popover-open .ui-radial-item {
+		translate: -50% calc(-1 * var(--radial-chip) / 2);
+		opacity: 0;
+	}
+}
+.ui-radial:not(:popover-open) .ui-radial-item {
+	opacity: 0;
+}
+
 /* ── Button ── */
 .ui-btn {
 	display: inline-flex;
