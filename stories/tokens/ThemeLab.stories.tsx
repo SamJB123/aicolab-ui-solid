@@ -10,10 +10,17 @@
 // ink/accent — and the generated `:root` block at the bottom is ready to
 // paste into .design-sync/theme/theme.css.
 //
+// Preset swatches (theme-presets.ts) offer curated starting points: light
+// and dark rails are independent, so any light pick combines with any dark
+// pick. Clicking a swatch pushes its values into the controls — tweak from
+// there and copy the block as usual.
+//
 // Tip: combine with the Theme toolbar's Split mode to tune both schemes
 // side by side.
 import { createEffect, createMemo, For } from 'solid-js'
+import { useArgs } from 'storybook/preview-api'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
+import { DARK_PRESETS, LIGHT_PRESETS, type SchemeValues, type ThemePreset } from './theme-presets'
 import {
 	ensureGoogleFontLoaded,
 	FONT_OPTIONS,
@@ -44,21 +51,22 @@ type ThemeLabArgs = {
 	fontLabel: string
 }
 
-// Canonical values from .design-sync/theme/theme.css.
+// Canonical values from .design-sync/theme/theme.css (light = Marigold,
+// adopted from the preset rail 2026-08-07).
 const CANONICAL: ThemeLabArgs = {
-	pageLight: '#f7f5f0',
+	pageLight: '#fff9e8',
 	pageDark: '#12100b',
-	page2Light: '#efece4',
+	page2Light: '#f6ecc7',
 	page2Dark: '#191610',
-	panelLight: '#ffffff',
+	panelLight: '#fffffb',
 	panelDark: '#1e1a12',
-	panel2Light: '#f5f2ea',
+	panel2Light: '#fbf3d6',
 	panel2Dark: '#262117',
-	textLight: '#1f1b12',
+	textLight: '#241c0b',
 	textDark: '#ede7da',
-	accentLight: '#a06f1c',
+	accentLight: '#cc6a00',
 	accentDark: '#e8b04c',
-	liveLight: '#16a34a',
+	liveLight: '#43913a',
 	liveDark: '#5aa179',
 	fontDisplay: 'default',
 	fontSans: 'default',
@@ -129,7 +137,7 @@ const DERIVED = ['--c-muted', '--c-faint', '--c-line', '--c-line-strong', '--c-a
 const DEFAULT_STACKS: Record<'display' | 'sans' | 'data', string> = {
 	display: 'ui-sans-serif, system-ui, sans-serif',
 	sans: 'ui-sans-serif, system-ui, sans-serif',
-	data: 'ui-monospace, "SFMono-Regular", monospace',
+	data: '"Azeret Mono", ui-monospace, "SFMono-Regular", monospace',
 }
 
 // Copy the :root token declarations from the loaded stylesheets onto the
@@ -153,6 +161,108 @@ const rehostRootTokens = (el: HTMLElement) => {
 			}
 		}
 	}
+}
+
+// Map a preset's scheme-agnostic values onto the lab's per-scheme arg keys.
+const schemeArgs = (v: SchemeValues, scheme: 'light' | 'dark'): Partial<ThemeLabArgs> =>
+	scheme === 'light'
+		? {
+				pageLight: v.page,
+				page2Light: v.page2,
+				panelLight: v.panel,
+				panel2Light: v.panel2,
+				textLight: v.text,
+				accentLight: v.accent,
+				liveLight: v.live,
+			}
+		: {
+				pageDark: v.page,
+				page2Dark: v.page2,
+				panelDark: v.panel,
+				panel2Dark: v.panel2,
+				textDark: v.text,
+				accentDark: v.accent,
+				liveDark: v.live,
+			}
+
+// The shipped theme.css values as a preset, one per rail, for an easy reset.
+const canonicalPreset = (scheme: 'light' | 'dark'): ThemePreset => ({
+	name: scheme === 'light' ? 'Marigold' : 'Lantern Gold',
+	note: `Canonical — the shipped theme.css ${scheme} scheme`,
+	values:
+		scheme === 'light'
+			? {
+					page: CANONICAL.pageLight,
+					page2: CANONICAL.page2Light,
+					panel: CANONICAL.panelLight,
+					panel2: CANONICAL.panel2Light,
+					text: CANONICAL.textLight,
+					accent: CANONICAL.accentLight,
+					live: CANONICAL.liveLight,
+				}
+			: {
+					page: CANONICAL.pageDark,
+					page2: CANONICAL.page2Dark,
+					panel: CANONICAL.panelDark,
+					panel2: CANONICAL.panel2Dark,
+					text: CANONICAL.textDark,
+					accent: CANONICAL.accentDark,
+					live: CANONICAL.liveDark,
+				},
+})
+
+// Preset cards render their own hexes (not tokens) so each card previews its
+// palette faithfully regardless of the currently applied theme.
+function PresetCard(props: { preset: ThemePreset; onApply: () => void }) {
+	const v = () => props.preset.values
+	return (
+		<button
+			type="button"
+			onClick={() => props.onApply()}
+			title={`Apply ${props.preset.name}`}
+			style={{
+				background: v().page,
+				color: v().text,
+				border: 'none',
+				'box-shadow': `inset 0 0 0 1px color-mix(in oklab, ${v().text} 28%, transparent)`,
+				'border-radius': '10px',
+				padding: '10px 12px',
+				display: 'grid',
+				gap: '7px',
+				'justify-items': 'start',
+				cursor: 'pointer',
+				width: '168px',
+				'text-align': 'left',
+				font: 'inherit',
+			}}
+		>
+			<span style={{ display: 'flex', gap: '5px' }}>
+				<For each={[v().page2, v().panel, v().accent, v().live, v().text]}>
+					{(hex) => (
+						<span
+							style={{
+								width: '15px',
+								height: '15px',
+								'border-radius': '50%',
+								background: hex,
+								'box-shadow': `inset 0 0 0 1px color-mix(in oklab, ${v().text} 30%, transparent)`,
+							}}
+						/>
+					)}
+				</For>
+			</span>
+			<span style={{ 'font-weight': '600', 'font-size': '13px' }}>{props.preset.name}</span>
+			<span
+				style={{
+					'font-size': '10.5px',
+					'line-height': '1.35',
+					color: `color-mix(in oklab, ${v().text} 62%, transparent)`,
+				}}
+			>
+				{props.preset.note}
+			</span>
+		</button>
+	)
 }
 
 function Swatch(props: { token: string }) {
@@ -181,6 +291,7 @@ export const Lab: Story = {
 	render: (args) => {
 		let wrap: HTMLDivElement | undefined
 		let rehosted = false
+		const [, updateArgs] = useArgs<ThemeLabArgs>()
 
 		const stacks = createMemo(() => ({
 			display: fontOption('display', args.fontDisplay)?.stack ?? DEFAULT_STACKS.display,
@@ -265,6 +376,33 @@ export const Lab: Story = {
 					'font-family': 'var(--font-sans)',
 				}}
 			>
+				{/* ── Preset swatches: independent light/dark rails, click to apply ── */}
+				<div style={{ display: 'grid', gap: '14px' }}>
+					<Rule label="Light presets — click to apply" />
+					<div style={{ display: 'flex', 'flex-wrap': 'wrap', gap: '10px' }}>
+						<For each={[canonicalPreset('light'), ...LIGHT_PRESETS]}>
+							{(preset) => (
+								<PresetCard
+									preset={preset}
+									onApply={() => updateArgs(schemeArgs(preset.values, 'light'))}
+								/>
+							)}
+						</For>
+					</div>
+					<Rule label="Dark presets — click to apply" />
+					<div style={{ display: 'flex', 'flex-wrap': 'wrap', gap: '10px' }}>
+						<For each={[canonicalPreset('dark'), ...DARK_PRESETS]}>
+							{(preset) => (
+								<PresetCard
+									preset={preset}
+									onApply={() => updateArgs(schemeArgs(preset.values, 'dark'))}
+								/>
+							)}
+						</For>
+					</div>
+				</div>
+
+				<Rule label="Type specimens" />
 				{/* ── Type specimens, one per font role ── */}
 				<div style={{ display: 'grid', gap: '10px' }}>
 					<Eyebrow class="ui-accent-ink">--font-display</Eyebrow>

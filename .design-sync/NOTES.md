@@ -33,7 +33,10 @@
   @scope/@property) and previews use inline styles, so the next re-sync must
   DROP the tailwind CLI step from `.ds-sync/solid-build.mjs` and emit
   `_ds_bundle.css` as essentially src/styles.css verbatim (the leading
-  block-comment strip still applies). solid-js/@solidjs/web resolve from the
+  block-comment strip still applies). NOTE 2026-08-07: styles.css now
+  begins with `@import url("./reset.css")` (the base reset, `@layer reset`)
+  — the bundle step must INLINE that import (substitute the file's
+  contents) since `_ds_bundle.css` ships as a single flat sheet. solid-js/@solidjs/web resolve from the
   package's own node_modules (2.0.0-beta.17, pnpm workspace catalog).
 - Render check/capture: no playwright chromium download needed —
   `DS_CHROMIUM_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`.

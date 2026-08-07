@@ -1,10 +1,12 @@
 /* @aicolab/ui-solid — the shared base reset. Replaces Tailwind's preflight
-   behaviour-compatibly so an app can swap `@import "tailwindcss"` for
+   behaviour-compatibly. INCLUDED BY styles.css since 2026-08-07 (it
+   @imports this file), so a consuming app needs only
 
-     @import "@aicolab/ui-solid/reset.css";
      @import "@aicolab/ui-solid/styles.css";
 
-   without its markup shifting. Two jobs: flatten the spec-pinned prose
+   Importing this sheet directly is still supported — for reset-only
+   consumers, or legacy two-import apps (the duplicate rules land in the
+   same layer, harmlessly). Two jobs: flatten the spec-pinned prose
    defaults apps were authored against (headings/lists/margins opt IN via
    classes), and normalize the genuinely browser-DIVERGENT zone — form
    controls, which engines + OSes style inconsistently — so component

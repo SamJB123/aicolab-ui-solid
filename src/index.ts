@@ -48,6 +48,8 @@ export { DatePicker, TimePicker } from './pickers'
 export {
 	Avatar,
 	AvatarStack,
+	Breadcrumb,
+	type BreadcrumbItem,
 	Button,
 	Chip,
 	type ClassProp,

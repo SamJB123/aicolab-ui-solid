@@ -97,6 +97,49 @@ export const FONT_OPTIONS: Record<FontRole, FontOption[]> = {
 			spec: 'Bacasime Antique',
 			stack: '"Bacasime Antique", Georgia, serif',
 		},
+		// ── sans-forward display voices (probed live against the css2 API) ──
+		{
+			id: 'outfit',
+			label: 'Outfit',
+			spec: 'Outfit:wght@100..900',
+			stack: '"Outfit", ui-sans-serif, system-ui, sans-serif',
+		},
+		{
+			id: 'jakarta',
+			label: 'Plus Jakarta Sans',
+			spec: 'Plus Jakarta Sans:wght@200..800',
+			stack: '"Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif',
+		},
+		{
+			id: 'unbounded',
+			label: 'Unbounded',
+			spec: 'Unbounded:wght@200..900',
+			stack: '"Unbounded", ui-sans-serif, system-ui, sans-serif',
+		},
+		{
+			id: 'syne',
+			label: 'Syne',
+			spec: 'Syne:wght@400..800',
+			stack: '"Syne", ui-sans-serif, system-ui, sans-serif',
+		},
+		{
+			id: 'archivo',
+			label: 'Archivo (variable width)',
+			spec: 'Archivo:wdth,wght@62..125,100..900',
+			stack: '"Archivo", ui-sans-serif, system-ui, sans-serif',
+		},
+		{
+			id: 'gabarito',
+			label: 'Gabarito',
+			spec: 'Gabarito:wght@400..900',
+			stack: '"Gabarito", ui-sans-serif, system-ui, sans-serif',
+		},
+		{
+			id: 'lexend',
+			label: 'Lexend',
+			spec: 'Lexend:wght@100..900',
+			stack: '"Lexend", ui-sans-serif, system-ui, sans-serif',
+		},
 	],
 	sans: [
 		{ id: 'default', label: 'Theme default' },
@@ -181,7 +224,9 @@ export const FONT_OPTIONS: Record<FontRole, FontOption[]> = {
 		},
 	],
 	data: [
-		{ id: 'default', label: 'Theme default' },
+		// theme.css itself loads + declares Azeret Mono for --font-data
+		// (canonical since 2026-08-07), so "default" already renders it.
+		{ id: 'default', label: 'Theme default (Azeret Mono)' },
 		{
 			id: 'jetbrains',
 			label: 'JetBrains Mono',
@@ -248,6 +293,50 @@ export const FONT_OPTIONS: Record<FontRole, FontOption[]> = {
 			label: 'Sono',
 			spec: 'Sono:wght@200..800',
 			stack: '"Sono", ui-monospace, "SFMono-Regular", monospace',
+		},
+		// ── warm / characterful voices — the antidote to the thin robotic
+		// mono badge look (probed live against the css2 API) ──
+		{
+			id: 'recursive-casual',
+			label: 'Recursive (Casual Mono)',
+			spec: 'Recursive:CASL,MONO,wght@1,1,300..1000',
+			stack: '"Recursive", ui-monospace, "SFMono-Regular", monospace',
+		},
+		{
+			id: 'courier-prime',
+			label: 'Courier Prime',
+			spec: 'Courier Prime:wght@400;700',
+			stack: '"Courier Prime", ui-monospace, "SFMono-Regular", monospace',
+		},
+		{
+			id: 'azeret',
+			label: 'Azeret Mono',
+			spec: 'Azeret Mono:wght@100..900',
+			stack: '"Azeret Mono", ui-monospace, "SFMono-Regular", monospace',
+		},
+		{
+			id: 'xanh',
+			label: 'Xanh Mono',
+			spec: 'Xanh Mono:ital@0;1',
+			stack: '"Xanh Mono", ui-monospace, "SFMono-Regular", monospace',
+		},
+		{
+			id: 'red-hat-mono',
+			label: 'Red Hat Mono',
+			spec: 'Red Hat Mono:wght@300..700',
+			stack: '"Red Hat Mono", ui-monospace, "SFMono-Regular", monospace',
+		},
+		{
+			id: 'ubuntu-mono',
+			label: 'Ubuntu Sans Mono',
+			spec: 'Ubuntu Sans Mono:wght@400..700',
+			stack: '"Ubuntu Sans Mono", ui-monospace, "SFMono-Regular", monospace',
+		},
+		{
+			id: 'sometype',
+			label: 'Sometype Mono',
+			spec: 'Sometype Mono:wght@400..700',
+			stack: '"Sometype Mono", ui-monospace, "SFMono-Regular", monospace',
 		},
 	],
 	// Micro-label voice (--font-label). Candidates reuse specs already
@@ -327,6 +416,25 @@ export const FONT_OPTIONS: Record<FontRole, FontOption[]> = {
 			label: 'Martian Mono',
 			spec: 'Martian Mono:wght@100..800',
 			stack: '"Martian Mono", ui-monospace, "SFMono-Regular", monospace',
+		},
+		// ── warm badge voices (specs verified for the data role) ──
+		{
+			id: 'recursive-casual',
+			label: 'Recursive (Casual Mono)',
+			spec: 'Recursive:CASL,MONO,wght@1,1,300..1000',
+			stack: '"Recursive", ui-monospace, "SFMono-Regular", monospace',
+		},
+		{
+			id: 'courier-prime',
+			label: 'Courier Prime',
+			spec: 'Courier Prime:wght@400;700',
+			stack: '"Courier Prime", ui-monospace, "SFMono-Regular", monospace',
+		},
+		{
+			id: 'azeret',
+			label: 'Azeret Mono',
+			spec: 'Azeret Mono:wght@100..900',
+			stack: '"Azeret Mono", ui-monospace, "SFMono-Regular", monospace',
 		},
 	],
 }

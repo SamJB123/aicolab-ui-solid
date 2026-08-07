@@ -4,8 +4,11 @@
 
    DUAL-MODE, ONE DECLARATION (2026-08-07): every colour token is a single
    light-dark() pair selected by `color-scheme` — no duplicated theme block.
-   Accent is the AI CoLab GOLD TRIM (the hive/bees identity): deep harbour
-   gold on light surfaces (AA on paper), lantern gold after dark.
+   Accent is the AI CoLab GOLD TRIM (the hive/bees identity). The light
+   scheme is MARIGOLD (adopted 2026-08-07 from the Theme Lab presets):
+   sunny yellow-tinged surfaces with a fully-saturated marigold flame
+   accent — chroma over darkness (~3.6:1 as ink; dark yellows at AA read
+   as drab brown). Dark stays lantern gold on near-black warmth.
 
    TOKEN SEMANTICS (canonical — do not invert):
      --c-page    = the PAGE surface        --c-text = PRIMARY TEXT
@@ -16,23 +19,29 @@
    force a mode by putting class="theme-dark"/"theme-light" (or
    data-theme="dark"/"light") on any ancestor — typically <body>. */
 
+/* Azeret Mono is the canonical --font-data voice (adopted 2026-08-07 —
+   warm/characterful, replacing the thin robotic system-mono default).
+   Loaded here so every consumer of this sheet gets the family; the token
+   below keeps system-mono fallbacks for the load window. */
+@import url("https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@100..900&display=swap");
+
 :root {
 	color-scheme: light dark;
-	--c-page: light-dark(#f7f5f0, #12100b); /* page */
-	--c-page-2: light-dark(#efece4, #191610); /* recessed */
-	--c-panel: light-dark(#ffffff, #1e1a12); /* raised */
-	--c-panel-2: light-dark(#f5f2ea, #262117);
-	--c-text: light-dark(#1f1b12, #ede7da); /* primary text */
+	--c-page: light-dark(#fff9e8, #12100b); /* page */
+	--c-page-2: light-dark(#f6ecc7, #191610); /* recessed */
+	--c-panel: light-dark(#fffffb, #1e1a12); /* raised */
+	--c-panel-2: light-dark(#fbf3d6, #262117);
+	--c-text: light-dark(#241c0b, #ede7da); /* primary text */
 	--c-muted: color-mix(in oklab, var(--c-text) 58%, transparent);
 	--c-faint: color-mix(in oklab, var(--c-text) 36%, transparent);
-	--c-accent: light-dark(#a06f1c, #e8b04c); /* gold trim (hive) */
-	--c-live: light-dark(#16a34a, #5aa179); /* live-positive */
+	--c-accent: light-dark(#cc6a00, #e8b04c); /* marigold flame / lantern gold */
+	--c-live: light-dark(#43913a, #5aa179); /* live-positive */
 	--c-line: color-mix(in oklab, var(--c-text) 10%, transparent);
 	--c-line-strong: color-mix(in oklab, var(--c-text) 20%, transparent);
 	--c-accent-soft: color-mix(in oklab, var(--c-accent) 14%, transparent);
 	--font-display: ui-sans-serif, system-ui, sans-serif;
 	--font-sans: ui-sans-serif, system-ui, sans-serif;
-	--font-data: ui-monospace, "SFMono-Regular", monospace;
+	--font-data: "Azeret Mono", ui-monospace, "SFMono-Regular", monospace;
 	/* --font-label (micro-labels: eyebrows/chips/kickers/field labels) is
 	   deliberately unset — it falls back to --font-data. Declare it to give
 	   the label voice its own family. */

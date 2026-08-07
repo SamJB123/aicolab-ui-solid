@@ -3,6 +3,14 @@
 
      @import "@aicolab/ui-solid/styles.css";
 
+   That single import now INCLUDES the base reset (first statement below):
+   reset.css rides in via @import, wrapped in `@layer reset` so it sits
+   below every unlayered rule regardless of import order — consumers no
+   longer need to remember a second sheet. Importing reset.css separately
+   as well (the pre-2026-08-07 two-import pattern) stays harmless: the
+   duplicate rules land in the same layer. reset.css remains exported for
+   reset-only consumers.
+
    No Tailwind, no @source, no build step: components style themselves from
    the semantic classes below (scoped with @scope — Baseline) plus the token
    contract. (Migrated off utility classes 2026-08-07.)
@@ -33,66 +41,71 @@
 
    Everything below is feature-guarded or degrades to a calm static state. */
 
+/* The base reset (Tailwind-preflight-compatible floor). Layered `reset`
+   inside the file, so it stays below all unlayered rules no matter where
+   this import lands in the consumer's cascade. */
+@import url("./reset.css");
+
 /* ── Registered token contract (typed, animatable, canonical initials) ── */
 @property --c-page {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: #f7f5f0;
+	initial-value: #fff9e8;
 }
 @property --c-page-2 {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: #efece4;
+	initial-value: #f6ecc7;
 }
 @property --c-panel {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: #ffffff;
+	initial-value: #fffffb;
 }
 @property --c-panel-2 {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: #f5f2ea;
+	initial-value: #fbf3d6;
 }
 @property --c-text {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: #1f1b12;
+	initial-value: #241c0b;
 }
 @property --c-muted {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: #6b6558;
+	initial-value: #78705e;
 }
 @property --c-faint {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: #a29b8a;
+	initial-value: #a9a290;
 }
 @property --c-accent {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: #a06f1c;
+	initial-value: #cc6a00;
 }
 @property --c-live {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: #16a34a;
+	initial-value: #43913a;
 }
 @property --c-line {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: #e5e1d6;
+	initial-value: #e6e0cf;
 }
 @property --c-line-strong {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: #d0cabb;
+	initial-value: #cec8b6;
 }
 @property --c-accent-soft {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: #f0e2c4;
+	initial-value: #fae5cc;
 }
 @property --font-display {
 	syntax: "*";
@@ -336,7 +349,10 @@
 	.ui-picker-pop {
 		position-area: block-end span-inline-end;
 		margin-top: 8px;
-		position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+		position-try-fallbacks:
+			flip-block,
+			flip-inline,
+			flip-block flip-inline;
 	}
 }
 .ui-wheel {
@@ -1261,6 +1277,69 @@
 	box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-live) 30%, transparent);
 }
 
+/* ── Breadcrumb — wayfinding trail; chevrons are pure CSS so the DOM stays
+      a clean nav>ol>li list ── */
+.ui-breadcrumb {
+	font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+}
+@scope (.ui-breadcrumb) {
+	:scope > .ui-breadcrumb-trail {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 2px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.ui-breadcrumb-step {
+		display: inline-flex;
+		align-items: center;
+	}
+	/* Chevron separator between steps — faint, non-selectable, spaced by
+	   its own padding so wrapped rows keep their rhythm. */
+	.ui-breadcrumb-step + .ui-breadcrumb-step::before {
+		content: "›";
+		padding-inline: 7px;
+		color: var(--c-faint);
+		user-select: none;
+	}
+	.ui-breadcrumb-link {
+		border: 0;
+		margin: 0;
+		padding: 2px 4px;
+		border-radius: 6px;
+		background: none;
+		font: inherit;
+		letter-spacing: inherit;
+		text-transform: inherit;
+		text-decoration: none;
+		color: var(--c-muted);
+		cursor: pointer;
+		transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+	.ui-breadcrumb-link:focus-visible {
+		outline: 2px solid color-mix(in oklab, var(--c-accent) 55%, transparent);
+		outline-offset: 1px;
+	}
+	.ui-breadcrumb-here {
+		padding: 2px 4px;
+		color: var(--c-text);
+	}
+	.ui-breadcrumb-here:not([aria-current]) {
+		/* An inert ANCESTOR (no href/handler) reads quieter than the page. */
+		color: var(--c-muted);
+	}
+}
+@media (hover: hover) {
+	.ui-breadcrumb .ui-breadcrumb-link:hover {
+		color: var(--c-text);
+	}
+}
+
 /* ── Button ── */
 .ui-btn {
 	display: inline-flex;
@@ -1547,7 +1626,9 @@
 		background: transparent;
 		color: var(--c-muted);
 		box-shadow: 0 0 0 1px var(--c-line);
-		transition: color 0.2s, background-color 0.2s;
+		transition:
+			color 0.2s,
+			background-color 0.2s;
 	}
 	.ui-cal-today-btn:hover {
 		background: var(--c-panel-2);
@@ -1590,7 +1671,9 @@
 		cursor: pointer;
 		background: transparent;
 		color: inherit;
-		transition: background-color 0.2s, border-color 0.2s;
+		transition:
+			background-color 0.2s,
+			border-color 0.2s;
 	}
 	.ui-cal-day:hover:not([data-selected]) {
 		background: var(--c-panel-2);
@@ -1705,7 +1788,9 @@
 		cursor: pointer;
 		background: transparent;
 		color: var(--c-text);
-		transition: background-color 0.2s, color 0.2s;
+		transition:
+			background-color 0.2s,
+			color 0.2s;
 	}
 	.ui-dp-day:hover:not([data-selected]) {
 		background: var(--c-accent-soft);
@@ -1797,7 +1882,9 @@
 		background: transparent;
 		color: var(--c-faint);
 		box-shadow: 0 0 0 1px var(--c-line);
-		transition: background-color 0.2s, color 0.2s;
+		transition:
+			background-color 0.2s,
+			color 0.2s;
 	}
 	.ui-tp-ampm:hover:not([data-active]) {
 		background: var(--c-panel);
@@ -1826,7 +1913,9 @@
 		background: transparent;
 		color: var(--c-muted);
 		box-shadow: 0 0 0 1px var(--c-line);
-		transition: background-color 0.2s, color 0.2s;
+		transition:
+			background-color 0.2s,
+			color 0.2s;
 	}
 	.ui-tp-preset:hover {
 		background: var(--c-panel);

@@ -19,6 +19,8 @@
 // global arrives as a reactive store, so switching modes swaps the layout
 // (and the <html> attribute, via the effect) without a remount storm.
 
+// styles.css @imports the base reset itself (since 2026-08-07), so the
+// package floor is these two sheets — same as any consuming app.
 import '../.design-sync/theme/theme.css'
 import '../src/styles.css'
 import './preview.css'
