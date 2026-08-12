@@ -23,7 +23,7 @@ const FEATURES: Feature[] = [
 ]
 
 const meta = {
-	title: 'Marketing/FeatureGrid',
+	title: 'Molecules/FeatureGrid',
 	component: FeatureGrid,
 	parameters: { layout: 'fullscreen' },
 	argTypes: {

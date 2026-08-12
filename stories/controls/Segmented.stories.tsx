@@ -29,7 +29,7 @@ function InteractiveTreatment(props: {
 }
 
 const meta = {
-	title: 'Controls/Segmented',
+	title: 'Atoms/Segmented',
 	component: Segmented,
 	argTypes: {
 		colorBase: { control: 'select', options: ['primary', 'secondary', 'accent', 'neutral', 'info', 'success', 'warning', 'error'] },

@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Mark } from '../../src/marketing'
 
 const meta = {
-	title: 'Marketing/Mark',
+	title: 'Atoms/Mark',
 	component: Mark,
 	argTypes: {
 		tone: { control: 'radio', options: ['underline', 'highlight'] },

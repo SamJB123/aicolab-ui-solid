@@ -12,7 +12,7 @@ const SLIDES = [
 ] as const
 
 const meta = {
-	title: 'Marketing/Carousel',
+	title: 'Molecules/Carousel',
 	component: Carousel,
 	parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof Carousel>

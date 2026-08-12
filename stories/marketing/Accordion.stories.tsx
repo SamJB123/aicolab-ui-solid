@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Accordion, AccordionItem } from '../../src/marketing'
 
 const meta = {
-	title: 'Marketing/Accordion',
+	title: 'Molecules/Accordion',
 	component: Accordion,
 	args: {
 		spacing: 'joined',

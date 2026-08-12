@@ -4,7 +4,7 @@ import { Section } from '../../src/marketing'
 import { Chip } from '../../src/primitives'
 
 const meta = {
-	title: 'Marketing/Section',
+	title: 'Molecules/Section',
 	component: Section,
 	parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof Section>

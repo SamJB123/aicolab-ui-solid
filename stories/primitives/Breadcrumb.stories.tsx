@@ -4,7 +4,7 @@ import { Breadcrumb } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
 
 const meta = {
-	title: 'Primitives/Breadcrumb',
+	title: 'Atoms/Breadcrumb',
 	component: Breadcrumb,
 	args: {
 		items: [

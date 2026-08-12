@@ -126,7 +126,7 @@ const fontArg = (role: FontRole) => ({
 })
 
 const meta = {
-	title: 'Tokens/Theme Lab',
+	title: 'Foundations/Theme Lab',
 	args: CANONICAL,
 	argTypes: {
 		baseLight: colorArg('--color-base-100 anchor (light)', 'Surface anchor'),

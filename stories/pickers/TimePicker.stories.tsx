@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { TimePicker } from '../../src/pickers'
 
 const meta = {
-	title: 'Pickers/TimePicker',
+	title: 'Molecules/Pickers/TimePicker',
 	component: TimePicker,
 	args: { value: 9 * 60 + 30, onChange: fn() },
 } satisfies Meta<typeof TimePicker>

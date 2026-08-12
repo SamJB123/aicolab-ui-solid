@@ -15,7 +15,7 @@ import {
 import { Button } from '../../src/primitives'
 
 const meta = {
-	title: 'Composed/Landing page',
+	title: 'Organisms/Compositions/Landing page',
 	parameters: { layout: 'fullscreen' },
 } satisfies Meta
 

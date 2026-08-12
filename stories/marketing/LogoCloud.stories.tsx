@@ -11,7 +11,7 @@ const DEMO_LOGO =
 	)
 
 const meta = {
-	title: 'Marketing/LogoCloud',
+	title: 'Molecules/LogoCloud',
 	component: LogoCloud,
 	parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof LogoCloud>

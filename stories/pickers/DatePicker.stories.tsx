@@ -6,7 +6,7 @@ import type { YMD } from '../../src/calendar'
 import { DatePicker } from '../../src/pickers'
 
 const meta = {
-	title: 'Pickers/DatePicker',
+	title: 'Molecules/Pickers/DatePicker',
 	component: DatePicker,
 	args: { value: { y: 2026, m: 7, d: 12 }, onChange: fn() },
 } satisfies Meta<typeof DatePicker>

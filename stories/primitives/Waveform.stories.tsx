@@ -25,7 +25,7 @@ function AnimatedAxesWaveforms() {
 }
 
 const meta = {
-	title: 'Primitives/Waveform',
+	title: 'Atoms/Waveform',
 	component: Waveform,
 	args: { bars: BARS },
 } satisfies Meta<typeof Waveform>

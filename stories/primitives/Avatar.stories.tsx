@@ -4,7 +4,7 @@ import { Avatar } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
 
 const meta = {
-	title: 'Primitives/Avatar',
+	title: 'Atoms/Avatar',
 	component: Avatar,
 	args: { name: 'Ada Lovelace', faceColor: 'var(--color-primary)' },
 } satisfies Meta<typeof Avatar>

@@ -4,7 +4,7 @@ import { Eyebrow, Meter } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
 
 const meta = {
-	title: 'Primitives/Meter',
+	title: 'Atoms/Meter',
 	component: Meter,
 	args: { value: 62, max: 100 },
 } satisfies Meta<typeof Meter>

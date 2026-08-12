@@ -6,7 +6,7 @@ import { addMonths, MonthCalendar, sameDay, todayYMD, type YM, type YMD } from '
 import { StatusDot } from '../../src/primitives'
 
 const meta = {
-	title: 'Calendar/MonthCalendar',
+	title: 'Molecules/Pickers/MonthCalendar',
 	component: MonthCalendar,
 	args: { month: { y: 2026, m: 7 }, onMonthChange: fn() },
 } satisfies Meta<typeof MonthCalendar>

@@ -13,7 +13,7 @@ const glyph = (label: string) => (
 )
 
 const meta = {
-	title: 'Primitives/RadialMenu',
+	title: 'Organisms/RadialMenu',
 	component: RadialMenu,
 } satisfies Meta<typeof RadialMenu>
 

@@ -4,7 +4,7 @@ import { Rule } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
 
 const meta = {
-	title: 'Primitives/Rule',
+	title: 'Atoms/Rule',
 	component: Rule,
 } satisfies Meta<typeof Rule>
 

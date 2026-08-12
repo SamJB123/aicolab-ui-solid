@@ -28,7 +28,7 @@ const ICON_STEPS: Step[] = STEPS.map((s, i) => ({
 }))
 
 const meta = {
-	title: 'Marketing/Steps',
+	title: 'Molecules/Steps',
 	component: Steps,
 	parameters: { layout: 'fullscreen' },
 	argTypes: {

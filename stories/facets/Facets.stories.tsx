@@ -43,7 +43,7 @@ const ITEMS: FacetItem[] = [
 ]
 
 const meta = {
-	title: 'Facets/Facets',
+	title: 'Organisms/Facets',
 	component: Facets,
 	argTypes: {
 		tabStyle: { control: 'radio', options: ['bar', 'pill', 'pill-stretch'] },

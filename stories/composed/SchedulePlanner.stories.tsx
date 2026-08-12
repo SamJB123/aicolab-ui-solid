@@ -18,7 +18,7 @@ import { DatePicker, TimePicker } from '../../src/pickers'
 import { Button, Chip, Panel, Rule, StatusDot } from '../../src/primitives'
 
 const meta = {
-	title: 'Composed/Schedule planner',
+	title: 'Organisms/Compositions/Schedule planner',
 } satisfies Meta
 
 export default meta

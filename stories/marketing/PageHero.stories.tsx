@@ -4,7 +4,7 @@ import { Mark, PageHero } from '../../src/marketing'
 import { Button } from '../../src/primitives'
 
 const meta = {
-	title: 'Marketing/PageHero',
+	title: 'Molecules/PageHero',
 	component: PageHero,
 	// Keep required metadata serializable. Rich JSX is created only inside each
 	// story's owned render scope below.

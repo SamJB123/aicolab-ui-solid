@@ -4,7 +4,7 @@ import { Chip } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
 
 const meta = {
-	title: 'Primitives/Chip',
+	title: 'Atoms/Chip',
 	component: Chip,
 	argTypes: {
 		tone: { control: 'radio', options: ['plain', 'accent', 'live'] },

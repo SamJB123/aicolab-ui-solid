@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { IconButton } from '../../src/controls'
 
 const meta = {
-	title: 'Controls/IconButton',
+	title: 'Atoms/IconButton',
 	component: IconButton,
 	args: { label: 'Next month' },
 } satisfies Meta<typeof IconButton>

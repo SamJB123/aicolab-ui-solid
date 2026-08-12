@@ -4,7 +4,7 @@ import { Button } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
 
 const meta = {
-	title: 'Primitives/Button',
+	title: 'Atoms/Button',
 	component: Button,
 	argTypes: {
 		colorBase: {

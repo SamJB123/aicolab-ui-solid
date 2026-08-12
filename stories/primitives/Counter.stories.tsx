@@ -5,7 +5,7 @@ import { Button, Counter } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
 
 const meta = {
-	title: 'Primitives/Counter',
+	title: 'Atoms/Counter',
 	component: Counter,
 	args: { value: 12480 },
 } satisfies Meta<typeof Counter>

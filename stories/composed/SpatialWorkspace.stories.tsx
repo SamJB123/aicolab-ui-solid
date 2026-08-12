@@ -21,7 +21,7 @@ import {
 import './spatial-workspace.css'
 
 const meta = {
-	title: 'Composed/Spatial workspace',
+	title: 'Organisms/Compositions/Spatial workspace',
 } satisfies Meta
 
 export default meta

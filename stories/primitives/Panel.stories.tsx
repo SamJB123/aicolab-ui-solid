@@ -14,7 +14,7 @@ import {
 import { ColorTreatmentStory } from './color-treatment-story'
 
 const meta = {
-	title: 'Primitives/Panel',
+	title: 'Atoms/Panel',
 	component: Panel,
 	args: { title: 'Sessions this week' },
 } satisfies Meta<typeof Panel>

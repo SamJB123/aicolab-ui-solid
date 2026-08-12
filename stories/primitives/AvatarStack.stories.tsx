@@ -14,7 +14,7 @@ const PEOPLE = [
 ]
 
 const meta = {
-	title: 'Primitives/AvatarStack',
+	title: 'Molecules/AvatarStack',
 	component: AvatarStack,
 } satisfies Meta<typeof AvatarStack>
 

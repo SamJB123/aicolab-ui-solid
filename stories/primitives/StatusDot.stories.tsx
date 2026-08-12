@@ -4,7 +4,7 @@ import { StatusDot } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
 
 const meta = {
-	title: 'Primitives/StatusDot',
+	title: 'Atoms/StatusDot',
 	component: StatusDot,
 	args: { status: { color: 'var(--color-primary)' } },
 } satisfies Meta<typeof StatusDot>

@@ -4,7 +4,7 @@ import { Eyebrow } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
 
 const meta = {
-	title: 'Primitives/Eyebrow',
+	title: 'Atoms/Eyebrow',
 	component: Eyebrow,
 } satisfies Meta<typeof Eyebrow>
 

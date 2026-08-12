@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { DocsShell } from '../../src/marketing'
 
 const meta = {
-	title: 'Marketing/DocsShell',
+	title: 'Organisms/DocsShell',
 	component: DocsShell,
 	parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof DocsShell>

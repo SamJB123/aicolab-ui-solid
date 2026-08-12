@@ -225,6 +225,11 @@ const preview: Preview = {
 	},
 	parameters: {
 		layout: 'padded',
+		options: {
+			storySort: {
+				order: ['Foundations', 'Atoms', 'Molecules', 'Organisms'],
+			},
+		},
 		// The page surface comes from the token contract (--color-base-200), not from
 		// Storybook's white/dark background presets.
 		backgrounds: { disable: true },

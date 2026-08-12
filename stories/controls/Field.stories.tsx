@@ -5,7 +5,7 @@ import { Field, Segmented } from '../../src/controls'
 import { Button } from '../../src/primitives'
 
 const meta = {
-	title: 'Controls/Field',
+	title: 'Atoms/Field',
 	component: Field,
 	args: { label: 'Room' },
 } satisfies Meta<typeof Field>
