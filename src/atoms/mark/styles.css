@@ -1,0 +1,27 @@
+/* ── Mark — inline emphasis (heir to rough-notation) ── */
+@scope (.ui-mark) {
+:scope {
+	background: none;
+	color: inherit;
+	font-style: inherit;
+}
+.ui-mark-underline {
+	background-image: linear-gradient(
+		to right,
+		color-mix(in oklab, var(--c-accent) 75%, transparent),
+		var(--c-accent)
+	);
+	background-repeat: no-repeat;
+	background-position: 0 96%;
+	background-size: 100% 0.12em;
+}
+.ui-mark-highlight {
+	background: var(--c-accent-soft);
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+	/* OFF-LADDER ON PURPOSE: an inline highlight must scale with the text it
+	   wraps (any font-size, any nesting), so it stays em-relative. */
+	border-radius: 0.2em;
+	padding-inline: 0.15em;
+}
+}

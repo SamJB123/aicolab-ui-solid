@@ -1,0 +1,11 @@
+/* ── Eyebrow ── */
+@scope (.ui-eyebrow) {
+	:scope {
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: var(--t-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.32em;
+		color: var(--c-faint);
+	}
+	:scope[data-ui-color-base] { color: var(--ui-mark); }
+}

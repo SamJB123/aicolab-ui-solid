@@ -1,0 +1,16 @@
+/* ── Field ── */
+@scope (.ui-field) {
+	:scope { display: flex; flex-direction: column; gap: 6px; }
+	:scope > .ui-field-label {
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: var(--t-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.2em;
+		color: var(--c-faint);
+	}
+	/* Opt-in content-hugging controls (field-sizing, Chromium/FF-beta). */
+	:scope.ui-autosize :is(input, textarea, select) {
+		field-sizing: content;
+		min-width: 4ch;
+	}
+}

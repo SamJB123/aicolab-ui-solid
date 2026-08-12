@@ -31,6 +31,9 @@ export { dismissOnOutside, Field, IconButton, Segmented, type SegOption } from '
 export { type FacetItem, Facets, type FacetTabStyle } from './facets'
 export {
 	AccordionItem,
+	Accordion,
+	type AccordionDensity,
+	type AccordionSpacing,
 	Carousel,
 	type DocsNavItem,
 	DocsShell,

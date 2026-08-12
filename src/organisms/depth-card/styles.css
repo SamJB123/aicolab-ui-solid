@@ -1,0 +1,232 @@
+/* ── DepthCard (CSS tilt / flip / conic glow) ──
+      Perspective tilt via --dc-tx/--dc-ty (set by JS), flip on the inner
+      wrapper, pointer-angled conic edge glow. ── */
+@property --dc-angle {
+	syntax: "<angle>";
+	inherits: true;
+	initial-value: 0deg;
+}
+@scope (.depth-card) {
+:scope {
+	--dc-tx: 0deg;
+	--dc-ty: 0deg;
+	position: relative;
+	perspective: 1400px;
+	cursor: pointer;
+}
+.dc-inner {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	transform-style: preserve-3d;
+	transform: rotateX(var(--dc-tx)) rotateY(var(--dc-ty));
+	transition: transform 0.18s ease-out;
+}
+:scope .dc-face {
+	position: absolute;
+	inset: 0;
+	/* NO overflow:hidden — it is a grouping property that flattens the 3D
+	   subtree, killing translateZ z-sorting (icon/media occlusion broke into
+	   paint-order artifacts). The legacy card never clipped its face either:
+	   corners come from border-radius alone, and face content is INSET (own
+	   radii), so nothing needs clipping. Free-form slot consumers with
+	   full-bleed content must round/clip it themselves. */
+	border-radius: var(--r-xl);
+	background: var(--c-panel);
+	box-shadow: inset 0 0 0 1px var(--c-line);
+	backface-visibility: hidden;
+	transform-style: preserve-3d;
+	transition: transform 0.6s cubic-bezier(0.4, 0.1, 0.2, 1);
+}
+:scope .dc-back {
+	transform: rotateY(180deg);
+}
+:scope.depth-card-flipped .dc-front {
+	transform: rotateY(-180deg);
+}
+:scope.depth-card-flipped .dc-back {
+	transform: rotateY(0deg);
+}
+/* Pointer-angled conic edge glow (the GlowingEffect heir): a masked ring that
+   brightens on hover, its bright arc facing the cursor. */
+:scope .dc-face::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	padding: 1.5px;
+	background: conic-gradient(
+		from var(--dc-angle),
+		transparent 12%,
+		var(--dc-glow, var(--c-accent)) 50%,
+		transparent 88%
+	);
+	mask:
+		linear-gradient(#000 0 0) content-box,
+		linear-gradient(#000 0 0);
+	mask-composite: exclude;
+	opacity: 0;
+	transition: opacity 0.3s;
+	pointer-events: none;
+}
+:scope:hover .dc-face::after {
+	opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+	.dc-inner,
+	:scope .dc-face {
+		transition: none;
+	}
+}
+
+/* ── DepthCard structured faces — the legacy Glowing3DCardFlip design ──
+      Front: title → description → inset media, icon bottom-center. The
+      content blocks ride real translateZ planes (legacy CardItem z map:
+      title 50 / description 60 / media 50) so the pointer tilt parallaxes
+      them. ── */
+.dc-sf {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	padding: 1.5rem;
+	transform-style: preserve-3d;
+}
+/* SELF-CONTAINED TYPOGRAPHY: docs pages wrap cards in .ui-prose, whose base
+   and element rules (line-height 1.7, p/ul margins, near-paper text at
+   (0,1,1) specificity) would otherwise reach in and restyle the faces. The
+   card is the design authority for its own faces: every text style here
+   carries the .depth-card prefix (≥(0,2,0)) so it beats prose everywhere —
+   prose-matched spacing, muted body distinct from headings. */
+:scope .dc-sf-title {
+	margin: 0;
+	font-family: var(--font-display);
+	font-size: var(--t-xl);
+	font-weight: 500;
+	line-height: 1.7;
+	color: var(--c-text);
+	transform: translateZ(50px);
+	backface-visibility: hidden;
+}
+:scope .dc-sf-desc {
+	margin: 0 0 1.1rem;
+	font-size: var(--t-md);
+	line-height: 1.55;
+	color: var(--c-muted);
+	transform: translateZ(60px);
+	backface-visibility: hidden;
+}
+.dc-sf-media {
+	position: relative;
+	margin-top: 1rem;
+	height: 12rem;
+	border-radius: var(--r-md);
+	overflow: hidden;
+	transform: translateZ(50px);
+	backface-visibility: hidden;
+	/* Static base shadow sells the lift at rest; deepens on hover (legacy
+	   group-hover shadow-xl). */
+	box-shadow: 0 10px 18px -8px rgb(0 0 0 / 0.35);
+	transition: box-shadow 0.2s ease-out;
+}
+:scope:hover .dc-sf-media {
+	box-shadow:
+		0 20px 25px -5px rgb(0 0 0 / 0.3),
+		0 8px 10px -6px rgb(0 0 0 / 0.3);
+}
+.dc-sf-img,
+.dc-sf-bgc {
+	position: absolute;
+	inset: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.dc-sf-bg-icon {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	color: #fff;
+	pointer-events: none;
+}
+.dc-sf-icon {
+	position: absolute;
+	bottom: 0.375rem;
+	left: 0;
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	color: var(--c-muted);
+	backface-visibility: hidden;
+}
+
+/* Back: tinted header band (title + ← Back), scrollable body, watermark. */
+.dc-sb {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+.dc-sb-watermark {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	color: var(--c-text);
+	opacity: 0.1;
+	pointer-events: none;
+}
+.dc-sb-watermark svg {
+	transform: scale(4);
+}
+.dc-sb-band {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	padding: 1rem 1.5rem;
+	background: var(--c-page-2);
+	border-radius: var(--r-xl) var(--r-xl) 0 0;
+}
+:scope .dc-sb-title {
+	margin: 0;
+	font-family: var(--font-display);
+	font-size: var(--t-xl);
+	font-weight: 500;
+	line-height: 1.7;
+	color: var(--c-text);
+}
+.dc-sb-return {
+	border: 0;
+	background: transparent;
+	padding: 0;
+	font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+	font-size: var(--t-xs);
+	color: var(--c-faint);
+	cursor: pointer;
+	transition: color 0.15s;
+}
+.dc-sb-return:hover {
+	color: var(--c-text);
+}
+:scope .dc-sb-body {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	padding: 1rem 1.5rem 1.5rem;
+	font-size: var(--t-md);
+	line-height: 1.7;
+	color: var(--c-muted);
+}
+/* Body rhythm, card-owned (same rationale as above): prose-matched block
+   margins, muted text — consumer utility classes cannot and should not
+   fight these (the card is the design authority for its own faces). */
+:scope .dc-sb-body p,
+:scope .dc-sb-body ul,
+:scope .dc-sb-body ol {
+	margin: 0 0 1.1rem;
+	color: var(--c-muted);
+}
+}

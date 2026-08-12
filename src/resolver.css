@@ -1,0 +1,167 @@
+/* ── Forward colour resolver ──────────────────────────────────────────────
+   The DOM supplies semantic strings and a numeric level. Typed attr() turns
+   those attributes into registered CSS values; if(style()) maps semantic
+   names and appearances on the element itself; @function owns all colour
+   algorithms. There are intentionally no compatibility declarations or
+   selector matrices in this Phase-1 implementation. */
+@function --ui-color-at-level(--base <color>, --level <number>) returns <color> {
+	--light-shift: calc(
+		max(0, 500 - var(--level)) * 0.00068
+		- max(0, var(--level) - 500) * 0.00071
+	);
+	--chroma-scale: calc(
+		1
+		- max(0, 500 - var(--level)) * 0.00178
+		- max(0, var(--level) - 500) * 0.00133
+	);
+	result: oklch(
+		from var(--base)
+		clamp(0, calc(l + var(--light-shift)), 1)
+		calc(c * max(0, var(--chroma-scale)))
+		h
+	);
+}
+
+@function --ui-content-for(--surface <color>) returns <color> {
+	result: color-mix(
+		in oklch,
+		var(--surface) 22%,
+		contrast-color(var(--surface))
+	);
+}
+
+@function --ui-color-as-ink(--color <color>) returns <color> {
+	result: color-mix(in oklch, var(--color) 58%, var(--color-base-content));
+}
+
+/* The old solid-button hover used filter: brightness(1.1). Resolve that same
+   luminous direction as an actual colour so every component can consume it
+   without a component-local filter or appearance branch. Relative OKLCH
+   preserves the family hue and chroma while lifting perceptual lightness. */
+@function --ui-brighten(--color <color>) returns <color> {
+	result: oklch(from var(--color) clamp(0, calc(l * 1.1), 1) c h);
+}
+
+:where([data-ui-color-base]) {
+	--ui-color-base-key: attr(data-ui-color-base type(<custom-ident>), primary);
+	--ui-color-level: attr(data-ui-color-level type(<number>), 500);
+	--ui-appearance: attr(data-ui-appearance type(<custom-ident>), solid);
+
+	--ui-color-base: if(
+		style(--ui-color-base-key: primary): var(--color-primary);
+		style(--ui-color-base-key: secondary): var(--color-secondary);
+		style(--ui-color-base-key: accent): var(--color-accent);
+		style(--ui-color-base-key: neutral): var(--color-neutral);
+		style(--ui-color-base-key: info): var(--color-info);
+		style(--ui-color-base-key: success): var(--color-success);
+		style(--ui-color-base-key: warning): var(--color-warning);
+		style(--ui-color-base-key: error): var(--color-error);
+		else: var(--color-primary)
+	);
+
+	--ui-color: --ui-color-at-level(
+		var(--ui-color-base),
+		var(--ui-color-level)
+	);
+	--ui-content: --ui-content-for(var(--ui-color));
+	--ui-family-ink: --ui-color-as-ink(var(--ui-color));
+
+	--ui-surface: if(
+		style(--ui-appearance: solid): var(--ui-color);
+		style(--ui-appearance: soft): color-mix(in oklab, var(--ui-color) 15%, var(--color-base-100));
+		style(--ui-appearance: outline): transparent;
+		style(--ui-appearance: ghost): var(--color-base-100);
+		style(--ui-appearance: text): transparent;
+		else: var(--ui-color)
+	);
+	/* Overlapping primitives need the visual intensity of their appearance but
+	   must remain physically opaque. Unlike alpha-based surface roles, this
+	   composites the family colour into a known theme surface. */
+	--ui-surface-occluding: if(
+		style(--ui-appearance: solid): var(--ui-color);
+		style(--ui-appearance: soft): color-mix(in oklab, var(--ui-color) 15%, var(--color-base-100));
+		style(--ui-appearance: outline): color-mix(in oklab, var(--ui-color) 8%, var(--color-base-100));
+		style(--ui-appearance: ghost): var(--color-base-100);
+		style(--ui-appearance: text): color-mix(in oklab, var(--ui-color) 8%, var(--color-base-100));
+		else: var(--color-base-100)
+	);
+	--ui-ink: if(
+		style(--ui-appearance: solid): var(--ui-content);
+		else: var(--ui-family-ink)
+	);
+	--ui-border: if(
+		style(--ui-appearance: solid): var(--ui-color);
+		style(--ui-appearance: soft): color-mix(in oklab, var(--ui-color) 32%, transparent);
+		style(--ui-appearance: outline): var(--ui-color);
+		style(--ui-appearance: ghost): var(--color-border);
+		style(--ui-appearance: text): transparent;
+		else: var(--ui-color)
+	);
+
+	/* Interaction states are resolved here once. Components switch state; they
+	   never reinterpret appearance or perform colour math. */
+	--ui-surface-hover: if(
+		style(--ui-appearance: solid): --ui-brighten(var(--ui-color));
+		style(--ui-appearance: soft): color-mix(in oklab, var(--ui-color) 22%, var(--color-base-100));
+		style(--ui-appearance: outline): color-mix(in oklab, var(--ui-color) 10%, transparent);
+		style(--ui-appearance: ghost): var(--color-base-150);
+		style(--ui-appearance: text): transparent;
+		else: var(--ui-surface)
+	);
+	--ui-ink-hover: if(
+		style(--ui-appearance: solid): --ui-brighten(var(--ui-content));
+		else: var(--ui-ink)
+	);
+	--ui-surface-active: var(--ui-surface-hover);
+	--ui-ink-active: var(--ui-ink-hover);
+	--ui-surface-selected: if(
+		style(--ui-appearance: solid): var(--ui-color);
+		else: color-mix(in oklab, var(--ui-color) 24%, var(--color-base-100))
+	);
+	--ui-ink-selected: if(
+		style(--ui-appearance: solid): var(--ui-content);
+		else: var(--ui-family-ink)
+	);
+	--ui-border-hover: if(
+		style(--ui-appearance: solid): --ui-brighten(var(--ui-color));
+		style(--ui-appearance: text): transparent;
+		else: color-mix(in oklab, var(--ui-border) 76%, var(--ui-color))
+	);
+	--ui-border-active: var(--ui-border-hover);
+	--ui-border-selected: var(--ui-color);
+	--ui-focus-ring: color-mix(in oklab, var(--ui-color) 62%, transparent);
+	/* Every appearance emits the same full resolved colour. Surface-bearing
+	   appearances bloom around their surface; text blooms around its ink so a
+	   transparent treatment never reveals a phantom box. Components consume
+	   both roles generically and do not reinterpret appearance. */
+	--ui-surface-glow: if(
+		style(--ui-appearance: text): transparent;
+		else: color-mix(in oklab, var(--ui-color) 14%, transparent)
+	);
+	--ui-surface-glow-hover: if(
+		style(--ui-appearance: text): transparent;
+		else: var(--ui-color)
+	);
+	--ui-surface-glow-active: var(--ui-surface-glow-hover);
+	--ui-ink-glow-hover: if(
+		style(--ui-appearance: text): var(--ui-color);
+		else: transparent
+	);
+	--ui-ink-glow-active: var(--ui-ink-glow-hover);
+	--ui-surface-raised: color-mix(in oklab, var(--ui-surface-occluding) 88%, white);
+	--ui-surface-inset: color-mix(in oklab, var(--ui-surface-occluding) 92%, black);
+	--ui-ink-muted: color-mix(in oklab, var(--ui-ink) 62%, transparent);
+	--ui-ink-faint: color-mix(in oklab, var(--ui-ink) 38%, transparent);
+	/* Marks are foreground-only paint: counters, rules, waveform bars, meter
+	   fills and status glyphs sit on the ambient theme surface rather than on
+	   --ui-surface. Raw ladder colours become illegible at the pale end, so a
+	   mark uses the same hue-preserving, surface-safe family ink as non-solid
+	   foregrounds. Appearance remains irrelevant by design. */
+	--ui-mark: var(--ui-family-ink);
+	--ui-mark-muted: color-mix(in oklab, var(--ui-mark) 62%, transparent);
+	--ui-track: color-mix(in oklab, var(--ui-mark) 18%, transparent);
+	--ui-surface-disabled: color-mix(in oklab, var(--ui-surface) 46%, var(--color-base-100));
+	--ui-ink-disabled: color-mix(in oklab, var(--ui-ink) 42%, transparent);
+	--ui-border-disabled: color-mix(in oklab, var(--ui-border) 42%, transparent);
+	--ui-mark-disabled: color-mix(in oklab, var(--ui-mark) 42%, transparent);
+}

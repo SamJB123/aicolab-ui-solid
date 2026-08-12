@@ -17,6 +17,7 @@
 		"./*": "./src/*.ts"
 	},
 	"scripts": {
+		"check-boundaries": "node scripts/check-atomic-boundaries.mjs",
 		"check-types": "tsc --noEmit",
 		"check-types:stories": "tsc -p stories/tsconfig.json --noEmit",
 		"storybook": "storybook dev -p 6006",

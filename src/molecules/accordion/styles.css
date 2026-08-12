@@ -1,0 +1,55 @@
+@scope (.ui-accordion) {
+	:scope {
+		container: ui-accordion / inline-size;
+		--ui-accordion-spacing: attr(data-ui-accordion-spacing type(<custom-ident>), joined);
+		--ui-accordion-density: attr(data-ui-accordion-density type(<custom-ident>), comfortable);
+		display: grid;
+	}
+}
+
+/* Presentation context belongs to the collection. Individual disclosures
+   react to its computed, inherited values rather than inspecting parent DOM. */
+@container ui-accordion style(--ui-accordion-spacing: separated) {
+	.ui-acc {
+		border: 1px solid var(--c-line);
+		border-radius: var(--r-md);
+		padding-inline: 1rem;
+	}
+}
+
+@container ui-accordion style(--ui-accordion-spacing: separated) {
+	.ui-acc + .ui-acc {
+		margin-top: 0.75rem;
+	}
+}
+
+@container ui-accordion style(--ui-accordion-density: compact) {
+	.ui-acc summary {
+		padding-block: 0.7rem;
+	}
+	.ui-acc .ui-acc-body {
+		padding-bottom: 0.85rem;
+	}
+}
+
+/* Width is environmental rather than a component prop. */
+@container ui-accordion (inline-size < 28rem) {
+	.ui-acc summary {
+		gap: 0.75rem;
+		font-size: var(--t-sm);
+	}
+	.ui-acc .ui-acc-body {
+		font-size: var(--t-sm);
+	}
+}
+@property --ui-accordion-spacing {
+	syntax: "<custom-ident>";
+	inherits: true;
+	initial-value: joined;
+}
+
+@property --ui-accordion-density {
+	syntax: "<custom-ident>";
+	inherits: true;
+	initial-value: comfortable;
+}

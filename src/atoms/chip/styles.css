@@ -1,0 +1,37 @@
+/* ── Chip — tone via data attribute (cascading, semantic) ── */
+@scope (.ui-chip) {
+	:scope {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		border-radius: var(--r-pill);
+		padding: 4px 10px;
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: var(--t-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.16em;
+		background: var(--c-panel-2);
+		color: var(--c-muted);
+		box-shadow: 0 0 0 1px var(--c-line);
+	}
+	:scope[data-ui-color-base] {
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: 0 0 0 1px var(--ui-border);
+	}
+	:scope[data-tone="accent"] {
+		background: var(--c-accent-soft);
+		color: var(--c-accent);
+		box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-accent) 35%, transparent);
+	}
+	:scope[data-tone="live"] {
+		background: color-mix(in oklab, var(--c-live) 15%, transparent);
+		color: var(--c-live);
+		box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-live) 30%, transparent);
+	}
+	:scope[data-ui-color-base][data-tone] {
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: 0 0 0 1px var(--ui-border);
+	}
+}

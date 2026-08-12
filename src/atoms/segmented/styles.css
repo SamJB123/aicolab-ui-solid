@@ -1,0 +1,81 @@
+/* ── Segmented tab switcher ──
+   Content-sized, horizontally scrollable tabs so labels never truncate or
+   shrink unevenly. The active pill is anchored to the active tab via CSS anchor
+   positioning, so it always matches that tab's real box — any count, any width,
+   even mid-scroll. Fallback: the active tab carries the pill look itself. */
+@scope (.seg) {
+:scope {
+	position: relative;
+	display: flex;
+	width: fit-content;
+	max-width: 100%;
+	gap: 4px;
+	padding: 4px;
+	border-radius: var(--r-pill);
+	background: var(--c-page-2);
+	box-shadow: inset 0 0 0 1px var(--c-line);
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scrollbar-width: none;
+	scroll-snap-type: x proximity;
+}
+:scope::-webkit-scrollbar {
+	display: none;
+}
+.seg-btn {
+	position: relative;
+	z-index: 1;
+	flex: 0 0 auto;
+	scroll-snap-align: center;
+	white-space: nowrap;
+	border-radius: var(--r-pill);
+	padding: 6px 16px;
+	font-size: var(--t-sm);
+	font-weight: 500;
+	color: var(--c-faint);
+	transition: color 0.2s;
+}
+.seg-btn:hover {
+	color: var(--c-muted);
+}
+.seg-btn-active {
+	color: var(--c-text);
+	/* Fallback indicator where anchor positioning is unavailable. */
+	background: var(--c-panel-2);
+	box-shadow: inset 0 0 0 1px var(--c-line-strong);
+}
+.seg-pill {
+	display: none;
+}
+@supports (anchor-name: --x) {
+	.seg-btn-active {
+		anchor-name: --seg-active;
+		background: none;
+		box-shadow: none;
+	}
+	.seg-pill {
+		display: block;
+		position: absolute;
+		z-index: 0;
+		position-anchor: --seg-active;
+		top: anchor(top);
+		left: anchor(left);
+		width: anchor-size(width);
+		height: anchor-size(height);
+		border-radius: var(--r-pill);
+		background: var(--c-panel-2);
+		box-shadow: inset 0 0 0 1px var(--c-line-strong);
+		transition:
+			top 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+			left 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+			width 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+			height 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+	}
+}
+}
+
+@scope (.seg) {
+	@media (prefers-reduced-motion: reduce) {
+		.seg-pill { transition: none; }
+	}
+}

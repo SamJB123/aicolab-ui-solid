@@ -1,0 +1,23 @@
+@scope (.ui-logo-cloud) {
+	:scope {
+		margin: 0;
+		display: flex;
+		list-style: none;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		column-gap: 48px;
+		row-gap: 32px;
+		padding: 0;
+	}
+	.ui-logo-name {
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: var(--t-md);
+		color: var(--c-faint);
+	}
+	.ui-logo-item img {
+		max-height: 40px;
+		width: auto;
+		max-width: 9rem;
+	}
+}

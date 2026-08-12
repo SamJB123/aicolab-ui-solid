@@ -1,0 +1,17 @@
+/* ── Waveform ── */
+@scope (.ui-waveform) {
+	:scope {
+		display: flex;
+		/* Percentage-height bars need a definite block size: min-height alone does
+		   not establish their percentage basis. Consumers can override this
+		   intrinsic size through the component's class prop. */
+		block-size: 32px;
+		min-inline-size: 132px;
+		align-items: center;
+		gap: 3px;
+	}
+	:scope > .ui-waveform-bar {
+		flex: 1;
+		border-radius: var(--r-pill);
+	}
+}

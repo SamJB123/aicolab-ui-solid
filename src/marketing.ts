@@ -1,0 +1,11 @@
+/** Compatibility façade for modular marketing components. */
+export * from './molecules/page-hero'
+export * from './molecules/section'
+export * from './atoms/mark'
+export * from './molecules/feature-grid'
+export * from './molecules/steps'
+export * from './molecules/logo-cloud'
+export * from './atoms/accordion-item'
+export * from './molecules/accordion'
+export * from './molecules/carousel'
+export * from './organisms/docs-shell'

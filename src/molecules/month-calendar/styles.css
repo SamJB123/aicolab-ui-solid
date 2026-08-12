@@ -1,0 +1,167 @@
+/* ── MonthCalendar ── */
+@scope (.ui-cal) {
+	:scope { display: flex; flex-direction: column; }
+	/* flex-wrap: at extreme narrowness the controls drop to a second row
+	   instead of forcing the whole calendar past its container. */
+	:scope > .ui-cal-head {
+		margin-bottom: 16px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+	}
+	.ui-cal-head-left {
+		display: flex;
+		align-items: baseline;
+		gap: 12px;
+	}
+	.ui-cal-head h2 {
+		margin: 0;
+		font-family: var(--font-display, Georgia, serif);
+		font-optical-sizing: auto;
+		font-size: var(--t-2xl);
+		font-weight: 500;
+		color: var(--c-text);
+	}
+	.ui-cal-year {
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: var(--t-lg);
+		font-variant-numeric: tabular-nums;
+		color: var(--c-faint);
+	}
+	.ui-cal-head-controls {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+	.ui-cal-today-btn {
+		border: 0;
+		border-radius: var(--r-pill);
+		padding: 6px 12px;
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: var(--t-xs);
+		text-transform: uppercase;
+		letter-spacing: 0.16em;
+		cursor: pointer;
+		background: transparent;
+		color: var(--c-muted);
+		box-shadow: 0 0 0 1px var(--c-line);
+		transition:
+			color 0.2s,
+			background-color 0.2s;
+	}
+	.ui-cal-today-btn:hover {
+		background: var(--c-panel-2);
+		color: var(--c-text);
+	}
+	:scope > .ui-cal-weekdays {
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+		gap: 4px;
+		border-bottom: 1px solid var(--c-line);
+		padding-bottom: 8px;
+	}
+	.ui-cal-weekday {
+		text-align: center;
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: var(--t-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.16em;
+		color: var(--c-faint);
+	}
+	:scope > .ui-cal-grid {
+		margin-top: 4px;
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+		gap: 4px;
+	}
+	.ui-cal-blank {
+		min-height: 84px;
+	}
+	.ui-cal-day {
+		display: flex;
+		min-height: 84px;
+		flex-direction: column;
+		gap: 4px;
+		border: 1px solid transparent;
+		border-radius: var(--r-md);
+		padding: 6px;
+		text-align: left;
+		font: inherit;
+		cursor: pointer;
+		background: transparent;
+		color: inherit;
+		transition:
+			background-color 0.2s,
+			border-color 0.2s;
+	}
+	.ui-cal-day:hover:not([data-selected]) {
+		background: var(--c-panel-2);
+	}
+	.ui-cal-day[data-selected] {
+		border-color: color-mix(in oklab, var(--c-accent) 45%, transparent);
+		background: var(--c-accent-soft);
+	}
+	.ui-cal-daynum {
+		display: grid;
+		width: 24px;
+		height: 24px;
+		place-items: center;
+		border-radius: var(--r-pill);
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: var(--t-sm);
+		font-variant-numeric: tabular-nums;
+		color: var(--c-muted);
+	}
+	.ui-cal-daynum[data-today] {
+		background: var(--c-accent);
+		font-weight: 600;
+		color: var(--c-page);
+	}
+}
+
+/* ── MonthCalendar grid morph (calendar.tsx) ──
+   The grid carries view-transition-name: cal-grid; month navigation passes a
+   `forward`/`back` view-transition *type*, branching the same transition into
+   a directional slide. The Today button passes no type — plain cross-fade. */
+::view-transition-old(cal-grid),
+::view-transition-new(cal-grid) {
+	animation-duration: 0.32s;
+}
+@keyframes ui-cal-out-left {
+	to {
+		opacity: 0;
+		transform: translateX(-26px);
+	}
+}
+@keyframes ui-cal-out-right {
+	to {
+		opacity: 0;
+		transform: translateX(26px);
+	}
+}
+@keyframes ui-cal-in-left {
+	from {
+		opacity: 0;
+		transform: translateX(-26px);
+	}
+}
+@keyframes ui-cal-in-right {
+	from {
+		opacity: 0;
+		transform: translateX(26px);
+	}
+}
+:root:active-view-transition-type(forward)::view-transition-old(cal-grid) {
+	animation-name: ui-cal-out-left;
+}
+:root:active-view-transition-type(forward)::view-transition-new(cal-grid) {
+	animation-name: ui-cal-in-right;
+}
+:root:active-view-transition-type(back)::view-transition-old(cal-grid) {
+	animation-name: ui-cal-out-right;
+}
+:root:active-view-transition-type(back)::view-transition-new(cal-grid) {
+	animation-name: ui-cal-in-left;
+}

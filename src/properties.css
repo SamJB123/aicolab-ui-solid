@@ -1,0 +1,242 @@
+/* ── Registered token contract (typed, animatable, canonical initials) ── */
+@property --c-page {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #fff9e8;
+}
+@property --c-page-2 {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #f6ecc7;
+}
+@property --c-panel {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #fffffb;
+}
+@property --c-panel-2 {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #fbf3d6;
+}
+@property --c-text {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #241c0b;
+}
+@property --c-muted {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #78705e;
+}
+@property --c-faint {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #a9a290;
+}
+@property --c-accent {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #e8b04c;
+}
+@property --c-live {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #43913a;
+}
+@property --c-line {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #e6e0cf;
+}
+@property --c-line-strong {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #cec8b6;
+}
+@property --c-accent-soft {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #fae5cc;
+}
+@property --font-display {
+	syntax: "*";
+	inherits: true;
+}
+@property --font-sans {
+	syntax: "*";
+	inherits: true;
+}
+@property --font-data {
+	syntax: "*";
+	inherits: true;
+}
+/* Micro-label voice (uppercase letterspaced 9-11px labels). Optional: every
+   usage falls back to --font-data, so an app that never sets it sees no
+   change — but it CAN be themed independently of numeric/data text. */
+@property --font-label {
+	syntax: "*";
+	inherits: true;
+}
+
+/* ── The type scale (see the contract note above on px initials) ── */
+@property --t-2xs {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 10px;
+}
+@property --t-xs {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 11px;
+}
+@property --t-sm {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 13px;
+}
+@property --t-md {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 14px;
+}
+@property --t-lg {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 16px;
+}
+@property --t-xl {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 19px;
+}
+@property --t-2xl {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 24px;
+}
+@property --t-3xl {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 30px;
+}
+@property --t-4xl {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 36px;
+}
+@property --t-5xl {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 60px;
+}
+
+/* ── The radius ladder ── */
+@property --r-xs {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 6px;
+}
+@property --r-sm {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 8px;
+}
+@property --r-md {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 12px;
+}
+@property --r-lg {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 16px;
+}
+@property --r-xl {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 20px;
+}
+@property --r-pill {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 999px;
+}
+
+/* ── Panel density (the durable replacement for the old --ui-density if()
+      knob; the opt-in selector lives with .ui-panel further down) ── */
+@property --ui-panel-pad {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 20px;
+}
+@property --ui-panel-title {
+	syntax: "<length>";
+	inherits: true;
+	/* = --t-xl. A var() initial-value is invalid for @property (it is not
+	   computationally independent), so the step is spelled out here. */
+	initial-value: 19px;
+}
+
+/* ── Semantic colour system ────────────────────────────────────────────────
+   The public palette follows DaisyUI's familiar family/content vocabulary,
+   under Tailwind's --color-* namespace. The existing --c-* properties stay
+   registered above as compatibility inputs during migration; these canonical
+   tokens read them by default, so existing application themes keep working.
+
+   Base colours and ladder positions are deliberately orthogonal. Components set
+   --ui-color-base from data-ui-color-base and a lightness/chroma transform
+   from data-ui-color-level. One relative OKLCH expression resolves every base × level
+   combination: no primary-100/success-100/etc matrix is authored. */
+@property --ui-color-base-key {
+	syntax: "<custom-ident>";
+	inherits: true;
+	initial-value: primary;
+}
+@property --ui-color-base {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #e8b04c;
+}
+@property --ui-color-level {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 500;
+}
+@property --ui-appearance {
+	syntax: "solid | soft | outline | ghost | text";
+	inherits: true;
+	initial-value: solid;
+}
+/* Canonical presentation outputs. Component CSS consumes only these roles;
+   resolver calculation values stay private, unregistered locals below. */
+@property --ui-surface { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-selected { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-disabled { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-occluding { syntax: "<color>"; inherits: true; initial-value: #fffffb; }
+@property --ui-surface-raised { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-inset { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-muted { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-faint { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-selected { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-disabled { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-border { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-border-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-border-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-border-selected { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-border-disabled { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-mark { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-mark-muted { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-mark-disabled { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-track { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-glow { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-glow-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-glow-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-glow-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-glow-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-focus-ring { syntax: "<color>"; inherits: true; initial-value: transparent; }

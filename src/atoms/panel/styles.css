@@ -1,0 +1,107 @@
+/* ── Panel ── */
+@scope (.ui-panel) {
+	:scope {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		border-radius: var(--r-lg);
+		background: var(--c-panel);
+		padding: var(--ui-panel-pad);
+		box-shadow: 0 0 0 1px var(--c-line);
+	}
+	:scope[data-ui-color-base] {
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: inset 0 0 0 1px var(--ui-border);
+	}
+	:scope::before {
+		content: "";
+		pointer-events: none;
+		position: absolute;
+		inset: 0 0 auto 0;
+		height: 1px;
+		background: linear-gradient(to right, transparent, var(--c-line-strong), transparent);
+	}
+	:scope[data-ui-color-base]::before {
+		background: linear-gradient(to right, transparent, var(--ui-border), transparent);
+	}
+	:scope > .ui-panel-glow {
+		pointer-events: none;
+		position: absolute;
+		right: -64px;
+		top: -80px;
+		width: 176px;
+		height: 176px;
+		border-radius: var(--r-pill);
+		background: var(--c-accent);
+		opacity: 0.07;
+		filter: blur(48px);
+	}
+	:scope[data-ui-color-base] > .ui-panel-glow {
+		background: var(--ui-surface-glow);
+		opacity: 1;
+	}
+	:scope > header {
+		margin-bottom: 16px;
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 12px;
+	}
+	:scope > header .ui-panel-head-left {
+		display: flex;
+		align-items: baseline;
+		gap: 10px;
+	}
+	:scope > header .ui-panel-index {
+		/* Label voice, like the kicker on the same baseline beside it —
+		   this used to hardcode the data font, so declaring --font-label
+		   changed one and not the other. */
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: var(--t-xs);
+		letter-spacing: 0.1em;
+		color: var(--c-faint);
+	}
+	:scope[data-ui-color-base] > header .ui-panel-index {
+		color: var(--ui-ink-faint);
+	}
+	:scope > header h2 {
+		margin: 0;
+		font-family: var(--font-display, Georgia, serif);
+		font-optical-sizing: auto;
+		font-size: var(--ui-panel-title);
+		font-weight: 500;
+		line-height: 1;
+		color: var(--c-text);
+	}
+	:scope[data-ui-color-base] > header h2 {
+		color: var(--ui-ink);
+	}
+	:scope > header .ui-panel-kicker {
+		margin: 6px 0 0;
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: var(--t-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.2em;
+		color: var(--c-faint);
+	}
+	:scope[data-ui-color-base] > header .ui-panel-kicker {
+		color: var(--ui-ink-faint);
+	}
+}
+/* Cascading density knob. The panel reads two REGISTERED tokens
+   (--ui-panel-pad / --ui-panel-title, both inherited), so density is just
+   a pair of inherited values — no feature gate, works in every engine, and
+   both tokens animate. Put `data-density="compact"` on any ancestor and
+   every panel beneath it tightens.
+
+   This REPLACES the previous `--ui-density` + `if()` implementation, which
+   only ever resolved in Chromium AND would have shadowed the tokens here
+   (the if() declarations win in Chromium whether or not --ui-density is
+   set, so keeping both would have made the attribute a no-op there).
+   Apps still setting --ui-density should move to the attribute. */
+[data-density="compact"] {
+	--ui-panel-pad: 14px;
+	--ui-panel-title: var(--t-lg);
+}

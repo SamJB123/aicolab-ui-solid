@@ -1,0 +1,156 @@
+/* ── Facets — tabs + glyph rail + swapped pane (facets.tsx) ── */
+@scope (.facets) {
+:scope {
+	border-radius: var(--r-xl);
+	background: var(--c-panel);
+	box-shadow: inset 0 0 0 1px var(--c-line);
+	overflow: hidden;
+}
+.facets-tabs {
+	position: relative;
+	display: flex;
+	border-bottom: 1px solid var(--c-line);
+}
+.facets-tab {
+	position: relative;
+	z-index: 1;
+	cursor: pointer;
+	border: 0;
+	background: none;
+	font: inherit;
+	font-size: var(--t-md);
+	color: var(--c-muted);
+	transition:
+		color 0.2s,
+		background 0.2s;
+}
+.facets-tab:hover {
+	color: var(--c-text);
+}
+
+/* Variant: full-width divided bar (legacy-faithful). */
+.facets-tabs-bar .facets-tab {
+	flex: 1;
+	padding: 0.85rem 1rem;
+	text-align: center;
+}
+.facets-tabs-bar .facets-tab + .facets-tab {
+	border-inline-start: 1px solid var(--c-line);
+}
+.facets-tabs-bar .facets-tab-active {
+	background: var(--c-page-2);
+	color: var(--c-text);
+	font-weight: 600;
+}
+
+/* Variants: sliding pill (content-hugging) and stretched pill. */
+.facets-tabs-pill,
+.facets-tabs-stretch {
+	gap: 4px;
+	padding: 0.55rem 0.65rem;
+}
+.facets-tabs-pill .facets-tab,
+.facets-tabs-stretch .facets-tab {
+	border-radius: var(--r-pill);
+	padding: 0.45rem 1rem;
+	white-space: nowrap;
+}
+.facets-tabs-stretch .facets-tab {
+	flex: 1;
+	text-align: center;
+}
+.facets-tabs-pill .facets-tab-active,
+.facets-tabs-stretch .facets-tab-active {
+	color: var(--c-text);
+	/* Fallback indicator where anchor positioning is unavailable. */
+	background: var(--c-panel-2);
+	box-shadow: inset 0 0 0 1px var(--c-line-strong);
+}
+.facets-pill {
+	display: none;
+}
+@supports (anchor-name: --x) {
+	.facets-tabs-pill .facets-tab-active,
+	.facets-tabs-stretch .facets-tab-active {
+		background: none;
+		box-shadow: none;
+	}
+	.facets-tabs-pill .facets-pill,
+	.facets-tabs-stretch .facets-pill {
+		display: block;
+		position: absolute;
+		z-index: 0;
+		top: anchor(top);
+		left: anchor(left);
+		width: anchor-size(width);
+		height: anchor-size(height);
+		border-radius: var(--r-pill);
+		background: var(--c-panel-2);
+		box-shadow: inset 0 0 0 1px var(--c-line-strong);
+		transition:
+			top 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+			left 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+			width 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+			height 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+	}
+}
+
+.facets-body {
+	display: flex;
+	align-items: stretch;
+}
+.facets-rail {
+	display: flex;
+	flex-direction: column;
+	flex: 0 0 auto;
+	width: 5rem;
+	border-inline-end: 1px solid var(--c-line);
+}
+.facets-rail-btn {
+	display: grid;
+	place-items: center;
+	height: 5rem;
+	border: 0;
+	border-bottom: 1px solid var(--c-line);
+	background: none;
+	font-size: var(--t-3xl);
+	cursor: pointer;
+	filter: grayscale(1);
+	opacity: 0.45;
+	transition:
+		filter 0.25s,
+		opacity 0.25s,
+		background 0.25s;
+}
+.facets-rail-btn:hover {
+	background: color-mix(in oklab, var(--c-page-2) 55%, transparent);
+	opacity: 0.75;
+}
+.facets-rail-active,
+.facets-rail-active:hover {
+	background: var(--c-page-2);
+	filter: none;
+	opacity: 1;
+}
+.facets-pane {
+	flex: 1;
+	min-width: 0;
+	padding: 1.5rem 2rem 2rem;
+}
+@media (max-width: 40rem) {
+	.facets-rail {
+		width: 3.25rem;
+	}
+	.facets-rail-btn {
+		height: 3.25rem;
+		font-size: var(--t-xl);
+	}
+	.facets-pane {
+		padding: 1.1rem 1.2rem 1.4rem;
+	}
+	.facets-tabs-bar .facets-tab {
+		padding: 0.7rem 0.4rem;
+		font-size: var(--t-sm);
+	}
+}
+}

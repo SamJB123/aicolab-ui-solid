@@ -1,0 +1,18 @@
+/* ── StatusDot ── */
+@scope (.ui-dot) {
+	:scope {
+		position: relative;
+		display: inline-grid;
+		place-items: center;
+	}
+	:scope > .ui-dot-ping {
+		position: absolute;
+		inset: 0;
+		border-radius: var(--r-pill);
+		animation: ui-ping 1.8s ease-out infinite;
+	}
+	:scope > .ui-dot-core {
+		position: relative;
+		border-radius: var(--r-pill);
+	}
+}

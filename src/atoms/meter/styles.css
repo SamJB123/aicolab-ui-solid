@@ -1,0 +1,26 @@
+/* ── Meter — typed-attr() exemplar ──
+   The fill width is data-driven: the component sets data-pct and, where
+   typed attr() is supported (detected in JS via CSS.supports), omits its
+   inline-style fallback so this rule owns the width — the browser animates
+   the change through the transition below. */
+@scope (.ui-meter) {
+	:scope {
+		height: 4px;
+		width: 100%;
+		overflow: hidden;
+		border-radius: var(--r-pill);
+		background: var(--c-line);
+	}
+	:scope[data-ui-color-base] {
+		background: var(--ui-track);
+	}
+	:scope > .ui-meter-fill {
+		height: 100%;
+		border-radius: var(--r-pill);
+		background: var(--c-text);
+		transition: width 0.5s;
+	}
+	@supports (width: attr(data-pct type(<percentage>), 0%)) {
+		:scope > .ui-meter-fill { width: attr(data-pct type(<percentage>), 0%); }
+	}
+}

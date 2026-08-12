@@ -1,0 +1,82 @@
+/* ── Date/time pickers (pickers.tsx) ──
+   Same convention as `.ui-anchored`: a top-layer popover (Popover API)
+   anchored to its trigger, flipped within the viewport by position-try.
+   Deliberately standalone rather than composed with `.ui-anchored`: this
+   sheet is unlayered, so any padding declared here would defeat the
+   component's layered `p-3` utility — the panel declares NO padding.
+   The wheels are scroll-snap columns with hidden scrollbars and a fade mask. */
+@scope (.ui-picker-pop) {
+	:scope {
+	margin: 0;
+	inset: auto;
+	width: 268px;
+	max-width: calc(100vw - 1.5rem);
+	border: 0;
+	border-radius: var(--r-lg);
+	background: var(--c-panel-2);
+	color: var(--c-text);
+	outline: 1px solid var(--c-line-strong);
+	box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.7);
+	opacity: 0;
+	transform: translateY(-6px) scale(0.98);
+	transition:
+		opacity 0.18s,
+		transform 0.18s,
+		overlay 0.18s allow-discrete,
+		display 0.18s allow-discrete;
+	}
+	:scope:popover-open { opacity: 1; transform: none; }
+	@starting-style {
+		:scope:popover-open {
+			opacity: 0;
+			transform: translateY(-6px) scale(0.98);
+		}
+	}
+	@supports (anchor-name: --x) {
+		:scope {
+			position-area: block-end span-inline-end;
+			margin-top: 8px;
+			position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+		}
+	}
+	.ui-wheel { scrollbar-width: none; scroll-snap-type: y proximity; }
+	.ui-wheel::-webkit-scrollbar { display: none; }
+	.ui-wheel > button { scroll-snap-align: center; }
+	/* fade the top/bottom of the hour/minute wheels into the panel */
+	.ui-wheel-mask {
+		background: linear-gradient(
+			var(--c-panel-2) 2%, transparent 34%, transparent 66%, var(--c-panel-2) 98%
+		);
+		border-radius: var(--r-md);
+	}
+}
+
+/* ── Pickers (semantic classes, 2026-08-07) ──
+   .ui-picker-pop now carries its own padding: the old "no padding here"
+   note guarded against fighting a package-side Tailwind utility, which no
+   longer exists. */
+@scope (.ui-picker-trigger) {
+	:scope {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		border: 0;
+		border-radius: var(--r-md);
+		padding: 10px 14px;
+		font: inherit;
+		font-size: var(--t-md);
+		cursor: pointer;
+		background: var(--c-page-2);
+		color: var(--c-text);
+		box-shadow: 0 0 0 1px var(--c-line);
+		transition: box-shadow 0.2s;
+	}
+	:scope:hover { box-shadow: 0 0 0 1px var(--c-line-strong); }
+	:scope > .ui-picker-trigger-icon {
+		color: var(--c-muted);
+	}
+	:scope > .ui-picker-trigger-value {
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-variant-numeric: tabular-nums;
+	}
+}

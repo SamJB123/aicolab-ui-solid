@@ -1,0 +1,148 @@
+/* ── DocsShell ── */
+@scope (.docs-shell) {
+.docs-progress {
+	display: none;
+}
+@supports (animation-timeline: scroll()) {
+	.docs-progress {
+		display: block;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 60;
+		width: 100%;
+		height: 3px;
+		background: var(--c-accent);
+		transform-origin: 0 50%;
+		transform: scaleX(0);
+		animation: docs-progress linear both;
+		animation-timeline: scroll(root block);
+	}
+	@keyframes docs-progress {
+		from {
+			transform: scaleX(0);
+		}
+		to {
+			transform: scaleX(1);
+		}
+	}
+}
+.docs-nav-link,
+.docs-toc-link {
+	display: block;
+	padding: 0.3rem 0.6rem;
+	border-radius: var(--r-sm);
+	font-size: var(--t-md);
+	color: var(--c-muted);
+	text-decoration: none;
+	transition:
+		color 0.15s,
+		background 0.15s;
+}
+.docs-nav-link:hover,
+.docs-toc-link:hover {
+	color: var(--c-text);
+	background: var(--c-page-2);
+}
+.docs-nav-sub,
+.docs-toc-sub {
+	padding-left: 1.4rem;
+	font-size: var(--t-sm);
+}
+.docs-nav-current,
+.docs-toc-current {
+	color: var(--c-accent);
+	background: var(--c-accent-soft);
+}
+}
+
+/* ── Prose — long-form document rhythm for DocsShell articles ── */
+@scope (.ui-prose) {
+:scope {
+	font-size: var(--t-lg);
+	line-height: 1.7;
+	color: var(--c-text);
+}
+:scope h1 {
+	font-family: var(--font-display);
+	font-weight: 500;
+	font-size: var(--t-4xl);
+	line-height: 1.1;
+	letter-spacing: -0.015em;
+	margin: 0 0 1rem;
+}
+:scope h2 {
+	font-family: var(--font-display);
+	font-weight: 500;
+	font-size: var(--t-3xl);
+	line-height: 1.2;
+	margin: 2.75rem 0 0.9rem;
+	scroll-margin-top: 6rem;
+}
+:scope h3 {
+	font-family: var(--font-display);
+	font-weight: 500;
+	font-size: var(--t-xl);
+	margin: 2rem 0 0.6rem;
+	scroll-margin-top: 6rem;
+}
+:scope p {
+	margin: 0 0 1.1rem;
+	color: color-mix(in oklab, var(--c-text) 88%, transparent);
+}
+:scope ul,
+:scope ol {
+	margin: 0 0 1.1rem;
+	padding-left: 1.4rem;
+	display: grid;
+	gap: 0.4rem;
+	color: color-mix(in oklab, var(--c-text) 84%, transparent);
+}
+:scope li::marker {
+	color: var(--c-accent);
+}
+:scope blockquote {
+	margin: 1.5rem 0;
+	padding: 0.2rem 0 0.2rem 1.2rem;
+	border-left: 3px solid var(--c-accent);
+	color: var(--c-muted);
+	font-style: italic;
+}
+:scope a {
+	color: var(--c-accent);
+	text-decoration: underline;
+	text-decoration-color: color-mix(in oklab, var(--c-accent) 40%, transparent);
+	text-underline-offset: 0.2em;
+}
+:scope a:hover {
+	text-decoration-color: var(--c-accent);
+}
+}
+
+@scope (.docs-shell) {
+	@media (prefers-reduced-motion: reduce) {
+		.docs-progress { display: none; }
+	}
+}
+
+@scope (.docs-shell) {
+	:scope {
+		margin-inline: auto;
+		display: grid;
+		width: 100%;
+		max-width: 80rem;
+		gap: 40px;
+		padding: 48px 24px;
+	}
+	@media (min-width: 1024px) {
+		:scope { grid-template-columns: 13rem minmax(0, 1fr); }
+		.docs-nav { display: block; }
+	}
+	@media (min-width: 1280px) {
+		:scope { grid-template-columns: 13rem minmax(0, 1fr) 13rem; }
+		.docs-toc { display: block; }
+	}
+	.docs-side { position: sticky; top: 96px; display: grid; gap: 4px; }
+	.docs-side > .ui-eyebrow { margin-bottom: 8px; }
+	.docs-article { min-width: 0; }
+}

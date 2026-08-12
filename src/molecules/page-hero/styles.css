@@ -1,0 +1,48 @@
+/* ── Marketing scaffolding (semantic classes, 2026-08-07) ──
+   Breakpoints match the former utility tiers: 640 / 768 / 1024 / 1280. */
+.ui-accent-ink {
+	color: var(--c-accent);
+}
+
+@scope (.ui-hero) {
+	:scope {
+		margin-inline: auto;
+		display: flex;
+		width: 100%;
+		max-width: 56rem;
+		flex-direction: column;
+		gap: 24px;
+		padding: 80px 24px 64px;
+	}
+	:scope[data-align="center"] { align-items: center; text-align: center; }
+	:scope[data-align="start"] { align-items: flex-start; }
+	@media (min-width: 640px) { :scope { padding-top: 112px; } }
+	:scope > h1 {
+		margin: 0;
+		font-family: var(--font-display, Georgia, serif);
+		font-optical-sizing: auto;
+		font-size: var(--t-4xl);
+		font-weight: 500;
+		line-height: 1.08;
+		letter-spacing: -0.015em;
+		color: var(--c-text);
+		text-wrap: balance;
+	}
+	:scope > .ui-hero-lede {
+		margin: 0;
+		max-width: 42rem;
+		font-size: var(--t-xl);
+		line-height: 1.625;
+		color: var(--c-muted);
+		text-wrap: pretty;
+	}
+	:scope > .ui-hero-actions {
+		margin-top: 8px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 12px;
+	}
+	@media (min-width: 640px) { :scope > h1 { font-size: var(--t-5xl); } }
+}

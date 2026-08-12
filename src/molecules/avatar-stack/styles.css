@@ -1,0 +1,30 @@
+/* ── AvatarStack ── */
+@scope (.ui-avatar-stack) {
+	:scope {
+		display: flex;
+		align-items: center;
+	}
+	:scope[data-ui-color-base] { color: var(--ui-mark); }
+	:scope > .ui-avatar-stack-item {
+		position: relative;
+		display: grid;
+		place-items: center;
+		line-height: 0;
+		border-radius: var(--r-pill);
+	}
+	:scope > .ui-avatar-stack-extra {
+		position: relative;
+		z-index: 0;
+		display: grid;
+		place-items: center;
+		border-radius: var(--r-pill);
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: var(--t-xs);
+		color: var(--c-muted);
+		background: var(--c-panel-2);
+	}
+	:scope[data-ui-color-base] > .ui-avatar-stack-extra {
+		color: var(--ui-ink-muted);
+		background: var(--ui-surface-raised);
+	}
+}

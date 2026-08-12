@@ -1,0 +1,4 @@
+/* ── Sparkline ── */
+@scope (.ui-sparkline) {
+	:scope { overflow: visible; }
+}

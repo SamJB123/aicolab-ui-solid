@@ -1,0 +1,18 @@
+/* ── Scroll reveal — fades/rises as the element enters the viewport.
+      Fallback: fully visible, no animation. ── */
+@supports (animation-timeline: view()) {
+	@media (prefers-reduced-motion: no-preference) {
+		.ui-reveal {
+			animation: ui-rise linear both;
+			animation-timeline: view();
+			animation-range: entry 0% entry 60%;
+		}
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ui-rise,
+	.ui-in {
+		animation: none;
+	}
+}

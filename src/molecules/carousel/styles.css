@@ -1,0 +1,60 @@
+/* ── Carousel — scroll-snap strip; buttons/markers are a Chromium/Safari
+      enhancement, elsewhere it's a swipeable scroller. ── */
+@scope (.ui-carousel) {
+:scope {
+	display: flex;
+	gap: 1rem;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+	padding: 0.25rem;
+	scroll-marker-group: after;
+}
+:scope::-webkit-scrollbar {
+	display: none;
+}
+:scope > * {
+	flex: 0 0 min(26rem, 85%);
+	scroll-snap-align: center;
+}
+:scope > *::scroll-marker {
+	content: "";
+	width: 8px;
+	height: 8px;
+	border-radius: var(--r-pill);
+	background: var(--c-line-strong);
+	transition: background 0.2s;
+}
+:scope > *::scroll-marker:target-current {
+	background: var(--c-accent);
+}
+:scope::scroll-marker-group {
+	display: flex;
+	justify-content: center;
+	gap: 0.6rem;
+	margin-top: 1rem;
+}
+:scope::scroll-button(left),
+:scope::scroll-button(right) {
+	position: absolute;
+	align-self: center;
+	width: 2.4rem;
+	height: 2.4rem;
+	border-radius: var(--r-pill);
+	border: 1px solid var(--c-line-strong);
+	background: var(--c-panel);
+	color: var(--c-text);
+	cursor: pointer;
+}
+:scope::scroll-button(left) {
+	content: "←" / "Previous";
+}
+:scope::scroll-button(right) {
+	content: "→" / "Next";
+}
+:scope::scroll-button(*):disabled {
+	opacity: 0.3;
+	cursor: default;
+}
+}

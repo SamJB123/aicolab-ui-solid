@@ -4,7 +4,7 @@ import { AccordionItem } from '../../src/marketing'
 import { Chip } from '../../src/primitives'
 
 const meta = {
-	title: 'Marketing/AccordionItem',
+	title: 'Atoms/AccordionItem',
 	component: AccordionItem,
 	args: { summary: 'What does membership cost?' },
 } satisfies Meta<typeof AccordionItem>

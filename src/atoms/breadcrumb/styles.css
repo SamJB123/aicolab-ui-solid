@@ -1,0 +1,83 @@
+/* ── Breadcrumb — wayfinding trail; chevrons are pure CSS so the DOM stays
+      a clean nav>ol>li list ── */
+@scope (.ui-breadcrumb) {
+	:scope {
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: var(--t-xs);
+		text-transform: uppercase;
+		letter-spacing: 0.14em;
+	}
+	:scope[data-ui-color-base] {
+		border-radius: var(--r-sm);
+		padding: 6px 9px;
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: inset 0 0 0 1px var(--ui-border);
+	}
+	:scope > .ui-breadcrumb-trail {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 2px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.ui-breadcrumb-step {
+		display: inline-flex;
+		align-items: center;
+	}
+	/* Chevron separator between steps — faint, non-selectable, spaced by
+	   its own padding so wrapped rows keep their rhythm. */
+	.ui-breadcrumb-step + .ui-breadcrumb-step::before {
+		content: "›";
+		padding-inline: 7px;
+		color: var(--c-faint);
+		user-select: none;
+	}
+	:scope[data-ui-color-base] .ui-breadcrumb-step + .ui-breadcrumb-step::before {
+		color: var(--ui-ink-faint);
+	}
+	.ui-breadcrumb-link {
+		border: 0;
+		margin: 0;
+		padding: 2px 4px;
+		border-radius: var(--r-xs);
+		background: none;
+		font: inherit;
+		letter-spacing: inherit;
+		text-transform: inherit;
+		text-decoration: none;
+		color: var(--c-muted);
+		cursor: pointer;
+		transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+	.ui-breadcrumb-link:focus-visible {
+		outline: 2px solid color-mix(in oklab, var(--c-accent) 55%, transparent);
+		outline-offset: 1px;
+	}
+	:scope[data-ui-color-base] .ui-breadcrumb-link {
+		color: var(--ui-ink-muted);
+	}
+	:scope[data-ui-color-base] .ui-breadcrumb-link:focus-visible {
+		outline-color: var(--ui-focus-ring);
+	}
+	.ui-breadcrumb-here {
+		padding: 2px 4px;
+		color: var(--c-text);
+	}
+	.ui-breadcrumb-here:not([aria-current]) {
+		/* An inert ANCESTOR (no href/handler) reads quieter than the page. */
+		color: var(--c-muted);
+	}
+	:scope[data-ui-color-base] .ui-breadcrumb-here {
+		color: var(--ui-ink);
+	}
+	:scope[data-ui-color-base] .ui-breadcrumb-here:not([aria-current]) {
+		color: var(--ui-ink-muted);
+	}
+	@media (hover: hover) {
+		.ui-breadcrumb-link:hover { color: var(--c-text); }
+		:scope[data-ui-color-base] .ui-breadcrumb-link:hover { color: var(--ui-ink); }
+	}
+}

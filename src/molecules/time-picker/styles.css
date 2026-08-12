@@ -1,0 +1,135 @@
+@scope (.ui-picker-pop) {
+	:scope { padding: 12px; }
+.ui-tp-readout {
+		margin-bottom: 12px;
+		text-align: center;
+		font-family: var(--font-display, Georgia, serif);
+		font-size: var(--t-2xl);
+		font-variant-numeric: tabular-nums;
+		color: var(--c-text);
+	}
+	.ui-tp-row {
+		display: flex;
+		gap: 8px;
+	}
+	.ui-tp-wheels {
+		position: relative;
+		display: flex;
+		flex: 1;
+		gap: 4px;
+	}
+	.ui-tp-band {
+		pointer-events: none;
+		position: absolute;
+		inset-inline: 0;
+		top: 50%;
+		height: 36px;
+		transform: translateY(-50%);
+		border-radius: var(--r-sm);
+		background: var(--c-accent-soft);
+		box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-accent) 28%, transparent);
+	}
+	.ui-tp-colon {
+		z-index: 10;
+		display: grid;
+		place-items: center;
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: var(--t-lg);
+		color: var(--c-faint);
+	}
+	.ui-wheel-item {
+		display: flex;
+		height: 36px;
+		width: 100%;
+		align-items: center;
+		justify-content: center;
+		border: 0;
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: var(--t-lg);
+		font-variant-numeric: tabular-nums;
+		cursor: pointer;
+		background: transparent;
+		color: var(--c-faint);
+		transition: all 0.2s;
+	}
+	.ui-wheel-item:hover:not([data-active]) {
+		color: var(--c-text);
+	}
+	.ui-wheel-item[data-active] {
+		transform: scale(1.1);
+		font-weight: 600;
+		color: var(--c-accent);
+	}
+	.ui-tp-ampm-col {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 6px;
+	}
+	.ui-tp-ampm {
+		border: 0;
+		border-radius: var(--r-sm);
+		padding: 8px 12px;
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: var(--t-sm);
+		font-weight: 600;
+		letter-spacing: 0.025em;
+		cursor: pointer;
+		background: transparent;
+		color: var(--c-faint);
+		box-shadow: 0 0 0 1px var(--c-line);
+		transition:
+			background-color 0.2s,
+			color 0.2s;
+	}
+	.ui-tp-ampm:hover:not([data-active]) {
+		background: var(--c-panel);
+		color: var(--c-muted);
+	}
+	.ui-tp-ampm[data-active] {
+		background: var(--c-accent-soft);
+		color: var(--c-accent);
+		box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-accent) 38%, transparent);
+	}
+	.ui-tp-presets {
+		margin-top: 12px;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		border-top: 1px solid var(--c-line);
+		padding-top: 12px;
+	}
+	.ui-tp-preset {
+		border: 0;
+		border-radius: var(--r-pill);
+		padding: 4px 10px;
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: var(--t-xs);
+		cursor: pointer;
+		background: transparent;
+		color: var(--c-muted);
+		box-shadow: 0 0 0 1px var(--c-line);
+		transition:
+			background-color 0.2s,
+			color 0.2s;
+	}
+	.ui-tp-preset:hover {
+		background: var(--c-panel);
+		color: var(--c-text);
+	}
+	/* Wheel sizing (was package-side utilities). */
+	.ui-wheel {
+		position: relative;
+		height: 160px;
+		flex: 1;
+		overflow-y: auto;
+		padding-block: 64px;
+	}
+	.ui-wheel-mask {
+		pointer-events: none;
+		position: absolute;
+		inset: 0;
+		z-index: 20;
+	}
+
+}
