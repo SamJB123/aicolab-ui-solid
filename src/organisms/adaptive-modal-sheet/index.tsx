@@ -67,7 +67,13 @@ export function AdaptiveModalSheet(props: {
 							closeButton = element
 						}}
 					>
-						<span aria-hidden="true">×</span>
+						<svg
+							class="ui-adaptive-modal-sheet-close-icon"
+							viewBox="0 0 24 24"
+							aria-hidden="true"
+						>
+							<path d="M6 6 18 18M18 6 6 18" />
+						</svg>
 					</IconButton>
 				</header>
 				<div

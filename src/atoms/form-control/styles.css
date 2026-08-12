@@ -30,28 +30,59 @@
 		background: var(--color-base-200);
 		color: var(--color-base-content-faint);
 	}
+
+	/* ToolPanel declares only its semantic environment. The atom owns how its
+	   control anatomy responds to that environment. */
+	@container ui-treatment-context style(--ui-environment: overlay) {
+		:scope {
+			border-color: var(--color-overlay-border);
+			background: var(--color-overlay-soft);
+			color: var(--color-overlay-content);
+		}
+		:scope:disabled {
+			background: var(--color-overlay-soft);
+			color: var(--color-overlay-content-muted);
+		}
+	}
 }
 
 @scope (.ui-select-control) {
 	:scope {
-		appearance: base-select;
 		cursor: pointer;
 	}
 
-	:scope::picker(select) {
-		appearance: base-select;
-		border: 1px solid var(--color-border-strong);
-		border-radius: var(--r-sm);
-		corner-shape: squircle;
-		background: var(--color-base-100);
-		color: var(--color-base-content);
-		box-shadow:
-			0 0 0 1px var(--color-border),
-			0 0.75rem 2.5rem -0.75rem color-mix(in oklab, var(--color-base-content) 28%, transparent);
-	}
+	/* Compatibility boundary: the ordinary native select above is the
+	   Baseline-2026 path. Remove this gate only once customizable select is
+	   Baseline; picker pseudos must never become a functional dependency. */
+	@supports (appearance: base-select) {
+		:scope {
+			appearance: base-select;
+		}
 
-	:scope option { padding: 0.45rem 0.65rem; }
-	:scope option:checked { background: var(--color-primary); color: var(--color-primary-content); }
+		:scope::picker(select) {
+			appearance: base-select;
+			border: 1px solid var(--color-border-strong);
+			border-radius: var(--r-sm);
+			corner-shape: squircle;
+			background: var(--color-base-100);
+			color: var(--color-base-content);
+			box-shadow:
+				0 0 0 1px var(--color-border),
+				0 0.75rem 2.5rem -0.75rem color-mix(in oklab, var(--color-base-content) 28%, transparent);
+		}
+
+		:scope option { padding: 0.45rem 0.65rem; }
+		:scope option:checked { background: var(--color-primary); color: var(--color-primary-content); }
+
+		@container ui-treatment-context style(--ui-environment: overlay) {
+			:scope::picker(select) {
+				border-color: var(--color-overlay-border);
+				background: var(--color-overlay-surface);
+				color: var(--color-overlay-content);
+				box-shadow: 0 0.75rem 2.5rem -0.75rem var(--color-overlay-surface);
+			}
+		}
+	}
 }
 
 @scope (.ui-text-area) {

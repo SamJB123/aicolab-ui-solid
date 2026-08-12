@@ -16,7 +16,8 @@ export function Sparkline(props: { data: number[]; w?: number; h?: number; strok
 		const area = `0,${h} ${line} ${w},${h}`
 		return { w, h, line, area, last: pts[pts.length - 1] }
 	})
-	const color = () => props.colorBase ? 'var(--ui-mark)' : (props.strokeColor ?? 'var(--color-primary)')
+	const exactColor = () => props.colorBase ? 'var(--ui-color)' : (props.strokeColor ?? 'var(--color-primary)')
+	const foregroundColor = () => props.colorBase ? 'var(--ui-color-foreground)' : exactColor()
 	return (
 		<svg
 			{...colorTreatmentData(props)}
@@ -27,16 +28,16 @@ export function Sparkline(props: { data: number[]; w?: number; h?: number; strok
 			preserveAspectRatio="none"
 			aria-hidden="true"
 		>
-			<polygon points={geo().area} fill={color()} opacity="0.1" />
+			<polygon points={geo().area} fill={exactColor()} opacity="0.1" />
 			<polyline
 				points={geo().line}
 				fill="none"
-				stroke={color()}
+				stroke={foregroundColor()}
 				stroke-width="1.5"
 				stroke-linejoin="round"
 				stroke-linecap="round"
 			/>
-			<circle cx={geo().last[0]} cy={geo().last[1]} r="2.4" fill={color()} />
+			<circle cx={geo().last[0]} cy={geo().last[1]} r="2.4" fill={foregroundColor()} />
 		</svg>
 	)
 }

@@ -1,5 +1,6 @@
 import { createSignal, For, onSettled, type ParentProps, Show } from 'solid-js'
 import { Eyebrow } from '../../atoms/eyebrow'
+import { RichList, RichListItem } from '../../molecules/rich-list'
 
 export type DocsNavItem = {
 	label: string
@@ -54,21 +55,18 @@ export function DocsShell(props: ParentProps<{ nav?: DocsNavItem[]; navLabel?: s
 				<nav class="docs-nav" aria-label={props.navLabel ?? 'Chapters'}>
 					<div class="docs-side">
 						<Eyebrow>{props.navLabel ?? 'Chapters'}</Eyebrow>
-						<For each={props.nav}>
-							{(item) => (
-								<a
-									href={item.href}
-									aria-current={item.current ? 'page' : undefined}
-									class={{
-										'docs-nav-link': true,
-										'docs-nav-sub': !!item.sub,
-										'docs-nav-current': !!item.current,
-									}}
-								>
-									{item.label}
-								</a>
-							)}
-						</For>
+						<RichList navigation label={props.navLabel ?? 'Chapters'}>
+							<For each={props.nav}>
+								{(item) => (
+									<RichListItem
+										href={item.href}
+										title={item.label}
+										selected={item.current}
+										class={{ 'docs-nav-sub': !!item.sub }}
+									/>
+								)}
+							</For>
+						</RichList>
 					</div>
 				</nav>
 			</Show>
@@ -79,20 +77,18 @@ export function DocsShell(props: ParentProps<{ nav?: DocsNavItem[]; navLabel?: s
 				<div class="docs-side">
 					<Show when={toc().length}>
 						<Eyebrow>On this page</Eyebrow>
-						<For each={toc()}>
-							{(item) => (
-								<a
-									href={`#${item.id}`}
-									class={{
-										'docs-toc-link': true,
-										'docs-toc-sub': item.depth === 3,
-										'docs-toc-current': active() === item.id,
-									}}
-								>
-									{item.label}
-								</a>
-							)}
-						</For>
+						<RichList navigation label="On this page">
+							<For each={toc()}>
+								{(item) => (
+									<RichListItem
+										href={`#${item.id}`}
+										title={item.label}
+										selected={active() === item.id}
+										class={{ 'docs-toc-sub': item.depth === 3 }}
+									/>
+								)}
+							</For>
+						</RichList>
 					</Show>
 				</div>
 			</nav>

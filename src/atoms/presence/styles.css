@@ -1,0 +1,38 @@
+@scope (.ui-presence) {
+	:scope {
+		/* Private component roles derived from the active theme's public anchors. */
+		--ui-presence-1: var(--color-info);
+		--ui-presence-2: var(--color-success);
+		--ui-presence-3: var(--color-warning);
+		--ui-presence-4: var(--color-error);
+		--ui-presence-5: var(--color-accent);
+		--ui-presence-6: var(--color-secondary);
+		--ui-attribution-1: color-mix(in oklab, var(--ui-presence-1) 22%, var(--color-base-100));
+		--ui-attribution-2: color-mix(in oklab, var(--ui-presence-2) 22%, var(--color-base-100));
+		--ui-attribution-3: color-mix(in oklab, var(--ui-presence-3) 22%, var(--color-base-100));
+		--ui-attribution-4: color-mix(in oklab, var(--ui-presence-4) 22%, var(--color-base-100));
+		--ui-attribution-5: color-mix(in oklab, var(--ui-presence-5) 22%, var(--color-base-100));
+		--ui-attribution-6: color-mix(in oklab, var(--ui-presence-6) 22%, var(--color-base-100));
+	}
+
+	.ui-presence-swatch {
+		display: inline-block;
+		inline-size: 0.5rem;
+		block-size: 0.5rem;
+		border-radius: var(--r-pill);
+		background: var(--ui-presence-color);
+	}
+	.ui-attribution-swatch {
+		display: inline-block;
+		inline-size: 0.75rem;
+		block-size: 0.75rem;
+		border-radius: 0.25rem;
+		background: var(--ui-presence-color);
+	}
+
+	.ui-attribution-mark[data-attributed] { background: var(--ui-attribution-color); }
+	.ui-attribution-mark[data-deleted] {
+		color: var(--color-base-content-faint);
+		text-decoration-line: line-through;
+	}
+}

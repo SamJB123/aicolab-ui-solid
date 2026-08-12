@@ -67,6 +67,12 @@ export const OnPanelSurface: Story = {
 export const ThreeAxes: Story = {
 	name: 'Color base × level × variant',
 	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, variant }) => (
-		<Avatar colorBase={colorBase} colorLevel={colorLevel} variant={variant} name="Ada Lovelace" faceColor="#888" status={{ color: '#888', live: true }} />
+		<Avatar
+			colorBase={colorBase}
+			colorLevel={colorLevel}
+			variant={variant}
+			name="Ada Lovelace"
+			status={{ color: 'var(--color-success)', live: true }}
+		/>
 	)} />,
 }

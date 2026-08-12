@@ -57,7 +57,7 @@ export const Full: Story = {
 					index="02"
 					title="New session"
 					kicker={`${longWeekday(date().y, date().m, date().d)} · ${fmtTime(start())}`}
-					action={() => <Chip tone="accent">draft</Chip>}
+					action={() => <Chip colorBase="primary" variant="soft">draft</Chip>}
 				>
 					<div style={{ display: 'grid', gap: '16px' }}>
 						<Field label="Date">

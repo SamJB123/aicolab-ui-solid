@@ -2,6 +2,7 @@
 import type { JSX } from '@solidjs/web'
 import { createEffect, createSignal, createUniqueId, Show } from 'solid-js'
 import { IconButton } from '../../atoms/icon-button'
+import { RichList, RichListItem } from '../../molecules/rich-list'
 import type { ClassProp } from '../../shared/color-treatment'
 
 export type InspectorDetent = 'peek' | 'half' | 'full'
@@ -11,6 +12,12 @@ const DRAG_SLOP_PX = 9
 const THROW_PROJECTION_MS = 220
 const FLICK_VELOCITY = 0.25
 const STALE_VELOCITY_MS = 120
+
+function workspaceClass(name: string, value?: ClassProp): ClassProp {
+	if (!value) return name
+	if (typeof value === 'string') return `${name} ${value}`
+	return { [name]: true, ...value }
+}
 
 function detentHeights(): Record<InspectorDetent, number> {
 	const viewportHeight = window.innerHeight
@@ -85,9 +92,9 @@ export function WorkspaceNavigationGroup(props: {
 			<h2 class="ui-workspace-navigation-group-label ui-eyebrow" id={props.id}>
 				{props.label}
 			</h2>
-			<ul class="ui-workspace-navigation-list" aria-labelledby={props.id}>
+			<RichList navigation class="ui-workspace-navigation-list" label={props.label}>
 				{props.children}
-			</ul>
+			</RichList>
 		</section>
 	)
 }
@@ -97,11 +104,7 @@ export function WorkspaceNavigationList(props: {
 	class?: ClassProp
 	children?: JSX.Element
 }) {
-	return (
-		<ul class={['ui-workspace-navigation-list', props.class]} aria-label={props.label}>
-			{props.children}
-		</ul>
-	)
+	return <RichList navigation class={workspaceClass('ui-workspace-navigation-list', props.class)} label={props.label}>{props.children}</RichList>
 }
 
 export function WorkspaceNavigationItem(props: {
@@ -113,21 +116,14 @@ export function WorkspaceNavigationItem(props: {
 	class?: ClassProp
 }) {
 	return (
-		<li class="ui-workspace-navigation-entry">
-			<button
-				type="button"
-				class={['ui-workspace-navigation-item', props.class]}
-				data-current={props.current ? '' : undefined}
-				data-muted={props.muted ? '' : undefined}
-				aria-current={props.current ? 'true' : undefined}
-				onClick={() => props.onSelect()}
-			>
-				<Show when={props.mark}>
-					{(mark) => <span class="ui-workspace-navigation-mark">{mark()}</span>}
-				</Show>
-				<span class="ui-workspace-navigation-item-label">{props.label}</span>
-			</button>
-		</li>
+		<RichListItem
+			title={props.label}
+			leading={props.mark}
+			onSelect={props.onSelect}
+			selected={props.current}
+			muted={props.muted}
+			class={workspaceClass('ui-workspace-navigation-item', props.class)}
+		/>
 	)
 }
 

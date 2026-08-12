@@ -3,9 +3,13 @@ import type { JSX } from '@solidjs/web'
 import { Show } from 'solid-js'
 import type { ClassProp } from '../../shared/color-treatment'
 
-export function RichList(props: { label?: string; class?: ClassProp; children?: JSX.Element }) {
+export function RichList(props: { label?: string; navigation?: boolean; class?: ClassProp; children?: JSX.Element }) {
 	return (
-		<ul class={['ui-rich-list', props.class]} aria-label={props.label}>
+		<ul
+			class={['ui-rich-list', props.class]}
+			aria-label={props.label}
+			data-navigation={props.navigation ? '' : undefined}
+		>
 			{props.children}
 		</ul>
 	)
@@ -20,8 +24,10 @@ export function RichListItem(props: {
 	description?: JSX.Element
 	trailing?: JSX.Element
 	onSelect?: () => void
+	href?: string
 	/** Persistent selection, distinct from the transient hover affordance. */
 	selected?: boolean
+	muted?: boolean
 	label?: string
 	class?: ClassProp
 }) {
@@ -46,30 +52,42 @@ export function RichListItem(props: {
 		</>
 	)
 
+	const attributes = () => ({
+		class: ['ui-rich-list-item', props.class],
+		'data-selected': props.selected ? '' : undefined,
+		'data-muted': props.muted ? '' : undefined,
+		'data-ui-color-base': 'primary',
+		'data-ui-color-level': 500,
+		'data-ui-color-variant': props.selected ? 'solid' : 'soft',
+	})
+
 	return (
 		<li class="ui-rich-list-entry">
 			<Show
-				when={props.onSelect}
+				when={props.href}
 				fallback={
-					<div
-						class={['ui-rich-list-item', props.class]}
-						data-selected={props.selected ? '' : undefined}
+					<Show
+						when={props.onSelect}
+						fallback={<div {...attributes()}>{content()}</div>}
 					>
-						{content()}
-					</div>
+						{(onSelect) => (
+							<button
+								type="button"
+								{...attributes()}
+								aria-label={props.label}
+								aria-pressed={props.selected === undefined ? undefined : props.selected ? 'true' : 'false'}
+								onClick={() => onSelect()()}
+							>
+								{content()}
+							</button>
+						)}
+					</Show>
 				}
 			>
-				{(onSelect) => (
-					<button
-						type="button"
-						class={['ui-rich-list-item', props.class]}
-						aria-label={props.label}
-						aria-pressed={props.selected === undefined ? undefined : props.selected ? 'true' : 'false'}
-						data-selected={props.selected ? '' : undefined}
-						onClick={() => onSelect()()}
-					>
+				{(href) => (
+					<a {...attributes()} href={href()} aria-current={props.selected ? 'page' : undefined}>
 						{content()}
-					</button>
+					</a>
 				)}
 			</Show>
 		</li>

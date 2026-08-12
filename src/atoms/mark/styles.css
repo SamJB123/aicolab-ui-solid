@@ -5,7 +5,7 @@
 	color: inherit;
 	font-style: inherit;
 }
-.ui-mark-underline {
+:scope.ui-mark-underline {
 	background-image: linear-gradient(
 		to right,
 		color-mix(in oklab, var(--color-primary) 75%, transparent),
@@ -15,8 +15,9 @@
 	background-position: 0 96%;
 	background-size: 100% 0.12em;
 }
-.ui-mark-highlight {
-	background: var(--color-primary-soft);
+:scope.ui-mark-highlight {
+	background: var(--color-primary);
+	color: var(--color-primary-content);
 	box-decoration-break: clone;
 	-webkit-box-decoration-break: clone;
 	/* OFF-LADDER ON PURPOSE: an inline highlight must scale with the text it

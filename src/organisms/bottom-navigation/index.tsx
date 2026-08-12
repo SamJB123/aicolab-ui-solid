@@ -9,6 +9,24 @@ export interface BottomNavigationItem<Id extends string = string> {
 	icon: JSX.Element
 }
 
+/** Canonical raised-centre anatomy for a BottomNavigation action.
+ *  It is intentionally independent of the action mechanism, so it can sit
+ *  inside a RadialMenu trigger or another consumer-supplied control. */
+export function BottomNavigationCentreContent(props: {
+	icon: JSX.Element
+	label: JSX.Element
+	active?: boolean
+}) {
+	return (
+		<>
+			<span class="ui-bottom-navigation-centre-chip" data-active={props.active ? '' : undefined}>
+				{props.icon}
+			</span>
+			<span class="ui-bottom-navigation-item-label">{props.label}</span>
+		</>
+	)
+}
+
 export function BottomNavigation<Id extends string>(props: {
 	label?: string
 	items: readonly BottomNavigationItem<Id>[]

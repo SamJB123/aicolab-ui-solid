@@ -22,7 +22,7 @@ export function Section(props: {
 			<Show when={props.eyebrow || props.title || props.lede}>
 				<header class="ui-section-head" data-center={props.center ? '' : undefined}>
 					<Show when={props.eyebrow}>
-						<Eyebrow class="ui-accent-ink">{props.eyebrow}</Eyebrow>
+						<Eyebrow colorBase="primary">{props.eyebrow}</Eyebrow>
 					</Show>
 					<Show when={props.title}>
 						<h2>{props.title}</h2>

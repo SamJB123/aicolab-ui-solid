@@ -27,32 +27,13 @@
 		}
 	}
 }
-.docs-nav-link,
-.docs-toc-link {
-	display: block;
-	padding: 0.3rem 0.6rem;
-	border-radius: var(--r-sm);
-	font-size: var(--t-md);
-	color: var(--color-base-content-muted);
-	text-decoration: none;
-	transition:
-		color 0.15s,
-		background 0.15s;
-}
-.docs-nav-link:hover,
-.docs-toc-link:hover {
-	color: var(--color-base-content);
-	background: var(--color-base-300);
-}
+
+/* DocsShell contributes hierarchy only. RichList owns navigation-item paint,
+   interaction and light/dark treatment. */
 .docs-nav-sub,
 .docs-toc-sub {
 	padding-left: 1.4rem;
 	font-size: var(--t-sm);
-}
-.docs-nav-current,
-.docs-toc-current {
-	color: var(--color-primary);
-	background: var(--color-primary-soft);
 }
 }
 

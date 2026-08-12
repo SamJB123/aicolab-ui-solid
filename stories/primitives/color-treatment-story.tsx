@@ -22,8 +22,8 @@ export type ColorTreatmentContext = {
 	colorBase: ColorBase
 	colorLevel: ColorLevel
 	variant: Variant
-	/** Canonical presentation mark for the selected base × level. */
-	markColor: string
+	/** Resolved colour for the selected base × level. */
+	resolvedColor: string
 	/** Canonical variant-resolved surface behind the specimen. */
 	surfaceColor: string
 }
@@ -86,7 +86,7 @@ export function ColorTreatmentStory(props: {
 												colorBase,
 												colorLevel: level(),
 												variant,
-												markColor: 'var(--ui-mark)',
+												resolvedColor: 'var(--ui-color)',
 												surfaceColor: 'var(--ui-surface)',
 											})}
 										</div>

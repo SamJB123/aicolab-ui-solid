@@ -8,6 +8,9 @@
 		letter-spacing: 0.2em;
 		color: var(--color-base-content-faint);
 	}
+	@container ui-treatment-context style(--ui-environment: overlay) {
+		:scope > .ui-field-label { color: var(--color-overlay-content-muted); }
+	}
 	/* Opt-in content-hugging controls (field-sizing, Chromium/FF-beta). */
 	:scope.ui-autosize :is(input, textarea, select) {
 		field-sizing: content;

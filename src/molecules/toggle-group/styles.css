@@ -19,4 +19,11 @@
 		font-size: var(--t-xs);
 		text-transform: capitalize;
 	}
+
+	@container ui-treatment-context style(--ui-environment: overlay) {
+		:scope {
+			background: var(--color-overlay-soft);
+			box-shadow: inset 0 0 0 1px var(--color-overlay-border);
+		}
+	}
 }

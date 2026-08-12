@@ -7,8 +7,34 @@
 	}
 }
 
+/* Baseline-2026 compatibility path for container style queries and typed
+   attr(). Keep until both features are Baseline. The collection's semantic
+   attributes preserve every public option without weakening AccordionItem's
+   independently reusable defaults. */
+@scope (.ui-accordion) {
+	:scope[data-ui-accordion-spacing="separated"] .ui-acc {
+		border: 1px solid var(--color-border);
+		border-radius: var(--r-md);
+		padding-inline: 1rem;
+	}
+
+	:scope[data-ui-accordion-spacing="separated"] .ui-acc + .ui-acc {
+		margin-top: 0.75rem;
+	}
+
+	:scope[data-ui-accordion-density="compact"] .ui-acc summary {
+		padding-block: 0.7rem;
+	}
+
+	:scope[data-ui-accordion-density="compact"] .ui-acc .ui-acc-body {
+		padding-bottom: 0.85rem;
+	}
+}
+
 /* Presentation context belongs to the collection. Individual disclosures
-   react to its computed, inherited values rather than inspecting parent DOM. */
+   react to its computed, inherited values rather than inspecting parent DOM.
+   This remains the forward path and may replace the attribute baseline once
+   custom-property style queries and typed attr() are both Baseline. */
 @container ui-accordion style(--ui-accordion-spacing: separated) {
 	.ui-acc {
 		border: 1px solid var(--color-border);

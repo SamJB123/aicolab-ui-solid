@@ -38,8 +38,8 @@ export const WideCentered: Story = {
 			center
 		>
 			<div style={{ display: 'flex', gap: '8px', 'justify-content': 'center' }}>
-				<Chip tone="accent">Studio A</Chip>
-				<Chip tone="accent">Studio B</Chip>
+				<Chip colorBase="primary" variant="soft">Studio A</Chip>
+				<Chip colorBase="secondary" variant="soft">Studio B</Chip>
 				<Chip>Workshop</Chip>
 				<Chip>Commons</Chip>
 			</div>

@@ -34,5 +34,5 @@ export const Sizes: Story = {
 
 export const ThreeAxes: Story = {
 	name: 'Color base × level × variant',
-	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, variant }) => <StatusDot colorBase={colorBase} colorLevel={colorLevel} variant={variant} status={{ color: '#888', live: true }} size={12} />} />,
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, variant }) => <StatusDot colorBase={colorBase} colorLevel={colorLevel} variant={variant} status={{ color: 'var(--color-success)', live: true }} size={12} />} />,
 }

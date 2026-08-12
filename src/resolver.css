@@ -1,9 +1,146 @@
-/* ── Forward colour resolver ──────────────────────────────────────────────
-   The DOM supplies semantic strings and a numeric level. Typed attr() turns
-   those attributes into registered CSS values; if(style()) maps semantic
-   names and variants on the element itself; @function owns all colour
-   algorithms. There are intentionally no compatibility declarations or
-   selector matrices in this Phase-1 implementation. */
+/* ── Baseline-2026 colour resolver compatibility path ─────────────────────
+   Keep this composable selector path until typed attr(), CSS if(style()), and
+   CSS @function are all Baseline across ui-solid's supported browser floor.
+   It deliberately separates the three public axes (8 bases + 11 levels +
+   5 variants), avoiding a base × level × variant selector matrix. */
+:where([data-ui-color-base]) {
+	/* Private environmental inputs. A named style-query context may replace
+	   these without changing the public treatment API or theme vocabulary. */
+	--ui-context-surface: var(--color-base-100);
+	--ui-context-content: var(--color-base-content);
+	--ui-color-base: var(--color-primary);
+	--ui-color-level: 500;
+	--ui-level-light-shift: 0;
+	--ui-level-chroma-scale: 1;
+
+	/* One Baseline relative-colour calculation serves every base and level. */
+	--ui-color: oklch(
+		from var(--ui-color-base)
+		clamp(
+			0,
+			calc(l + var(--ui-level-light-shift)),
+			1
+		)
+		calc(c * var(--ui-level-chroma-scale))
+		h
+	);
+	--ui-content: color-mix(in oklch, var(--ui-color) 10%, contrast-color(var(--ui-color)));
+	--ui-family-ink: color-mix(in oklch, var(--ui-color) 24%, var(--ui-context-content));
+	--ui-bright-color: oklch(from var(--ui-color) clamp(0, calc(l * 1.1), 1) c h);
+	--ui-bright-content: oklch(from var(--ui-content) clamp(0, calc(l * 1.1), 1) c h);
+
+	/* Solid is the compatibility default when variant is absent or unknown. */
+	--ui-surface: var(--ui-color);
+	--ui-surface-occluding: var(--ui-color);
+	--ui-ink: var(--ui-content);
+	--ui-border: var(--ui-color);
+	--ui-surface-hover: var(--ui-bright-color);
+	--ui-ink-hover: var(--ui-bright-content);
+	--ui-surface-selected: var(--ui-color);
+	--ui-ink-selected: var(--ui-content);
+	--ui-border-hover: var(--ui-bright-color);
+	--ui-surface-glow: color-mix(in oklab, var(--ui-color) 22%, transparent);
+	--ui-surface-glow-hover: var(--ui-bright-color);
+	--ui-ink-glow-hover: transparent;
+
+	/* Outputs common to every variant remain resolved in one place. */
+	--ui-surface-active: var(--ui-surface-hover);
+	--ui-ink-active: var(--ui-ink-hover);
+	--ui-border-active: var(--ui-border-hover);
+	--ui-border-selected: var(--ui-color);
+	--ui-focus-ring: color-mix(in oklab, var(--ui-color) 62%, transparent);
+	--ui-surface-glow-active: var(--ui-surface-glow-hover);
+	--ui-ink-glow-active: var(--ui-ink-glow-hover);
+	--ui-surface-raised: color-mix(in oklab, var(--ui-surface-occluding) 88%, white);
+	--ui-surface-inset: color-mix(in oklab, var(--ui-surface-occluding) 92%, black);
+	--ui-ink-muted: color-mix(in oklab, var(--ui-ink) 78%, transparent);
+	--ui-ink-faint: color-mix(in oklab, var(--ui-ink) 60%, transparent);
+	--ui-surface-disabled: color-mix(in oklab, var(--ui-surface) 46%, var(--ui-context-surface));
+	--ui-ink-disabled: color-mix(in oklab, var(--ui-ink) 42%, transparent);
+	--ui-border-disabled: color-mix(in oklab, var(--ui-border) 42%, transparent);
+}
+
+/* Compatibility base axis. */
+:where([data-ui-color-base="secondary"]) { --ui-color-base: var(--color-secondary); }
+:where([data-ui-color-base="accent"]) { --ui-color-base: var(--color-accent); }
+:where([data-ui-color-base="neutral"]) { --ui-color-base: var(--color-neutral); }
+:where([data-ui-color-base="info"]) { --ui-color-base: var(--color-info); }
+:where([data-ui-color-base="success"]) { --ui-color-base: var(--color-success); }
+:where([data-ui-color-base="warning"]) { --ui-color-base: var(--color-warning); }
+:where([data-ui-color-base="error"]) { --ui-color-base: var(--color-error); }
+
+/* Compatibility perceptual-level axis. */
+:where([data-ui-color-level="50"]) { --ui-color-level: 50; --ui-level-light-shift: 0.306; --ui-level-chroma-scale: 0.199; }
+:where([data-ui-color-level="100"]) { --ui-color-level: 100; --ui-level-light-shift: 0.272; --ui-level-chroma-scale: 0.288; }
+:where([data-ui-color-level="200"]) { --ui-color-level: 200; --ui-level-light-shift: 0.204; --ui-level-chroma-scale: 0.466; }
+:where([data-ui-color-level="300"]) { --ui-color-level: 300; --ui-level-light-shift: 0.136; --ui-level-chroma-scale: 0.644; }
+:where([data-ui-color-level="400"]) { --ui-color-level: 400; --ui-level-light-shift: 0.068; --ui-level-chroma-scale: 0.822; }
+:where([data-ui-color-level="500"]) { --ui-color-level: 500; --ui-level-light-shift: 0; --ui-level-chroma-scale: 1; }
+:where([data-ui-color-level="600"]) { --ui-color-level: 600; --ui-level-light-shift: -0.071; --ui-level-chroma-scale: 0.867; }
+:where([data-ui-color-level="700"]) { --ui-color-level: 700; --ui-level-light-shift: -0.142; --ui-level-chroma-scale: 0.734; }
+:where([data-ui-color-level="800"]) { --ui-color-level: 800; --ui-level-light-shift: -0.213; --ui-level-chroma-scale: 0.601; }
+:where([data-ui-color-level="900"]) { --ui-color-level: 900; --ui-level-light-shift: -0.284; --ui-level-chroma-scale: 0.468; }
+:where([data-ui-color-level="950"]) { --ui-color-level: 950; --ui-level-light-shift: -0.3195; --ui-level-chroma-scale: 0.4015; }
+
+/* Compatibility variant axis. Each branch owns the complete set of roles
+   whose policy differs from solid; components remain variant-agnostic. */
+:where([data-ui-color-variant="soft"]) {
+	--ui-surface: color-mix(in oklab, var(--ui-color) 15%, var(--ui-context-surface));
+	--ui-surface-occluding: color-mix(in oklab, var(--ui-color) 15%, var(--ui-context-surface));
+	--ui-ink: var(--ui-family-ink);
+	--ui-border: color-mix(in oklab, var(--ui-color) 32%, transparent);
+	--ui-surface-hover: color-mix(in oklab, var(--ui-color) 22%, var(--ui-context-surface));
+	--ui-ink-hover: var(--ui-family-ink);
+	--ui-surface-selected: color-mix(in oklab, var(--ui-color) 24%, var(--ui-context-surface));
+	--ui-ink-selected: var(--ui-family-ink);
+	--ui-border-hover: color-mix(in oklab, var(--ui-border) 76%, var(--ui-color));
+}
+
+:where([data-ui-color-variant="outline"]) {
+	--ui-surface: transparent;
+	--ui-surface-occluding: color-mix(in oklab, var(--ui-color) 8%, var(--ui-context-surface));
+	--ui-ink: var(--ui-family-ink);
+	--ui-border: var(--ui-color);
+	--ui-surface-hover: color-mix(in oklab, var(--ui-color) 10%, transparent);
+	--ui-ink-hover: var(--ui-family-ink);
+	--ui-surface-selected: color-mix(in oklab, var(--ui-color) 24%, var(--ui-context-surface));
+	--ui-ink-selected: var(--ui-family-ink);
+	--ui-border-hover: color-mix(in oklab, var(--ui-border) 76%, var(--ui-color));
+}
+
+:where([data-ui-color-variant="ghost"]) {
+	--ui-surface: var(--ui-context-surface);
+	--ui-surface-occluding: var(--ui-context-surface);
+	--ui-ink: var(--ui-family-ink);
+	--ui-border: var(--color-border);
+	--ui-surface-hover: var(--color-base-150);
+	--ui-ink-hover: var(--ui-family-ink);
+	--ui-surface-selected: color-mix(in oklab, var(--ui-color) 24%, var(--ui-context-surface));
+	--ui-ink-selected: var(--ui-family-ink);
+	--ui-border-hover: color-mix(in oklab, var(--ui-border) 76%, var(--ui-color));
+}
+
+:where([data-ui-color-variant="text"]) {
+	--ui-surface: transparent;
+	--ui-surface-occluding: color-mix(in oklab, var(--ui-color) 8%, var(--ui-context-surface));
+	--ui-ink: var(--ui-family-ink);
+	--ui-border: transparent;
+	--ui-surface-hover: transparent;
+	--ui-ink-hover: var(--ui-family-ink);
+	--ui-surface-selected: color-mix(in oklab, var(--ui-color) 24%, var(--ui-context-surface));
+	--ui-ink-selected: var(--ui-family-ink);
+	--ui-border-hover: transparent;
+	--ui-surface-glow: transparent;
+	--ui-surface-glow-hover: transparent;
+	--ui-ink-glow-hover: var(--ui-bright-color);
+}
+
+/* ── Frontier resolver override ───────────────────────────────────────────
+   Remove the compatibility selector path above once typed attr(), CSS
+   if(style()), and CSS @function are all Baseline. Until then, only engines
+   supporting the entire stack may replace the Baseline-2026 outputs. */
+@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) and (color: if(style(--ui-compat-probe: yes): red; else: blue)) {
+	@supports at-rule(@function) {
 @function --ui-color-at-level(--base <color>, --level <number>) returns <color> {
 	--light-shift: calc(
 		max(0, 500 - var(--level)) * 0.00068
@@ -33,7 +170,7 @@
 @function --ui-color-as-ink(--color <color>) returns <color> {
 	/* Environmental content owns contrast direction; the family contributes
 	   hue without dragging text toward a low-contrast midtone. */
-	result: color-mix(in oklch, var(--color) 24%, var(--color-base-content));
+	result: color-mix(in oklch, var(--color) 24%, var(--ui-context-content));
 }
 
 /* The old solid-button hover used filter: brightness(1.1). Resolve that same
@@ -70,9 +207,9 @@
 
 	--ui-surface: if(
 		style(--ui-color-variant: solid): var(--ui-color);
-		style(--ui-color-variant: soft): color-mix(in oklab, var(--ui-color) 15%, var(--color-base-100));
+		style(--ui-color-variant: soft): color-mix(in oklab, var(--ui-color) 15%, var(--ui-context-surface));
 		style(--ui-color-variant: outline): transparent;
-		style(--ui-color-variant: ghost): var(--color-base-100);
+		style(--ui-color-variant: ghost): var(--ui-context-surface);
 		style(--ui-color-variant: text): transparent;
 		else: var(--ui-color)
 	);
@@ -81,11 +218,11 @@
 	   composites the family colour into a known theme surface. */
 	--ui-surface-occluding: if(
 		style(--ui-color-variant: solid): var(--ui-color);
-		style(--ui-color-variant: soft): color-mix(in oklab, var(--ui-color) 15%, var(--color-base-100));
-		style(--ui-color-variant: outline): color-mix(in oklab, var(--ui-color) 8%, var(--color-base-100));
-		style(--ui-color-variant: ghost): var(--color-base-100);
-		style(--ui-color-variant: text): color-mix(in oklab, var(--ui-color) 8%, var(--color-base-100));
-		else: var(--color-base-100)
+		style(--ui-color-variant: soft): color-mix(in oklab, var(--ui-color) 15%, var(--ui-context-surface));
+		style(--ui-color-variant: outline): color-mix(in oklab, var(--ui-color) 8%, var(--ui-context-surface));
+		style(--ui-color-variant: ghost): var(--ui-context-surface);
+		style(--ui-color-variant: text): color-mix(in oklab, var(--ui-color) 8%, var(--ui-context-surface));
+		else: var(--ui-context-surface)
 	);
 	--ui-ink: if(
 		style(--ui-color-variant: solid): var(--ui-content);
@@ -104,7 +241,7 @@
 	   never reinterpret variant or perform colour math. */
 	--ui-surface-hover: if(
 		style(--ui-color-variant: solid): --ui-brighten(var(--ui-color));
-		style(--ui-color-variant: soft): color-mix(in oklab, var(--ui-color) 22%, var(--color-base-100));
+		style(--ui-color-variant: soft): color-mix(in oklab, var(--ui-color) 22%, var(--ui-context-surface));
 		style(--ui-color-variant: outline): color-mix(in oklab, var(--ui-color) 10%, transparent);
 		style(--ui-color-variant: ghost): var(--color-base-150);
 		style(--ui-color-variant: text): transparent;
@@ -118,7 +255,7 @@
 	--ui-ink-active: var(--ui-ink-hover);
 	--ui-surface-selected: if(
 		style(--ui-color-variant: solid): var(--ui-color);
-		else: color-mix(in oklab, var(--ui-color) 24%, var(--color-base-100))
+		else: color-mix(in oklab, var(--ui-color) 24%, var(--ui-context-surface))
 	);
 	--ui-ink-selected: if(
 		style(--ui-color-variant: solid): var(--ui-content);
@@ -154,16 +291,33 @@
 	--ui-surface-inset: color-mix(in oklab, var(--ui-surface-occluding) 92%, black);
 	--ui-ink-muted: color-mix(in oklab, var(--ui-ink) 78%, transparent);
 	--ui-ink-faint: color-mix(in oklab, var(--ui-ink) 60%, transparent);
-	/* Marks are foreground-only paint: counters, rules, waveform bars, meter
-	   fills and status glyphs sit on the ambient theme surface rather than on
-	   --ui-surface. Raw ladder colours become illegible at the pale end, so a
-	   mark uses the same hue-preserving, surface-safe family ink as non-solid
-	   foregrounds. Variant remains irrelevant by design. */
-	--ui-mark: var(--ui-family-ink);
-	--ui-mark-muted: color-mix(in oklab, var(--ui-mark) 78%, transparent);
-	--ui-track: color-mix(in oklab, var(--ui-mark) 18%, transparent);
-	--ui-surface-disabled: color-mix(in oklab, var(--ui-surface) 46%, var(--color-base-100));
+	--ui-surface-disabled: color-mix(in oklab, var(--ui-surface) 46%, var(--ui-context-surface));
 	--ui-ink-disabled: color-mix(in oklab, var(--ui-ink) 42%, transparent);
 	--ui-border-disabled: color-mix(in oklab, var(--ui-border) 42%, transparent);
-	--ui-mark-disabled: color-mix(in oklab, var(--ui-mark) 42%, transparent);
+}
+	}
+}
+
+/* Foreground graphics and coloured text preserve the selected family's hue
+   and chroma while clamping only the lightness that would disappear into the
+   active scheme. Exact data/fill colour remains available as --ui-color. */
+:where([data-ui-color-base]) {
+	--ui-color-foreground: light-dark(
+		oklch(from var(--ui-color) min(l, 0.55) c h),
+		oklch(from var(--ui-color) max(l, 0.72) c h)
+	);
+
+	/* Track is the intentionally reduced-colour counterpart to the foreground. */
+	--ui-track: color-mix(in oklab, var(--ui-color) 18%, transparent);
+}
+
+/* Environmental treatment stays semantic: a container declares what kind of
+   scenery it provides, while this shared resolver—not individual components—
+   translates that context into the private surface/content inputs used by all
+   variants. Container style queries are Baseline Newly Available (2026). */
+@container ui-treatment-context style(--ui-environment: overlay) {
+	:where([data-ui-color-base]) {
+		--ui-context-surface: var(--color-overlay-surface);
+		--ui-context-content: var(--color-overlay-content);
+	}
 }

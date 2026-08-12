@@ -15,7 +15,7 @@ export function PageHero(props: {
 	return (
 		<div class={['ui-hero', props.class]} data-align={props.align ?? 'center'}>
 			<Show when={props.eyebrow}>
-				<Eyebrow class="ui-accent-ink">{props.eyebrow}</Eyebrow>
+				<Eyebrow colorBase="primary">{props.eyebrow}</Eyebrow>
 			</Show>
 			<h1>{props.title}</h1>
 			<Show when={props.lede}>

@@ -78,8 +78,8 @@ export const ComposedDashboardCard: Story = {
 			>
 				<div style={{ display: 'grid', gap: '14px' }}>
 					<div style={{ display: 'flex', gap: '8px', 'align-items': 'center' }}>
-						<Chip tone="live">live</Chip>
-						<Chip tone="accent">peak hours</Chip>
+						<Chip colorBase="success" variant="soft">live</Chip>
+						<Chip colorBase="primary" variant="soft">peak hours</Chip>
 						<Chip>floor 2</Chip>
 					</div>
 					<div style={{ display: 'flex', 'align-items': 'baseline', gap: '10px' }}>

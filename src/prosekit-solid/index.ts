@@ -16,6 +16,11 @@ export {
 	type SolidNodeViewProps,
 } from './node-view'
 export {
+	type RemoteCursorEntry,
+	remoteCursorsKey,
+	remoteCursorsPlugin,
+} from './presence'
+export {
 	createEditorUi,
 	defineToolbarContribution,
 	EditorToolbar,

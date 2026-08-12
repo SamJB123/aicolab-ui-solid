@@ -12,12 +12,14 @@
 		"./depth-card": "./src/depth-card/index.ts",
 		"./prosekit-solid": "./src/prosekit-solid/index.ts",
 		"./prosekit-solid/block-identity": "./src/prosekit-solid/block-identity.ts",
+		"./prosekit-solid/presence": "./src/prosekit-solid/presence.ts",
 		"./prosekit-solid/styles.css": "./src/prosekit-solid/styles.css",
 		"./package.json": "./package.json",
 		"./*": "./src/*.ts"
 	},
 	"scripts": {
 		"check-boundaries": "node scripts/check-atomic-boundaries.mjs",
+		"check-css-compatibility": "node scripts/check-css-compatibility.mjs",
 		"check-types": "tsc --noEmit",
 		"check-types:stories": "tsc -p stories/tsconfig.json --noEmit",
 		"storybook": "storybook dev -p 6006",
@@ -33,6 +35,8 @@
 		"@prosekit/core": "0.13.0-beta.7",
 		"@prosekit/extensions": "0.18.0-beta.19",
 		"@prosekit/pm": "0.1.19-beta.4",
+		"@y/prosemirror": "2.0.0-6",
+		"@y/y": "catalog:",
 		"three": "catalog:"
 	},
 	"devDependencies": {

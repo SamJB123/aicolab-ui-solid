@@ -5,10 +5,10 @@ import { Carousel } from '../../src/marketing'
 import { Chip, Panel } from '../../src/primitives'
 
 const SLIDES = [
-	{ title: 'Critique night', kicker: 'Thursdays · Commons', tone: 'live' },
-	{ title: 'Intro to weaving', kicker: 'Six weeks · Studio A', tone: 'accent' },
-	{ title: 'Open hardware lab', kicker: 'Saturdays · Workshop', tone: 'plain' },
-	{ title: 'Seasonal exhibition', kicker: 'Opens March · Gallery', tone: 'accent' },
+	{ title: 'Critique night', kicker: 'Thursdays · Commons', colorBase: 'success' },
+	{ title: 'Intro to weaving', kicker: 'Six weeks · Studio A', colorBase: 'primary' },
+	{ title: 'Open hardware lab', kicker: 'Saturdays · Workshop', colorBase: 'secondary' },
+	{ title: 'Seasonal exhibition', kicker: 'Opens March · Gallery', colorBase: 'accent' },
 ] as const
 
 const meta = {
@@ -29,7 +29,9 @@ export const PanelSlides: Story = {
 					{(slide) => (
 						<div style={{ 'min-width': '320px' }}>
 							<Panel title={slide.title} kicker={slide.kicker}>
-								<Chip tone={slide.tone}>{slide.tone === 'live' ? 'running now' : 'enrolling'}</Chip>
+								<Chip colorBase={slide.colorBase} variant="soft">
+									{slide.colorBase === 'success' ? 'running now' : 'enrolling'}
+								</Chip>
 							</Panel>
 						</div>
 					)}

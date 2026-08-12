@@ -52,7 +52,7 @@ export const LazySummarySlot: Story = {
 			<AccordionItem
 				summary={() => (
 					<span style={{ display: 'inline-flex', gap: '8px', 'align-items': 'center' }}>
-						Season 4 program <Chip tone="live">voting open</Chip>
+						Season 4 program <Chip colorBase="success" variant="soft">voting open</Chip>
 					</span>
 				)}
 			>

@@ -10,6 +10,7 @@
 		font: inherit;
 		font-size: var(--t-sm);
 		font-weight: 500;
+		text-decoration: none;
 		cursor: pointer;
 		background: transparent;
 		transition: all 0.2s;

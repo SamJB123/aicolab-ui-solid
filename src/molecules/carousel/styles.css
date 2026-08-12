@@ -1,5 +1,6 @@
-/* ── Carousel — scroll-snap strip; buttons/markers are a Chromium/Safari
-      enhancement, elsewhere it's a swipeable scroller. ── */
+/* ── Carousel — the Baseline-2026 contract is a swipeable scroll-snap strip.
+      Generated buttons and markers remain a compatibility-gated enhancement
+      until the CSS carousel pseudos are Baseline. ── */
 @scope (.ui-carousel) {
 :scope {
 	display: flex;
@@ -9,7 +10,6 @@
 	scroll-snap-type: x mandatory;
 	scrollbar-width: none;
 	padding: 0.25rem;
-	scroll-marker-group: after;
 }
 :scope::-webkit-scrollbar {
 	display: none;
@@ -18,43 +18,52 @@
 	flex: 0 0 min(26rem, 85%);
 	scroll-snap-align: center;
 }
-:scope > *::scroll-marker {
-	content: "";
-	width: 8px;
-	height: 8px;
-	border-radius: var(--r-pill);
-	background: var(--color-border-strong);
-	transition: background 0.2s;
-}
-:scope > *::scroll-marker:target-current {
-	background: var(--color-primary);
-}
-:scope::scroll-marker-group {
-	display: flex;
-	justify-content: center;
-	gap: 0.6rem;
-	margin-top: 1rem;
-}
-:scope::scroll-button(left),
-:scope::scroll-button(right) {
-	position: absolute;
-	align-self: center;
-	width: 2.4rem;
-	height: 2.4rem;
-	border-radius: var(--r-pill);
-	border: 1px solid var(--color-border-strong);
-	background: var(--color-base-100);
-	color: var(--color-base-content);
-	cursor: pointer;
-}
-:scope::scroll-button(left) {
-	content: "←" / "Previous";
-}
-:scope::scroll-button(right) {
-	content: "→" / "Next";
-}
-:scope::scroll-button(*):disabled {
-	opacity: 0.3;
-	cursor: default;
+
+/* Compatibility boundary: unsupported engines retain the complete scroll-snap
+   interaction above. Remove this gate when generated carousel controls are
+   Baseline across the supported browser floor. */
+@supports (scroll-marker-group: after) and selector(::scroll-marker) and selector(::scroll-button(left)) {
+	:scope {
+		scroll-marker-group: after;
+	}
+	:scope > *::scroll-marker {
+		content: "";
+		width: 8px;
+		height: 8px;
+		border-radius: var(--r-pill);
+		background: var(--color-border-strong);
+		transition: background 0.2s;
+	}
+	:scope > *::scroll-marker:target-current {
+		background: var(--color-primary);
+	}
+	:scope::scroll-marker-group {
+		display: flex;
+		justify-content: center;
+		gap: 0.6rem;
+		margin-top: 1rem;
+	}
+	:scope::scroll-button(left),
+	:scope::scroll-button(right) {
+		position: absolute;
+		align-self: center;
+		width: 2.4rem;
+		height: 2.4rem;
+		border-radius: var(--r-pill);
+		border: 1px solid var(--color-border-strong);
+		background: var(--color-base-100);
+		color: var(--color-base-content);
+		cursor: pointer;
+	}
+	:scope::scroll-button(left) {
+		content: "←" / "Previous";
+	}
+	:scope::scroll-button(right) {
+		content: "→" / "Next";
+	}
+	:scope::scroll-button(*):disabled {
+		opacity: 0.3;
+		cursor: default;
+	}
 }
 }

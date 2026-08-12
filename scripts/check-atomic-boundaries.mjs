@@ -12,7 +12,6 @@ const privateResolverProperties = [
 	'--ui-color-base',
 	'--ui-color-level',
 	'--ui-color-variant',
-	'--ui-color',
 	'--ui-content',
 	'--ui-family-ink',
 ]
@@ -49,6 +48,9 @@ for (const tier of tiers) {
 	const root = resolve(src, tier)
 	for (const importer of walk(root).filter((path) => sourceExtensions.has(extname(path)))) {
 		const source = readFileSync(importer, 'utf8')
+		const locallyOwnedProperties = new Set(
+			[...source.matchAll(/(--ui-[\w-]+)\s*:/g)].map((match) => match[1]),
+		)
 		const [importerTier, importerComponent] = describe(importer)
 		// Tier barrels are public aggregators, not component implementations.
 		if (!importerComponent || importerComponent === 'index.ts') continue
@@ -57,8 +59,12 @@ for (const tier of tiers) {
 				violations.push(`${relative(src, importer)} consumes private resolver input ${property}`)
 			}
 		}
-		if (/(?:color-mix|oklch|contrast-color|light-dark)\([^;{}]*var\(--ui-/s.test(source)) {
-			violations.push(`${relative(src, importer)} derives colour from a resolved --ui-* presentation role`)
+		for (const match of source.matchAll(
+			/(?:color-mix|oklch|contrast-color|light-dark)\([^;{}]*var\((--ui-[\w-]+)/gs,
+		)) {
+			if (!locallyOwnedProperties.has(match[1])) {
+				violations.push(`${relative(src, importer)} derives colour from resolved presentation role ${match[1]}`)
+			}
 		}
 		const importerNode = nodeFor(importerTier, importerComponent)
 		if (!graph.has(importerNode)) graph.set(importerNode, new Set())

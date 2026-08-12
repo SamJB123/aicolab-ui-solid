@@ -19,19 +19,4 @@
 		color: var(--ui-ink);
 		box-shadow: 0 0 0 1px var(--ui-border);
 	}
-	:scope[data-tone="accent"] {
-		background: var(--color-primary-soft);
-		color: var(--color-primary);
-		box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-primary) 35%, transparent);
-	}
-	:scope[data-tone="live"] {
-		background: color-mix(in oklab, var(--color-success) 15%, transparent);
-		color: var(--color-success);
-		box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-success) 30%, transparent);
-	}
-	:scope[data-ui-color-base][data-tone] {
-		background: var(--ui-surface);
-		color: var(--ui-ink);
-		box-shadow: 0 0 0 1px var(--ui-border);
-	}
 }

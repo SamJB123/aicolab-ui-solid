@@ -16,8 +16,8 @@ export const Default: Story = {
 }
 
 export const AccentInk: Story = {
-	name: 'Accent ink (ui-accent-ink)',
-	args: { children: 'Model for change', class: 'ui-accent-ink' },
+	name: 'Primary foreground',
+	args: { children: 'Model for change', colorBase: 'primary' },
 }
 
 export const ThreeAxes: Story = {

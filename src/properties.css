@@ -329,10 +329,8 @@
 @property --ui-border-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-border-selected { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-border-disabled { syntax: "<color>"; inherits: true; initial-value: transparent; }
-@property --ui-mark { syntax: "<color>"; inherits: true; initial-value: transparent; }
-@property --ui-mark-muted { syntax: "<color>"; inherits: true; initial-value: transparent; }
-@property --ui-mark-disabled { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-track { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-color-foreground { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-surface-glow { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-surface-glow-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-surface-glow-active { syntax: "<color>"; inherits: true; initial-value: transparent; }

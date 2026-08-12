@@ -1,5 +1,6 @@
 @scope (.ui-tool-panel) {
 	:scope {
+		--ui-environment: overlay;
 		display: flex;
 		box-sizing: border-box;
 		width: min(20rem, calc(100% - 2rem));
@@ -18,7 +19,8 @@
 		font-weight: 700;
 		line-height: 1.3;
 		scrollbar-gutter: stable;
-		container: ui-tool-panel / inline-size;
+		container-name: ui-tool-panel ui-treatment-context;
+		container-type: inline-size;
 		corner-shape: squircle;
 		transition:
 			opacity 180ms ease,
@@ -85,19 +87,6 @@
 	.ui-tool-panel-actions[data-wrap="true"] > * {
 		min-width: 2rem;
 		flex: 0 1 auto;
-	}
-
-	.ui-field-label { color: var(--color-overlay-content-muted); }
-
-	:is(.ui-text-input, .ui-number-input, .ui-select-control, .ui-text-area) {
-		border-color: var(--color-overlay-border);
-		background: color-mix(in oklab, var(--color-overlay-surface) 84%, var(--color-base-1000));
-		color: var(--color-overlay-content);
-	}
-
-	.ui-toggle-group {
-		background: color-mix(in oklab, var(--color-overlay-surface) 84%, var(--color-base-1000));
-		box-shadow: inset 0 0 0 1px var(--color-overlay-border);
 	}
 
 	@container ui-tool-panel (width < 17rem) {

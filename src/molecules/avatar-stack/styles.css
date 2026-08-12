@@ -4,7 +4,7 @@
 		display: flex;
 		align-items: center;
 	}
-	:scope[data-ui-color-base] { color: var(--ui-mark); }
+	:scope[data-ui-color-base] { color: var(--ui-color-foreground); }
 	:scope > .ui-avatar-stack-item {
 		position: relative;
 		display: grid;

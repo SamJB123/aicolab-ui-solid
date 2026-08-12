@@ -726,14 +726,14 @@ function ResolverAnatomy(props: { colorBase: ColorBase; colorLevel: ColorLevel; 
 				>
 					<strong>Graphics on the ambient page/panel surface</strong>
 					<div style={{ height: '6px', 'border-radius': 'var(--r-pill)', background: 'var(--ui-track)', overflow: 'hidden' }}>
-						<div style={{ width: '68%', height: '100%', background: 'var(--ui-mark)' }} />
+						<div style={{ width: '68%', height: '100%', background: 'var(--ui-color)' }} />
 					</div>
 					<div style={{ display: 'flex', gap: '8px', 'align-items': 'center' }}>
-						<span style={{ width: '12px', height: '12px', 'border-radius': '50%', background: 'var(--ui-mark)' }} />
-						<span style={{ width: '64px', height: '3px', background: 'var(--ui-mark-muted)' }} />
+						<span style={{ width: '12px', height: '12px', 'border-radius': '50%', background: 'var(--ui-color)' }} />
+						<span style={{ width: '64px', height: '3px', background: 'var(--ui-ink-muted)' }} />
 					</div>
-					<RoleLabel token="--ui-mark" meaning="data/status graphic on the ambient surface" />
-					<RoleLabel token="--ui-mark-muted" meaning="de-emphasised ambient graphic" />
+					<RoleLabel token="--ui-color" meaning="resolved base × perceptual level" />
+					<RoleLabel token="--ui-ink-muted" meaning="de-emphasised foreground" />
 					<RoleLabel token="--ui-track" meaning="track behind an ambient graphic" />
 				</div>
 			</div>
@@ -1022,7 +1022,7 @@ export const Lab: Story = {
 				<Rule label="Type specimens" />
 				{/* ── Type specimens, one per font role ── */}
 				<div style={{ display: 'grid', gap: '10px' }}>
-					<Eyebrow class="ui-accent-ink">--font-display</Eyebrow>
+					<Eyebrow colorBase="primary">--font-display</Eyebrow>
 					<div
 						style={{
 							'font-family': 'var(--font-display)',
@@ -1033,17 +1033,17 @@ export const Lab: Story = {
 					>
 						A commons for collective intelligence
 					</div>
-					<Eyebrow class="ui-accent-ink">--font-sans</Eyebrow>
+					<Eyebrow colorBase="primary">--font-sans</Eyebrow>
 					<p style={{ margin: '0', 'max-width': '58ch', color: 'var(--color-base-content-muted)' }}>
 						Workshops, working groups, and shared infrastructure for people building with AI in the
 						public interest. Body copy rides the sans role; secondary ink is derived from
 						your text colour.
 					</p>
-					<Eyebrow class="ui-accent-ink">--font-data</Eyebrow>
+					<Eyebrow colorBase="primary">--font-data</Eyebrow>
 					<div style={{ 'font-family': 'var(--font-data)', 'font-size': '20px' }}>
 						0123456789 · 87% · 12:45 PM · {'{ x: 0.618 }'}
 					</div>
-					<Eyebrow class="ui-accent-ink">--font-label</Eyebrow>
+					<Eyebrow colorBase="primary">--font-label</Eyebrow>
 					<div
 						style={{
 							'font-family': 'var(--font-label, var(--font-data))',

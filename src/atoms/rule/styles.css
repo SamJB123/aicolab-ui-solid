@@ -1,12 +1,12 @@
 /* ── Rule ── */
 @scope (.ui-rule) {
 	:scope { display: flex; align-items: center; gap: 12px; }
-	:scope[data-ui-color-base] { color: var(--ui-mark); }
+	:scope[data-ui-color-base] { color: var(--ui-color-foreground); }
 	:scope > .ui-rule-line {
 		height: 1px;
 		flex: 1;
 		background: var(--color-border);
 	}
-	:scope[data-ui-color-base] > .ui-rule-line { background: var(--ui-mark); }
+	:scope[data-ui-color-base] > .ui-rule-line { background: var(--ui-color-foreground); }
 	:scope[data-ui-color-base] .ui-eyebrow { color: inherit; }
 }
