@@ -1,6 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Breadcrumb } from '../../src/primitives'
+import { ColorAxesStory } from './color-axes-story'
 
 const meta = {
 	title: 'Primitives/Breadcrumb',
@@ -61,4 +62,11 @@ export const DeepTrailWraps: Story = {
 			/>
 		</div>
 	),
+}
+
+export const ThreeAxes: Story = {
+	name: 'Family × level × usage',
+	render: () => <ColorAxesStory render={({ color, level, variant }) => (
+		<Breadcrumb family={color} level={level} usage={variant} items={[{ label: 'Home', onSelect: () => {} }, { label: 'Gallery', onSelect: () => {} }, { label: 'Exhibit' }]} />
+	)} />,
 }

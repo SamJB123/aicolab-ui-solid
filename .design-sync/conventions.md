@@ -62,16 +62,20 @@ not exist and will silently do nothing. Three styling surfaces exist:
    hard-code colours or fonts. Defined in `tokens/theme.css` as
    `light-dark()` pairs — dark mode via `class="theme-dark"` (or
    `data-theme="dark"`) on any ancestor:
-   - surfaces `--c-page` / `--c-page-2` (page/recessed), `--c-panel` / `--c-panel-2` (raised)
-   - text `--c-text` / `--c-muted` / `--c-faint`
-   - signals `--c-accent` / `--c-accent-soft` / `--c-live`
-   - hairlines `--c-line` / `--c-line-strong`
+   - surfaces `--color-base-100` through `--color-base-300`
+   - text `--color-base-content`, plus its `-muted` / `-faint` roles
+   - semantic families `--color-primary`, `--color-secondary`, `--color-accent`,
+     `--color-neutral`, `--color-info`, `--color-success`, `--color-warning`,
+     and `--color-error`, each paired with `--color-*-content`
+   - hairlines `--color-border` / `--color-border-strong`
+   - legacy `--c-*` names are compatibility outputs; never author a new theme
+     through them
    - font roles `--font-display` / `--font-sans` / `--font-data`, plus
      optional `--font-label` for the micro-label voice (eyebrows, chips,
      panel kickers, field labels) — unset it falls back to `--font-data`
 3. **Inline `style={{ ... }}` for layout glue and one-off text styling** —
    kebab-case keys (`'font-size'`, `'align-items'`, `'box-shadow'`), values
-   referencing the tokens (`color: 'var(--c-muted)'`). Flex/grid wrappers,
+   referencing the tokens (`color: 'var(--color-base-content-muted)'`). Flex/grid wrappers,
    widths, gaps, ad-hoc labels: all inline. Components accept `class` but
    only for classes that actually exist — when a component needs one-off
    placement (e.g. keep a Button from stretching in Panel's flex column),

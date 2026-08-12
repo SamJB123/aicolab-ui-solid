@@ -1,6 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { RadialMenu } from '../../src/radial-menu'
+import { ColorAxesStory } from './color-axes-story'
 
 const glyph = (label: string) => (
 	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -70,4 +71,22 @@ export const DownwardFan: Story = {
 			</RadialMenu>
 		</div>
 	),
+}
+
+export const ThreeAxes: Story = {
+	name: 'Family × level × usage',
+	render: () => <ColorAxesStory render={({ color, level, variant }) => (
+		<RadialMenu
+			id={`axis-radial-${color}-${level}-${variant}`}
+			label={`${color} actions`}
+			items={[
+				{ id: 'one', label: 'One', icon: glyph('1'), onSelect: () => {} },
+				{ id: 'two', label: 'Two', icon: glyph('2'), onSelect: () => {} },
+			]}
+		>
+			<span class="ui-color" data-color={color} data-level={level} data-variant={variant} style={{ display: 'grid', 'place-items': 'center', width: '38px', height: '38px', 'border-radius': '999px', background: 'var(--ui-primitive-surface)', color: 'var(--ui-primitive-ink)', 'box-shadow': 'inset 0 0 0 1px var(--ui-primitive-border)' }}>
+				{glyph('⋯')}
+			</span>
+		</RadialMenu>
+	)} />,
 }

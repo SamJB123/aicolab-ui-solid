@@ -1,6 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Eyebrow, Meter } from '../../src/primitives'
+import { ColorAxesStory } from './color-axes-story'
 
 const meta = {
 	title: 'Primitives/Meter',
@@ -29,4 +30,11 @@ export const Levels: Story = {
 			<Meter value={140} max={100} color="var(--c-accent)" />
 		</div>
 	),
+}
+
+export const ThreeAxes: Story = {
+	name: 'Family × level × usage',
+	render: () => <ColorAxesStory render={({ color, level, variant }) => (
+		<div style={{ width: '120px' }}><Meter family={color} level={level} usage={variant} value={68} max={100} /></div>
+	)} />,
 }

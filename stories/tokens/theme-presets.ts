@@ -112,6 +112,19 @@ export const LIGHT_PRESETS: ThemePreset[] = [
 		},
 	},
 	{
+		name: 'Insight Museum',
+		note: 'Parchment galleries, deep evergreen controls',
+		values: {
+			page: '#eee6c9',
+			page2: '#d8ca9f',
+			panel: '#fff4ce',
+			panel2: '#e7dcc0',
+			text: '#172a25',
+			accent: '#263b33',
+			live: '#3f735a',
+		},
+	},
+	{
 		name: 'Harbour Day',
 		note: 'Wildcard — cool harbour light, punchy cobalt',
 		values: {

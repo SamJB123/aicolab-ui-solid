@@ -11,6 +11,7 @@ import {
 	Rule,
 	Sparkline,
 } from '../../src/primitives'
+import { ColorAxesStory } from './color-axes-story'
 
 const meta = {
 	title: 'Primitives/Panel',
@@ -103,4 +104,21 @@ export const ComposedDashboardCard: Story = {
 			</Panel>
 		</div>
 	),
+}
+
+export const ThreeAxes: Story = {
+	name: 'Family × level × usage',
+	render: () => <ColorAxesStory render={({ color, level, variant }) => (
+		<Panel
+			family={color}
+			level={level}
+			usage={variant}
+			index="01"
+			title="Gallery activity"
+			kicker="Live specimen"
+			glow
+		>
+			Current occupancy 68%
+		</Panel>
+	)} />,
 }

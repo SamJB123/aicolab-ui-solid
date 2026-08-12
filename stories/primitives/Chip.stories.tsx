@@ -1,6 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Chip } from '../../src/primitives'
+import { ColorAxesStory } from './color-axes-story'
 
 const meta = {
 	title: 'Primitives/Chip',
@@ -33,4 +34,9 @@ export const AllTones: Story = {
 			<Chip tone="live">live</Chip>
 		</div>
 	),
+}
+
+export const ThreeAxes: Story = {
+	name: 'Family × level × usage',
+	render: () => <ColorAxesStory render={({ color, level, variant }) => <Chip family={color} level={level} usage={variant}>exhibit</Chip>} />,
 }

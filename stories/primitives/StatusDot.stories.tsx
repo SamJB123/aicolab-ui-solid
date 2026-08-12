@@ -1,6 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { StatusDot } from '../../src/primitives'
+import { ColorAxesStory } from './color-axes-story'
 
 const meta = {
 	title: 'Primitives/StatusDot',
@@ -29,4 +30,9 @@ export const Sizes: Story = {
 			<StatusDot status={{ color: 'var(--c-faint)' }} size={16} />
 		</div>
 	),
+}
+
+export const ThreeAxes: Story = {
+	name: 'Family × level × usage',
+	render: () => <ColorAxesStory render={({ color, level, variant }) => <StatusDot family={color} level={level} usage={variant} status={{ color: '#888', live: true }} size={12} />} />,
 }

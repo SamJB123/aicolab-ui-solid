@@ -2,8 +2,27 @@
 import { createSignal, onSettled } from 'solid-js'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Waveform } from '../../src/primitives'
+import { ColorAxesStory } from './color-axes-story'
 
 const BARS = [0.2, 0.5, 0.8, 0.4, 0.9, 0.6, 0.3, 0.7, 1, 0.5, 0.35, 0.65, 0.85, 0.45, 0.25]
+
+function AnimatedAxesWaveforms() {
+	const [bars, setBars] = createSignal(BARS)
+	onSettled(() => {
+		const id = setInterval(() => {
+			setBars((prev) => prev.map(() => 0.15 + Math.random() * 0.85))
+		}, 240)
+		return () => clearInterval(id)
+	})
+
+	return (
+		<ColorAxesStory
+			render={({ color, level, variant }) => (
+				<Waveform family={color} level={level} usage={variant} bars={bars()} />
+			)}
+		/>
+	)
+}
 
 const meta = {
 	title: 'Primitives/Waveform',
@@ -34,4 +53,9 @@ export const Animated: Story = {
 		})
 		return <Waveform bars={bars()} />
 	},
+}
+
+export const ThreeAxes: Story = {
+	name: 'Family × level × usage',
+	render: () => <AnimatedAxesWaveforms />,
 }

@@ -4,19 +4,10 @@
 //
 // ## The token contract
 //
-// Every primitive styles itself exclusively from the token set the consuming
-// app defines on a root element — see styles.css, where the full contract is
-// REGISTERED with @property (typed, animatable, canonical gold-trim
-// initials, so the package renders styled even without an app palette):
-//
-//   --c-page / --c-page-2      page + recessed surfaces
-//   --c-panel / --c-panel-2  raised surfaces
-//   --c-text                primary text
-//   --c-muted / --c-faint    secondary / tertiary text
-//   --c-accent               brand accent (gold trim)
-//   --c-live                 "live"/positive signal
-//   --c-line / --c-line-strong  hairlines (DERIVE from --c-text via color-mix)
-//   --c-accent-soft             accent wash (DERIVE from --c-accent)
+// Every primitive styles itself from the DaisyUI-compatible --color-* palette
+// in styles.css. Semantic families carry explicit *-content partners; the
+// shared 50–950 ladder is generated perceptually with relative OKLCH. Legacy
+// --c-* theme inputs remain bridged during repository migration.
 //
 // plus three font roles: --font-display / --font-sans / --font-data.
 //
@@ -57,10 +48,39 @@ import {
  *  `Record<string, boolean>` covers conditional mixes. */
 export type ClassProp = string | Record<string, boolean>
 
+/** Orthogonal colour controls shared by colour-aware primitives. A family
+ * selects a semantic theme anchor, a level selects a perceptual ladder step,
+ * and a variant decides how the resolved colour is applied. */
+export type ColorFamily =
+	| 'primary'
+	| 'secondary'
+	| 'accent'
+	| 'neutral'
+	| 'info'
+	| 'success'
+	| 'warning'
+	| 'error'
+export type ColorLevel = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950
+export type ColorVariant = 'solid' | 'soft' | 'outline' | 'ghost' | 'text'
+export type ColorAxesProps = {
+	/** Semantic palette family. When omitted, the primitive keeps its original styling. */
+	family?: ColorFamily
+	/** Perceptual position on the shared family ladder. */
+	level?: ColorLevel
+	/** How the resolved family colour is used by this primitive. */
+	usage?: ColorVariant
+}
+
+const colorAxesData = (props: ColorAxesProps) => ({
+	'data-color': props.family,
+	'data-level': props.family ? (props.level ?? 500) : undefined,
+	'data-variant': props.family ? (props.usage ?? 'text') : undefined,
+})
+
 // ── Type ────────────────────────────────────────────────────────────────────
 
-export function Eyebrow(props: ParentProps<{ class?: ClassProp }>) {
-	return <span class={['ui-eyebrow', props.class]}>{props.children}</span>
+export function Eyebrow(props: ParentProps<{ class?: ClassProp } & ColorAxesProps>) {
+	return <span {...colorAxesData(props)} class={['ui-eyebrow ui-color', props.class]}>{props.children}</span>
 }
 
 // ── Status dot ────────────────────────────────────────────────────────────────
@@ -69,16 +89,17 @@ export function Eyebrow(props: ParentProps<{ class?: ClassProp }>) {
  *  vocabulary (online/away/flow/…) onto this shape. */
 export type StatusVisual = { color: string; live?: boolean }
 
-export function StatusDot(props: { status: StatusVisual; size?: number }) {
+export function StatusDot(props: { status: StatusVisual; size?: number } & ColorAxesProps) {
 	const size = () => props.size ?? 8
+	const color = () => props.family ? 'var(--ui-primitive-mark)' : props.status.color
 	return (
-		<span class="ui-dot" style={{ width: `${size()}px`, height: `${size()}px` }}>
+		<span {...colorAxesData(props)} class="ui-dot ui-color" style={{ width: `${size()}px`, height: `${size()}px` }}>
 			<Show when={props.status.live}>
-				<span class="ui-dot-ping" style={{ background: props.status.color }} />
+				<span class="ui-dot-ping" style={{ background: color() }} />
 			</Show>
 			<span
 				class="ui-dot-core"
-				style={{ width: `${size()}px`, height: `${size()}px`, background: props.status.color }}
+				style={{ width: `${size()}px`, height: `${size()}px`, background: color() }}
 			/>
 		</span>
 	)
@@ -100,17 +121,19 @@ export function Avatar(props: {
 	size?: number
 	status?: StatusVisual
 	ring?: string
-}) {
+} & ColorAxesProps) {
 	const size = () => props.size ?? 36
+	const color = () => props.family ? 'var(--ui-primitive-ink)' : props.color
+	const surface = () => props.family ? 'var(--ui-primitive-surface)' : (props.ring ?? 'var(--c-panel)')
 	return (
-		<span class="ui-avatar" style={{ width: `${size()}px`, height: `${size()}px` }}>
+		<span {...colorAxesData(props)} class="ui-avatar ui-color" style={{ width: `${size()}px`, height: `${size()}px` }}>
 			<span
 				class="ui-avatar-face"
 				style={{
 					'font-size': `${Math.round(size() * 0.34)}px`,
-					color: props.color,
-					background: `color-mix(in oklab, ${props.color} 20%, ${props.ring ?? 'var(--c-panel)'})`,
-					'box-shadow': `inset 0 0 0 1px color-mix(in oklab, ${props.color} 55%, transparent)`,
+					color: color(),
+					background: `color-mix(in oklab, ${color()} 20%, ${surface()})`,
+					'box-shadow': `inset 0 0 0 1px color-mix(in oklab, ${color()} 55%, transparent)`,
 				}}
 			>
 				{initials(props.name)}
@@ -131,13 +154,13 @@ export function AvatarStack(props: {
 	max?: number
 	size?: number
 	ring?: string
-}) {
+} & ColorAxesProps) {
 	const max = () => props.max ?? 5
 	const size = () => props.size ?? 32
 	const shown = createMemo(() => props.people.slice(0, max()))
 	const extra = createMemo(() => props.people.length - shown().length)
 	return (
-		<div class="ui-avatar-stack">
+		<div {...colorAxesData(props)} class="ui-avatar-stack ui-color">
 			<For each={shown()}>
 				{(p, i) => (
 					<span
@@ -150,9 +173,9 @@ export function AvatarStack(props: {
 					>
 						<Avatar
 							name={p.name}
-							color={p.color}
+							color={props.family ? 'var(--ui-primitive-ink)' : p.color}
 							size={size()}
-							ring={props.ring ?? 'var(--c-page)'}
+							ring={props.family ? 'var(--ui-primitive-surface)' : (props.ring ?? 'var(--c-page)')}
 						/>
 					</span>
 				)}
@@ -177,11 +200,11 @@ export function AvatarStack(props: {
 // ── Chip ──────────────────────────────────────────────────────────────────────
 
 export function Chip(
-	props: ParentProps<{ tone?: 'plain' | 'accent' | 'live'; class?: ClassProp }>,
+	props: ParentProps<{ tone?: 'plain' | 'accent' | 'live'; class?: ClassProp } & ColorAxesProps>,
 ) {
 	const tone = () => props.tone ?? 'plain'
 	return (
-		<span class={['ui-chip', props.class]} data-tone={tone() === 'plain' ? undefined : tone()}>
+		<span {...colorAxesData(props)} class={['ui-chip ui-color', props.class]} data-tone={tone() === 'plain' ? undefined : tone()}>
 			{props.children}
 		</span>
 	)
@@ -211,10 +234,10 @@ export function Breadcrumb(props: {
 	/** Accessible name for the nav landmark. Default "Breadcrumb". */
 	label?: string
 	class?: ClassProp
-}) {
+} & ColorAxesProps) {
 	const last = createMemo(() => props.items.length - 1)
 	return (
-		<nav class={['ui-breadcrumb', props.class]} aria-label={props.label ?? 'Breadcrumb'}>
+		<nav {...colorAxesData(props)} class={['ui-breadcrumb ui-color', props.class]} aria-label={props.label ?? 'Breadcrumb'}>
 			<ol class="ui-breadcrumb-trail">
 				<For each={props.items}>
 					{(item, index) => (
@@ -259,7 +282,13 @@ export function Breadcrumb(props: {
 
 export function Button(
 	props: ParentProps<{
-		variant?: 'primary' | 'ghost'
+		/** How the resolved colour is applied. `primary` remains as a deprecated
+		 * compatibility spelling for the old primary button variant. */
+		variant?: ColorVariant | 'primary'
+		/** Semantic colour family, independent from strength and presentation. */
+		color?: ColorFamily
+		/** Perceptual position on the shared colour ladder. */
+		level?: ColorLevel
 		onClick?: () => void
 		/** Real native disabled — event suppression, focus exclusion and aria
 		 *  semantics come from the <button> attribute, not a class hack. */
@@ -275,7 +304,9 @@ export function Button(
 				if (!props.disabled) props.onClick?.()
 			}}
 			class={['ui-btn', props.class]}
-			data-variant={props.variant ?? 'ghost'}
+			data-color={props.color ?? 'primary'}
+			data-level={props.level ?? 500}
+			data-variant={props.variant === 'primary' ? 'solid' : (props.variant ?? 'ghost')}
 		>
 			{props.children}
 		</button>
@@ -296,11 +327,11 @@ export function Panel(
 		class?: ClassProp
 		style?: JSX.CSSProperties
 		glow?: boolean
-	}>,
+	} & ColorAxesProps>,
 ) {
 	return (
 		// `group` is kept as a marker class for consumers' group-hover styling.
-		<section class={['ui-panel group', props.class]} style={props.style}>
+		<section {...colorAxesData(props)} class={['ui-panel ui-color group', props.class]} style={props.style}>
 			<Show when={props.glow}>
 				<span class="ui-panel-glow" />
 			</Show>
@@ -329,7 +360,7 @@ export function Counter(props: {
 	value: number
 	format?: (n: number) => string
 	class?: ClassProp
-}) {
+} & ColorAxesProps) {
 	let el: HTMLSpanElement | undefined
 	const fmt = (n: number) => (props.format ? props.format(n) : Math.round(n).toLocaleString())
 	// Compute phase tracks props.value; apply phase (untracked) tweens the text
@@ -361,7 +392,7 @@ export function Counter(props: {
 		},
 	)
 	return (
-		<span ref={el} class={['ui-counter', props.class]} data-v={String(props.value)}>
+		<span ref={el} {...colorAxesData(props)} class={['ui-counter ui-color', props.class]} data-v={String(props.value)}>
 			{fmt(props.value)}
 		</span>
 	)
@@ -369,7 +400,7 @@ export function Counter(props: {
 
 // ── Sparkline ─────────────────────────────────────────────────────────────────
 
-export function Sparkline(props: { data: number[]; w?: number; h?: number; color?: string }) {
+export function Sparkline(props: { data: number[]; w?: number; h?: number; color?: string } & ColorAxesProps) {
 	const geo = createMemo(() => {
 		const w = props.w ?? 132
 		const h = props.h ?? 36
@@ -383,13 +414,14 @@ export function Sparkline(props: { data: number[]; w?: number; h?: number; color
 		const area = `0,${h} ${line} ${w},${h}`
 		return { w, h, line, area, last: pts[pts.length - 1] }
 	})
-	const color = () => props.color ?? 'var(--c-accent)'
+	const color = () => props.family ? 'var(--ui-primitive-mark)' : (props.color ?? 'var(--c-accent)')
 	return (
 		<svg
+			{...colorAxesData(props)}
 			viewBox={`0 0 ${geo().w} ${geo().h}`}
 			width={geo().w}
 			height={geo().h}
-			class="ui-sparkline"
+			class="ui-sparkline ui-color"
 			preserveAspectRatio="none"
 			aria-hidden="true"
 		>
@@ -409,10 +441,10 @@ export function Sparkline(props: { data: number[]; w?: number; h?: number; color
 
 // ── Waveform — live audio bars ────────────────────────────────────────────────
 
-export function Waveform(props: { bars: number[]; color?: string; class?: ClassProp }) {
-	const color = () => props.color ?? 'var(--c-accent)'
+export function Waveform(props: { bars: number[]; color?: string; class?: ClassProp } & ColorAxesProps) {
+	const color = () => props.family ? 'var(--ui-primitive-mark)' : (props.color ?? 'var(--c-accent)')
 	return (
-		<div class={['ui-waveform', props.class]}>
+		<div {...colorAxesData(props)} class={['ui-waveform ui-color', props.class]}>
 			<For each={props.bars}>
 				{(v) => (
 					<div
@@ -439,20 +471,20 @@ export function Waveform(props: { bars: number[]; color?: string; class?: ClassP
 const supportsTypedAttr = (): boolean =>
 	typeof CSS !== 'undefined' && CSS.supports('width', 'attr(data-pct type(<percentage>), 0%)')
 
-export function Meter(props: { value: number; max: number; color?: string }) {
+export function Meter(props: { value: number; max: number; color?: string } & ColorAxesProps) {
 	const pct = () => Math.min(100, Math.round((props.value / props.max) * 100))
 	const [cssOwnsWidth, setCssOwnsWidth] = createSignal(false)
 	onSettled(() => {
 		if (supportsTypedAttr()) setCssOwnsWidth(true)
 	})
 	return (
-		<div class="ui-meter">
+		<div {...colorAxesData(props)} class="ui-meter ui-color">
 			<div
 				class="ui-meter-fill"
 				data-pct={`${pct()}%`}
 				style={{
 					width: cssOwnsWidth() ? undefined : `${pct()}%`,
-					background: props.color ?? 'var(--c-text)',
+					background: props.family ? 'var(--ui-primitive-mark)' : (props.color ?? 'var(--c-text)'),
 				}}
 			/>
 		</div>
@@ -461,9 +493,9 @@ export function Meter(props: { value: number; max: number; color?: string }) {
 
 // ── Rule — a labelled editorial divider ───────────────────────────────────────
 
-export function Rule(props: { label?: string }) {
+export function Rule(props: { label?: string } & ColorAxesProps) {
 	return (
-		<div class="ui-rule">
+		<div {...colorAxesData(props)} class="ui-rule ui-color">
 			<span class="ui-rule-line" />
 			<Show when={props.label}>
 				<Eyebrow>{props.label}</Eyebrow>

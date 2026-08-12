@@ -1,6 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { AvatarStack } from '../../src/primitives'
+import { ColorAxesStory } from './color-axes-story'
 
 const PEOPLE = [
 	{ name: 'Ada Lovelace', color: '#a06f1c' },
@@ -32,4 +33,11 @@ export const AllShown: Story = {
 export const Compact: Story = {
 	name: 'Compact (size 24, max 3)',
 	args: { people: PEOPLE, max: 3, size: 24 },
+}
+
+export const ThreeAxes: Story = {
+	name: 'Family × level × usage',
+	render: () => <ColorAxesStory render={({ color, level, variant }) => (
+		<AvatarStack family={color} level={level} usage={variant} people={PEOPLE.slice(0, 4)} max={3} size={28} />
+	)} />,
 }

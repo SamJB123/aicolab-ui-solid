@@ -2,6 +2,7 @@
 import { createSignal } from 'solid-js'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Button, Counter } from '../../src/primitives'
+import { ColorAxesStory } from './color-axes-story'
 
 const meta = {
 	title: 'Primitives/Counter',
@@ -33,4 +34,9 @@ export const Tweened: Story = {
 			</div>
 		)
 	},
+}
+
+export const ThreeAxes: Story = {
+	name: 'Family × level × usage',
+	render: () => <ColorAxesStory render={({ color, level, variant }) => <Counter family={color} level={level} usage={variant} value={12480} class="font-data" />} />,
 }

@@ -1,6 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Avatar } from '../../src/primitives'
+import { ColorAxesStory } from './color-axes-story'
 
 const meta = {
 	title: 'Primitives/Avatar',
@@ -61,4 +62,11 @@ export const OnPanelSurface: Story = {
 			<Avatar name="Mary Jackson" color="var(--c-accent)" ring="var(--c-panel)" />
 		</div>
 	),
+}
+
+export const ThreeAxes: Story = {
+	name: 'Family × level × usage',
+	render: () => <ColorAxesStory render={({ color, level, variant }) => (
+		<Avatar family={color} level={level} usage={variant} name="Ada Lovelace" color="#888" status={{ color: '#888', live: true }} />
+	)} />,
 }

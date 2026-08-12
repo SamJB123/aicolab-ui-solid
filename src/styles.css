@@ -16,21 +16,25 @@
    contract. (Migrated off utility classes 2026-08-07.)
 
    ── The token contract ──────────────────────────────────────────────────
-   Every token is REGISTERED below with @property (Baseline): typed, so a
+   The canonical public palette follows DaisyUI's semantic vocabulary in
+   Tailwind's --color-* namespace:
+
+     --color-base-100/150/200/300, --color-base-content
+     --color-{primary,secondary,accent,neutral}-{content}
+     --color-{info,success,warning,error}-{content}
+
+   Derived roles cover muted/faint content, borders, ring and primary-soft.
+   Colour-aware components independently select data-color (family),
+   data-level (perceptual 50–950 ladder), and data-variant (usage).
+
+   Legacy --c-* tokens remain REGISTERED below as compatibility outputs while
+   repository consumers migrate. Every registered token is typed, so a
    malformed app value falls back to the canonical initial instead of
-   breaking color-mix chains; inherited; and ANIMATABLE — `transition:
-   --c-panel 0.3s` crossfades a theme change. The registered initials are
+   breaking color-mix chains; inherited; and ANIMATABLE. The registered initials are
    the canonical LIGHT gold-trim values, so the package renders styled even
    before an app defines its palette; apps override on a theme root,
    ideally as single light-dark() declarations (see .design-sync/theme).
 
-     --c-page, --c-page-2         page + recessed surfaces
-     --c-panel, --c-panel-2     raised surfaces
-     --c-text                  primary text
-     --c-muted, --c-faint       secondary / tertiary text
-     --c-accent, --c-live       brand accent (gold trim) / live signal
-     --c-line, --c-line-strong  hairlines — derive from --c-text
-     --c-accent-soft            accent wash — derive from --c-accent
      --font-display, --font-sans, --font-data   the three core font roles
      --font-label                micro-label voice (eyebrows/chips/kickers/field
                                 labels/weekday heads); OPTIONAL — falls back
@@ -122,7 +126,7 @@
 @property --c-accent {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: #cc6a00;
+	initial-value: #e8b04c;
 }
 @property --c-live {
 	syntax: "<color>";
@@ -261,6 +265,228 @@
 	/* = --t-xl. A var() initial-value is invalid for @property (it is not
 	   computationally independent), so the step is spelled out here. */
 	initial-value: 19px;
+}
+
+/* ── Semantic colour system ────────────────────────────────────────────────
+   The public palette follows DaisyUI's familiar family/content vocabulary,
+   under Tailwind's --color-* namespace. The existing --c-* properties stay
+   registered above as compatibility inputs during migration; these canonical
+   tokens read them by default, so existing application themes keep working.
+
+   Families and ladder positions are deliberately orthogonal. Components set
+   --ui-family-color from data-color and a lightness/chroma transform from
+   data-level. One relative OKLCH expression resolves every family × level
+   combination: no primary-100/success-100/etc matrix is authored. */
+@property --ui-family-color {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #e8b04c;
+}
+@property --ui-family-content {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #ffffff;
+}
+@property --ui-step-lightness {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
+@property --ui-step-chroma {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 1;
+}
+
+/* A low-priority standalone fallback keeps the package styled when a consumer
+   imports styles.css without a theme. Any unlayered app/theme declaration
+   wins regardless of stylesheet order. The semantic palette is the source;
+   --c-* names point downstream for compatibility, never the reverse. */
+@layer ui-token-defaults {
+	:root {
+		--color-base-100: #fffffb;
+		--color-base-150: #fbf3d6;
+		--color-base-200: #fff9e8;
+		--color-base-300: #f6ecc7;
+		--color-base-content: #241c0b;
+		--color-base-content-muted: color-mix(in oklab, var(--color-base-content) 58%, transparent);
+		--color-base-content-faint: color-mix(in oklab, var(--color-base-content) 36%, transparent);
+		--color-primary: #e8b04c;
+		--color-primary-content: #2b210d;
+		--color-secondary: oklch(from var(--color-primary) l calc(c * 0.72) calc(h + 35));
+		--color-secondary-content: #2b210d;
+		--color-secondary-content: contrast-color(var(--color-secondary));
+		--color-accent: oklch(from var(--color-primary) l c calc(h - 55));
+		--color-accent-content: #2b210d;
+		--color-accent-content: contrast-color(var(--color-accent));
+		--color-neutral: oklch(from var(--color-base-content) l calc(c * 0.35) h);
+		--color-neutral-content: #fffffb;
+		--color-neutral-content: contrast-color(var(--color-neutral));
+		--color-info: oklch(0.58 0.12 230);
+		--color-info-content: #fffffb;
+		--color-info-content: contrast-color(var(--color-info));
+		--color-success: #43913a;
+		--color-success-content: #fffffb;
+		--color-success-content: contrast-color(var(--color-success));
+		--color-warning: oklch(0.72 0.16 75);
+		--color-warning-content: #2b210d;
+		--color-warning-content: contrast-color(var(--color-warning));
+		--color-error: oklch(0.58 0.18 28);
+		--color-error-content: #fffffb;
+		--color-error-content: contrast-color(var(--color-error));
+		--color-border: color-mix(in oklab, var(--color-base-content) 10%, transparent);
+		--color-border-strong: color-mix(in oklab, var(--color-base-content) 20%, transparent);
+		--color-primary-soft: color-mix(in oklab, var(--color-primary) 14%, transparent);
+		--color-ring: var(--color-primary);
+
+		--c-page: var(--color-base-200);
+		--c-page-2: var(--color-base-300);
+		--c-panel: var(--color-base-100);
+		--c-panel-2: var(--color-base-150);
+		--c-text: var(--color-base-content);
+		--c-muted: var(--color-base-content-muted);
+		--c-faint: var(--color-base-content-faint);
+		--c-accent: var(--color-primary);
+		--c-live: var(--color-success);
+		--c-line: var(--color-border);
+		--c-line-strong: var(--color-border-strong);
+		--c-accent-soft: var(--color-primary-soft);
+	}
+}
+
+/* New themes can author only base-100 and base-content and opt into a
+   perceptual generated surface ladder. Explicit declarations still win when
+   a palette needs deliberate hue/material changes between surfaces. */
+.ui-theme[data-base-ladder="derived"] {
+	--color-base-150: oklch(
+		from var(--color-base-100)
+		calc(l - 0.025)
+		calc(c * 1.02)
+		h
+	);
+	--color-base-200: oklch(
+		from var(--color-base-100)
+		calc(l - 0.055)
+		calc(c * 1.04)
+		h
+	);
+	--color-base-300: oklch(
+		from var(--color-base-100)
+		calc(l - 0.11)
+		calc(c * 1.08)
+		h
+	);
+}
+
+/* Family axis. */
+:where(.ui-color, .ui-btn)[data-color="primary"] { --ui-family-color: var(--color-primary); --ui-family-content: var(--color-primary-content); }
+:where(.ui-color, .ui-btn)[data-color="secondary"] { --ui-family-color: var(--color-secondary); --ui-family-content: var(--color-secondary-content); }
+:where(.ui-color, .ui-btn)[data-color="accent"] { --ui-family-color: var(--color-accent); --ui-family-content: var(--color-accent-content); }
+:where(.ui-color, .ui-btn)[data-color="neutral"] { --ui-family-color: var(--color-neutral); --ui-family-content: var(--color-neutral-content); }
+:where(.ui-color, .ui-btn)[data-color="info"] { --ui-family-color: var(--color-info); --ui-family-content: var(--color-info-content); }
+:where(.ui-color, .ui-btn)[data-color="success"] { --ui-family-color: var(--color-success); --ui-family-content: var(--color-success-content); }
+:where(.ui-color, .ui-btn)[data-color="warning"] { --ui-family-color: var(--color-warning); --ui-family-content: var(--color-warning-content); }
+:where(.ui-color, .ui-btn)[data-color="error"] { --ui-family-color: var(--color-error); --ui-family-content: var(--color-error-content); }
+
+/* Level axis. Lightness and chroma taper perceptually at both extremes. */
+:where(.ui-color, .ui-btn)[data-level="50"] { --ui-step-lightness: 0.34; --ui-step-chroma: 0.2; }
+:where(.ui-color, .ui-btn)[data-level="100"] { --ui-step-lightness: 0.28; --ui-step-chroma: 0.32; }
+:where(.ui-color, .ui-btn)[data-level="200"] { --ui-step-lightness: 0.2; --ui-step-chroma: 0.5; }
+:where(.ui-color, .ui-btn)[data-level="300"] { --ui-step-lightness: 0.12; --ui-step-chroma: 0.7; }
+:where(.ui-color, .ui-btn)[data-level="400"] { --ui-step-lightness: 0.055; --ui-step-chroma: 0.88; }
+:where(.ui-color, .ui-btn)[data-level="500"] { --ui-step-lightness: 0; --ui-step-chroma: 1; }
+:where(.ui-color, .ui-btn)[data-level="600"] { --ui-step-lightness: -0.065; --ui-step-chroma: 0.96; }
+:where(.ui-color, .ui-btn)[data-level="700"] { --ui-step-lightness: -0.13; --ui-step-chroma: 0.88; }
+:where(.ui-color, .ui-btn)[data-level="800"] { --ui-step-lightness: -0.2; --ui-step-chroma: 0.72; }
+:where(.ui-color, .ui-btn)[data-level="900"] { --ui-step-lightness: -0.27; --ui-step-chroma: 0.55; }
+:where(.ui-color, .ui-btn)[data-level="950"] { --ui-step-lightness: -0.32; --ui-step-chroma: 0.4; }
+
+:where(.ui-color, .ui-btn)[data-color][data-level] {
+	/* color-mix is the robust fallback; relative OKLCH then supplies the
+	   perceptually uniform ladder in browsers implementing relative colours. */
+	--ui-resolved-color: color-mix(in oklab, var(--ui-family-color) 82%, var(--color-base-100));
+	--ui-resolved-color: oklch(
+		from var(--ui-family-color)
+		calc(l + var(--ui-step-lightness))
+		calc(c * var(--ui-step-chroma))
+		h
+	);
+	/* Keep foregrounds inside their colour family. The first declaration uses
+	   the authored content token as a broadly-supported light/dark endpoint;
+	   contrast-color() upgrades that choice for every generated ladder step.
+	   In either case, mixing some of the family colour back in avoids literal
+	   black/white ink while preserving strong contrast with the solid fill. */
+	--ui-resolved-content: color-mix(
+		in oklch,
+		var(--ui-resolved-color) 22%,
+		var(--ui-family-content)
+	);
+	--ui-resolved-content: color-mix(
+		in oklch,
+		var(--ui-resolved-color) 22%,
+		contrast-color(var(--ui-resolved-color))
+	);
+	/* Ink used when the family colour is itself the foreground rather than a
+	   filled surface. Blend toward the theme's authored base-content so it is
+	   dark enough on light themes and light enough on dark themes while
+	   retaining the selected family's hue. */
+	--ui-resolved-ink: color-mix(
+		in oklch,
+		var(--ui-resolved-color) 58%,
+		var(--color-base-content)
+	);
+	/* Marks which do not paint a surface (type, rules, dots, charts, meters)
+	   use the adaptive family ink. They must not consume the foreground
+	   calculated for a hypothetical solid surface. */
+	--ui-primitive-mark: var(--ui-resolved-ink);
+}
+:where(.ui-color, .ui-btn)[data-color][data-level="500"] {
+	/* 500 is the authored family anchor. Its family/content pair is a theme
+	   contract, so do not second-guess it with contrast-color(). */
+	--ui-resolved-content: var(--ui-family-content);
+}
+
+/* Usage is the third input axis. These are internal resolved values, not a
+   fourth author-facing axis: each primitive's own CSS decides which of ink,
+   surface and border it actually consumes. */
+.ui-color[data-variant="solid"] {
+	/* Solid is the filled treatment: the selected family colour is the surface,
+	   its paired content colour is the ink, and the edge belongs to the fill. */
+	--ui-primitive-ink: var(--ui-resolved-content);
+	--ui-primitive-surface: var(--ui-resolved-color);
+	--ui-primitive-border: var(--ui-resolved-color);
+}
+.ui-color[data-variant="soft"] {
+	--ui-primitive-ink: var(--ui-resolved-ink);
+	--ui-primitive-surface: color-mix(in oklab, var(--ui-resolved-color) 15%, var(--color-base-100));
+	--ui-primitive-border: color-mix(in oklab, var(--ui-resolved-color) 32%, transparent);
+}
+.ui-color[data-variant="outline"] {
+	--ui-primitive-ink: var(--ui-resolved-ink);
+	--ui-primitive-surface: transparent;
+	--ui-primitive-border: var(--ui-resolved-color);
+}
+.ui-color[data-variant="ghost"] {
+	--ui-primitive-ink: var(--ui-resolved-ink);
+	--ui-primitive-surface: var(--color-base-100);
+	--ui-primitive-border: var(--color-border);
+}
+.ui-color[data-variant="text"] {
+	--ui-primitive-ink: var(--ui-resolved-ink);
+	--ui-primitive-surface: transparent;
+	--ui-primitive-border: transparent;
+}
+
+/* Surface-aware descendant hierarchy. Components historically express their
+   internal emphasis through --c-text/--c-muted/--c-faint. Re-host those roles
+   locally from the resolved primitive ink, so all existing descendants retain
+   their nuance while contrasting with the primitive's actual surface. */
+:where(.ui-color)[data-color][data-variant] {
+	--ui-primitive-ink-muted: color-mix(in oklab, var(--ui-primitive-ink) 58%, transparent);
+	--ui-primitive-ink-faint: color-mix(in oklab, var(--ui-primitive-ink) 36%, transparent);
+	--c-text: var(--ui-primitive-ink);
+	--c-muted: var(--ui-primitive-ink-muted);
+	--c-faint: var(--ui-primitive-ink-faint);
 }
 
 /* ── Font role helpers ── */
@@ -1317,7 +1543,7 @@
 	font-size: var(--t-2xs);
 	text-transform: uppercase;
 	letter-spacing: 0.32em;
-	color: var(--c-faint);
+	color: var(--ui-primitive-mark, var(--c-faint));
 }
 
 /* ── StatusDot ── */
@@ -1373,6 +1599,9 @@
 	display: flex;
 	align-items: center;
 }
+.ui-avatar-stack[data-color] {
+	color: var(--ui-primitive-mark);
+}
 @scope (.ui-avatar-stack) {
 	:scope > .ui-avatar-stack-item {
 		position: relative;
@@ -1406,6 +1635,11 @@
 	color: var(--c-muted);
 	box-shadow: 0 0 0 1px var(--c-line);
 }
+.ui-chip[data-color] {
+	background: var(--ui-primitive-surface);
+	color: var(--ui-primitive-ink);
+	box-shadow: 0 0 0 1px var(--ui-primitive-border);
+}
 .ui-chip[data-tone="accent"] {
 	background: var(--c-accent-soft);
 	color: var(--c-accent);
@@ -1416,6 +1650,11 @@
 	color: var(--c-live);
 	box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-live) 30%, transparent);
 }
+.ui-chip[data-color][data-tone] {
+	background: var(--ui-primitive-surface);
+	color: var(--ui-primitive-ink);
+	box-shadow: 0 0 0 1px var(--ui-primitive-border);
+}
 
 /* ── Breadcrumb — wayfinding trail; chevrons are pure CSS so the DOM stays
       a clean nav>ol>li list ── */
@@ -1424,6 +1663,13 @@
 	font-size: var(--t-xs);
 	text-transform: uppercase;
 	letter-spacing: 0.14em;
+}
+.ui-breadcrumb[data-color] {
+	border-radius: var(--r-sm);
+	padding: 6px 9px;
+	background: var(--ui-primitive-surface);
+	color: var(--ui-primitive-ink);
+	box-shadow: inset 0 0 0 1px var(--ui-primitive-border);
 }
 @scope (.ui-breadcrumb) {
 	:scope > .ui-breadcrumb-trail {
@@ -1479,7 +1725,6 @@
 		color: var(--c-text);
 	}
 }
-
 /* ── RadialMenu — a fan of chips around its TRIGGER (Popover API + anchor
       positioning + @starting-style; see radial-menu.tsx).
 
@@ -1698,16 +1943,37 @@
 	cursor: not-allowed;
 	opacity: 0.5;
 }
-.ui-btn[data-variant="primary"] {
-	background: var(--c-accent);
-	color: var(--c-page);
+.ui-btn[data-variant="solid"] {
+	background: var(--ui-resolved-color);
+	color: var(--ui-resolved-content);
+	box-shadow: inset 0 0 0 1px var(--ui-resolved-color);
 }
-.ui-btn[data-variant="primary"]:hover:not(:disabled) {
+.ui-btn[data-variant="solid"]:hover:not(:disabled) {
 	filter: brightness(1.1);
-	box-shadow: 0 4px 24px -6px var(--c-accent);
+	box-shadow: 0 4px 24px -6px var(--ui-resolved-color);
+}
+.ui-btn[data-variant="soft"] {
+	background: color-mix(in oklab, var(--ui-resolved-color) 15%, transparent);
+	color: var(--ui-resolved-ink);
+	box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ui-resolved-color) 32%, transparent);
+}
+.ui-btn[data-variant="soft"]:hover:not(:disabled) {
+	background: color-mix(in oklab, var(--ui-resolved-color) 22%, transparent);
+}
+.ui-btn[data-variant="outline"] {
+	background: transparent;
+	color: var(--ui-resolved-ink);
+	box-shadow: inset 0 0 0 1px var(--ui-resolved-color);
+}
+.ui-btn[data-variant="outline"]:hover:not(:disabled) {
+	background: color-mix(in oklab, var(--ui-resolved-color) 10%, transparent);
+}
+.ui-btn[data-variant="text"] {
+	padding-inline: 4px;
+	color: var(--ui-resolved-ink);
 }
 .ui-btn[data-variant="ghost"] {
-	color: var(--c-text);
+	color: var(--ui-resolved-ink);
 	box-shadow: 0 0 0 1px var(--c-line-strong);
 }
 .ui-btn[data-variant="ghost"]:hover:not(:disabled) {
@@ -1725,6 +1991,14 @@
 	background: var(--c-panel);
 	padding: var(--ui-panel-pad);
 	box-shadow: 0 0 0 1px var(--c-line);
+}
+.ui-panel[data-color] {
+	background: var(--ui-primitive-surface);
+	color: var(--ui-primitive-ink);
+	box-shadow: inset 0 0 0 1px var(--ui-primitive-border);
+}
+.ui-panel[data-color]::before {
+	background: linear-gradient(to right, transparent, var(--ui-primitive-border), transparent);
 }
 .ui-panel::before {
 	content: "";
@@ -1806,6 +2080,9 @@
 .ui-counter {
 	font-variant-numeric: tabular-nums;
 }
+.ui-counter[data-color] {
+	color: var(--ui-primitive-mark);
+}
 
 /* ── Sparkline ── */
 .ui-sparkline {
@@ -1815,7 +2092,11 @@
 /* ── Waveform ── */
 .ui-waveform {
 	display: flex;
-	height: 100%;
+	/* Percentage-height bars need a definite block size: min-height alone does
+	   not establish their percentage basis. Consumers can override this
+	   intrinsic size through the component's class prop. */
+	block-size: 32px;
+	min-inline-size: 132px;
 	align-items: center;
 	gap: 3px;
 }
@@ -1838,6 +2119,9 @@
 	border-radius: var(--r-pill);
 	background: var(--c-line);
 }
+.ui-meter[data-color] {
+	background: color-mix(in oklab, var(--ui-primitive-mark) 18%, transparent);
+}
 @scope (.ui-meter) {
 	:scope > .ui-meter-fill {
 		height: 100%;
@@ -1858,12 +2142,21 @@
 	align-items: center;
 	gap: 12px;
 }
+.ui-rule[data-color] {
+	color: var(--ui-primitive-mark);
+}
 @scope (.ui-rule) {
 	:scope > .ui-rule-line {
 		height: 1px;
 		flex: 1;
 		background: var(--c-line);
 	}
+}
+.ui-rule[data-color] > .ui-rule-line {
+	background: var(--ui-primitive-mark);
+}
+.ui-rule[data-color] .ui-eyebrow {
+	color: inherit;
 }
 
 /* ── IconButton ── */

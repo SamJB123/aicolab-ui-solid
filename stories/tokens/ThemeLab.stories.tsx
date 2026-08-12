@@ -5,7 +5,7 @@
 // theming model is one light-dark() declaration per token), and each font
 // role offers the curated Google Fonts candidates from the toolbar. Edits
 // apply live to the specimen collage below — including the derived tokens
-// (--c-muted/--c-faint/--c-line/--c-line-strong/--c-accent-soft), which are
+// (muted/faint content, borders and primary-soft), which are
 // re-hosted onto the lab wrapper so their color-mix() recomputes from YOUR
 // ink/accent — and the generated `:root` block at the bottom is ready to
 // paste into .design-sync/theme/theme.css.
@@ -64,7 +64,7 @@ const CANONICAL: ThemeLabArgs = {
 	panel2Dark: '#262117',
 	textLight: '#241c0b',
 	textDark: '#ede7da',
-	accentLight: '#cc6a00',
+	accentLight: '#e8b04c',
 	accentDark: '#e8b04c',
 	liveLight: '#43913a',
 	liveDark: '#5aa179',
@@ -93,20 +93,20 @@ const meta = {
 	title: 'Tokens/Theme Lab',
 	args: CANONICAL,
 	argTypes: {
-		pageLight: colorArg('--c-page (light)', 'Page surfaces'),
-		pageDark: colorArg('--c-page (dark)', 'Page surfaces'),
-		page2Light: colorArg('--c-page-2 (light)', 'Page surfaces'),
-		page2Dark: colorArg('--c-page-2 (dark)', 'Page surfaces'),
-		panelLight: colorArg('--c-panel (light)', 'Panel surfaces'),
-		panelDark: colorArg('--c-panel (dark)', 'Panel surfaces'),
-		panel2Light: colorArg('--c-panel-2 (light)', 'Panel surfaces'),
-		panel2Dark: colorArg('--c-panel-2 (dark)', 'Panel surfaces'),
-		textLight: colorArg('--c-text (light)', 'Ink'),
-		textDark: colorArg('--c-text (dark)', 'Ink'),
-		accentLight: colorArg('--c-accent (light)', 'Signals'),
-		accentDark: colorArg('--c-accent (dark)', 'Signals'),
-		liveLight: colorArg('--c-live (light)', 'Signals'),
-		liveDark: colorArg('--c-live (dark)', 'Signals'),
+		pageLight: colorArg('--color-base-200 (light)', 'Base ladder'),
+		pageDark: colorArg('--color-base-200 (dark)', 'Base ladder'),
+		page2Light: colorArg('--color-base-300 (light)', 'Base ladder'),
+		page2Dark: colorArg('--color-base-300 (dark)', 'Base ladder'),
+		panelLight: colorArg('--color-base-100 (light)', 'Base ladder'),
+		panelDark: colorArg('--color-base-100 (dark)', 'Base ladder'),
+		panel2Light: colorArg('--color-base-150 (light)', 'Base ladder'),
+		panel2Dark: colorArg('--color-base-150 (dark)', 'Base ladder'),
+		textLight: colorArg('--color-base-content (light)', 'Content'),
+		textDark: colorArg('--color-base-content (dark)', 'Content'),
+		accentLight: colorArg('--color-primary (light)', 'Semantic families'),
+		accentDark: colorArg('--color-primary (dark)', 'Semantic families'),
+		liveLight: colorArg('--color-success (light)', 'Semantic families'),
+		liveDark: colorArg('--color-success (dark)', 'Semantic families'),
 		fontDisplay: { name: '--font-display', ...fontArg('display') },
 		fontSans: { name: '--font-sans', ...fontArg('sans') },
 		fontData: { name: '--font-data', ...fontArg('data') },
@@ -120,16 +120,110 @@ export default meta
 type Story = StoryObj<ThemeLabArgs>
 
 const PAIRS = [
-	['--c-page', 'pageLight', 'pageDark'],
-	['--c-page-2', 'page2Light', 'page2Dark'],
-	['--c-panel', 'panelLight', 'panelDark'],
-	['--c-panel-2', 'panel2Light', 'panel2Dark'],
-	['--c-text', 'textLight', 'textDark'],
-	['--c-accent', 'accentLight', 'accentDark'],
-	['--c-live', 'liveLight', 'liveDark'],
+	['--color-base-200', 'pageLight', 'pageDark'],
+	['--color-base-300', 'page2Light', 'page2Dark'],
+	['--color-base-100', 'panelLight', 'panelDark'],
+	['--color-base-150', 'panel2Light', 'panel2Dark'],
+	['--color-base-content', 'textLight', 'textDark'],
+	['--color-primary', 'accentLight', 'accentDark'],
+	['--color-success', 'liveLight', 'liveDark'],
 ] satisfies [string, keyof ThemeLabArgs, keyof ThemeLabArgs][]
 
-const DERIVED = ['--c-muted', '--c-faint', '--c-line', '--c-line-strong', '--c-accent-soft']
+const LEGACY_ALIASES = [
+	['--c-page', '--color-base-200'],
+	['--c-page-2', '--color-base-300'],
+	['--c-panel', '--color-base-100'],
+	['--c-panel-2', '--color-base-150'],
+	['--c-text', '--color-base-content'],
+	['--c-muted', '--color-base-content-muted'],
+	['--c-faint', '--color-base-content-faint'],
+	['--c-accent', '--color-primary'],
+	['--c-live', '--color-success'],
+	['--c-line', '--color-border'],
+	['--c-line-strong', '--color-border-strong'],
+	['--c-accent-soft', '--color-primary-soft'],
+] as const
+
+const DERIVED = [
+	'--color-base-content-muted',
+	'--color-base-content-faint',
+	'--color-border',
+	'--color-border-strong',
+	'--color-primary-soft',
+]
+
+const FAMILY_DERIVATIONS = [
+	'--color-primary-content: #2b210d;',
+	'--color-primary-content: color-mix(in oklch, var(--color-primary) 22%, contrast-color(var(--color-primary)));',
+	'--color-secondary: oklch(from var(--color-primary) l calc(c * 0.72) calc(h + 35));',
+	'--color-secondary-content: #2b210d;',
+	'--color-secondary-content: contrast-color(var(--color-secondary));',
+	'--color-accent: oklch(from var(--color-primary) l c calc(h - 55));',
+	'--color-accent-content: #2b210d;',
+	'--color-accent-content: contrast-color(var(--color-accent));',
+	'--color-neutral: oklch(from var(--color-base-content) l calc(c * 0.35) h);',
+	'--color-neutral-content: light-dark(#fffffb, #12100b);',
+	'--color-neutral-content: contrast-color(var(--color-neutral));',
+	'--color-info: oklch(0.58 0.12 230);',
+	'--color-info-content: #fffffb;',
+	'--color-info-content: contrast-color(var(--color-info));',
+	'--color-success-content: #fffffb;',
+	'--color-success-content: contrast-color(var(--color-success));',
+	'--color-warning: oklch(0.72 0.16 75);',
+	'--color-warning-content: #2b210d;',
+	'--color-warning-content: contrast-color(var(--color-warning));',
+	'--color-error: oklch(0.58 0.18 28);',
+	'--color-error-content: #fffffb;',
+	'--color-error-content: contrast-color(var(--color-error));',
+] as const
+
+const SEMANTIC_FAMILIES = [
+	'primary',
+	'secondary',
+	'accent',
+	'neutral',
+	'info',
+	'success',
+	'warning',
+	'error',
+] as const
+const SEMANTIC_TOKENS = SEMANTIC_FAMILIES.flatMap((family) => [
+	`--color-${family}`,
+	`--color-${family}-content`,
+])
+const COLOR_LEVELS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const
+
+function ColorFamilyLevelMatrix() {
+	return (
+		<div style={{ overflow: 'auto', 'padding-block-end': '4px' }}>
+			<div style={{ display: 'grid', gap: '10px', 'min-width': '900px' }}>
+				<For each={SEMANTIC_FAMILIES}>
+					{(color) => (
+						<div style={{ display: 'grid', 'grid-template-columns': '88px repeat(11, minmax(56px, 1fr))', gap: '6px', 'align-items': 'center' }}>
+							<strong style={{ 'font-size': 'var(--t-xs)' }}>{color}</strong>
+							<For each={COLOR_LEVELS}>
+								{(level) => (
+									<div
+										class="ui-color"
+										data-color={color}
+										data-level={level}
+										title={`${color} ${level}`}
+										style={{
+											background: 'var(--ui-resolved-color)',
+											'border-radius': 'var(--r-sm)',
+											'block-size': '42px',
+											'box-shadow': 'inset 0 0 0 1px color-mix(in oklab, var(--color-base-content) 12%, transparent)',
+										}}
+									/>
+								)}
+							</For>
+						</div>
+					)}
+				</For>
+			</div>
+		</div>
+	)
+}
 
 // Default stacks from theme.css, used when a role stays on 'default'.
 // --font-label has NO default stack on purpose: unset, the micro-label
@@ -274,11 +368,11 @@ function Swatch(props: { token: string }) {
 					height: '32px',
 					'border-radius': '7px',
 					background: `var(${props.token})`,
-					'box-shadow': 'inset 0 0 0 1px var(--c-line-strong)',
+					'box-shadow': 'inset 0 0 0 1px var(--color-border-strong)',
 				}}
 			/>
 			<code
-				style={{ 'font-family': 'var(--font-data)', 'font-size': '9.5px', color: 'var(--c-muted)' }}
+				style={{ 'font-family': 'var(--font-data)', 'font-size': '9.5px', color: 'var(--color-base-content-muted)' }}
 			>
 				{props.token}
 			</code>
@@ -306,6 +400,12 @@ export const Lab: Story = {
 			for (const [token, lightKey, darkKey] of PAIRS) {
 				out[token] = `light-dark(${args[lightKey]}, ${args[darkKey]})`
 			}
+			out['--color-base-content-muted'] = 'color-mix(in oklab, var(--color-base-content) 58%, transparent)'
+			out['--color-base-content-faint'] = 'color-mix(in oklab, var(--color-base-content) 36%, transparent)'
+			out['--color-border'] = 'color-mix(in oklab, var(--color-base-content) 10%, transparent)'
+			out['--color-border-strong'] = 'color-mix(in oklab, var(--color-base-content) 20%, transparent)'
+			out['--color-primary-soft'] = 'color-mix(in oklab, var(--color-primary) 14%, transparent)'
+			for (const [legacy, semantic] of LEGACY_ALIASES) out[legacy] = `var(${semantic})`
 			const s = stacks()
 			for (const role of FONT_ROLES) {
 				const stack = s[role]
@@ -347,11 +447,14 @@ export const Lab: Story = {
 					([token, lightKey, darkKey]) =>
 						`\t${token}: light-dark(${args[lightKey]}, ${args[darkKey]});`,
 				),
-				'\t--c-muted: color-mix(in oklab, var(--c-text) 58%, transparent);',
-				'\t--c-faint: color-mix(in oklab, var(--c-text) 36%, transparent);',
-				'\t--c-line: color-mix(in oklab, var(--c-text) 10%, transparent);',
-				'\t--c-line-strong: color-mix(in oklab, var(--c-text) 20%, transparent);',
-				'\t--c-accent-soft: color-mix(in oklab, var(--c-accent) 14%, transparent);',
+				...FAMILY_DERIVATIONS.map((declaration) => `\t${declaration}`),
+				'\t--color-base-content-muted: color-mix(in oklab, var(--color-base-content) 58%, transparent);',
+				'\t--color-base-content-faint: color-mix(in oklab, var(--color-base-content) 36%, transparent);',
+				'\t--color-border: color-mix(in oklab, var(--color-base-content) 10%, transparent);',
+				'\t--color-border-strong: color-mix(in oklab, var(--color-base-content) 20%, transparent);',
+				'\t--color-primary-soft: color-mix(in oklab, var(--color-primary) 14%, transparent);',
+				'\t/* Legacy compatibility outputs. */',
+				...LEGACY_ALIASES.map(([legacy, semantic]) => `\t${legacy}: var(${semantic});`),
 				`\t--font-display: ${s.display};`,
 				`\t--font-sans: ${s.sans};`,
 				`\t--font-data: ${s.data};`,
@@ -367,8 +470,8 @@ export const Lab: Story = {
 			<div
 				ref={wrap}
 				style={{
-					background: 'var(--c-page)',
-					color: 'var(--c-text)',
+					background: 'var(--color-base-200)',
+					color: 'var(--color-base-content)',
 					padding: '28px',
 					'border-radius': '12px',
 					display: 'grid',
@@ -417,9 +520,9 @@ export const Lab: Story = {
 						A commons for collective intelligence
 					</div>
 					<Eyebrow class="ui-accent-ink">--font-sans</Eyebrow>
-					<p style={{ margin: '0', 'max-width': '58ch', color: 'var(--c-muted)' }}>
+					<p style={{ margin: '0', 'max-width': '58ch', color: 'var(--color-base-content-muted)' }}>
 						Workshops, working groups, and shared infrastructure for people building with AI in the
-						public interest. Body copy rides the sans role; secondary ink is --c-muted derived from
+						public interest. Body copy rides the sans role; secondary ink is derived from
 						your text colour.
 					</p>
 					<Eyebrow class="ui-accent-ink">--font-data</Eyebrow>
@@ -433,7 +536,7 @@ export const Lab: Story = {
 							'font-size': '10px',
 							'text-transform': 'uppercase',
 							'letter-spacing': '0.2em',
-							color: 'var(--c-muted)',
+							color: 'var(--color-base-content-muted)',
 						}}
 					>
 						micro-labels · eyebrows · chips · panel kickers · field labels
@@ -442,10 +545,13 @@ export const Lab: Story = {
 
 				<Rule label="Token swatches" />
 				<div style={{ display: 'flex', gap: '18px', 'flex-wrap': 'wrap' }}>
-					<For each={[...PAIRS.map(([token]) => token), ...DERIVED]}>
+					<For each={[...PAIRS.map(([token]) => token), ...SEMANTIC_TOKENS, ...DERIVED]}>
 						{(token) => <Swatch token={token} />}
 					</For>
 				</div>
+
+				<Rule label="Colour family × perceptual level" />
+				<ColorFamilyLevelMatrix />
 
 				<Rule label="Components on these tokens" />
 				<div
@@ -467,37 +573,39 @@ export const Lab: Story = {
 								<Counter value={87} format={(n) => `${Math.round(n)}%`} class="font-data" />
 								<Eyebrow>capacity</Eyebrow>
 							</div>
-							<Meter value={87} max={100} color="var(--c-accent)" />
+							<Meter value={87} max={100} color="var(--color-primary)" />
 							<Sparkline data={[12, 18, 14, 22, 30, 26, 38, 34, 41, 39, 47, 52]} />
 						</div>
 					</Panel>
 					<div style={{ display: 'grid', gap: '12px', 'align-content': 'start' }}>
 						<div style={{ display: 'flex', gap: '10px' }}>
-							<Button variant="primary">Primary action</Button>
+							<Button variant="solid">Primary action</Button>
+							<Button color="info" variant="soft">Information</Button>
+							<Button color="error" variant="outline">Error</Button>
 							<Button>Ghost action</Button>
 						</div>
 						<div
 							style={{
-								background: 'var(--c-page-2)',
+								background: 'var(--color-base-300)',
 								padding: '14px',
 								'border-radius': '10px',
-								'box-shadow': 'inset 0 0 0 1px var(--c-line)',
-								color: 'var(--c-muted)',
+								'box-shadow': 'inset 0 0 0 1px var(--color-border)',
+								color: 'var(--color-base-content-muted)',
 								'font-size': '13.5px',
 							}}
 						>
-							Recessed surface (--c-page-2) with a hairline (--c-line) and muted ink.
+							Recessed surface (base-300) with a derived border and muted content.
 						</div>
 						<div
 							style={{
-								background: 'var(--c-accent-soft)',
+								background: 'var(--color-primary-soft)',
 								padding: '14px',
 								'border-radius': '10px',
-								color: 'var(--c-accent)',
+								color: 'var(--color-primary)',
 								'font-size': '13.5px',
 							}}
 						>
-							Accent wash (--c-accent-soft) with accent ink.
+							Primary-soft wash with primary content.
 						</div>
 					</div>
 				</div>
@@ -509,8 +617,8 @@ export const Lab: Story = {
 							margin: '0',
 							padding: '16px',
 							'border-radius': '10px',
-							background: 'var(--c-panel)',
-							'box-shadow': 'inset 0 0 0 1px var(--c-line)',
+							background: 'var(--color-base-100)',
+							'box-shadow': 'inset 0 0 0 1px var(--color-border)',
 							'font-family': 'var(--font-data)',
 							'font-size': '12px',
 							'line-height': '1.55',
@@ -520,7 +628,7 @@ export const Lab: Story = {
 					>
 						{cssBlock()}
 					</pre>
-					<Button variant="primary" onClick={() => navigator.clipboard.writeText(cssBlock())}>
+					<Button variant="solid" onClick={() => navigator.clipboard.writeText(cssBlock())}>
 						Copy :root block
 					</Button>
 				</div>
