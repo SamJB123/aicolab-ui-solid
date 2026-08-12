@@ -60,11 +60,6 @@ export {
 	Button,
 	ButtonLink,
 	Chip,
-	type ClassProp,
-	type Variant,
-	type ColorLevel,
-	type ColorBase,
-	type ColorTreatmentProps,
 	Counter,
 	Eyebrow,
 	HoldButton,
@@ -92,6 +87,14 @@ export {
 	Waveform,
 	VisuallyHidden,
 } from './primitives'
+export {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorBase,
+	type ColorLevel,
+	type ColorTreatmentProps,
+	type Variant,
+} from './shared/color-treatment'
 export {
 	ApplicationHeader,
 	ThemeToggle,
