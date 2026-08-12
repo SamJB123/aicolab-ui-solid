@@ -1,7 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { RadialMenu } from '../../src/radial-menu'
-import { ColorAxesStory } from './color-axes-story'
+import { ColorTreatmentStory } from './color-treatment-story'
 
 const glyph = (label: string) => (
 	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -21,6 +21,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const BottomBarFan: Story = {
+	args: { id: 'story-radial', items: [] },
 	render: () => (
 		<div style={{ display: 'grid', 'place-items': 'end center', 'min-height': '70vh' }}>
 			<RadialMenu
@@ -53,6 +54,7 @@ export const BottomBarFan: Story = {
 }
 
 export const DownwardFan: Story = {
+	args: { id: 'story-radial-down', items: [] },
 	render: () => (
 		<div style={{ display: 'grid', 'place-items': 'start center', 'min-height': '60vh' }}>
 			<RadialMenu
@@ -74,17 +76,18 @@ export const DownwardFan: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Family × level × usage',
-	render: () => <ColorAxesStory render={({ color, level, variant }) => (
+	name: 'Color base × level × appearance',
+	args: { id: 'axis-radial', items: [] },
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, appearance }) => (
 		<RadialMenu
-			id={`axis-radial-${color}-${level}-${variant}`}
-			label={`${color} actions`}
+			id={`axis-radial-${colorBase}-${colorLevel}-${appearance}`}
+			label={`${colorBase} actions`}
 			items={[
 				{ id: 'one', label: 'One', icon: glyph('1'), onSelect: () => {} },
 				{ id: 'two', label: 'Two', icon: glyph('2'), onSelect: () => {} },
 			]}
 		>
-			<span class="ui-color" data-color={color} data-level={level} data-variant={variant} style={{ display: 'grid', 'place-items': 'center', width: '38px', height: '38px', 'border-radius': '999px', background: 'var(--ui-primitive-surface)', color: 'var(--ui-primitive-ink)', 'box-shadow': 'inset 0 0 0 1px var(--ui-primitive-border)' }}>
+			<span data-ui-color-base={colorBase} data-ui-color-level={colorLevel} data-ui-appearance={appearance} style={{ display: 'grid', 'place-items': 'center', width: '38px', height: '38px', 'border-radius': '999px', background: 'var(--ui-surface)', color: 'var(--ui-ink)', 'box-shadow': 'inset 0 0 0 1px var(--ui-border)' }}>
 				{glyph('⋯')}
 			</span>
 		</RadialMenu>

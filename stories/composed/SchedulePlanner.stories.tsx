@@ -78,7 +78,7 @@ export const Full: Story = {
 							/>
 						</Field>
 						<Rule />
-						<Button variant="primary">Book session</Button>
+						<Button appearance="solid">Book session</Button>
 					</div>
 				</Panel>
 			</div>

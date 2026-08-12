@@ -1,5 +1,6 @@
-import { createEffect, createSignal, Show } from "solid-js";
+import { createSignal, Show } from "solid-js";
 import type { JSX } from "@solidjs/web";
+import { createEffect } from "../../solid-v2";
 import { TitleBar } from "./TitleBar";
 import { ResizeHandles } from "./ResizeHandles";
 import type { WindowViewState } from "./types";

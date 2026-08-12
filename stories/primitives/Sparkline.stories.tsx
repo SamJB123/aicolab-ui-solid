@@ -1,7 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Sparkline } from '../../src/primitives'
-import { ColorAxesStory } from './color-axes-story'
+import { ColorTreatmentStory } from './color-treatment-story'
 
 const DATA = [12, 18, 14, 22, 30, 26, 38, 34, 41, 39, 47, 52]
 
@@ -18,7 +18,7 @@ export const Default: Story = {
 }
 
 export const LiveColour: Story = {
-	args: { data: [40, 42, 38, 45, 43, 48, 52, 50, 55, 61], color: 'var(--c-live)' },
+	args: { data: [40, 42, 38, 45, 43, 48, 52, 50, 55, 61], strokeColor: 'var(--c-live)' },
 }
 
 export const Wide: Story = {
@@ -27,6 +27,7 @@ export const Wide: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Family × level × usage',
-	render: () => <ColorAxesStory render={({ color, level, variant }) => <Sparkline family={color} level={level} usage={variant} data={DATA} />} />,
+	name: 'Color base × level × appearance',
+	args: { data: DATA },
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, appearance }) => <Sparkline colorBase={colorBase} colorLevel={colorLevel} appearance={appearance} data={DATA} />} />,
 }

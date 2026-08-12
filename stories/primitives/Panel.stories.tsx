@@ -11,7 +11,7 @@ import {
 	Rule,
 	Sparkline,
 } from '../../src/primitives'
-import { ColorAxesStory } from './color-axes-story'
+import { ColorTreatmentStory } from './color-treatment-story'
 
 const meta = {
 	title: 'Primitives/Panel',
@@ -37,7 +37,7 @@ export const IndexActionGlow: Story = {
 		title: 'Occupancy',
 		kicker: 'Rolling 7-day average',
 		glow: true,
-		action: () => <Button variant="ghost">Export</Button>,
+		action: () => <Button appearance="ghost">Export</Button>,
 		children: 'Peak load lands on Wednesday afternoons.',
 	},
 }
@@ -74,7 +74,7 @@ export const ComposedDashboardCard: Story = {
 				title="Studio occupancy"
 				kicker="Live across both floors"
 				glow
-				action={() => <Button variant="primary">Book</Button>}
+				action={() => <Button appearance="solid">Book</Button>}
 			>
 				<div style={{ display: 'grid', gap: '14px' }}>
 					<div style={{ display: 'flex', gap: '8px', 'align-items': 'center' }}>
@@ -86,7 +86,7 @@ export const ComposedDashboardCard: Story = {
 						<Counter value={87} format={(n) => `${Math.round(n)}%`} class="font-data" />
 						<Eyebrow>capacity</Eyebrow>
 					</div>
-					<Meter value={87} max={100} color="var(--c-accent)" />
+					<Meter value={87} max={100} fillColor="var(--c-accent)" />
 					<Sparkline data={[12, 18, 14, 22, 30, 26, 38, 34, 41, 39, 47, 52]} />
 					<Rule label="On site" />
 					<AvatarStack
@@ -107,12 +107,12 @@ export const ComposedDashboardCard: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Family × level × usage',
-	render: () => <ColorAxesStory render={({ color, level, variant }) => (
+	name: 'Color base × level × appearance',
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, appearance }) => (
 		<Panel
-			family={color}
-			level={level}
-			usage={variant}
+			colorBase={colorBase}
+			colorLevel={colorLevel}
+			appearance={appearance}
 			index="01"
 			title="Gallery activity"
 			kicker="Live specimen"

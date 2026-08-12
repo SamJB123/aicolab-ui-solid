@@ -10,7 +10,7 @@
 // `.ui-wheel*` in styles.css (a standalone panel class — see the note there
 // on why it must not compose `.ui-anchored`).
 
-import { createEffect, createSignal, createUniqueId, For, Show, untrack } from 'solid-js'
+import { createSignal, createUniqueId, For, Show, untrack } from 'solid-js'
 import {
 	daysInMonth,
 	firstWeekday,
@@ -21,6 +21,7 @@ import {
 	weekdayOf,
 	type YMD,
 } from './calendar'
+import { createEffect } from './solid-v2'
 
 const sameDay = (a: YMD, b: YMD) => a.y === b.y && a.m === b.m && a.d === b.d
 

@@ -1,6 +1,7 @@
-import { createEffect, createSignal, For, Show } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import { Button } from "./Button";
 import { s } from "../style";
+import { createEffect } from "../../solid-v2";
 
 export type MenuItem = {
   label: string;

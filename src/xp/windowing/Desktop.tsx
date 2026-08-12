@@ -1,5 +1,6 @@
-import { createEffect, createSignal } from "solid-js";
+import { createSignal } from "solid-js";
 import type { JSX } from "@solidjs/web";
+import { createEffect } from "../../solid-v2";
 import { Wallpaper } from "../components/Wallpaper";
 import { TASKBAR_HEIGHT } from "../taskbar/Taskbar";
 import { DesktopContext } from "./DesktopContext";

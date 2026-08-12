@@ -2,7 +2,7 @@
 import { createSignal, onSettled } from 'solid-js'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Waveform } from '../../src/primitives'
-import { ColorAxesStory } from './color-axes-story'
+import { ColorTreatmentStory } from './color-treatment-story'
 
 const BARS = [0.2, 0.5, 0.8, 0.4, 0.9, 0.6, 0.3, 0.7, 1, 0.5, 0.35, 0.65, 0.85, 0.45, 0.25]
 
@@ -16,9 +16,9 @@ function AnimatedAxesWaveforms() {
 	})
 
 	return (
-		<ColorAxesStory
-			render={({ color, level, variant }) => (
-				<Waveform family={color} level={level} usage={variant} bars={bars()} />
+		<ColorTreatmentStory
+			render={({ colorBase, colorLevel, appearance }) => (
+				<Waveform colorBase={colorBase} colorLevel={colorLevel} appearance={appearance} bars={bars()} />
 			)}
 		/>
 	)
@@ -38,7 +38,7 @@ export const Default: Story = {
 }
 
 export const LiveColour: Story = {
-	args: { bars: BARS, color: 'var(--c-live)' },
+	args: { bars: BARS, barColor: 'var(--c-live)' },
 }
 
 export const Animated: Story = {
@@ -56,6 +56,6 @@ export const Animated: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Family × level × usage',
+	name: 'Color base × level × appearance',
 	render: () => <AnimatedAxesWaveforms />,
 }

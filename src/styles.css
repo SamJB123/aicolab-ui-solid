@@ -24,8 +24,8 @@
      --color-{info,success,warning,error}-{content}
 
    Derived roles cover muted/faint content, borders, ring and primary-soft.
-   Colour-aware components independently select data-color (family),
-   data-level (perceptual 50–950 ladder), and data-variant (usage).
+   Colour-aware components independently select data-ui-color-base,
+   data-ui-color-level (perceptual 50–950 ladder), and data-ui-appearance.
 
    Legacy --c-* tokens remain REGISTERED below as compatibility outputs while
    repository consumers migrate. Every registered token is typed, so a
@@ -273,30 +273,62 @@
    registered above as compatibility inputs during migration; these canonical
    tokens read them by default, so existing application themes keep working.
 
-   Families and ladder positions are deliberately orthogonal. Components set
-   --ui-family-color from data-color and a lightness/chroma transform from
-   data-level. One relative OKLCH expression resolves every family × level
+   Base colours and ladder positions are deliberately orthogonal. Components set
+   --ui-color-base from data-ui-color-base and a lightness/chroma transform
+   from data-ui-color-level. One relative OKLCH expression resolves every base × level
    combination: no primary-100/success-100/etc matrix is authored. */
-@property --ui-family-color {
+@property --ui-color-base-key {
+	syntax: "<custom-ident>";
+	inherits: true;
+	initial-value: primary;
+}
+@property --ui-color-base {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: #e8b04c;
 }
-@property --ui-family-content {
-	syntax: "<color>";
-	inherits: true;
-	initial-value: #ffffff;
-}
-@property --ui-step-lightness {
+@property --ui-color-level {
 	syntax: "<number>";
 	inherits: true;
-	initial-value: 0;
+	initial-value: 500;
 }
-@property --ui-step-chroma {
-	syntax: "<number>";
+@property --ui-appearance {
+	syntax: "solid | soft | outline | ghost | text";
 	inherits: true;
-	initial-value: 1;
+	initial-value: solid;
 }
+/* Canonical presentation outputs. Component CSS consumes only these roles;
+   resolver calculation values stay private, unregistered locals below. */
+@property --ui-surface { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-selected { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-disabled { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-occluding { syntax: "<color>"; inherits: true; initial-value: #fffffb; }
+@property --ui-surface-raised { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-inset { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-muted { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-faint { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-selected { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-disabled { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-border { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-border-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-border-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-border-selected { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-border-disabled { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-mark { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-mark-muted { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-mark-disabled { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-track { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-glow { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-glow-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-surface-glow-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-glow-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-ink-glow-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-focus-ring { syntax: "<color>"; inherits: true; initial-value: transparent; }
 
 /* A low-priority standalone fallback keeps the package styled when a consumer
    imports styles.css without a theme. Any unlayered app/theme declaration
@@ -378,115 +410,172 @@
 	);
 }
 
-/* Family axis. */
-:where(.ui-color, .ui-btn)[data-color="primary"] { --ui-family-color: var(--color-primary); --ui-family-content: var(--color-primary-content); }
-:where(.ui-color, .ui-btn)[data-color="secondary"] { --ui-family-color: var(--color-secondary); --ui-family-content: var(--color-secondary-content); }
-:where(.ui-color, .ui-btn)[data-color="accent"] { --ui-family-color: var(--color-accent); --ui-family-content: var(--color-accent-content); }
-:where(.ui-color, .ui-btn)[data-color="neutral"] { --ui-family-color: var(--color-neutral); --ui-family-content: var(--color-neutral-content); }
-:where(.ui-color, .ui-btn)[data-color="info"] { --ui-family-color: var(--color-info); --ui-family-content: var(--color-info-content); }
-:where(.ui-color, .ui-btn)[data-color="success"] { --ui-family-color: var(--color-success); --ui-family-content: var(--color-success-content); }
-:where(.ui-color, .ui-btn)[data-color="warning"] { --ui-family-color: var(--color-warning); --ui-family-content: var(--color-warning-content); }
-:where(.ui-color, .ui-btn)[data-color="error"] { --ui-family-color: var(--color-error); --ui-family-content: var(--color-error-content); }
-
-/* Level axis. Lightness and chroma taper perceptually at both extremes. */
-:where(.ui-color, .ui-btn)[data-level="50"] { --ui-step-lightness: 0.34; --ui-step-chroma: 0.2; }
-:where(.ui-color, .ui-btn)[data-level="100"] { --ui-step-lightness: 0.28; --ui-step-chroma: 0.32; }
-:where(.ui-color, .ui-btn)[data-level="200"] { --ui-step-lightness: 0.2; --ui-step-chroma: 0.5; }
-:where(.ui-color, .ui-btn)[data-level="300"] { --ui-step-lightness: 0.12; --ui-step-chroma: 0.7; }
-:where(.ui-color, .ui-btn)[data-level="400"] { --ui-step-lightness: 0.055; --ui-step-chroma: 0.88; }
-:where(.ui-color, .ui-btn)[data-level="500"] { --ui-step-lightness: 0; --ui-step-chroma: 1; }
-:where(.ui-color, .ui-btn)[data-level="600"] { --ui-step-lightness: -0.065; --ui-step-chroma: 0.96; }
-:where(.ui-color, .ui-btn)[data-level="700"] { --ui-step-lightness: -0.13; --ui-step-chroma: 0.88; }
-:where(.ui-color, .ui-btn)[data-level="800"] { --ui-step-lightness: -0.2; --ui-step-chroma: 0.72; }
-:where(.ui-color, .ui-btn)[data-level="900"] { --ui-step-lightness: -0.27; --ui-step-chroma: 0.55; }
-:where(.ui-color, .ui-btn)[data-level="950"] { --ui-step-lightness: -0.32; --ui-step-chroma: 0.4; }
-
-:where(.ui-color, .ui-btn)[data-color][data-level] {
-	/* color-mix is the robust fallback; relative OKLCH then supplies the
-	   perceptually uniform ladder in browsers implementing relative colours. */
-	--ui-resolved-color: color-mix(in oklab, var(--ui-family-color) 82%, var(--color-base-100));
-	--ui-resolved-color: oklch(
-		from var(--ui-family-color)
-		calc(l + var(--ui-step-lightness))
-		calc(c * var(--ui-step-chroma))
+/* ── Forward colour resolver ──────────────────────────────────────────────
+   The DOM supplies semantic strings and a numeric level. Typed attr() turns
+   those attributes into registered CSS values; if(style()) maps semantic
+   names and appearances on the element itself; @function owns all colour
+   algorithms. There are intentionally no compatibility declarations or
+   selector matrices in this Phase-1 implementation. */
+@function --ui-color-at-level(--base <color>, --level <number>) returns <color> {
+	--light-shift: calc(
+		max(0, 500 - var(--level)) * 0.00068
+		- max(0, var(--level) - 500) * 0.00071
+	);
+	--chroma-scale: calc(
+		1
+		- max(0, 500 - var(--level)) * 0.00178
+		- max(0, var(--level) - 500) * 0.00133
+	);
+	result: oklch(
+		from var(--base)
+		clamp(0, calc(l + var(--light-shift)), 1)
+		calc(c * max(0, var(--chroma-scale)))
 		h
 	);
-	/* Keep foregrounds inside their colour family. The first declaration uses
-	   the authored content token as a broadly-supported light/dark endpoint;
-	   contrast-color() upgrades that choice for every generated ladder step.
-	   In either case, mixing some of the family colour back in avoids literal
-	   black/white ink while preserving strong contrast with the solid fill. */
-	--ui-resolved-content: color-mix(
-		in oklch,
-		var(--ui-resolved-color) 22%,
-		var(--ui-family-content)
-	);
-	--ui-resolved-content: color-mix(
-		in oklch,
-		var(--ui-resolved-color) 22%,
-		contrast-color(var(--ui-resolved-color))
-	);
-	/* Ink used when the family colour is itself the foreground rather than a
-	   filled surface. Blend toward the theme's authored base-content so it is
-	   dark enough on light themes and light enough on dark themes while
-	   retaining the selected family's hue. */
-	--ui-resolved-ink: color-mix(
-		in oklch,
-		var(--ui-resolved-color) 58%,
-		var(--color-base-content)
-	);
-	/* Marks which do not paint a surface (type, rules, dots, charts, meters)
-	   use the adaptive family ink. They must not consume the foreground
-	   calculated for a hypothetical solid surface. */
-	--ui-primitive-mark: var(--ui-resolved-ink);
-}
-:where(.ui-color, .ui-btn)[data-color][data-level="500"] {
-	/* 500 is the authored family anchor. Its family/content pair is a theme
-	   contract, so do not second-guess it with contrast-color(). */
-	--ui-resolved-content: var(--ui-family-content);
 }
 
-/* Usage is the third input axis. These are internal resolved values, not a
-   fourth author-facing axis: each primitive's own CSS decides which of ink,
-   surface and border it actually consumes. */
-.ui-color[data-variant="solid"] {
-	/* Solid is the filled treatment: the selected family colour is the surface,
-	   its paired content colour is the ink, and the edge belongs to the fill. */
-	--ui-primitive-ink: var(--ui-resolved-content);
-	--ui-primitive-surface: var(--ui-resolved-color);
-	--ui-primitive-border: var(--ui-resolved-color);
-}
-.ui-color[data-variant="soft"] {
-	--ui-primitive-ink: var(--ui-resolved-ink);
-	--ui-primitive-surface: color-mix(in oklab, var(--ui-resolved-color) 15%, var(--color-base-100));
-	--ui-primitive-border: color-mix(in oklab, var(--ui-resolved-color) 32%, transparent);
-}
-.ui-color[data-variant="outline"] {
-	--ui-primitive-ink: var(--ui-resolved-ink);
-	--ui-primitive-surface: transparent;
-	--ui-primitive-border: var(--ui-resolved-color);
-}
-.ui-color[data-variant="ghost"] {
-	--ui-primitive-ink: var(--ui-resolved-ink);
-	--ui-primitive-surface: var(--color-base-100);
-	--ui-primitive-border: var(--color-border);
-}
-.ui-color[data-variant="text"] {
-	--ui-primitive-ink: var(--ui-resolved-ink);
-	--ui-primitive-surface: transparent;
-	--ui-primitive-border: transparent;
+@function --ui-content-for(--surface <color>) returns <color> {
+	result: color-mix(
+		in oklch,
+		var(--surface) 22%,
+		contrast-color(var(--surface))
+	);
 }
 
-/* Surface-aware descendant hierarchy. Components historically express their
-   internal emphasis through --c-text/--c-muted/--c-faint. Re-host those roles
-   locally from the resolved primitive ink, so all existing descendants retain
-   their nuance while contrasting with the primitive's actual surface. */
-:where(.ui-color)[data-color][data-variant] {
-	--ui-primitive-ink-muted: color-mix(in oklab, var(--ui-primitive-ink) 58%, transparent);
-	--ui-primitive-ink-faint: color-mix(in oklab, var(--ui-primitive-ink) 36%, transparent);
-	--c-text: var(--ui-primitive-ink);
-	--c-muted: var(--ui-primitive-ink-muted);
-	--c-faint: var(--ui-primitive-ink-faint);
+@function --ui-color-as-ink(--color <color>) returns <color> {
+	result: color-mix(in oklch, var(--color) 58%, var(--color-base-content));
+}
+
+/* The old solid-button hover used filter: brightness(1.1). Resolve that same
+   luminous direction as an actual colour so every component can consume it
+   without a component-local filter or appearance branch. Relative OKLCH
+   preserves the family hue and chroma while lifting perceptual lightness. */
+@function --ui-brighten(--color <color>) returns <color> {
+	result: oklch(from var(--color) clamp(0, calc(l * 1.1), 1) c h);
+}
+
+:where([data-ui-color-base]) {
+	--ui-color-base-key: attr(data-ui-color-base type(<custom-ident>), primary);
+	--ui-color-level: attr(data-ui-color-level type(<number>), 500);
+	--ui-appearance: attr(data-ui-appearance type(<custom-ident>), solid);
+
+	--ui-color-base: if(
+		style(--ui-color-base-key: primary): var(--color-primary);
+		style(--ui-color-base-key: secondary): var(--color-secondary);
+		style(--ui-color-base-key: accent): var(--color-accent);
+		style(--ui-color-base-key: neutral): var(--color-neutral);
+		style(--ui-color-base-key: info): var(--color-info);
+		style(--ui-color-base-key: success): var(--color-success);
+		style(--ui-color-base-key: warning): var(--color-warning);
+		style(--ui-color-base-key: error): var(--color-error);
+		else: var(--color-primary)
+	);
+
+	--ui-color: --ui-color-at-level(
+		var(--ui-color-base),
+		var(--ui-color-level)
+	);
+	--ui-content: --ui-content-for(var(--ui-color));
+	--ui-family-ink: --ui-color-as-ink(var(--ui-color));
+
+	--ui-surface: if(
+		style(--ui-appearance: solid): var(--ui-color);
+		style(--ui-appearance: soft): color-mix(in oklab, var(--ui-color) 15%, var(--color-base-100));
+		style(--ui-appearance: outline): transparent;
+		style(--ui-appearance: ghost): var(--color-base-100);
+		style(--ui-appearance: text): transparent;
+		else: var(--ui-color)
+	);
+	/* Overlapping primitives need the visual intensity of their appearance but
+	   must remain physically opaque. Unlike alpha-based surface roles, this
+	   composites the family colour into a known theme surface. */
+	--ui-surface-occluding: if(
+		style(--ui-appearance: solid): var(--ui-color);
+		style(--ui-appearance: soft): color-mix(in oklab, var(--ui-color) 15%, var(--color-base-100));
+		style(--ui-appearance: outline): color-mix(in oklab, var(--ui-color) 8%, var(--color-base-100));
+		style(--ui-appearance: ghost): var(--color-base-100);
+		style(--ui-appearance: text): color-mix(in oklab, var(--ui-color) 8%, var(--color-base-100));
+		else: var(--color-base-100)
+	);
+	--ui-ink: if(
+		style(--ui-appearance: solid): var(--ui-content);
+		else: var(--ui-family-ink)
+	);
+	--ui-border: if(
+		style(--ui-appearance: solid): var(--ui-color);
+		style(--ui-appearance: soft): color-mix(in oklab, var(--ui-color) 32%, transparent);
+		style(--ui-appearance: outline): var(--ui-color);
+		style(--ui-appearance: ghost): var(--color-border);
+		style(--ui-appearance: text): transparent;
+		else: var(--ui-color)
+	);
+
+	/* Interaction states are resolved here once. Components switch state; they
+	   never reinterpret appearance or perform colour math. */
+	--ui-surface-hover: if(
+		style(--ui-appearance: solid): --ui-brighten(var(--ui-color));
+		style(--ui-appearance: soft): color-mix(in oklab, var(--ui-color) 22%, var(--color-base-100));
+		style(--ui-appearance: outline): color-mix(in oklab, var(--ui-color) 10%, transparent);
+		style(--ui-appearance: ghost): var(--color-base-150);
+		style(--ui-appearance: text): transparent;
+		else: var(--ui-surface)
+	);
+	--ui-ink-hover: if(
+		style(--ui-appearance: solid): --ui-brighten(var(--ui-content));
+		else: var(--ui-ink)
+	);
+	--ui-surface-active: var(--ui-surface-hover);
+	--ui-ink-active: var(--ui-ink-hover);
+	--ui-surface-selected: if(
+		style(--ui-appearance: solid): var(--ui-color);
+		else: color-mix(in oklab, var(--ui-color) 24%, var(--color-base-100))
+	);
+	--ui-ink-selected: if(
+		style(--ui-appearance: solid): var(--ui-content);
+		else: var(--ui-family-ink)
+	);
+	--ui-border-hover: if(
+		style(--ui-appearance: solid): --ui-brighten(var(--ui-color));
+		style(--ui-appearance: text): transparent;
+		else: color-mix(in oklab, var(--ui-border) 76%, var(--ui-color))
+	);
+	--ui-border-active: var(--ui-border-hover);
+	--ui-border-selected: var(--ui-color);
+	--ui-focus-ring: color-mix(in oklab, var(--ui-color) 62%, transparent);
+	/* Every appearance emits the same full resolved colour. Surface-bearing
+	   appearances bloom around their surface; text blooms around its ink so a
+	   transparent treatment never reveals a phantom box. Components consume
+	   both roles generically and do not reinterpret appearance. */
+	--ui-surface-glow: if(
+		style(--ui-appearance: text): transparent;
+		else: color-mix(in oklab, var(--ui-color) 14%, transparent)
+	);
+	--ui-surface-glow-hover: if(
+		style(--ui-appearance: text): transparent;
+		else: var(--ui-color)
+	);
+	--ui-surface-glow-active: var(--ui-surface-glow-hover);
+	--ui-ink-glow-hover: if(
+		style(--ui-appearance: text): var(--ui-color);
+		else: transparent
+	);
+	--ui-ink-glow-active: var(--ui-ink-glow-hover);
+	--ui-surface-raised: color-mix(in oklab, var(--ui-surface-occluding) 88%, white);
+	--ui-surface-inset: color-mix(in oklab, var(--ui-surface-occluding) 92%, black);
+	--ui-ink-muted: color-mix(in oklab, var(--ui-ink) 62%, transparent);
+	--ui-ink-faint: color-mix(in oklab, var(--ui-ink) 38%, transparent);
+	/* Marks are foreground-only paint: counters, rules, waveform bars, meter
+	   fills and status glyphs sit on the ambient theme surface rather than on
+	   --ui-surface. Raw ladder colours become illegible at the pale end, so a
+	   mark uses the same hue-preserving, surface-safe family ink as non-solid
+	   foregrounds. Appearance remains irrelevant by design. */
+	--ui-mark: var(--ui-family-ink);
+	--ui-mark-muted: color-mix(in oklab, var(--ui-mark) 62%, transparent);
+	--ui-track: color-mix(in oklab, var(--ui-mark) 18%, transparent);
+	--ui-surface-disabled: color-mix(in oklab, var(--ui-surface) 46%, var(--color-base-100));
+	--ui-ink-disabled: color-mix(in oklab, var(--ui-ink) 42%, transparent);
+	--ui-border-disabled: color-mix(in oklab, var(--ui-border) 42%, transparent);
+	--ui-mark-disabled: color-mix(in oklab, var(--ui-mark) 42%, transparent);
 }
 
 /* ── Font role helpers ── */
@@ -559,7 +648,8 @@
    shrink unevenly. The active pill is anchored to the active tab via CSS anchor
    positioning, so it always matches that tab's real box — any count, any width,
    even mid-scroll. Fallback: the active tab carries the pill look itself. */
-.seg {
+@scope (.seg) {
+:scope {
 	position: relative;
 	display: flex;
 	width: fit-content;
@@ -574,7 +664,7 @@
 	scrollbar-width: none;
 	scroll-snap-type: x proximity;
 }
-.seg::-webkit-scrollbar {
+:scope::-webkit-scrollbar {
 	display: none;
 }
 .seg-btn {
@@ -627,13 +717,15 @@
 			height 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
 	}
 }
+}
 
 /* ── Anchored top-layer popover ──
    A Popover-API panel anchored to its trigger, flipped within the viewport by
    position-try, animated with @starting-style + allow-discrete. Top-layer
    means it is never clipped by an ancestor. Set `position-anchor` (and an
    `anchor-name` on the trigger) inline per instance. */
-.ui-anchored {
+@scope (.ui-anchored) {
+	:scope {
 	margin: 0;
 	inset: auto;
 	width: 224px;
@@ -651,25 +743,20 @@
 		transform 0.2s,
 		overlay 0.2s allow-discrete,
 		display 0.2s allow-discrete;
-}
-.ui-anchored:popover-open {
-	opacity: 1;
-	transform: none;
-}
-@starting-style {
-	.ui-anchored:popover-open {
-		opacity: 0;
-		transform: translateY(-6px) scale(0.96);
 	}
-}
-@supports (anchor-name: --a) {
-	.ui-anchored {
-		position-area: block-end span-inline-end;
-		margin-top: 8px;
-		position-try-fallbacks:
-			flip-block,
-			flip-inline,
-			flip-block flip-inline;
+	:scope:popover-open { opacity: 1; transform: none; }
+	@starting-style {
+		:scope:popover-open {
+			opacity: 0;
+			transform: translateY(-6px) scale(0.96);
+		}
+	}
+	@supports (anchor-name: --a) {
+		:scope {
+			position-area: block-end span-inline-end;
+			margin-top: 8px;
+			position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+		}
 	}
 }
 
@@ -680,7 +767,8 @@
    sheet is unlayered, so any padding declared here would defeat the
    component's layered `p-3` utility — the panel declares NO padding.
    The wheels are scroll-snap columns with hidden scrollbars and a fade mask. */
-.ui-picker-pop {
+@scope (.ui-picker-pop) {
+	:scope {
 	margin: 0;
 	inset: auto;
 	width: 268px;
@@ -698,46 +786,31 @@
 		transform 0.18s,
 		overlay 0.18s allow-discrete,
 		display 0.18s allow-discrete;
-}
-.ui-picker-pop:popover-open {
-	opacity: 1;
-	transform: none;
-}
-@starting-style {
-	.ui-picker-pop:popover-open {
-		opacity: 0;
-		transform: translateY(-6px) scale(0.98);
 	}
-}
-@supports (anchor-name: --x) {
-	.ui-picker-pop {
-		position-area: block-end span-inline-end;
-		margin-top: 8px;
-		position-try-fallbacks:
-			flip-block,
-			flip-inline,
-			flip-block flip-inline;
+	:scope:popover-open { opacity: 1; transform: none; }
+	@starting-style {
+		:scope:popover-open {
+			opacity: 0;
+			transform: translateY(-6px) scale(0.98);
+		}
 	}
-}
-.ui-wheel {
-	scrollbar-width: none;
-	scroll-snap-type: y proximity;
-}
-.ui-wheel::-webkit-scrollbar {
-	display: none;
-}
-.ui-wheel > button {
-	scroll-snap-align: center;
-}
-/* fade the top/bottom of the hour/minute wheels into the panel */
-.ui-wheel-mask {
-	background: linear-gradient(
-		var(--c-panel-2) 2%,
-		transparent 34%,
-		transparent 66%,
-		var(--c-panel-2) 98%
-	);
-	border-radius: var(--r-md);
+	@supports (anchor-name: --x) {
+		:scope {
+			position-area: block-end span-inline-end;
+			margin-top: 8px;
+			position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+		}
+	}
+	.ui-wheel { scrollbar-width: none; scroll-snap-type: y proximity; }
+	.ui-wheel::-webkit-scrollbar { display: none; }
+	.ui-wheel > button { scroll-snap-align: center; }
+	/* fade the top/bottom of the hour/minute wheels into the panel */
+	.ui-wheel-mask {
+		background: linear-gradient(
+			var(--c-panel-2) 2%, transparent 34%, transparent 66%, var(--c-panel-2) 98%
+		);
+		border-radius: var(--r-md);
+	}
 }
 
 /* ── MonthCalendar grid morph (calendar.tsx) ──
@@ -807,6 +880,7 @@
       The disc reads --step-accent (set inline per step by StepNode); the
       shimmer is the CSS port of the legacy framer-motion rotating gradient
       (4s linear loop, opacity 0→.5→0), guarded by prefers-reduced-motion. ── */
+@scope (.ui-steps) {
 .ui-steps-line {
 	background: linear-gradient(
 		to bottom,
@@ -848,6 +922,7 @@
 		animation: ui-step-shimmer 4s linear infinite;
 	}
 }
+}
 @keyframes ui-step-shimmer {
 	0% {
 		opacity: 0;
@@ -863,7 +938,8 @@
 }
 
 /* ── Mark — inline emphasis (heir to rough-notation) ── */
-.ui-mark {
+@scope (.ui-mark) {
+:scope {
 	background: none;
 	color: inherit;
 	font-style: inherit;
@@ -887,13 +963,15 @@
 	border-radius: 0.2em;
 	padding-inline: 0.15em;
 }
+}
 
 /* ── Accordion — native <details> animated via ::details-content ── */
-.ui-acc {
+@scope (.ui-acc) {
+:scope {
 	border-bottom: 1px solid var(--c-line);
 	interpolate-size: allow-keywords;
 }
-.ui-acc summary {
+:scope summary {
 	display: flex;
 	align-items: baseline;
 	justify-content: space-between;
@@ -904,10 +982,10 @@
 	color: var(--c-text);
 	font-weight: 500;
 }
-.ui-acc summary::-webkit-details-marker {
+:scope summary::-webkit-details-marker {
 	display: none;
 }
-.ui-acc .ui-acc-icon {
+:scope .ui-acc-icon {
 	position: relative;
 	flex: 0 0 auto;
 	width: 0.85rem;
@@ -915,8 +993,8 @@
 	align-self: center;
 	color: var(--c-accent);
 }
-.ui-acc .ui-acc-icon::before,
-.ui-acc .ui-acc-icon::after {
+:scope .ui-acc-icon::before,
+:scope .ui-acc-icon::after {
 	content: "";
 	position: absolute;
 	inset: 0;
@@ -924,36 +1002,38 @@
 	background: currentColor;
 	transition: transform 0.25s ease;
 }
-.ui-acc .ui-acc-icon::before {
+:scope .ui-acc-icon::before {
 	width: 100%;
 	height: 2px;
 }
-.ui-acc .ui-acc-icon::after {
+:scope .ui-acc-icon::after {
 	width: 2px;
 	height: 100%;
 }
-.ui-acc[open] .ui-acc-icon::after {
+:scope[open] .ui-acc-icon::after {
 	transform: rotate(90deg) scaleY(0);
 }
-.ui-acc::details-content {
+:scope::details-content {
 	height: 0;
 	overflow: clip;
 	transition:
 		height 0.3s ease,
 		content-visibility 0.3s allow-discrete;
 }
-.ui-acc[open]::details-content {
+:scope[open]::details-content {
 	height: auto;
 }
-.ui-acc .ui-acc-body {
+:scope .ui-acc-body {
 	padding: 0 0 1.25rem;
 	color: var(--c-muted);
 	line-height: 1.65;
 }
+}
 
 /* ── Carousel — scroll-snap strip; buttons/markers are a Chromium/Safari
       enhancement, elsewhere it's a swipeable scroller. ── */
-.ui-carousel {
+@scope (.ui-carousel) {
+:scope {
 	display: flex;
 	gap: 1rem;
 	overflow-x: auto;
@@ -963,14 +1043,14 @@
 	padding: 0.25rem;
 	scroll-marker-group: after;
 }
-.ui-carousel::-webkit-scrollbar {
+:scope::-webkit-scrollbar {
 	display: none;
 }
-.ui-carousel > * {
+:scope > * {
 	flex: 0 0 min(26rem, 85%);
 	scroll-snap-align: center;
 }
-.ui-carousel > *::scroll-marker {
+:scope > *::scroll-marker {
 	content: "";
 	width: 8px;
 	height: 8px;
@@ -978,17 +1058,17 @@
 	background: var(--c-line-strong);
 	transition: background 0.2s;
 }
-.ui-carousel > *::scroll-marker:target-current {
+:scope > *::scroll-marker:target-current {
 	background: var(--c-accent);
 }
-.ui-carousel::scroll-marker-group {
+:scope::scroll-marker-group {
 	display: flex;
 	justify-content: center;
 	gap: 0.6rem;
 	margin-top: 1rem;
 }
-.ui-carousel::scroll-button(left),
-.ui-carousel::scroll-button(right) {
+:scope::scroll-button(left),
+:scope::scroll-button(right) {
 	position: absolute;
 	align-self: center;
 	width: 2.4rem;
@@ -999,19 +1079,21 @@
 	color: var(--c-text);
 	cursor: pointer;
 }
-.ui-carousel::scroll-button(left) {
+:scope::scroll-button(left) {
 	content: "←" / "Previous";
 }
-.ui-carousel::scroll-button(right) {
+:scope::scroll-button(right) {
 	content: "→" / "Next";
 }
-.ui-carousel::scroll-button(*):disabled {
+:scope::scroll-button(*):disabled {
 	opacity: 0.3;
 	cursor: default;
 }
+}
 
 /* ── Facets — tabs + glyph rail + swapped pane (facets.tsx) ── */
-.facets {
+@scope (.facets) {
+:scope {
 	border-radius: var(--r-xl);
 	background: var(--c-panel);
 	box-shadow: inset 0 0 0 1px var(--c-line);
@@ -1164,6 +1246,7 @@
 		font-size: var(--t-sm);
 	}
 }
+}
 
 /* ── DepthCard (CSS tilt / flip / conic glow) ──
       Perspective tilt via --dc-tx/--dc-ty (set by JS), flip on the inner
@@ -1173,7 +1256,8 @@
 	inherits: true;
 	initial-value: 0deg;
 }
-.depth-card {
+@scope (.depth-card) {
+:scope {
 	--dc-tx: 0deg;
 	--dc-ty: 0deg;
 	position: relative;
@@ -1188,7 +1272,7 @@
 	transform: rotateX(var(--dc-tx)) rotateY(var(--dc-ty));
 	transition: transform 0.18s ease-out;
 }
-.depth-card .dc-face {
+:scope .dc-face {
 	position: absolute;
 	inset: 0;
 	/* NO overflow:hidden — it is a grouping property that flattens the 3D
@@ -1204,18 +1288,18 @@
 	transform-style: preserve-3d;
 	transition: transform 0.6s cubic-bezier(0.4, 0.1, 0.2, 1);
 }
-.depth-card .dc-back {
+:scope .dc-back {
 	transform: rotateY(180deg);
 }
-.depth-card-flipped .dc-front {
+:scope.depth-card-flipped .dc-front {
 	transform: rotateY(-180deg);
 }
-.depth-card-flipped .dc-back {
+:scope.depth-card-flipped .dc-back {
 	transform: rotateY(0deg);
 }
 /* Pointer-angled conic edge glow (the GlowingEffect heir): a masked ring that
    brightens on hover, its bright arc facing the cursor. */
-.depth-card .dc-face::after {
+:scope .dc-face::after {
 	content: "";
 	position: absolute;
 	inset: 0;
@@ -1235,12 +1319,12 @@
 	transition: opacity 0.3s;
 	pointer-events: none;
 }
-.depth-card:hover .dc-face::after {
+:scope:hover .dc-face::after {
 	opacity: 1;
 }
 @media (prefers-reduced-motion: reduce) {
 	.dc-inner,
-	.depth-card .dc-face {
+	:scope .dc-face {
 		transition: none;
 	}
 }
@@ -1264,7 +1348,7 @@
    card is the design authority for its own faces: every text style here
    carries the .depth-card prefix (≥(0,2,0)) so it beats prose everywhere —
    prose-matched spacing, muted body distinct from headings. */
-.depth-card .dc-sf-title {
+:scope .dc-sf-title {
 	margin: 0;
 	font-family: var(--font-display);
 	font-size: var(--t-xl);
@@ -1274,7 +1358,7 @@
 	transform: translateZ(50px);
 	backface-visibility: hidden;
 }
-.depth-card .dc-sf-desc {
+:scope .dc-sf-desc {
 	margin: 0 0 1.1rem;
 	font-size: var(--t-md);
 	line-height: 1.55;
@@ -1295,7 +1379,7 @@
 	box-shadow: 0 10px 18px -8px rgb(0 0 0 / 0.35);
 	transition: box-shadow 0.2s ease-out;
 }
-.depth-card:hover .dc-sf-media {
+:scope:hover .dc-sf-media {
 	box-shadow:
 		0 20px 25px -5px rgb(0 0 0 / 0.3),
 		0 8px 10px -6px rgb(0 0 0 / 0.3);
@@ -1356,7 +1440,7 @@
 	background: var(--c-page-2);
 	border-radius: var(--r-xl) var(--r-xl) 0 0;
 }
-.depth-card .dc-sb-title {
+:scope .dc-sb-title {
 	margin: 0;
 	font-family: var(--font-display);
 	font-size: var(--t-xl);
@@ -1377,7 +1461,7 @@
 .dc-sb-return:hover {
 	color: var(--c-text);
 }
-.depth-card .dc-sb-body {
+:scope .dc-sb-body {
 	flex: 1;
 	min-height: 0;
 	overflow-y: auto;
@@ -1389,14 +1473,16 @@
 /* Body rhythm, card-owned (same rationale as above): prose-matched block
    margins, muted text — consumer utility classes cannot and should not
    fight these (the card is the design authority for its own faces). */
-.depth-card .dc-sb-body p,
-.depth-card .dc-sb-body ul,
-.depth-card .dc-sb-body ol {
+:scope .dc-sb-body p,
+:scope .dc-sb-body ul,
+:scope .dc-sb-body ol {
 	margin: 0 0 1.1rem;
 	color: var(--c-muted);
 }
+}
 
 /* ── DocsShell ── */
+@scope (.docs-shell) {
 .docs-progress {
 	display: none;
 }
@@ -1451,14 +1537,16 @@
 	color: var(--c-accent);
 	background: var(--c-accent-soft);
 }
+}
 
 /* ── Prose — long-form document rhythm for DocsShell articles ── */
-.ui-prose {
+@scope (.ui-prose) {
+:scope {
 	font-size: var(--t-lg);
 	line-height: 1.7;
 	color: var(--c-text);
 }
-.ui-prose h1 {
+:scope h1 {
 	font-family: var(--font-display);
 	font-weight: 500;
 	font-size: var(--t-4xl);
@@ -1466,7 +1554,7 @@
 	letter-spacing: -0.015em;
 	margin: 0 0 1rem;
 }
-.ui-prose h2 {
+:scope h2 {
 	font-family: var(--font-display);
 	font-weight: 500;
 	font-size: var(--t-3xl);
@@ -1474,43 +1562,44 @@
 	margin: 2.75rem 0 0.9rem;
 	scroll-margin-top: 6rem;
 }
-.ui-prose h3 {
+:scope h3 {
 	font-family: var(--font-display);
 	font-weight: 500;
 	font-size: var(--t-xl);
 	margin: 2rem 0 0.6rem;
 	scroll-margin-top: 6rem;
 }
-.ui-prose p {
+:scope p {
 	margin: 0 0 1.1rem;
 	color: color-mix(in oklab, var(--c-text) 88%, transparent);
 }
-.ui-prose ul,
-.ui-prose ol {
+:scope ul,
+:scope ol {
 	margin: 0 0 1.1rem;
 	padding-left: 1.4rem;
 	display: grid;
 	gap: 0.4rem;
 	color: color-mix(in oklab, var(--c-text) 84%, transparent);
 }
-.ui-prose li::marker {
+:scope li::marker {
 	color: var(--c-accent);
 }
-.ui-prose blockquote {
+:scope blockquote {
 	margin: 1.5rem 0;
 	padding: 0.2rem 0 0.2rem 1.2rem;
 	border-left: 3px solid var(--c-accent);
 	color: var(--c-muted);
 	font-style: italic;
 }
-.ui-prose a {
+:scope a {
 	color: var(--c-accent);
 	text-decoration: underline;
 	text-decoration-color: color-mix(in oklab, var(--c-accent) 40%, transparent);
 	text-underline-offset: 0.2em;
 }
-.ui-prose a:hover {
+:scope a:hover {
 	text-decoration-color: var(--c-accent);
+}
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1518,14 +1607,20 @@
 	.ui-in {
 		animation: none;
 	}
-	.seg-pill {
-		transition: none;
+}
+@scope (.seg) {
+	@media (prefers-reduced-motion: reduce) {
+		.seg-pill { transition: none; }
 	}
-	.ui-acc::details-content {
-		transition: none;
+}
+@scope (.ui-acc) {
+	@media (prefers-reduced-motion: reduce) {
+		:scope::details-content { transition: none; }
 	}
-	.docs-progress {
-		display: none;
+}
+@scope (.docs-shell) {
+	@media (prefers-reduced-motion: reduce) {
+		.docs-progress { display: none; }
 	}
 }
 
@@ -1538,21 +1633,24 @@
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── Eyebrow ── */
-.ui-eyebrow {
-	font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-	font-size: var(--t-2xs);
-	text-transform: uppercase;
-	letter-spacing: 0.32em;
-	color: var(--ui-primitive-mark, var(--c-faint));
+@scope (.ui-eyebrow) {
+	:scope {
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: var(--t-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.32em;
+		color: var(--c-faint);
+	}
+	:scope[data-ui-color-base] { color: var(--ui-mark); }
 }
 
 /* ── StatusDot ── */
-.ui-dot {
-	position: relative;
-	display: inline-grid;
-	place-items: center;
-}
 @scope (.ui-dot) {
+	:scope {
+		position: relative;
+		display: inline-grid;
+		place-items: center;
+	}
 	:scope > .ui-dot-ping {
 		position: absolute;
 		inset: 0;
@@ -1566,12 +1664,12 @@
 }
 
 /* ── Avatar ── */
-.ui-avatar {
-	position: relative;
-	display: inline-block;
-	flex-shrink: 0;
-}
 @scope (.ui-avatar) {
+	:scope {
+		position: relative;
+		display: inline-block;
+		flex-shrink: 0;
+	}
 	:scope > .ui-avatar-face {
 		display: grid;
 		place-items: center;
@@ -1595,16 +1693,17 @@
 }
 
 /* ── AvatarStack ── */
-.ui-avatar-stack {
-	display: flex;
-	align-items: center;
-}
-.ui-avatar-stack[data-color] {
-	color: var(--ui-primitive-mark);
-}
 @scope (.ui-avatar-stack) {
+	:scope {
+		display: flex;
+		align-items: center;
+	}
+	:scope[data-ui-color-base] { color: var(--ui-mark); }
 	:scope > .ui-avatar-stack-item {
 		position: relative;
+		display: grid;
+		place-items: center;
+		line-height: 0;
 		border-radius: var(--r-pill);
 	}
 	:scope > .ui-avatar-stack-extra {
@@ -1618,60 +1717,66 @@
 		color: var(--c-muted);
 		background: var(--c-panel-2);
 	}
+	:scope[data-ui-color-base] > .ui-avatar-stack-extra {
+		color: var(--ui-ink-muted);
+		background: var(--ui-surface-raised);
+	}
 }
 
 /* ── Chip — tone via data attribute (cascading, semantic) ── */
-.ui-chip {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	border-radius: var(--r-pill);
-	padding: 4px 10px;
-	font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-	font-size: var(--t-2xs);
-	text-transform: uppercase;
-	letter-spacing: 0.16em;
-	background: var(--c-panel-2);
-	color: var(--c-muted);
-	box-shadow: 0 0 0 1px var(--c-line);
-}
-.ui-chip[data-color] {
-	background: var(--ui-primitive-surface);
-	color: var(--ui-primitive-ink);
-	box-shadow: 0 0 0 1px var(--ui-primitive-border);
-}
-.ui-chip[data-tone="accent"] {
-	background: var(--c-accent-soft);
-	color: var(--c-accent);
-	box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-accent) 35%, transparent);
-}
-.ui-chip[data-tone="live"] {
-	background: color-mix(in oklab, var(--c-live) 15%, transparent);
-	color: var(--c-live);
-	box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-live) 30%, transparent);
-}
-.ui-chip[data-color][data-tone] {
-	background: var(--ui-primitive-surface);
-	color: var(--ui-primitive-ink);
-	box-shadow: 0 0 0 1px var(--ui-primitive-border);
+@scope (.ui-chip) {
+	:scope {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		border-radius: var(--r-pill);
+		padding: 4px 10px;
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: var(--t-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.16em;
+		background: var(--c-panel-2);
+		color: var(--c-muted);
+		box-shadow: 0 0 0 1px var(--c-line);
+	}
+	:scope[data-ui-color-base] {
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: 0 0 0 1px var(--ui-border);
+	}
+	:scope[data-tone="accent"] {
+		background: var(--c-accent-soft);
+		color: var(--c-accent);
+		box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-accent) 35%, transparent);
+	}
+	:scope[data-tone="live"] {
+		background: color-mix(in oklab, var(--c-live) 15%, transparent);
+		color: var(--c-live);
+		box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-live) 30%, transparent);
+	}
+	:scope[data-ui-color-base][data-tone] {
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: 0 0 0 1px var(--ui-border);
+	}
 }
 
 /* ── Breadcrumb — wayfinding trail; chevrons are pure CSS so the DOM stays
       a clean nav>ol>li list ── */
-.ui-breadcrumb {
-	font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-	font-size: var(--t-xs);
-	text-transform: uppercase;
-	letter-spacing: 0.14em;
-}
-.ui-breadcrumb[data-color] {
-	border-radius: var(--r-sm);
-	padding: 6px 9px;
-	background: var(--ui-primitive-surface);
-	color: var(--ui-primitive-ink);
-	box-shadow: inset 0 0 0 1px var(--ui-primitive-border);
-}
 @scope (.ui-breadcrumb) {
+	:scope {
+		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
+		font-size: var(--t-xs);
+		text-transform: uppercase;
+		letter-spacing: 0.14em;
+	}
+	:scope[data-ui-color-base] {
+		border-radius: var(--r-sm);
+		padding: 6px 9px;
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: inset 0 0 0 1px var(--ui-border);
+	}
 	:scope > .ui-breadcrumb-trail {
 		display: flex;
 		align-items: center;
@@ -1693,6 +1798,9 @@
 		color: var(--c-faint);
 		user-select: none;
 	}
+	:scope[data-ui-color-base] .ui-breadcrumb-step + .ui-breadcrumb-step::before {
+		color: var(--ui-ink-faint);
+	}
 	.ui-breadcrumb-link {
 		border: 0;
 		margin: 0;
@@ -1711,6 +1819,12 @@
 		outline: 2px solid color-mix(in oklab, var(--c-accent) 55%, transparent);
 		outline-offset: 1px;
 	}
+	:scope[data-ui-color-base] .ui-breadcrumb-link {
+		color: var(--ui-ink-muted);
+	}
+	:scope[data-ui-color-base] .ui-breadcrumb-link:focus-visible {
+		outline-color: var(--ui-focus-ring);
+	}
 	.ui-breadcrumb-here {
 		padding: 2px 4px;
 		color: var(--c-text);
@@ -1719,10 +1833,15 @@
 		/* An inert ANCESTOR (no href/handler) reads quieter than the page. */
 		color: var(--c-muted);
 	}
-}
-@media (hover: hover) {
-	.ui-breadcrumb .ui-breadcrumb-link:hover {
-		color: var(--c-text);
+	:scope[data-ui-color-base] .ui-breadcrumb-here {
+		color: var(--ui-ink);
+	}
+	:scope[data-ui-color-base] .ui-breadcrumb-here:not([aria-current]) {
+		color: var(--ui-ink-muted);
+	}
+	@media (hover: hover) {
+		.ui-breadcrumb-link:hover { color: var(--c-text); }
+		:scope[data-ui-color-base] .ui-breadcrumb-link:hover { color: var(--ui-ink); }
 	}
 }
 /* ── RadialMenu — a fan of chips around its TRIGGER (Popover API + anchor
@@ -1739,7 +1858,8 @@
       guarantees neighbouring cards (chip + gap + label block) clear each
       other in every direction, at any token values. Resize the tokens and
       the clearance re-derives itself. ── */
-.ui-radial-trigger {
+@scope (.ui-radial-trigger) {
+:scope {
 	border: 0;
 	background: none;
 	font: inherit;
@@ -1747,7 +1867,9 @@
 	cursor: pointer;
 	padding: 0;
 }
-.ui-radial {
+}
+@scope (.ui-radial) {
+:scope {
 	/* Design tokens — the ONLY authored quantities; everything else is
 	   derived. (--radial-radius/--radial-sweep/--radial-down arrive from
 	   the component as its public props.) */
@@ -1768,13 +1890,13 @@
 }
 @supports (anchor-name: --x) {
 	/* position-anchor arrives inline from the component (per-instance). */
-	.ui-radial {
+	:scope {
 		inset: auto;
 		left: anchor(center);
 		top: anchor(center);
 	}
 }
-.ui-radial::backdrop {
+:scope::backdrop {
 	/* The veil is the CONTRAST GUARANTEE: whatever the page or a live
 	   canvas shows, the fan opens over a reliably dark backdrop — warm
 	   ink-tinted in light mode, deep space in dark (light-dark()). Deep
@@ -1782,6 +1904,7 @@
 	   parchment came out an indeterminate olive rather than a dimmed page. */
 	background: light-dark(rgb(18 14 8 / 0.72), rgb(2 2 8 / 0.72));
 	backdrop-filter: blur(8px);
+}
 }
 @scope (.ui-radial) {
 	:scope > .ui-radial-item {
@@ -1884,131 +2007,132 @@
 		text-shadow: 0 1px 4px rgb(0 0 0 / 0.5);
 	}
 }
-@media (hover: hover) {
-	.ui-radial .ui-radial-item:hover .ui-radial-chip {
+@scope (.ui-radial) {
+	@media (hover: hover) {
+	.ui-radial-item:hover .ui-radial-chip {
 		box-shadow:
 			0 0 0 2px color-mix(in oklab, var(--c-accent) 70%, transparent),
 			0 10px 24px -8px rgb(0 0 0 / 0.45);
 	}
 }
+}
 /* Entrance: chips launch from the trigger, staggered along the fan. */
-@starting-style {
-	.ui-radial:popover-open .ui-radial-item {
+@scope (.ui-radial) {
+	@starting-style {
+	:scope:popover-open .ui-radial-item {
 		translate: -50% calc(-1 * var(--radial-chip) / 2);
 		opacity: 0;
 	}
-}
-.ui-radial:not(:popover-open) .ui-radial-item {
+	}
+	:scope:not(:popover-open) .ui-radial-item {
 	opacity: 0;
-}
+    }
 /* Five chips launching outward on an overshoot curve is exactly the
    vestibular pattern this query exists for: keep the fade, drop the
    flight (and the stagger that draws the eye across it). */
-@media (prefers-reduced-motion: reduce) {
+	@media (prefers-reduced-motion: reduce) {
 	/* Scoped through .ui-radial so it doesn't descend below the
 	   :not(:popover-open) rule above it. */
-	.ui-radial .ui-radial-item {
+	.ui-radial-item {
 		transition:
 			opacity 120ms ease,
 			display 120ms allow-discrete;
 		transition-delay: 0s;
 	}
 	@starting-style {
-		.ui-radial:popover-open .ui-radial-item {
+		:scope:popover-open .ui-radial-item {
 			translate: calc(cos(var(--a)) * var(--r) - 50%)
 				calc(sin(var(--a)) * var(--r) - var(--radial-chip) / 2);
 		}
 	}
 }
+}
 
 /* ── Button ── */
-.ui-btn {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-	border: 0;
-	border-radius: var(--r-pill);
-	padding: 8px 16px;
-	font: inherit;
-	font-size: var(--t-sm);
-	font-weight: 500;
-	cursor: pointer;
-	background: transparent;
-	transition: all 0.2s;
-}
-.ui-btn:active:not(:disabled) {
-	transform: scale(0.97);
-}
-.ui-btn:disabled {
-	cursor: not-allowed;
-	opacity: 0.5;
-}
-.ui-btn[data-variant="solid"] {
-	background: var(--ui-resolved-color);
-	color: var(--ui-resolved-content);
-	box-shadow: inset 0 0 0 1px var(--ui-resolved-color);
-}
-.ui-btn[data-variant="solid"]:hover:not(:disabled) {
-	filter: brightness(1.1);
-	box-shadow: 0 4px 24px -6px var(--ui-resolved-color);
-}
-.ui-btn[data-variant="soft"] {
-	background: color-mix(in oklab, var(--ui-resolved-color) 15%, transparent);
-	color: var(--ui-resolved-ink);
-	box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ui-resolved-color) 32%, transparent);
-}
-.ui-btn[data-variant="soft"]:hover:not(:disabled) {
-	background: color-mix(in oklab, var(--ui-resolved-color) 22%, transparent);
-}
-.ui-btn[data-variant="outline"] {
-	background: transparent;
-	color: var(--ui-resolved-ink);
-	box-shadow: inset 0 0 0 1px var(--ui-resolved-color);
-}
-.ui-btn[data-variant="outline"]:hover:not(:disabled) {
-	background: color-mix(in oklab, var(--ui-resolved-color) 10%, transparent);
-}
-.ui-btn[data-variant="text"] {
-	padding-inline: 4px;
-	color: var(--ui-resolved-ink);
-}
-.ui-btn[data-variant="ghost"] {
-	color: var(--ui-resolved-ink);
-	box-shadow: 0 0 0 1px var(--c-line-strong);
-}
-.ui-btn[data-variant="ghost"]:hover:not(:disabled) {
-	background: var(--c-panel-2);
-	box-shadow: 0 0 0 1px var(--c-muted);
+@scope (.ui-btn) {
+	:scope {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		border: 0;
+		border-radius: var(--r-pill);
+		padding: 8px 16px;
+		font: inherit;
+		font-size: var(--t-sm);
+		font-weight: 500;
+		cursor: pointer;
+		background: transparent;
+		transition: all 0.2s;
+	}
+	:scope:active:not(:disabled) { transform: scale(0.97); }
+	:scope:disabled { cursor: not-allowed; opacity: 0.5; }
+	:scope[data-ui-color-base] {
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: inset 0 0 0 1px var(--ui-border);
+	}
+	:scope[data-ui-color-base]:hover:not(:disabled) {
+		background: var(--ui-surface-hover);
+		color: var(--ui-ink-hover);
+		text-shadow: 0 0 14px var(--ui-ink-glow-hover);
+		box-shadow:
+			inset 0 0 0 1px var(--ui-border-hover),
+			0 4px 24px -6px var(--ui-surface-glow-hover);
+	}
+	:scope[data-ui-color-base]:active:not(:disabled) {
+		background: var(--ui-surface-active);
+		color: var(--ui-ink-active);
+		text-shadow: 0 0 14px var(--ui-ink-glow-active);
+		box-shadow:
+			inset 0 0 0 1px var(--ui-border-active),
+			0 4px 24px -6px var(--ui-surface-glow-active);
+	}
+	:scope[data-ui-color-base]:focus-visible {
+		outline: 2px solid var(--ui-focus-ring);
+		outline-offset: 2px;
+	}
+	:scope[data-ui-color-base]:is([aria-pressed="true"], [aria-selected="true"]) {
+		background: var(--ui-surface-selected);
+		color: var(--ui-ink-selected);
+		box-shadow: inset 0 0 0 1px var(--ui-border-selected);
+	}
+	:scope[data-ui-color-base]:disabled {
+		opacity: 1;
+		background: var(--ui-surface-disabled);
+		color: var(--ui-ink-disabled);
+		box-shadow: inset 0 0 0 1px var(--ui-border-disabled);
+	}
+	:scope[data-ui-appearance="text"] { padding-inline: 4px; }
 }
 
 /* ── Panel ── */
-.ui-panel {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-	border-radius: var(--r-lg);
-	background: var(--c-panel);
-	padding: var(--ui-panel-pad);
-	box-shadow: 0 0 0 1px var(--c-line);
-}
-.ui-panel[data-color] {
-	background: var(--ui-primitive-surface);
-	color: var(--ui-primitive-ink);
-	box-shadow: inset 0 0 0 1px var(--ui-primitive-border);
-}
-.ui-panel[data-color]::before {
-	background: linear-gradient(to right, transparent, var(--ui-primitive-border), transparent);
-}
-.ui-panel::before {
-	content: "";
-	pointer-events: none;
-	position: absolute;
-	inset: 0 0 auto 0;
-	height: 1px;
-	background: linear-gradient(to right, transparent, var(--c-line-strong), transparent);
-}
 @scope (.ui-panel) {
+	:scope {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		border-radius: var(--r-lg);
+		background: var(--c-panel);
+		padding: var(--ui-panel-pad);
+		box-shadow: 0 0 0 1px var(--c-line);
+	}
+	:scope[data-ui-color-base] {
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: inset 0 0 0 1px var(--ui-border);
+	}
+	:scope::before {
+		content: "";
+		pointer-events: none;
+		position: absolute;
+		inset: 0 0 auto 0;
+		height: 1px;
+		background: linear-gradient(to right, transparent, var(--c-line-strong), transparent);
+	}
+	:scope[data-ui-color-base]::before {
+		background: linear-gradient(to right, transparent, var(--ui-border), transparent);
+	}
 	:scope > .ui-panel-glow {
 		pointer-events: none;
 		position: absolute;
@@ -2020,6 +2144,10 @@
 		background: var(--c-accent);
 		opacity: 0.07;
 		filter: blur(48px);
+	}
+	:scope[data-ui-color-base] > .ui-panel-glow {
+		background: var(--ui-surface-glow);
+		opacity: 1;
 	}
 	:scope > header {
 		margin-bottom: 16px;
@@ -2042,6 +2170,9 @@
 		letter-spacing: 0.1em;
 		color: var(--c-faint);
 	}
+	:scope[data-ui-color-base] > header .ui-panel-index {
+		color: var(--ui-ink-faint);
+	}
 	:scope > header h2 {
 		margin: 0;
 		font-family: var(--font-display, Georgia, serif);
@@ -2051,6 +2182,9 @@
 		line-height: 1;
 		color: var(--c-text);
 	}
+	:scope[data-ui-color-base] > header h2 {
+		color: var(--ui-ink);
+	}
 	:scope > header .ui-panel-kicker {
 		margin: 6px 0 0;
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
@@ -2058,6 +2192,9 @@
 		text-transform: uppercase;
 		letter-spacing: 0.2em;
 		color: var(--c-faint);
+	}
+	:scope[data-ui-color-base] > header .ui-panel-kicker {
+		color: var(--ui-ink-faint);
 	}
 }
 /* Cascading density knob. The panel reads two REGISTERED tokens
@@ -2077,30 +2214,30 @@
 }
 
 /* ── Counter ── */
-.ui-counter {
-	font-variant-numeric: tabular-nums;
-}
-.ui-counter[data-color] {
-	color: var(--ui-primitive-mark);
+@scope (.ui-counter) {
+	:scope { font-variant-numeric: tabular-nums; }
+	/* Counter is a glyph-only primitive: it paints no surface for content ink
+	   to contrast against, so its resolved family colour is a mark. */
+	:scope[data-ui-color-base] { color: var(--ui-mark); }
 }
 
 /* ── Sparkline ── */
-.ui-sparkline {
-	overflow: visible;
+@scope (.ui-sparkline) {
+	:scope { overflow: visible; }
 }
 
 /* ── Waveform ── */
-.ui-waveform {
-	display: flex;
-	/* Percentage-height bars need a definite block size: min-height alone does
-	   not establish their percentage basis. Consumers can override this
-	   intrinsic size through the component's class prop. */
-	block-size: 32px;
-	min-inline-size: 132px;
-	align-items: center;
-	gap: 3px;
-}
 @scope (.ui-waveform) {
+	:scope {
+		display: flex;
+		/* Percentage-height bars need a definite block size: min-height alone does
+		   not establish their percentage basis. Consumers can override this
+		   intrinsic size through the component's class prop. */
+		block-size: 32px;
+		min-inline-size: 132px;
+		align-items: center;
+		gap: 3px;
+	}
 	:scope > .ui-waveform-bar {
 		flex: 1;
 		border-radius: var(--r-pill);
@@ -2112,88 +2249,66 @@
    typed attr() is supported (detected in JS via CSS.supports), omits its
    inline-style fallback so this rule owns the width — the browser animates
    the change through the transition below. */
-.ui-meter {
-	height: 4px;
-	width: 100%;
-	overflow: hidden;
-	border-radius: var(--r-pill);
-	background: var(--c-line);
-}
-.ui-meter[data-color] {
-	background: color-mix(in oklab, var(--ui-primitive-mark) 18%, transparent);
-}
 @scope (.ui-meter) {
+	:scope {
+		height: 4px;
+		width: 100%;
+		overflow: hidden;
+		border-radius: var(--r-pill);
+		background: var(--c-line);
+	}
+	:scope[data-ui-color-base] {
+		background: var(--ui-track);
+	}
 	:scope > .ui-meter-fill {
 		height: 100%;
 		border-radius: var(--r-pill);
 		background: var(--c-text);
 		transition: width 0.5s;
 	}
-}
-@supports (width: attr(data-pct type(<percentage>), 0%)) {
-	.ui-meter > .ui-meter-fill {
-		width: attr(data-pct type(<percentage>), 0%);
+	@supports (width: attr(data-pct type(<percentage>), 0%)) {
+		:scope > .ui-meter-fill { width: attr(data-pct type(<percentage>), 0%); }
 	}
 }
 
 /* ── Rule ── */
-.ui-rule {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-}
-.ui-rule[data-color] {
-	color: var(--ui-primitive-mark);
-}
 @scope (.ui-rule) {
+	:scope { display: flex; align-items: center; gap: 12px; }
+	:scope[data-ui-color-base] { color: var(--ui-mark); }
 	:scope > .ui-rule-line {
 		height: 1px;
 		flex: 1;
 		background: var(--c-line);
 	}
-}
-.ui-rule[data-color] > .ui-rule-line {
-	background: var(--ui-primitive-mark);
-}
-.ui-rule[data-color] .ui-eyebrow {
-	color: inherit;
+	:scope[data-ui-color-base] > .ui-rule-line { background: var(--ui-mark); }
+	:scope[data-ui-color-base] .ui-eyebrow { color: inherit; }
 }
 
 /* ── IconButton ── */
-.ui-iconbtn {
-	display: grid;
-	place-items: center;
-	width: 36px;
-	height: 36px;
-	border: 0;
-	border-radius: var(--r-pill);
-	padding: 0;
-	font: inherit;
-	cursor: pointer;
-	background: transparent;
-	color: var(--c-muted);
-	box-shadow: 0 0 0 1px var(--c-line);
-	transition: all 0.2s;
-}
-.ui-iconbtn:hover:not(:disabled) {
-	background: var(--c-panel-2);
-	color: var(--c-text);
-}
-.ui-iconbtn:active:not(:disabled) {
-	transform: scale(0.9);
-}
-.ui-iconbtn:disabled {
-	cursor: not-allowed;
-	opacity: 0.35;
+@scope (.ui-iconbtn) {
+	:scope {
+		display: grid;
+		place-items: center;
+		width: 36px;
+		height: 36px;
+		border: 0;
+		border-radius: var(--r-pill);
+		padding: 0;
+		font: inherit;
+		cursor: pointer;
+		background: transparent;
+		color: var(--c-muted);
+		box-shadow: 0 0 0 1px var(--c-line);
+		transition: all 0.2s;
+	}
+	:scope:hover:not(:disabled) { background: var(--c-panel-2); color: var(--c-text); }
+	:scope:active:not(:disabled) { transform: scale(0.9); }
+	:scope:disabled { cursor: not-allowed; opacity: 0.35; }
 }
 
 /* ── Field ── */
-.ui-field {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-}
 @scope (.ui-field) {
+	:scope { display: flex; flex-direction: column; gap: 6px; }
 	:scope > .ui-field-label {
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
 		font-size: var(--t-2xs);
@@ -2201,21 +2316,16 @@
 		letter-spacing: 0.2em;
 		color: var(--c-faint);
 	}
-}
-/* Opt-in content-hugging controls (field-sizing, Chromium/FF-beta; a plain
-   no-op elsewhere): <Field class="ui-autosize"> lets inputs/textareas grow
-   with their content instead of a fixed default. */
-.ui-autosize :is(input, textarea, select) {
-	field-sizing: content;
-	min-width: 4ch;
+	/* Opt-in content-hugging controls (field-sizing, Chromium/FF-beta). */
+	:scope.ui-autosize :is(input, textarea, select) {
+		field-sizing: content;
+		min-width: 4ch;
+	}
 }
 
 /* ── MonthCalendar ── */
-.ui-cal {
-	display: flex;
-	flex-direction: column;
-}
 @scope (.ui-cal) {
+	:scope { display: flex; flex-direction: column; }
 	/* flex-wrap: at extreme narrowness the controls drop to a second row
 	   instead of forcing the whole calendar past its container. */
 	:scope > .ui-cal-head {
@@ -2340,28 +2450,23 @@
    .ui-picker-pop now carries its own padding: the old "no padding here"
    note guarded against fighting a package-side Tailwind utility, which no
    longer exists. */
-.ui-picker-pop {
-	padding: 12px;
-}
-.ui-picker-trigger {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	border: 0;
-	border-radius: var(--r-md);
-	padding: 10px 14px;
-	font: inherit;
-	font-size: var(--t-md);
-	cursor: pointer;
-	background: var(--c-page-2);
-	color: var(--c-text);
-	box-shadow: 0 0 0 1px var(--c-line);
-	transition: box-shadow 0.2s;
-}
-.ui-picker-trigger:hover {
-	box-shadow: 0 0 0 1px var(--c-line-strong);
-}
 @scope (.ui-picker-trigger) {
+	:scope {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		border: 0;
+		border-radius: var(--r-md);
+		padding: 10px 14px;
+		font: inherit;
+		font-size: var(--t-md);
+		cursor: pointer;
+		background: var(--c-page-2);
+		color: var(--c-text);
+		box-shadow: 0 0 0 1px var(--c-line);
+		transition: box-shadow 0.2s;
+	}
+	:scope:hover { box-shadow: 0 0 0 1px var(--c-line-strong); }
 	:scope > .ui-picker-trigger-icon {
 		color: var(--c-muted);
 	}
@@ -2371,6 +2476,7 @@
 	}
 }
 @scope (.ui-picker-pop) {
+	:scope { padding: 12px; }
 	.ui-dp-head {
 		margin-bottom: 8px;
 		display: flex;
@@ -2557,21 +2663,20 @@
 		background: var(--c-panel);
 		color: var(--c-text);
 	}
-}
-/* Wheel sizing (was package-side utilities; scroll/mask styling for
-   .ui-wheel/.ui-wheel-mask lives earlier in this sheet). */
-.ui-wheel {
-	position: relative;
-	height: 160px;
-	flex: 1;
-	overflow-y: auto;
-	padding-block: 64px;
-}
-.ui-wheel-mask {
-	pointer-events: none;
-	position: absolute;
-	inset: 0;
-	z-index: 20;
+	/* Wheel sizing (was package-side utilities). */
+	.ui-wheel {
+		position: relative;
+		height: 160px;
+		flex: 1;
+		overflow-y: auto;
+		padding-block: 64px;
+	}
+	.ui-wheel-mask {
+		pointer-events: none;
+		position: absolute;
+		inset: 0;
+		z-index: 20;
+	}
 }
 
 /* ── Marketing scaffolding (semantic classes, 2026-08-07) ──
@@ -2580,28 +2685,19 @@
 	color: var(--c-accent);
 }
 
-.ui-hero {
-	margin-inline: auto;
-	display: flex;
-	width: 100%;
-	max-width: 56rem;
-	flex-direction: column;
-	gap: 24px;
-	padding: 80px 24px 64px;
-}
-.ui-hero[data-align="center"] {
-	align-items: center;
-	text-align: center;
-}
-.ui-hero[data-align="start"] {
-	align-items: flex-start;
-}
-@media (min-width: 640px) {
-	.ui-hero {
-		padding-top: 112px;
-	}
-}
 @scope (.ui-hero) {
+	:scope {
+		margin-inline: auto;
+		display: flex;
+		width: 100%;
+		max-width: 56rem;
+		flex-direction: column;
+		gap: 24px;
+		padding: 80px 24px 64px;
+	}
+	:scope[data-align="center"] { align-items: center; text-align: center; }
+	:scope[data-align="start"] { align-items: flex-start; }
+	@media (min-width: 640px) { :scope { padding-top: 112px; } }
 	:scope > h1 {
 		margin: 0;
 		font-family: var(--font-display, Georgia, serif);
@@ -2629,28 +2725,13 @@
 		justify-content: center;
 		gap: 12px;
 	}
-}
-@media (min-width: 640px) {
-	.ui-hero > h1 {
-		font-size: var(--t-5xl);
-	}
+	@media (min-width: 640px) { :scope > h1 { font-size: var(--t-5xl); } }
 }
 
-.ui-section {
-	margin-inline: auto;
-	width: 100%;
-	max-width: 48rem;
-	padding: 56px 24px;
-}
-.ui-section[data-wide] {
-	max-width: 72rem;
-}
-@media (min-width: 640px) {
-	.ui-section {
-		padding-block: 80px;
-	}
-}
 @scope (.ui-section) {
+	:scope { margin-inline: auto; width: 100%; max-width: 48rem; padding: 56px 24px; }
+	:scope[data-wide] { max-width: 72rem; }
+	@media (min-width: 640px) { :scope { padding-block: 80px; } }
 	:scope > .ui-section-head {
 		margin-bottom: 40px;
 		display: flex;
@@ -2679,28 +2760,16 @@
 		color: var(--c-muted);
 		text-wrap: pretty;
 	}
-}
-@media (min-width: 640px) {
-	.ui-section > .ui-section-head h2 {
-		font-size: var(--t-4xl);
-	}
+	@media (min-width: 640px) { :scope > .ui-section-head h2 { font-size: var(--t-4xl); } }
 }
 
-.ui-feature-grid {
-	display: grid;
-	gap: 20px;
-}
-@media (min-width: 640px) {
-	.ui-feature-grid {
-		grid-template-columns: repeat(2, 1fr);
-	}
-}
-@media (min-width: 1024px) {
-	.ui-feature-grid[data-columns="3"] {
-		grid-template-columns: repeat(3, 1fr);
-	}
-}
 @scope (.ui-feature-grid) {
+	:scope { display: grid; gap: 20px; }
+	@media (min-width: 640px) { :scope { grid-template-columns: repeat(2, 1fr); } }
+	.docs-nav, .docs-toc { display: none; }
+	@media (min-width: 1024px) {
+		:scope[data-columns="3"] { grid-template-columns: repeat(3, 1fr); }
+	}
 	:scope > .ui-feature-card {
 		display: flex;
 		flex-direction: column;
@@ -2734,43 +2803,22 @@
 
 /* Steps layout (the node disc/wash/shimmer visuals live earlier in this
    sheet under the legacy Steps section). */
-.ui-step-disc {
-	position: relative;
-	aspect-ratio: 1;
-	width: 100%;
-	flex-shrink: 0;
-}
-.ui-step-num {
-	position: relative;
-	display: flex;
-	height: 100%;
-	align-items: center;
-	justify-content: center;
-	font-family: var(--font-data, ui-monospace, monospace);
-}
-.ui-step-num[data-size="sm"] {
-	font-size: var(--t-md);
-}
-.ui-step-num[data-size="md"] {
-	font-size: var(--t-xl);
-}
-.ui-step-num[data-size="lg"] {
-	font-size: var(--t-3xl);
-}
-.ui-steps {
-	position: relative;
-	margin: 0;
-	display: grid;
-	list-style: none;
-	padding: 0;
-}
-.ui-steps[data-variant="rail"] {
-	gap: 40px;
-}
-.ui-steps[data-variant="zigzag"] {
-	gap: 64px;
-}
 @scope (.ui-steps) {
+	:scope { position: relative; margin: 0; display: grid; list-style: none; padding: 0; }
+	:scope[data-variant="rail"] { gap: 40px; }
+	:scope[data-variant="zigzag"] { gap: 64px; }
+	.ui-step-disc { position: relative; aspect-ratio: 1; width: 100%; flex-shrink: 0; }
+	.ui-step-num {
+		position: relative;
+		display: flex;
+		height: 100%;
+		align-items: center;
+		justify-content: center;
+		font-family: var(--font-data, ui-monospace, monospace);
+	}
+	.ui-step-num[data-size="sm"] { font-size: var(--t-md); }
+	.ui-step-num[data-size="md"] { font-size: var(--t-xl); }
+	.ui-step-num[data-size="lg"] { font-size: var(--t-3xl); }
 	:scope > .ui-steps-line {
 		position: absolute;
 		width: 1px;
@@ -2838,36 +2886,36 @@
 		gap: 6px;
 		font-size: var(--t-lg);
 	}
-}
-@media (min-width: 768px) {
-	.ui-steps[data-variant="zigzag"] > .ui-steps-line {
+	@media (min-width: 768px) {
+	:scope[data-variant="zigzag"] > .ui-steps-line {
 		display: block;
 	}
-	.ui-steps[data-variant="zigzag"] > .ui-step {
+	:scope[data-variant="zigzag"] > .ui-step {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		gap: 32px;
 	}
-	.ui-steps[data-variant="zigzag"] > .ui-step:not([data-flip]) .ui-step-text {
+	:scope[data-variant="zigzag"] > .ui-step:not([data-flip]) .ui-step-text {
 		text-align: right;
 	}
-	.ui-steps[data-variant="zigzag"] > .ui-step[data-flip] .ui-step-node-cell {
+	:scope[data-variant="zigzag"] > .ui-step[data-flip] .ui-step-node-cell {
 		justify-content: flex-end;
 	}
 }
-
-.ui-logo-cloud {
-	margin: 0;
-	display: flex;
-	list-style: none;
-	flex-wrap: wrap;
-	align-items: center;
-	justify-content: center;
-	column-gap: 48px;
-	row-gap: 32px;
-	padding: 0;
 }
+
 @scope (.ui-logo-cloud) {
+	:scope {
+		margin: 0;
+		display: flex;
+		list-style: none;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		column-gap: 48px;
+		row-gap: 32px;
+		padding: 0;
+	}
 	.ui-logo-name {
 		font-family: var(--font-data, ui-monospace, monospace);
 		font-size: var(--t-md);
@@ -2880,47 +2928,24 @@
 	}
 }
 
-.docs-shell {
-	margin-inline: auto;
-	display: grid;
-	width: 100%;
-	max-width: 80rem;
-	gap: 40px;
-	padding: 48px 24px;
-}
-@media (min-width: 1024px) {
-	.docs-shell {
-		grid-template-columns: 13rem minmax(0, 1fr);
+@scope (.docs-shell) {
+	:scope {
+		margin-inline: auto;
+		display: grid;
+		width: 100%;
+		max-width: 80rem;
+		gap: 40px;
+		padding: 48px 24px;
 	}
-}
-@media (min-width: 1280px) {
-	.docs-shell {
-		grid-template-columns: 13rem minmax(0, 1fr) 13rem;
+	@media (min-width: 1024px) {
+		:scope { grid-template-columns: 13rem minmax(0, 1fr); }
+		.docs-nav { display: block; }
 	}
-}
-.docs-nav,
-.docs-toc {
-	display: none;
-}
-@media (min-width: 1024px) {
-	.docs-nav {
-		display: block;
+	@media (min-width: 1280px) {
+		:scope { grid-template-columns: 13rem minmax(0, 1fr) 13rem; }
+		.docs-toc { display: block; }
 	}
-}
-@media (min-width: 1280px) {
-	.docs-toc {
-		display: block;
-	}
-}
-.docs-side {
-	position: sticky;
-	top: 96px;
-	display: grid;
-	gap: 4px;
-}
-.docs-side > .ui-eyebrow {
-	margin-bottom: 8px;
-}
-.docs-article {
-	min-width: 0;
+	.docs-side { position: sticky; top: 96px; display: grid; gap: 4px; }
+	.docs-side > .ui-eyebrow { margin-bottom: 8px; }
+	.docs-article { min-width: 0; }
 }

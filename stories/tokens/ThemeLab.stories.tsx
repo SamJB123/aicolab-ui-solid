@@ -17,7 +17,7 @@
 //
 // Tip: combine with the Theme toolbar's Split mode to tune both schemes
 // side by side.
-import { createEffect, createMemo, For } from 'solid-js'
+import { createMemo, For } from 'solid-js'
 import { useArgs } from 'storybook/preview-api'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { DARK_PRESETS, LIGHT_PRESETS, type SchemeValues, type ThemePreset } from './theme-presets'
@@ -29,6 +29,7 @@ import {
 	fontOption,
 } from '../../.storybook/fonts'
 import { Button, Chip, Counter, Eyebrow, Meter, Panel, Rule, Sparkline } from '../../src/primitives'
+import { createEffect } from '../../src/solid-v2'
 
 type ThemeLabArgs = {
 	pageLight: string
@@ -193,7 +194,7 @@ const SEMANTIC_TOKENS = SEMANTIC_FAMILIES.flatMap((family) => [
 ])
 const COLOR_LEVELS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const
 
-function ColorFamilyLevelMatrix() {
+function ColorBaseLevelMatrix() {
 	return (
 		<div style={{ overflow: 'auto', 'padding-block-end': '4px' }}>
 			<div style={{ display: 'grid', gap: '10px', 'min-width': '900px' }}>
@@ -204,12 +205,11 @@ function ColorFamilyLevelMatrix() {
 							<For each={COLOR_LEVELS}>
 								{(level) => (
 									<div
-										class="ui-color"
-										data-color={color}
-										data-level={level}
+										data-ui-color-base={color}
+										data-ui-color-level={level}
 										title={`${color} ${level}`}
 										style={{
-											background: 'var(--ui-resolved-color)',
+											background: 'var(--ui-mark)',
 											'border-radius': 'var(--r-sm)',
 											'block-size': '42px',
 											'box-shadow': 'inset 0 0 0 1px color-mix(in oklab, var(--color-base-content) 12%, transparent)',
@@ -550,8 +550,8 @@ export const Lab: Story = {
 					</For>
 				</div>
 
-				<Rule label="Colour family × perceptual level" />
-				<ColorFamilyLevelMatrix />
+				<Rule label="Colour base × perceptual level" />
+				<ColorBaseLevelMatrix />
 
 				<Rule label="Components on these tokens" />
 				<div
@@ -573,15 +573,15 @@ export const Lab: Story = {
 								<Counter value={87} format={(n) => `${Math.round(n)}%`} class="font-data" />
 								<Eyebrow>capacity</Eyebrow>
 							</div>
-							<Meter value={87} max={100} color="var(--color-primary)" />
+							<Meter value={87} max={100} fillColor="var(--color-primary)" />
 							<Sparkline data={[12, 18, 14, 22, 30, 26, 38, 34, 41, 39, 47, 52]} />
 						</div>
 					</Panel>
 					<div style={{ display: 'grid', gap: '12px', 'align-content': 'start' }}>
 						<div style={{ display: 'flex', gap: '10px' }}>
-							<Button variant="solid">Primary action</Button>
-							<Button color="info" variant="soft">Information</Button>
-							<Button color="error" variant="outline">Error</Button>
+							<Button appearance="solid">Primary action</Button>
+							<Button colorBase="info" appearance="soft">Information</Button>
+							<Button colorBase="error" appearance="outline">Error</Button>
 							<Button>Ghost action</Button>
 						</div>
 						<div
@@ -628,7 +628,7 @@ export const Lab: Story = {
 					>
 						{cssBlock()}
 					</pre>
-					<Button variant="solid" onClick={() => navigator.clipboard.writeText(cssBlock())}>
+					<Button appearance="solid" onClick={() => navigator.clipboard.writeText(cssBlock())}>
 						Copy :root block
 					</Button>
 				</div>

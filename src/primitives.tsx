@@ -15,10 +15,10 @@
 //
 // Components carry ONE semantic root class (`.ui-*`) whose interior is
 // styled through @scope blocks in styles.css — no utility classes, no
-// consumer `@source`, no build step. Dynamic values (sizes, data colours)
-// remain inline styles or data-* attributes. Variants ride data attributes
-// (`data-tone`, `data-variant`). Where typed attr() is supported, Meter's
-// fill is fully data-driven (see below).
+// consumer `@source`, no build step. Semantic colour inputs use namespaced
+// data-* attributes. CSS consumes them through typed attr(), resolves them
+// with if(style()) and native @function rules, and exposes typed paint outputs
+// to component-local @scope blocks. Phase 1 deliberately has no fallback.
 //
 // ## Differences from the COMMONS originals
 //
@@ -32,15 +32,14 @@
 
 import type { JSX } from '@solidjs/web'
 import {
-	createEffect,
 	createMemo,
 	createSignal,
 	For,
 	onSettled,
 	type ParentProps,
 	Show,
-	untrack,
 } from 'solid-js'
+import { createEffect } from './solid-v2'
 
 /** What a component `class` prop accepts: anything that can sit INSIDE a
  *  Solid class array (the components splice it into their own arrays, and
@@ -48,10 +47,8 @@ import {
  *  `Record<string, boolean>` covers conditional mixes. */
 export type ClassProp = string | Record<string, boolean>
 
-/** Orthogonal colour controls shared by colour-aware primitives. A family
- * selects a semantic theme anchor, a level selects a perceptual ladder step,
- * and a variant decides how the resolved colour is applied. */
-export type ColorFamily =
+/** Orthogonal colour controls shared by colour-aware primitives. */
+export type ColorBase =
 	| 'primary'
 	| 'secondary'
 	| 'accent'
@@ -61,26 +58,26 @@ export type ColorFamily =
 	| 'warning'
 	| 'error'
 export type ColorLevel = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950
-export type ColorVariant = 'solid' | 'soft' | 'outline' | 'ghost' | 'text'
-export type ColorAxesProps = {
-	/** Semantic palette family. When omitted, the primitive keeps its original styling. */
-	family?: ColorFamily
-	/** Perceptual position on the shared family ladder. */
-	level?: ColorLevel
-	/** How the resolved family colour is used by this primitive. */
-	usage?: ColorVariant
+export type Appearance = 'solid' | 'soft' | 'outline' | 'ghost' | 'text'
+export type ColorTreatmentProps = {
+	/** Semantic theme base. Its presence opts the primitive into colour resolution. */
+	colorBase?: ColorBase
+	/** Perceptual position on the base's colour ladder. Defaults to 500. */
+	colorLevel?: ColorLevel
+	/** Overall visual treatment. Defaults to solid. */
+	appearance?: Appearance
 }
 
-const colorAxesData = (props: ColorAxesProps) => ({
-	'data-color': props.family,
-	'data-level': props.family ? (props.level ?? 500) : undefined,
-	'data-variant': props.family ? (props.usage ?? 'text') : undefined,
+const colorTreatmentData = (props: ColorTreatmentProps) => ({
+	'data-ui-color-base': props.colorBase,
+	'data-ui-color-level': props.colorBase ? (props.colorLevel ?? 500) : undefined,
+	'data-ui-appearance': props.colorBase ? (props.appearance ?? 'solid') : undefined,
 })
 
 // ── Type ────────────────────────────────────────────────────────────────────
 
-export function Eyebrow(props: ParentProps<{ class?: ClassProp } & ColorAxesProps>) {
-	return <span {...colorAxesData(props)} class={['ui-eyebrow ui-color', props.class]}>{props.children}</span>
+export function Eyebrow(props: ParentProps<{ class?: ClassProp } & ColorTreatmentProps>) {
+	return <span {...colorTreatmentData(props)} class={['ui-eyebrow', props.class]}>{props.children}</span>
 }
 
 // ── Status dot ────────────────────────────────────────────────────────────────
@@ -89,11 +86,11 @@ export function Eyebrow(props: ParentProps<{ class?: ClassProp } & ColorAxesProp
  *  vocabulary (online/away/flow/…) onto this shape. */
 export type StatusVisual = { color: string; live?: boolean }
 
-export function StatusDot(props: { status: StatusVisual; size?: number } & ColorAxesProps) {
+export function StatusDot(props: { status: StatusVisual; size?: number } & ColorTreatmentProps) {
 	const size = () => props.size ?? 8
-	const color = () => props.family ? 'var(--ui-primitive-mark)' : props.status.color
+	const color = () => props.colorBase ? 'var(--ui-mark)' : props.status.color
 	return (
-		<span {...colorAxesData(props)} class="ui-dot ui-color" style={{ width: `${size()}px`, height: `${size()}px` }}>
+		<span {...colorTreatmentData(props)} class="ui-dot" style={{ width: `${size()}px`, height: `${size()}px` }}>
 			<Show when={props.status.live}>
 				<span class="ui-dot-ping" style={{ background: color() }} />
 			</Show>
@@ -117,30 +114,32 @@ const initials = (name: string) =>
 
 export function Avatar(props: {
 	name: string
-	color: string
+	faceColor: string
 	size?: number
 	status?: StatusVisual
 	ring?: string
-} & ColorAxesProps) {
+} & ColorTreatmentProps) {
 	const size = () => props.size ?? 36
-	const color = () => props.family ? 'var(--ui-primitive-ink)' : props.color
-	const surface = () => props.family ? 'var(--ui-primitive-surface)' : (props.ring ?? 'var(--c-panel)')
+	const color = () => props.colorBase ? 'var(--ui-ink)' : props.faceColor
+	const surface = () => props.colorBase ? 'var(--ui-surface-occluding)' : (props.ring ?? 'var(--c-panel)')
 	return (
-		<span {...colorAxesData(props)} class="ui-avatar ui-color" style={{ width: `${size()}px`, height: `${size()}px` }}>
+		<span {...colorTreatmentData(props)} class="ui-avatar" style={{ width: `${size()}px`, height: `${size()}px` }}>
 			<span
 				class="ui-avatar-face"
 				style={{
 					'font-size': `${Math.round(size() * 0.34)}px`,
 					color: color(),
-					background: `color-mix(in oklab, ${color()} 20%, ${surface()})`,
-					'box-shadow': `inset 0 0 0 1px color-mix(in oklab, ${color()} 55%, transparent)`,
+					background: props.colorBase ? surface() : `color-mix(in oklab, ${color()} 20%, ${surface()})`,
+					'box-shadow': props.colorBase
+						? 'inset 0 0 0 1px var(--ui-border)'
+						: `inset 0 0 0 1px color-mix(in oklab, ${color()} 55%, transparent)`,
 				}}
 			>
 				{initials(props.name)}
 			</span>
 			<Show when={props.status}>
 				{(s) => (
-					<span class="ui-avatar-badge" style={{ background: props.ring ?? 'var(--c-panel)' }}>
+					<span class="ui-avatar-badge" style={{ background: props.colorBase ? 'var(--ui-surface-raised)' : (props.ring ?? 'var(--c-panel)') }}>
 						<StatusDot status={s()} size={Math.max(7, Math.round(size() * 0.2))} />
 					</span>
 				)}
@@ -154,28 +153,37 @@ export function AvatarStack(props: {
 	max?: number
 	size?: number
 	ring?: string
-} & ColorAxesProps) {
+} & ColorTreatmentProps) {
 	const max = () => props.max ?? 5
 	const size = () => props.size ?? 32
+	/* Initials occupy roughly the central two-thirds of the face. Keep the
+	 * overlap inside the outer eighth so the stack remains legible at every
+	 * supported size, with a 2px minimum that still reads as an overlap. */
+	const overlap = () => Math.max(2, Math.round(size() * 0.125))
 	const shown = createMemo(() => props.people.slice(0, max()))
 	const extra = createMemo(() => props.people.length - shown().length)
 	return (
-		<div {...colorAxesData(props)} class="ui-avatar-stack ui-color">
+		<div {...colorTreatmentData(props)} class="ui-avatar-stack">
 			<For each={shown()}>
 				{(p, i) => (
 					<span
 						class="ui-avatar-stack-item"
 						style={{
-							'margin-left': i() === 0 ? '0' : `-${Math.round(size() * 0.32)}px`,
-							'box-shadow': `0 0 0 2px ${props.ring ?? 'var(--c-page)'}`,
+							'margin-left': i() === 0 ? '0' : `-${overlap()}px`,
+							'box-shadow': props.colorBase
+								? '0 0 0 2px var(--ui-surface-raised)'
+								: `0 0 0 2px ${props.ring ?? 'var(--c-page)'}`,
 							'z-index': String(shown().length - i()),
 						}}
 					>
 						<Avatar
 							name={p.name}
-							color={props.family ? 'var(--ui-primitive-ink)' : p.color}
+							faceColor={props.colorBase ? 'var(--ui-ink)' : p.color}
 							size={size()}
-							ring={props.family ? 'var(--ui-primitive-surface)' : (props.ring ?? 'var(--c-page)')}
+							ring={props.colorBase ? 'var(--ui-surface-occluding)' : (props.ring ?? 'var(--c-page)')}
+							colorBase={props.colorBase}
+							colorLevel={props.colorLevel}
+							appearance={props.appearance}
 						/>
 					</span>
 				)}
@@ -184,10 +192,12 @@ export function AvatarStack(props: {
 				<span
 					class="ui-avatar-stack-extra"
 					style={{
-						'margin-left': `-${Math.round(size() * 0.32)}px`,
+						'margin-left': `-${overlap()}px`,
 						width: `${size()}px`,
 						height: `${size()}px`,
-						'box-shadow': `0 0 0 2px ${props.ring ?? 'var(--c-page)'}, inset 0 0 0 1px var(--c-line)`,
+						'box-shadow': props.colorBase
+							? '0 0 0 2px var(--ui-surface-raised), inset 0 0 0 1px var(--ui-border)'
+							: `0 0 0 2px ${props.ring ?? 'var(--c-page)'}, inset 0 0 0 1px var(--c-line)`,
 					}}
 				>
 					+{extra()}
@@ -200,11 +210,11 @@ export function AvatarStack(props: {
 // ── Chip ──────────────────────────────────────────────────────────────────────
 
 export function Chip(
-	props: ParentProps<{ tone?: 'plain' | 'accent' | 'live'; class?: ClassProp } & ColorAxesProps>,
+	props: ParentProps<{ tone?: 'plain' | 'accent' | 'live'; class?: ClassProp } & ColorTreatmentProps>,
 ) {
 	const tone = () => props.tone ?? 'plain'
 	return (
-		<span {...colorAxesData(props)} class={['ui-chip ui-color', props.class]} data-tone={tone() === 'plain' ? undefined : tone()}>
+		<span {...colorTreatmentData(props)} class={['ui-chip', props.class]} data-tone={tone() === 'plain' ? undefined : tone()}>
 			{props.children}
 		</span>
 	)
@@ -234,10 +244,10 @@ export function Breadcrumb(props: {
 	/** Accessible name for the nav landmark. Default "Breadcrumb". */
 	label?: string
 	class?: ClassProp
-} & ColorAxesProps) {
+} & ColorTreatmentProps) {
 	const last = createMemo(() => props.items.length - 1)
 	return (
-		<nav {...colorAxesData(props)} class={['ui-breadcrumb ui-color', props.class]} aria-label={props.label ?? 'Breadcrumb'}>
+		<nav {...colorTreatmentData(props)} class={['ui-breadcrumb', props.class]} aria-label={props.label ?? 'Breadcrumb'}>
 			<ol class="ui-breadcrumb-trail">
 				<For each={props.items}>
 					{(item, index) => (
@@ -282,19 +292,12 @@ export function Breadcrumb(props: {
 
 export function Button(
 	props: ParentProps<{
-		/** How the resolved colour is applied. `primary` remains as a deprecated
-		 * compatibility spelling for the old primary button variant. */
-		variant?: ColorVariant | 'primary'
-		/** Semantic colour family, independent from strength and presentation. */
-		color?: ColorFamily
-		/** Perceptual position on the shared colour ladder. */
-		level?: ColorLevel
 		onClick?: () => void
 		/** Real native disabled — event suppression, focus exclusion and aria
 		 *  semantics come from the <button> attribute, not a class hack. */
 		disabled?: boolean
 		class?: ClassProp
-	}>,
+	} & ColorTreatmentProps>,
 ) {
 	return (
 		<button
@@ -304,9 +307,9 @@ export function Button(
 				if (!props.disabled) props.onClick?.()
 			}}
 			class={['ui-btn', props.class]}
-			data-color={props.color ?? 'primary'}
-			data-level={props.level ?? 500}
-			data-variant={props.variant === 'primary' ? 'solid' : (props.variant ?? 'ghost')}
+			data-ui-color-base={props.colorBase ?? 'primary'}
+			data-ui-color-level={props.colorLevel ?? 500}
+			data-ui-appearance={props.appearance ?? 'solid'}
 		>
 			{props.children}
 		</button>
@@ -327,11 +330,11 @@ export function Panel(
 		class?: ClassProp
 		style?: JSX.CSSProperties
 		glow?: boolean
-	} & ColorAxesProps>,
+	} & ColorTreatmentProps>,
 ) {
 	return (
 		// `group` is kept as a marker class for consumers' group-hover styling.
-		<section {...colorAxesData(props)} class={['ui-panel ui-color group', props.class]} style={props.style}>
+		<section {...colorTreatmentData(props)} class={['ui-panel group', props.class]} style={props.style}>
 			<Show when={props.glow}>
 				<span class="ui-panel-glow" />
 			</Show>
@@ -360,39 +363,45 @@ export function Counter(props: {
 	value: number
 	format?: (n: number) => string
 	class?: ClassProp
-} & ColorAxesProps) {
+} & ColorTreatmentProps) {
 	let el: HTMLSpanElement | undefined
 	const fmt = (n: number) => (props.format ? props.format(n) : Math.round(n).toLocaleString())
-	// Compute phase tracks props.value; apply phase (untracked) tweens the text
-	// node directly so we never re-create the signal graph per frame.
+	let displayed: number | undefined
+	let raf = 0
+	/* Track the target reactively, but update the text node directly per frame.
+	 * A new target begins from the currently displayed intermediate value, so
+	 * rapid updates retarget smoothly instead of jumping or running two tweens. */
 	createEffect(
 		() => props.value,
-		(target, prev) => {
+		(target) => {
 			if (!el) return
-			if (prev === undefined) {
+			if (displayed === undefined) {
+				displayed = target
 				el.textContent = fmt(target)
+				el.dataset.v = String(target)
 				return
 			}
-			let raf = 0
-			const from = Number(untrack(() => el?.dataset.v) ?? prev)
-			const t0 = performance.now()
-			const dur = 700
-			const step = (t: number) => {
-				const k = Math.min(1, (t - t0) / dur)
-				const e = 1 - (1 - k) ** 3
-				const v = from + (target - from) * e
+
+			const from = displayed
+			if (from === target) return
+			const startedAt = performance.now()
+			const duration = 700
+			const step = (time: number) => {
+				const progress = Math.min(1, (time - startedAt) / duration)
+				const eased = 1 - (1 - progress) ** 3
+				displayed = from + (target - from) * eased
 				if (el) {
-					el.textContent = fmt(v)
-					el.dataset.v = String(v)
+					el.textContent = fmt(displayed)
+					el.dataset.v = String(displayed)
 				}
-				if (k < 1) raf = requestAnimationFrame(step)
+				if (progress < 1) raf = requestAnimationFrame(step)
 			}
 			raf = requestAnimationFrame(step)
 			return () => cancelAnimationFrame(raf)
 		},
 	)
 	return (
-		<span ref={el} {...colorAxesData(props)} class={['ui-counter ui-color', props.class]} data-v={String(props.value)}>
+		<span ref={el} {...colorTreatmentData(props)} class={['ui-counter', props.class]} data-v={String(props.value)}>
 			{fmt(props.value)}
 		</span>
 	)
@@ -400,7 +409,7 @@ export function Counter(props: {
 
 // ── Sparkline ─────────────────────────────────────────────────────────────────
 
-export function Sparkline(props: { data: number[]; w?: number; h?: number; color?: string } & ColorAxesProps) {
+export function Sparkline(props: { data: number[]; w?: number; h?: number; strokeColor?: string } & ColorTreatmentProps) {
 	const geo = createMemo(() => {
 		const w = props.w ?? 132
 		const h = props.h ?? 36
@@ -414,14 +423,14 @@ export function Sparkline(props: { data: number[]; w?: number; h?: number; color
 		const area = `0,${h} ${line} ${w},${h}`
 		return { w, h, line, area, last: pts[pts.length - 1] }
 	})
-	const color = () => props.family ? 'var(--ui-primitive-mark)' : (props.color ?? 'var(--c-accent)')
+	const color = () => props.colorBase ? 'var(--ui-mark)' : (props.strokeColor ?? 'var(--c-accent)')
 	return (
 		<svg
-			{...colorAxesData(props)}
+			{...colorTreatmentData(props)}
 			viewBox={`0 0 ${geo().w} ${geo().h}`}
 			width={geo().w}
 			height={geo().h}
-			class="ui-sparkline ui-color"
+			class="ui-sparkline"
 			preserveAspectRatio="none"
 			aria-hidden="true"
 		>
@@ -441,10 +450,10 @@ export function Sparkline(props: { data: number[]; w?: number; h?: number; color
 
 // ── Waveform — live audio bars ────────────────────────────────────────────────
 
-export function Waveform(props: { bars: number[]; color?: string; class?: ClassProp } & ColorAxesProps) {
-	const color = () => props.family ? 'var(--ui-primitive-mark)' : (props.color ?? 'var(--c-accent)')
+export function Waveform(props: { bars: number[]; barColor?: string; class?: ClassProp } & ColorTreatmentProps) {
+	const color = () => props.colorBase ? 'var(--ui-mark)' : (props.barColor ?? 'var(--c-accent)')
 	return (
-		<div {...colorAxesData(props)} class={['ui-waveform ui-color', props.class]}>
+		<div {...colorTreatmentData(props)} class={['ui-waveform', props.class]}>
 			<For each={props.bars}>
 				{(v) => (
 					<div
@@ -471,20 +480,20 @@ export function Waveform(props: { bars: number[]; color?: string; class?: ClassP
 const supportsTypedAttr = (): boolean =>
 	typeof CSS !== 'undefined' && CSS.supports('width', 'attr(data-pct type(<percentage>), 0%)')
 
-export function Meter(props: { value: number; max: number; color?: string } & ColorAxesProps) {
+export function Meter(props: { value: number; max: number; fillColor?: string } & ColorTreatmentProps) {
 	const pct = () => Math.min(100, Math.round((props.value / props.max) * 100))
 	const [cssOwnsWidth, setCssOwnsWidth] = createSignal(false)
 	onSettled(() => {
 		if (supportsTypedAttr()) setCssOwnsWidth(true)
 	})
 	return (
-		<div {...colorAxesData(props)} class="ui-meter ui-color">
+		<div {...colorTreatmentData(props)} class="ui-meter">
 			<div
 				class="ui-meter-fill"
 				data-pct={`${pct()}%`}
 				style={{
 					width: cssOwnsWidth() ? undefined : `${pct()}%`,
-					background: props.family ? 'var(--ui-primitive-mark)' : (props.color ?? 'var(--c-text)'),
+					background: props.colorBase ? 'var(--ui-mark)' : (props.fillColor ?? 'var(--c-text)'),
 				}}
 			/>
 		</div>
@@ -493,9 +502,9 @@ export function Meter(props: { value: number; max: number; color?: string } & Co
 
 // ── Rule — a labelled editorial divider ───────────────────────────────────────
 
-export function Rule(props: { label?: string } & ColorAxesProps) {
+export function Rule(props: { label?: string } & ColorTreatmentProps) {
 	return (
-		<div {...colorAxesData(props)} class="ui-rule ui-color">
+		<div {...colorTreatmentData(props)} class="ui-rule">
 			<span class="ui-rule-line" />
 			<Show when={props.label}>
 				<Eyebrow>{props.label}</Eyebrow>

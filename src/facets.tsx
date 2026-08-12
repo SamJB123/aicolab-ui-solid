@@ -13,8 +13,9 @@
 // Structural CSS lives in styles.css under "── Facets ──".
 
 import type { JSX } from '@solidjs/web'
-import { createEffect, createSignal, createUniqueId, For } from 'solid-js'
+import { createSignal, createUniqueId, For } from 'solid-js'
 import type { ClassProp } from './primitives'
+import { createEffect } from './solid-v2'
 import { withScopedViewTransition } from './vt'
 
 export type FacetItem = {
