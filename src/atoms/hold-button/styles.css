@@ -1,0 +1,28 @@
+@scope (.ui-hold-button) {
+	:scope {
+		box-sizing: border-box;
+		min-width: 4.25rem;
+		min-height: 4.25rem;
+		border: 2px solid var(--ui-border);
+		border-radius: 50%;
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: var(--ui-glow);
+		font-family: var(--font-label);
+		font-size: var(--t-xs);
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		touch-action: none;
+		user-select: none;
+		-webkit-tap-highlight-color: transparent;
+		transition:
+			background 140ms ease,
+			color 140ms ease,
+			transform 180ms linear(0, 0.4, 0.82, 1.1, 1);
+	}
+
+	:scope:active { background: var(--ui-surface-active); transform: scale(0.94); }
+	:scope:focus-visible { outline: 2px solid var(--ui-focus-ring); outline-offset: 3px; }
+	:scope:disabled { cursor: not-allowed; opacity: 0.45; }
+}

@@ -82,6 +82,17 @@
 		--color-border-strong: color-mix(in oklab, var(--color-base-content) 20%, transparent);
 		--color-primary-soft: color-mix(in oklab, var(--color-primary) 14%, transparent);
 		--color-ring: var(--color-primary);
+		/* Chrome floating over visual media uses the darkest theme anchor as
+		   material and the lightest as ink. It therefore stays legible over an
+		   image/canvas without hardcoding black and white into components. */
+		--color-overlay-surface: light-dark(
+			color-mix(in oklab, var(--color-base-content) 55%, transparent),
+			color-mix(in oklab, var(--color-base-100) 72%, transparent)
+		);
+		--color-overlay-content: light-dark(var(--color-base-100), var(--color-base-content));
+		--color-overlay-content-muted: color-mix(in oklab, var(--color-overlay-content) 65%, transparent);
+		--color-overlay-border: color-mix(in oklab, var(--color-overlay-content) 14%, transparent);
+		--color-overlay-soft: color-mix(in oklab, var(--color-overlay-content) 12%, transparent);
 	}
 
 	body {

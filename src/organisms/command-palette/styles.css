@@ -1,0 +1,196 @@
+@scope (.ui-command-palette-trigger) {
+	:scope {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0.45rem 1rem;
+		border: 1px solid var(--color-overlay-border);
+		border-radius: var(--r-pill);
+		background: var(--color-overlay-surface);
+		color: var(--color-overlay-content);
+		font: inherit;
+		font-size: var(--t-md);
+		cursor: pointer;
+		backdrop-filter: blur(10px);
+		transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	@media (hover: hover) {
+		:scope:hover {
+			border-color: color-mix(in oklab, var(--color-primary) 60%, transparent);
+		}
+	}
+
+	:scope:focus-visible {
+		outline: 2px solid var(--color-overlay-content);
+		outline-offset: 3px;
+	}
+
+	.ui-command-palette-trigger-shortcut {
+		font-family: var(--font-label);
+		font-size: var(--t-2xs);
+		letter-spacing: 0.16em;
+		padding: 0.15rem 0.4rem;
+		border-radius: var(--r-xs);
+		background: var(--color-overlay-soft);
+	}
+
+	.ui-command-palette-trigger-label {
+		color: var(--color-overlay-content-muted);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:scope { transition-duration: 1ms; }
+	}
+}
+
+@scope (.ui-command-palette) {
+	:scope {
+		position: fixed;
+		top: 14dvh;
+		left: 50%;
+		translate: -50% 0;
+		width: min(34rem, 92vw);
+		margin: 0;
+		border: 0;
+		padding: 0;
+		border-radius: var(--r-lg);
+		background: var(--color-base-100);
+		color: var(--color-base-content);
+		box-shadow:
+			0 0 0 1px var(--color-border-strong),
+			0 25px 50px -12px rgb(0 0 0 / 0.4);
+		overflow: hidden;
+		opacity: 1;
+		scale: 1;
+		transition:
+			opacity 160ms ease,
+			translate 200ms cubic-bezier(0.4, 0, 0.2, 1),
+			scale 200ms cubic-bezier(0.4, 0, 0.2, 1),
+			display 200ms allow-discrete,
+			overlay 200ms allow-discrete;
+	}
+
+	:scope:not(:popover-open) {
+		opacity: 0;
+		translate: -50% -0.5rem;
+		scale: 0.98;
+	}
+
+	@starting-style {
+		:scope:popover-open {
+			opacity: 0;
+			translate: -50% -0.5rem;
+			scale: 0.98;
+		}
+	}
+
+	:scope::backdrop {
+		background: rgb(0 0 0 / 0.3);
+		backdrop-filter: blur(2px);
+		transition:
+			background-color 160ms ease,
+			display 160ms allow-discrete,
+			overlay 160ms allow-discrete;
+	}
+
+	.ui-command-palette-input {
+		width: 100%;
+		border: 0;
+		padding: 0.9rem 1.1rem;
+		background: none;
+		font: inherit;
+		font-size: var(--t-lg);
+		color: var(--color-base-content);
+		outline: none;
+		box-shadow: 0 1px 0 var(--color-border);
+	}
+
+	.ui-command-palette-input:focus-visible {
+		box-shadow:
+			inset 0 -2px 0 var(--color-primary),
+			0 1px 0 var(--color-border);
+	}
+
+	.ui-command-palette-input::placeholder {
+		color: var(--color-base-content-faint);
+	}
+
+	.ui-command-palette-list {
+		padding: 0.4rem;
+		max-height: 46dvh;
+		overflow: auto;
+		overscroll-behavior: contain;
+		scrollbar-gutter: stable;
+	}
+
+	.ui-command-palette-group {
+		display: block;
+		padding: 0.5rem 0.7rem 0.25rem;
+		font-family: var(--font-label);
+		font-size: var(--t-2xs);
+		letter-spacing: 0.28em;
+		text-transform: uppercase;
+		color: var(--color-base-content-faint);
+	}
+
+	.ui-command-palette-item {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: baseline;
+		column-gap: 0.75rem;
+		padding: 0.45rem 0.7rem;
+		border-radius: var(--r-sm);
+		cursor: pointer;
+		color: var(--color-base-content);
+	}
+
+	.ui-command-palette-item[data-active] {
+		background: var(--color-primary-soft);
+	}
+
+	.ui-command-palette-label {
+		font-size: var(--t-md);
+	}
+
+	.ui-command-palette-kind {
+		font-family: var(--font-label);
+		font-size: var(--t-2xs);
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--color-primary);
+		text-align: right;
+	}
+
+	.ui-command-palette-detail {
+		grid-column: 1 / -1;
+		font-size: var(--t-xs);
+		color: var(--color-base-content-faint);
+	}
+
+	.ui-command-palette-empty {
+		margin: 0;
+		padding: 0.9rem;
+		color: var(--color-base-content-faint);
+		font-size: var(--t-md);
+	}
+
+	.ui-command-palette-item:focus-visible {
+		outline: 2px solid color-mix(in oklab, var(--color-primary) 60%, transparent);
+		outline-offset: 2px;
+	}
+
+	@media (max-width: 900px) {
+		:scope {
+			top: 6dvh;
+			width: min(34rem, 94vw);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:scope,
+		:scope::backdrop {
+			transition-duration: 1ms;
+		}
+	}
+}

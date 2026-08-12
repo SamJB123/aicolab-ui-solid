@@ -1,0 +1,413 @@
+@scope (.ui-workspace) {
+	:scope {
+		--ui-workspace-gutter: 1rem;
+		--ui-bottom-navigation-height: calc(3.8rem + env(safe-area-inset-bottom, 0px));
+		display: flex;
+		height: 100%;
+		background: var(--color-base-200);
+		color: var(--color-base-content);
+	}
+
+	.ui-workspace-navigation {
+		flex: none;
+		width: 13.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.9rem;
+		padding: var(--ui-workspace-gutter) calc(var(--ui-workspace-gutter) - 0.25rem);
+		background: var(--color-base-100);
+		box-shadow: 1px 0 0 var(--color-border);
+	}
+
+	.ui-workspace-navigation-brand {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding-inline: 0.4rem;
+	}
+
+	.ui-workspace-navigation-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		padding-inline: 0.4rem;
+	}
+
+	.ui-workspace-navigation-group-label {
+		margin: 0;
+		font-weight: inherit;
+	}
+
+	.ui-workspace-navigation-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.1rem;
+	}
+
+	.ui-workspace-navigation-entry {
+		margin: 0;
+	}
+
+	.ui-workspace-navigation-item {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+		width: 100%;
+		padding: 0.4rem 0.5rem;
+		border: 0;
+		border-radius: var(--r-sm);
+		background: none;
+		font: inherit;
+		font-size: var(--t-md);
+		text-align: left;
+		cursor: pointer;
+		color: var(--color-base-content-muted);
+		transition:
+			background-color 140ms cubic-bezier(0.4, 0, 0.2, 1),
+			color 140ms cubic-bezier(0.4, 0, 0.2, 1),
+			box-shadow 140ms cubic-bezier(0.4, 0, 0.2, 1),
+			transform 140ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.ui-workspace-navigation-item[data-muted]:not([data-current]) {
+		color: var(--color-base-content-faint);
+		font-style: italic;
+	}
+
+	@media (hover: hover) {
+		.ui-workspace-navigation-item:not([data-current]):hover {
+			background: color-mix(in oklab, var(--color-primary) 24%, var(--color-base-100));
+			color: var(--color-base-content);
+			box-shadow:
+				inset 0 0 0 1px color-mix(in oklab, var(--color-primary) 62%, transparent),
+				0 0.18rem 0.55rem color-mix(in oklab, var(--color-primary) 16%, transparent);
+			transform: translateX(0.08rem);
+		}
+
+		.ui-workspace-navigation-item[data-current]:hover {
+			background: color-mix(in oklch, var(--color-primary) 88%, var(--color-overlay-content));
+			color: var(--color-primary-content);
+			box-shadow:
+				inset 0 0 0 1px color-mix(in oklab, var(--color-primary-content) 26%, transparent),
+				0 0 1rem color-mix(in oklab, var(--color-primary) 58%, transparent);
+		}
+	}
+
+	.ui-workspace-navigation-item[data-current] {
+		background: var(--color-primary);
+		color: var(--color-primary-content);
+		font-weight: 600;
+		box-shadow:
+			inset 0 0 0 1px color-mix(in oklab, var(--color-primary-content) 18%, transparent),
+			0 0.2rem 0.65rem color-mix(in oklab, var(--color-primary) 28%, transparent);
+	}
+
+	.ui-workspace-navigation-item:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+
+	.ui-workspace-navigation-mark {
+		flex: none;
+		display: grid;
+		place-items: center;
+		inline-size: 1.15rem;
+		block-size: 1.15rem;
+	}
+
+	.ui-workspace-navigation-mark > * {
+		max-width: 100%;
+		max-height: 100%;
+	}
+
+	.ui-workspace-navigation-footer {
+		margin-top: auto;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		padding-inline: 0.25rem;
+	}
+
+	.ui-workspace-stage {
+		position: relative;
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.ui-raised-sheet {
+		position: absolute;
+		inset: 3.4rem 1.25rem 1.25rem;
+		display: flex;
+		flex-direction: column;
+		border-radius: var(--r-lg);
+		background: var(--color-base-200);
+		box-shadow:
+			0 0 0 1px var(--color-border),
+			0 0 0 2px color-mix(in oklab, #fff 8%, transparent),
+			0 25px 50px -12px rgb(0 0 0 / 0.55);
+		animation: ui-workspace-rise 220ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	@keyframes ui-workspace-rise {
+		from {
+			transform: translateY(1.25rem);
+			opacity: 0;
+		}
+	}
+
+	.ui-raised-sheet-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		padding: 0.75rem 1.25rem;
+		box-shadow: 0 1px 0 var(--color-border);
+	}
+
+	.ui-raised-sheet-title {
+		margin: 0;
+		font-family: var(--font-display);
+		font-size: var(--t-xl);
+		font-weight: 700;
+	}
+
+	.ui-raised-sheet-title:focus-visible {
+		outline: none;
+	}
+
+	.ui-raised-sheet-body {
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow: auto;
+		overscroll-behavior: contain;
+		padding: 1.25rem 1.25rem 2rem;
+	}
+
+	.ui-responsive-inspector {
+		flex: none;
+		width: 21rem;
+		background: var(--color-base-300);
+		box-shadow: -1px 0 0 var(--color-border);
+		min-height: 0;
+		display: flex;
+		--ui-panel-pad: 14px;
+		--ui-panel-title: var(--t-lg);
+	}
+
+	.ui-responsive-inspector[data-bound] {
+		box-shadow:
+			-1px 0 0 var(--color-border),
+			inset 2px 0 0 var(--color-primary);
+	}
+
+	.ui-responsive-inspector-grip {
+		display: none;
+	}
+
+	.ui-responsive-inspector-content {
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow: auto;
+		overscroll-behavior: contain;
+		scrollbar-gutter: stable;
+		padding: var(--ui-workspace-gutter) var(--ui-workspace-gutter) 1.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.9rem;
+		animation: ui-workspace-bind 200ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	@keyframes ui-workspace-bind {
+		from {
+			opacity: 0;
+			translate: 0 0.4rem;
+		}
+	}
+
+	@supports (container-type: scroll-state) {
+		@container scroll-state(scrollable: bottom) {
+			.ui-responsive-inspector-content {
+				mask-image: linear-gradient(to bottom, #000 calc(100% - 2rem), transparent);
+			}
+		}
+	}
+
+	.ui-responsive-inspector-content > * {
+		flex: none;
+	}
+
+	.ui-inspector-header {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+		padding-inline: 0.15rem;
+	}
+
+	.ui-inspector-title {
+		margin: 0;
+		font-family: var(--font-display);
+		font-size: var(--t-xl);
+		color: var(--color-base-content);
+	}
+
+	.ui-inspector-description {
+		font-size: var(--t-md);
+		line-height: 1.5;
+		color: var(--color-base-content-muted);
+		text-wrap: pretty;
+	}
+
+	.ui-inspector-description > :first-child {
+		margin-top: 0;
+	}
+
+	.ui-inspector-description > :last-child {
+		margin-bottom: 0;
+	}
+
+	.ui-workspace-stage-tooltip {
+		display: flex;
+		align-items: baseline;
+		gap: 0.5rem;
+		padding: 0.3rem 0.7rem;
+		border-radius: var(--r-pill);
+		border: 1px solid var(--color-overlay-border);
+		background: var(--color-overlay-surface);
+		color: var(--color-overlay-content);
+		backdrop-filter: blur(8px);
+		pointer-events: none;
+	}
+
+	.ui-workspace-stage-tooltip-label { font-size: var(--t-sm); }
+
+	.ui-workspace-stage-tooltip-detail {
+		font-family: var(--font-label);
+		font-size: var(--t-2xs);
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--color-overlay-content-muted);
+	}
+
+	@media (max-width: 900px) {
+		:scope {
+			flex-direction: column;
+			--ui-workspace-stage-floor: calc(var(--ui-bottom-navigation-height) + 58px);
+		}
+
+		:scope:has(.ui-responsive-inspector[data-detent="half"]) {
+			--ui-workspace-stage-floor: calc(var(--ui-bottom-navigation-height) + 42dvh);
+		}
+
+		:scope:has(.ui-responsive-inspector[data-detent="full"]) {
+			--ui-workspace-stage-floor: calc(var(--ui-bottom-navigation-height) + 88dvh);
+		}
+
+		.ui-workspace-navigation {
+			display: none;
+		}
+
+		.ui-responsive-inspector {
+			position: fixed;
+			inset: auto 0 var(--ui-bottom-navigation-height) 0;
+			width: auto;
+			flex-direction: column;
+			height: var(--ui-inspector-detent-height);
+			border-radius: var(--r-lg) var(--r-lg) 0 0;
+			box-shadow:
+				0 -1px 0 var(--color-border),
+				0 -18px 40px rgb(0 0 0 / 0.35);
+			z-index: 30;
+			transition: height 300ms cubic-bezier(0.32, 0.72, 0, 1);
+		}
+
+		.ui-responsive-inspector[data-detent="peek"] { --ui-inspector-detent-height: 58px; }
+		.ui-responsive-inspector[data-detent="half"] { --ui-inspector-detent-height: 42dvh; }
+		.ui-responsive-inspector[data-detent="full"] { --ui-inspector-detent-height: 88dvh; }
+		.ui-responsive-inspector[style*="height"] { transition: none; }
+
+		.ui-responsive-inspector[data-bound] {
+			box-shadow:
+				0 -1px 0 var(--color-border),
+				inset 0 2px 0 var(--color-primary),
+				0 -18px 40px rgb(0 0 0 / 0.35);
+		}
+
+		.ui-responsive-inspector[data-hidden],
+		:scope[data-ui-workspace-raised] .ui-responsive-inspector {
+			display: none;
+		}
+
+		.ui-responsive-inspector-grip {
+			position: relative;
+			display: flex;
+			flex: none;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 0.3rem;
+			width: 100%;
+			padding: 0.55rem 1rem 0.4rem;
+			border: 0;
+			background: none;
+			font: inherit;
+			color: var(--color-base-content);
+			cursor: grab;
+			touch-action: none;
+		}
+
+		.ui-responsive-inspector-grip::before {
+			content: "";
+			position: absolute;
+			inset: -0.75rem 0 -1.5rem;
+		}
+
+		.ui-responsive-inspector-grip:active { cursor: grabbing; }
+
+		.ui-responsive-inspector-grip-bar {
+			width: 2.75rem;
+			height: 4px;
+			border-radius: var(--r-pill);
+			background: var(--color-border-strong);
+		}
+
+		.ui-responsive-inspector-grip-title {
+			max-width: 100%;
+			font-family: var(--font-label);
+			font-size: var(--t-xs);
+			letter-spacing: 0.16em;
+			text-transform: uppercase;
+			color: var(--color-base-content-muted);
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.ui-responsive-inspector:not([data-detent="peek"]) .ui-responsive-inspector-grip-title {
+			display: none;
+		}
+
+		.ui-responsive-inspector[data-detent="peek"] .ui-responsive-inspector-content {
+			display: none;
+		}
+
+		.ui-responsive-inspector-content { padding-top: 0.35rem; }
+
+		.ui-raised-sheet {
+			inset: calc(3.4rem + env(safe-area-inset-top, 0px)) 0.6rem calc(var(--ui-bottom-navigation-height) + 0.6rem);
+		}
+
+		.ui-raised-sheet-body { padding: 1rem 1rem 2rem; }
+
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ui-raised-sheet,
+		.ui-responsive-inspector-content { animation: none; }
+		.ui-workspace-navigation-item,
+		.ui-responsive-inspector { transition-duration: 1ms; }
+	}
+}

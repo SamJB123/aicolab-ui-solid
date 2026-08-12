@@ -1,5 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import { For } from 'solid-js'
+import { colorTreatmentData, type ClassProp, type ColorTreatmentProps } from '../../shared/color-treatment'
 export type SegOption<T extends string> = { id: T; label: string }
 
 // The tabs are content-sized and the strip scrolls when there are too many for
@@ -9,12 +10,14 @@ export type SegOption<T extends string> = { id: T; label: string }
 // scroll. Where anchor positioning is unsupported, the active tab carries the
 // pill look itself (see styles.css `.seg*`).
 export function Segmented<T extends string>(props: {
+	label?: string
 	options: SegOption<T>[]
 	value: T
 	onChange: (v: T) => void
-}) {
+	class?: ClassProp
+} & ColorTreatmentProps) {
 	return (
-		<div class="seg" role="tablist">
+		<div {...colorTreatmentData(props)} class={['seg', props.class]} role="tablist" aria-label={props.label}>
 			<For each={props.options}>
 				{(o) => (
 					<button

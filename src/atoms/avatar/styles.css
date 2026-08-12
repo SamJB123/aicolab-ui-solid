@@ -16,6 +16,13 @@
 		text-transform: uppercase;
 		letter-spacing: 0.02em;
 	}
+	.ui-avatar-image {
+		display: block;
+		width: 100%;
+		height: 100%;
+		border-radius: inherit;
+		object-fit: cover;
+	}
 	:scope > .ui-avatar-badge {
 		position: absolute;
 		bottom: -2px;

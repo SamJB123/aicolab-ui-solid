@@ -1,4 +1,5 @@
 /** @jsxImportSource @solidjs/web */
+import type { JSX } from '@solidjs/web'
 import { Show } from 'solid-js'
 import { StatusDot, type StatusVisual } from '../status-dot'
 import { colorTreatmentData, type ColorTreatmentProps } from '../../shared/color-treatment'
@@ -13,13 +14,15 @@ const initials = (name: string) =>
 
 export function Avatar(props: {
 	name: string
-	faceColor: string
+	faceColor?: string
+	image?: string | null
+	referrerPolicy?: JSX.ImgHTMLAttributes<HTMLImageElement>['referrerpolicy']
 	size?: number
 	status?: StatusVisual
 	ring?: string
 } & ColorTreatmentProps) {
 	const size = () => props.size ?? 36
-	const color = () => props.colorBase ? 'var(--ui-ink)' : props.faceColor
+	const color = () => props.colorBase ? 'var(--ui-ink)' : (props.faceColor ?? 'var(--color-primary)')
 	const surface = () => props.colorBase ? 'var(--ui-surface-occluding)' : (props.ring ?? 'var(--color-base-100)')
 	return (
 		<span {...colorTreatmentData(props)} class="ui-avatar" style={{ width: `${size()}px`, height: `${size()}px` }}>
@@ -34,7 +37,16 @@ export function Avatar(props: {
 						: `inset 0 0 0 1px color-mix(in oklab, ${color()} 55%, transparent)`,
 				}}
 			>
-				{initials(props.name)}
+				<Show when={props.image} fallback={initials(props.name)}>
+					{(source) => (
+						<img
+							class="ui-avatar-image"
+							src={source()}
+							alt=""
+							referrerpolicy={props.referrerPolicy}
+						/>
+					)}
+				</Show>
 			</span>
 			<Show when={props.status}>
 				{(s) => (

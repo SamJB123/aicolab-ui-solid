@@ -1,0 +1,22 @@
+@scope (.ui-toggle-group) {
+	:scope {
+		display: flex;
+		align-items: stretch;
+		gap: 0.25rem;
+		padding: 0.25rem;
+		border-radius: var(--r-sm);
+		background: var(--color-base-200);
+		box-shadow: inset 0 0 0 1px var(--color-border);
+	}
+
+	.ui-btn {
+		flex: 1 1 auto;
+		justify-content: center;
+		min-width: 0;
+		padding: 0.4rem 0.55rem;
+		border-radius: var(--r-xs);
+		font-family: var(--font-label);
+		font-size: var(--t-xs);
+		text-transform: capitalize;
+	}
+}

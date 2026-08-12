@@ -1,0 +1,80 @@
+@scope (.ui-combobox) {
+	:scope {
+		position: relative;
+		width: 100%;
+	}
+
+	.ui-combobox-input {
+		box-sizing: border-box;
+		width: 100%;
+		min-height: 2.25rem;
+		border: 1px solid var(--color-border-strong);
+		border-radius: var(--r-xs);
+		corner-shape: squircle;
+		padding: 0.45rem 0.55rem;
+		background: var(--color-base-100);
+		color: var(--color-base-content);
+		font: inherit;
+		transition:
+			border-color 160ms ease,
+			box-shadow 220ms linear(0, 0.45, 0.82, 1.08, 1);
+	}
+
+	.ui-combobox-input:hover:not(:disabled) { border-color: var(--color-primary); }
+
+	.ui-combobox-input:focus-visible {
+		border-color: var(--color-primary);
+		outline: 2px solid color-mix(in oklab, var(--color-primary) 54%, transparent);
+		outline-offset: 1px;
+		box-shadow: 0 0 1rem color-mix(in oklab, var(--color-primary) 26%, transparent);
+	}
+
+	.ui-combobox-listbox {
+		position: absolute;
+		z-index: 20;
+		inset-block-start: calc(100% + 0.3rem);
+		inset-inline: 0;
+		max-height: min(20rem, 45vh);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		border: 1px solid var(--color-border-strong);
+		border-radius: var(--r-sm);
+		corner-shape: squircle;
+		padding: 0.3rem;
+		background: var(--color-base-100);
+		color: var(--color-base-content);
+		box-shadow:
+			0 0 0 1px var(--color-border),
+			0 0.75rem 2.5rem -0.75rem color-mix(in oklab, var(--color-base-content) 28%, transparent);
+	}
+
+	.ui-combobox-option {
+		display: grid;
+		gap: 0.12rem;
+		padding: 0.5rem 0.6rem;
+		border-radius: var(--r-xs);
+		cursor: pointer;
+	}
+
+	.ui-combobox-option:is([data-active], [aria-selected="true"]) {
+		background: var(--color-primary);
+		color: var(--color-primary-content);
+	}
+
+	.ui-combobox-option-label { font-weight: 650; }
+
+	.ui-combobox-option-description {
+		color: var(--color-base-content-faint);
+		font-size: 0.76rem;
+	}
+
+	.ui-combobox-option:is([data-active], [aria-selected="true"]) .ui-combobox-option-description {
+		color: color-mix(in oklab, var(--color-primary-content) 78%, transparent);
+	}
+
+	.ui-combobox-empty {
+		margin: 0;
+		padding: 0.65rem;
+		color: var(--color-base-content-faint);
+	}
+}

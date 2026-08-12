@@ -134,6 +134,31 @@
 	inherits: true;
 	initial-value: #e8b04c;
 }
+@property --color-overlay-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: rgb(0 0 0 / 0.55);
+}
+@property --color-overlay-content {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #fffffb;
+}
+@property --color-overlay-content-muted {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: rgb(255 255 251 / 0.65);
+}
+@property --color-overlay-border {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: rgb(255 255 251 / 0.14);
+}
+@property --color-overlay-soft {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: rgb(255 255 251 / 0.12);
+}
 @property --font-display {
 	syntax: "*";
 	inherits: true;
