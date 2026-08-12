@@ -15,6 +15,7 @@
 @import url("./atoms/panel/styles.css");
 @import url("./atoms/presence/styles.css");
 @import url("./atoms/rule/styles.css");
+@import url("./atoms/select-control/styles.css");
 @import url("./atoms/segmented/styles.css");
 @import url("./atoms/sparkline/styles.css");
 @import url("./atoms/stage-hint/styles.css");

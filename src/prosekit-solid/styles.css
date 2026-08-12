@@ -91,13 +91,6 @@
 	}
 }
 
-.aic-prosekit:focus-within {
-	border-color: color-mix(in oklab, var(--aic-prosekit-accent) 48%, var(--aic-prosekit-line));
-	box-shadow:
-		0 0 0 3px var(--aic-prosekit-accent-soft),
-		0 24px 65px -40px color-mix(in oklab, var(--aic-prosekit-accent) 45%, transparent);
-}
-
 .aic-prosekit-toolbar {
 	position: sticky;
 	top: 0;

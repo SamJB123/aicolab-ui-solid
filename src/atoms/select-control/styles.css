@@ -1,0 +1,122 @@
+@scope (.ui-select-control) {
+	:scope {
+		box-sizing: border-box;
+		width: fit-content;
+		max-width: 100%;
+		min-height: 2.25rem;
+		padding: 0.42rem 0.75rem;
+		border: 1px solid var(--color-border-strong);
+		border-radius: var(--r-md);
+		corner-shape: squircle;
+		background: var(--color-base-100);
+		color: var(--color-base-content);
+		font: inherit;
+		field-sizing: content;
+		cursor: pointer;
+		transition:
+			border-color 160ms ease,
+			outline-color 160ms ease;
+	}
+
+	:scope:hover:not(:disabled) {
+		border-color: color-mix(in oklab, var(--color-primary) 58%, var(--color-border-strong));
+	}
+
+	:scope:focus-visible {
+		border-color: var(--color-primary);
+		outline: 2px solid color-mix(in oklab, var(--color-primary) 42%, transparent);
+		outline-offset: 2px;
+	}
+
+	:scope:disabled {
+		cursor: not-allowed;
+		background: var(--color-base-200);
+		color: var(--color-base-content-faint);
+	}
+
+	:scope[data-ui-color-base] {
+		border-color: var(--ui-border);
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+	}
+
+	:scope[data-ui-color-base]:hover:not(:disabled) {
+		border-color: var(--ui-border-hover);
+		background: var(--ui-surface-hover);
+		color: var(--ui-ink-hover);
+	}
+
+	:scope[data-ui-color-base]:focus-visible {
+		border-color: var(--ui-border-active);
+		outline-color: var(--ui-focus-ring);
+	}
+
+	:scope[data-ui-color-base]:disabled {
+		border-color: var(--ui-border-disabled);
+		background: var(--ui-surface-disabled);
+		color: var(--ui-ink-disabled);
+	}
+
+	@container ui-treatment-context style(--ui-environment: overlay) {
+		:scope {
+			border-color: var(--color-overlay-border);
+			background: var(--color-overlay-soft);
+			color: var(--color-overlay-content);
+		}
+		:scope:disabled { color: var(--color-overlay-content-muted); }
+	}
+
+	/* Compatibility boundary: the ordinary native select above is the
+	   Baseline-2026 path. Remove this gate only once customizable select is
+	   Baseline; picker pseudos must never become a functional dependency. */
+	@supports (appearance: base-select) {
+		:scope { appearance: base-select; }
+
+		:scope::picker(select) {
+			appearance: base-select;
+			border: 1px solid var(--color-border-strong);
+			border-radius: var(--r-md);
+			corner-shape: squircle;
+			background: var(--color-base-100);
+			color: var(--color-base-content);
+			box-shadow:
+				0 0 0 1px var(--color-border),
+				0 0.75rem 2.5rem -0.75rem color-mix(in oklab, var(--color-base-content) 28%, transparent);
+		}
+
+		:scope option { padding: 0.45rem 0.65rem; }
+		:scope option:checked {
+			background: var(--color-primary);
+			color: var(--color-primary-content);
+		}
+
+		:scope[data-ui-color-base]::picker(select) {
+			border-color: var(--ui-border);
+			background: var(--color-base-100);
+			color: var(--color-base-content);
+		}
+
+		:scope[data-ui-color-base] option:not(:checked) {
+			background: transparent;
+			color: var(--color-base-content);
+		}
+
+		:scope[data-ui-color-base] option:not(:checked):hover {
+			background: var(--color-base-150);
+		}
+
+		:scope[data-ui-color-base] option:checked {
+			background: var(--ui-surface-selected);
+			color: var(--ui-ink-selected);
+		}
+
+		@container ui-treatment-context style(--ui-environment: overlay) {
+			:scope::picker(select) {
+				border-color: var(--color-overlay-border);
+				background: var(--color-overlay-surface);
+				color: var(--color-overlay-content);
+				box-shadow: 0 0.75rem 2.5rem -0.75rem var(--color-overlay-surface);
+			}
+		}
+	}
+}
