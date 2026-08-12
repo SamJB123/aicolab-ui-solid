@@ -7,12 +7,12 @@
 		--ui-presence-4: var(--color-error);
 		--ui-presence-5: var(--color-accent);
 		--ui-presence-6: var(--color-secondary);
-		--ui-attribution-1: color-mix(in oklab, var(--ui-presence-1) 22%, var(--color-base-100));
-		--ui-attribution-2: color-mix(in oklab, var(--ui-presence-2) 22%, var(--color-base-100));
-		--ui-attribution-3: color-mix(in oklab, var(--ui-presence-3) 22%, var(--color-base-100));
-		--ui-attribution-4: color-mix(in oklab, var(--ui-presence-4) 22%, var(--color-base-100));
-		--ui-attribution-5: color-mix(in oklab, var(--ui-presence-5) 22%, var(--color-base-100));
-		--ui-attribution-6: color-mix(in oklab, var(--ui-presence-6) 22%, var(--color-base-100));
+		--ui-attribution-1: var(--ui-presence-1);
+		--ui-attribution-2: var(--ui-presence-2);
+		--ui-attribution-3: var(--ui-presence-3);
+		--ui-attribution-4: var(--ui-presence-4);
+		--ui-attribution-5: var(--ui-presence-5);
+		--ui-attribution-6: var(--ui-presence-6);
 	}
 
 	.ui-presence-swatch {
@@ -30,9 +30,12 @@
 		background: var(--ui-presence-color);
 	}
 
-	.ui-attribution-mark[data-attributed] { background: var(--ui-attribution-color); }
+	.ui-attribution-mark[data-attributed] {
+		background: var(--ui-attribution-color);
+		color: contrast-color(var(--ui-attribution-color));
+	}
 	.ui-attribution-mark[data-deleted] {
-		color: var(--color-base-content-faint);
+		color: contrast-color(var(--ui-attribution-color));
 		text-decoration-line: line-through;
 	}
 }

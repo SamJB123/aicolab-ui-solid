@@ -1,0 +1,9 @@
+@scope (.ui-iconbtn) {
+	/* ThemeToggle deliberately inherits the complete IconButton presentation.
+	   Its visible glyph needs only stable tabular centring between modes. */
+	:scope[aria-label^="Theme:"] > span {
+		display: grid;
+		place-items: center;
+		line-height: 1;
+	}
+}

@@ -324,10 +324,14 @@
 	gap: 0.55rem;
 	margin-block: 0.75rem;
 	padding: 0.6rem;
-	border: 1px solid;
+	border: 1px solid var(--ui-color);
 	border-radius: 0.8rem;
 	corner-shape: squircle;
 	background: color-mix(in oklab, var(--aic-prosekit-surface-raised) 82%, transparent);
+	/* Notice normally resolves a variant-aware inset border. A callout's tone
+	   is categorical information, so its outline deliberately uses the exact
+	   semantic family colour instead of the diluted soft-variant border. */
+	box-shadow: inset 0 0 0 1px var(--ui-color);
 }
 
 .aic-prosekit-block-select,
@@ -343,13 +347,16 @@
 
 .aic-prosekit-block-select {
 	flex: 0 0 auto;
+	width: auto;
+	max-inline-size: 9rem;
 	padding: 0.5rem 0.65rem;
 	line-height: 1.2;
 	vertical-align: middle;
 }
 
 .aic-prosekit-block-input {
-	flex: 1 1 auto;
+	flex: 1 1 12rem;
+	width: auto;
 	min-inline-size: 0;
 	padding: 0.52rem 0.72rem;
 	field-sizing: content;

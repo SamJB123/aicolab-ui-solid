@@ -162,6 +162,33 @@
 		white-space: nowrap;
 	}
 
+	.ui-rich-list-metadata {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		flex-wrap: wrap;
+		gap: 0.25rem 0.6rem;
+		font-size: var(--t-xs);
+		line-height: 1.25;
+	}
+
+	.ui-rich-list-metadata-primary {
+		color: var(--color-base-content-muted);
+		font-weight: 650;
+	}
+
+	.ui-rich-list-metadata-secondary {
+		color: var(--color-base-content-faint);
+		font-family: var(--font-data);
+		font-size: var(--t-2xs);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.ui-rich-list-metadata-actions {
+		display: inline-flex;
+		align-items: center;
+	}
+
 	@container (max-width: 20rem) {
 		.ui-rich-list-item:has(.ui-rich-list-leading[data-width="wide"]) {
 			grid-template-columns: 1fr auto;

@@ -47,7 +47,7 @@ export {
 	type Step,
 	Steps,
 } from './marketing'
-export { RichList, RichListItem } from './molecules/rich-list'
+export { RichList, RichListItem, RichListMetadata } from './molecules/rich-list'
 export { DatePicker, TimePicker } from './pickers'
 export {
 	Avatar,
@@ -94,6 +94,8 @@ export {
 } from './primitives'
 export {
 	ApplicationHeader,
+	ThemeToggle,
+	type ThemeMode,
 	Combobox,
 	ToggleGroup,
 	type ToggleOption,

@@ -19,11 +19,15 @@ export function ApplicationHeader(props: {
 				</Show>
 				<h1 class="ui-application-header-title">{props.title}</h1>
 			</div>
-			<Show when={props.actions}>
-				<div class="ui-application-header-actions">{props.actions?.()}</div>
-			</Show>
-			<Show when={props.status}>
-				<div class="ui-application-header-status">{props.status?.()}</div>
+			<Show when={props.status || props.actions}>
+				<div class="ui-application-header-end">
+					<Show when={props.status}>
+						<div class="ui-application-header-status">{props.status?.()}</div>
+					</Show>
+					<Show when={props.actions}>
+						<div class="ui-application-header-actions">{props.actions?.()}</div>
+					</Show>
+				</div>
 			</Show>
 		</header>
 	)

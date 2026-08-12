@@ -34,6 +34,7 @@
 		color: var(--color-base-content-muted);
 	}
 
+	.ui-application-header-end,
 	.ui-application-header-actions {
 		display: flex;
 		align-items: center;
@@ -42,19 +43,17 @@
 		min-width: 0;
 	}
 
-	.ui-application-header-status {
-		grid-column: 1 / -1;
-	}
+	.ui-application-header-status { flex: 0 0 auto; }
 
 	@container ui-application-header (width < 48rem) {
 		.ui-application-header-eyebrow { display: none; }
-		.ui-application-header-actions {
+		.ui-application-header-end {
 			max-width: 62cqw;
 			overflow-x: auto;
 			overscroll-behavior-x: contain;
 			scrollbar-width: none;
 		}
-		.ui-application-header-actions::-webkit-scrollbar { display: none; }
+		.ui-application-header-end::-webkit-scrollbar { display: none; }
 	}
 
 	@container ui-application-header (width < 34rem) {

@@ -15,6 +15,26 @@ export function RichList(props: { label?: string; navigation?: boolean; class?: 
 	)
 }
 
+/** Compact provenance/timing anatomy for the trailing edge of rich rows. */
+export function RichListMetadata(props: {
+	primary: JSX.Element
+	secondary?: JSX.Element
+	actions?: JSX.Element
+	class?: ClassProp
+}) {
+	return (
+		<span class={['ui-rich-list-metadata', props.class]}>
+			<span class="ui-rich-list-metadata-primary">{props.primary}</span>
+			<Show when={props.secondary}>
+				{(secondary) => <span class="ui-rich-list-metadata-secondary">{secondary()}</span>}
+			</Show>
+			<Show when={props.actions}>
+				{(actions) => <span class="ui-rich-list-metadata-actions">{actions()}</span>}
+			</Show>
+		</span>
+	)
+}
+
 /** A compound information row. Supplying onSelect makes the whole row one
  * native action; omitting it produces the same anatomy as static content. */
 export function RichListItem(props: {
