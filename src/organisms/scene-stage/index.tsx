@@ -3,11 +3,13 @@ import type { JSX } from '@solidjs/web'
 import { createEffect, createSignal, onSettled, Show } from 'solid-js'
 import type { ClassProp } from '../../shared/color-treatment'
 
-export interface SceneStageMountContext<Command, Events> {
+export interface SceneStageMountContext<Events, Configuration> {
 	canvas: HTMLCanvasElement
 	host: HTMLDivElement
-	command: Command | undefined
-	events: Events
+	configuration: Configuration
+	/** Read callbacks at event time so replacements remain live without
+	 * rebuilding the renderer. */
+	events: () => Events
 	onReady: () => void
 	onError: (message: string) => void
 }
@@ -20,14 +22,17 @@ export interface SceneStageController<Command> {
 /** Renderer-neutral bridge between reactive UI and an imperative visual
  * engine. The adapter owns rendering; SceneStage owns its canvas lifecycle,
  * accessible picture contract, status presentation and command delivery. */
-export interface SceneStageAdapter<Command, Events> {
-	mount: (context: SceneStageMountContext<Command, Events>) => SceneStageController<Command>
+export interface SceneStageAdapter<Command, Events, Configuration = undefined> {
+	mount: (context: SceneStageMountContext<Events, Configuration>) => SceneStageController<Command>
 }
 
-export function SceneStage<Command, Events>(props: {
-	adapter: SceneStageAdapter<Command, Events>
+export function SceneStage<Command, Events, Configuration = undefined>(props: {
+	adapter: SceneStageAdapter<Command, Events, Configuration>
 	command?: Command
 	events: Events
+	/** Renderer construction inputs. Changing this value deliberately disposes
+	 * and remounts the renderer; live commands and callbacks do not. */
+	configuration: Configuration
 	label: string
 	loadingLabel?: JSX.Element
 	errorLabel?: (message: string) => JSX.Element
@@ -37,32 +42,51 @@ export function SceneStage<Command, Events>(props: {
 }) {
 	let canvas: HTMLCanvasElement | undefined
 	let host: HTMLDivElement | undefined
-	let controller: SceneStageController<Command> | undefined
+	const [settled, setSettled] = createSignal(false)
+	const [controller, setController] = createSignal<SceneStageController<Command> | undefined>()
 	const [ready, setReady] = createSignal(false)
 	const [error, setError] = createSignal<string | null>(null)
 
+	onSettled(() => {
+		setSettled(true)
+	})
+
 	createEffect(
-		() => props.command,
-		(command) => {
-			if (command !== undefined) controller?.updateCommand(command)
+		() =>
+			settled() && canvas && host
+				? {
+						adapter: props.adapter,
+						configuration: props.configuration,
+						canvas,
+						host,
+					}
+				: undefined,
+		(mount) => {
+			if (!mount) return
+			setReady(false)
+			setError(null)
+			const nextController = mount.adapter.mount({
+				canvas: mount.canvas,
+				host: mount.host,
+				configuration: mount.configuration,
+				events: () => props.events,
+				onReady: () => setReady(true),
+				onError: (message) => setError(message),
+			})
+			setController(nextController)
+			return () => {
+				nextController.dispose()
+				setController(undefined)
+			}
 		},
 	)
 
-	onSettled(() => {
-		if (!canvas || !host) return
-		controller = props.adapter.mount({
-			canvas,
-			host,
-			command: props.command,
-			events: props.events,
-			onReady: () => setReady(true),
-			onError: (message) => setError(message),
-		})
-		return () => {
-			controller?.dispose()
-			controller = undefined
-		}
-	})
+	createEffect(
+		() => ({ controller: controller(), command: props.command }),
+		({ controller: activeController, command }) => {
+			if (command !== undefined) activeController?.updateCommand(command)
+		},
+	)
 
 	return (
 		<div
