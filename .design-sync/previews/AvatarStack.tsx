@@ -24,12 +24,12 @@ export function OnPanel() {
 		<div
 			style={{
 				'border-radius': '16px',
-				background: 'var(--c-panel)',
+				background: 'var(--color-base-100)',
 				padding: '16px',
-				'box-shadow': '0 0 0 1px var(--c-line)',
+				'box-shadow': '0 0 0 1px var(--color-border)',
 			}}
 		>
-			<AvatarStack people={PEOPLE.slice(0, 4)} ring="var(--c-panel)" />
+			<AvatarStack people={PEOPLE.slice(0, 4)} ring="var(--color-base-100)" />
 		</div>
 	)
 }

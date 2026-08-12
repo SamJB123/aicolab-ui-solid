@@ -9,7 +9,7 @@ export function Trend() {
 }
 
 export function LiveColour() {
-	return <Sparkline data={FLAT} color="var(--c-live)" />
+	return <Sparkline data={FLAT} color="var(--color-success)" />
 }
 
 export function InStatRow() {
@@ -21,7 +21,7 @@ export function InStatRow() {
 						'font-family': 'var(--font-data)',
 						'font-size': '1.5rem',
 						'line-height': '2rem',
-						color: 'var(--c-text)',
+						color: 'var(--color-base-content)',
 					}}
 				>
 					1,204
@@ -32,7 +32,7 @@ export function InStatRow() {
 						'font-size': '10px',
 						'text-transform': 'uppercase',
 						'letter-spacing': '0.2em',
-						color: 'var(--c-faint)',
+						color: 'var(--color-base-content-faint)',
 					}}
 				>
 					visits this week

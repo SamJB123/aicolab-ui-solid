@@ -49,7 +49,7 @@ export const Full: Story = {
 					transitionName="cal-grid-planner"
 					day={(d) => (
 						<Show when={sameDay(d(), date())}>
-							<StatusDot status={{ color: 'var(--c-accent)' }} size={5} />
+							<StatusDot status={{ color: 'var(--color-primary)' }} size={5} />
 						</Show>
 					)}
 				/>
@@ -78,7 +78,7 @@ export const Full: Story = {
 							/>
 						</Field>
 						<Rule />
-						<Button appearance="solid">Book session</Button>
+						<Button variant="solid">Book session</Button>
 					</div>
 				</Panel>
 			</div>

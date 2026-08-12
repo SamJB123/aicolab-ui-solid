@@ -20,7 +20,7 @@ export function Avatar(props: {
 } & ColorTreatmentProps) {
 	const size = () => props.size ?? 36
 	const color = () => props.colorBase ? 'var(--ui-ink)' : props.faceColor
-	const surface = () => props.colorBase ? 'var(--ui-surface-occluding)' : (props.ring ?? 'var(--c-panel)')
+	const surface = () => props.colorBase ? 'var(--ui-surface-occluding)' : (props.ring ?? 'var(--color-base-100)')
 	return (
 		<span {...colorTreatmentData(props)} class="ui-avatar" style={{ width: `${size()}px`, height: `${size()}px` }}>
 			<span
@@ -38,7 +38,7 @@ export function Avatar(props: {
 			</span>
 			<Show when={props.status}>
 				{(s) => (
-					<span class="ui-avatar-badge" style={{ background: props.colorBase ? 'var(--ui-surface-raised)' : (props.ring ?? 'var(--c-panel)') }}>
+					<span class="ui-avatar-badge" style={{ background: props.colorBase ? 'var(--ui-surface-raised)' : (props.ring ?? 'var(--color-base-100)') }}>
 						<StatusDot status={s()} size={Math.max(7, Math.round(size() * 0.2))} />
 					</span>
 				)}

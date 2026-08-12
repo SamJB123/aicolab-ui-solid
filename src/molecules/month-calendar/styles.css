@@ -22,13 +22,13 @@
 		font-optical-sizing: auto;
 		font-size: var(--t-2xl);
 		font-weight: 500;
-		color: var(--c-text);
+		color: var(--color-base-content);
 	}
 	.ui-cal-year {
 		font-family: var(--font-data, ui-monospace, monospace);
 		font-size: var(--t-lg);
 		font-variant-numeric: tabular-nums;
-		color: var(--c-faint);
+		color: var(--color-base-content-faint);
 	}
 	.ui-cal-head-controls {
 		display: flex;
@@ -45,21 +45,21 @@
 		letter-spacing: 0.16em;
 		cursor: pointer;
 		background: transparent;
-		color: var(--c-muted);
-		box-shadow: 0 0 0 1px var(--c-line);
+		color: var(--color-base-content-muted);
+		box-shadow: 0 0 0 1px var(--color-border);
 		transition:
 			color 0.2s,
 			background-color 0.2s;
 	}
 	.ui-cal-today-btn:hover {
-		background: var(--c-panel-2);
-		color: var(--c-text);
+		background: var(--color-base-150);
+		color: var(--color-base-content);
 	}
 	:scope > .ui-cal-weekdays {
 		display: grid;
 		grid-template-columns: repeat(7, 1fr);
 		gap: 4px;
-		border-bottom: 1px solid var(--c-line);
+		border-bottom: 1px solid var(--color-border);
 		padding-bottom: 8px;
 	}
 	.ui-cal-weekday {
@@ -68,7 +68,7 @@
 		font-size: var(--t-2xs);
 		text-transform: uppercase;
 		letter-spacing: 0.16em;
-		color: var(--c-faint);
+		color: var(--color-base-content-faint);
 	}
 	:scope > .ui-cal-grid {
 		margin-top: 4px;
@@ -97,11 +97,11 @@
 			border-color 0.2s;
 	}
 	.ui-cal-day:hover:not([data-selected]) {
-		background: var(--c-panel-2);
+		background: var(--color-base-150);
 	}
 	.ui-cal-day[data-selected] {
-		border-color: color-mix(in oklab, var(--c-accent) 45%, transparent);
-		background: var(--c-accent-soft);
+		border-color: color-mix(in oklab, var(--color-primary) 45%, transparent);
+		background: var(--color-primary-soft);
 	}
 	.ui-cal-daynum {
 		display: grid;
@@ -112,12 +112,12 @@
 		font-family: var(--font-data, ui-monospace, monospace);
 		font-size: var(--t-sm);
 		font-variant-numeric: tabular-nums;
-		color: var(--c-muted);
+		color: var(--color-base-content-muted);
 	}
 	.ui-cal-daynum[data-today] {
-		background: var(--c-accent);
+		background: var(--color-primary);
 		font-weight: 600;
-		color: var(--c-page);
+		color: var(--color-base-200);
 	}
 }
 

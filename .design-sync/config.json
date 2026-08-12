@@ -8,8 +8,8 @@
 	"srcDir": "src",
 	"scope": "main-entry-only",
 	"themeSources": {
-		"light": "../../playground/template/src/styles.css",
-		"dark": "../../playground/audit-corpus/src/styles.css"
+		"light": "src/styles.css",
+		"dark": "src/styles.css"
 	},
 	"readmeHeader": ".design-sync/conventions.md",
 	"runtimeFontPrefixes": ["Iowan Old Style", "Palatino"],

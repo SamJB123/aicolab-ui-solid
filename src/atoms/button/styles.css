@@ -52,5 +52,5 @@
 		color: var(--ui-ink-disabled);
 		box-shadow: inset 0 0 0 1px var(--ui-border-disabled);
 	}
-	:scope[data-ui-appearance="text"] { padding-inline: 4px; }
+	:scope[data-ui-color-variant="text"] { padding-inline: 4px; }
 }

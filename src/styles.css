@@ -10,3 +10,4 @@
 @import url("./molecules.css") layer(ui.molecules);
 @import url("./organisms.css") layer(ui.organisms);
 @import url("./enhancements.css") layer(ui.enhancements);
+@import url("./fonts.css");

@@ -28,7 +28,7 @@ export const Tweened: Story = {
 		return (
 			<div style={{ display: 'flex', 'align-items': 'center', gap: '16px' }}>
 				<Counter value={value()} class="font-data" />
-				<Button appearance="solid" onClick={() => setValue(Math.round(Math.random() * 100_000))}>
+				<Button variant="solid" onClick={() => setValue(Math.round(Math.random() * 100_000))}>
 					Randomise
 				</Button>
 			</div>
@@ -37,6 +37,6 @@ export const Tweened: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Color base × level × appearance',
-	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, appearance }) => <Counter colorBase={colorBase} colorLevel={colorLevel} appearance={appearance} value={12480} class="font-data" />} />,
+	name: 'Color base × level × variant',
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, variant }) => <Counter colorBase={colorBase} colorLevel={colorLevel} variant={variant} value={12480} class="font-data" />} />,
 }

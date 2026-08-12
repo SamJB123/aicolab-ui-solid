@@ -36,9 +36,9 @@ export const Compact: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Color base × level × appearance',
+	name: 'Color base × level × variant',
 	args: { people: PEOPLE },
-	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, appearance }) => (
-		<AvatarStack colorBase={colorBase} colorLevel={colorLevel} appearance={appearance} people={PEOPLE.slice(0, 4)} max={3} size={28} />
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, variant }) => (
+		<AvatarStack colorBase={colorBase} colorLevel={colorLevel} variant={variant} people={PEOPLE.slice(0, 4)} max={3} size={28} />
 	)} />,
 }

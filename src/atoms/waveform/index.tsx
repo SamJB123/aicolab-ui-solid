@@ -3,7 +3,7 @@ import { For } from 'solid-js'
 import { colorTreatmentData, type ClassProp, type ColorTreatmentProps } from '../../shared/color-treatment'
 
 export function Waveform(props: { bars: number[]; barColor?: string; class?: ClassProp } & ColorTreatmentProps) {
-	const color = () => props.colorBase ? 'var(--ui-mark)' : (props.barColor ?? 'var(--c-accent)')
+	const color = () => props.colorBase ? 'var(--ui-mark)' : (props.barColor ?? 'var(--color-primary)')
 	return (
 		<div {...colorTreatmentData(props)} class={['ui-waveform', props.class]}>
 			<For each={props.bars}>

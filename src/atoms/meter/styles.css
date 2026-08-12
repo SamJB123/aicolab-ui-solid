@@ -9,7 +9,7 @@
 		width: 100%;
 		overflow: hidden;
 		border-radius: var(--r-pill);
-		background: var(--c-line);
+		background: var(--color-border);
 	}
 	:scope[data-ui-color-base] {
 		background: var(--ui-track);
@@ -17,7 +17,7 @@
 	:scope > .ui-meter-fill {
 		height: 100%;
 		border-radius: var(--r-pill);
-		background: var(--c-text);
+		background: var(--color-base-content);
 		transition: width 0.5s;
 	}
 	@supports (width: attr(data-pct type(<percentage>), 0%)) {

@@ -27,8 +27,8 @@ export const Centered: Story = {
 			lede="Workshops, working groups, and shared infrastructure for people building with AI in the public interest."
 			actions={() => (
 			<>
-				<Button appearance="solid">Join a session</Button>
-				<Button appearance="ghost">Read the model</Button>
+				<Button variant="solid">Join a session</Button>
+				<Button variant="ghost">Read the model</Button>
 			</>
 			)}
 		/>
@@ -46,7 +46,7 @@ export const StartAligned: Story = {
 			</>
 			)}
 			lede="Twelve weeks of member-led sessions across both studios."
-			actions={() => <Button appearance="solid">Browse the calendar</Button>}
+			actions={() => <Button variant="solid">Browse the calendar</Button>}
 		/>
 	),
 }

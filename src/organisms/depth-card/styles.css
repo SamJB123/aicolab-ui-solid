@@ -32,8 +32,8 @@
 	   radii), so nothing needs clipping. Free-form slot consumers with
 	   full-bleed content must round/clip it themselves. */
 	border-radius: var(--r-xl);
-	background: var(--c-panel);
-	box-shadow: inset 0 0 0 1px var(--c-line);
+	background: var(--color-base-100);
+	box-shadow: inset 0 0 0 1px var(--color-border);
 	backface-visibility: hidden;
 	transform-style: preserve-3d;
 	transition: transform 0.6s cubic-bezier(0.4, 0.1, 0.2, 1);
@@ -58,7 +58,7 @@
 	background: conic-gradient(
 		from var(--dc-angle),
 		transparent 12%,
-		var(--dc-glow, var(--c-accent)) 50%,
+		var(--dc-glow, var(--color-primary)) 50%,
 		transparent 88%
 	);
 	mask:
@@ -104,7 +104,7 @@
 	font-size: var(--t-xl);
 	font-weight: 500;
 	line-height: 1.7;
-	color: var(--c-text);
+	color: var(--color-base-content);
 	transform: translateZ(50px);
 	backface-visibility: hidden;
 }
@@ -112,7 +112,7 @@
 	margin: 0 0 1.1rem;
 	font-size: var(--t-md);
 	line-height: 1.55;
-	color: var(--c-muted);
+	color: var(--color-base-content-muted);
 	transform: translateZ(60px);
 	backface-visibility: hidden;
 }
@@ -158,7 +158,7 @@
 	display: flex;
 	width: 100%;
 	justify-content: center;
-	color: var(--c-muted);
+	color: var(--color-base-content-muted);
 	backface-visibility: hidden;
 }
 
@@ -174,7 +174,7 @@
 	inset: 0;
 	display: grid;
 	place-items: center;
-	color: var(--c-text);
+	color: var(--color-base-content);
 	opacity: 0.1;
 	pointer-events: none;
 }
@@ -187,7 +187,7 @@
 	justify-content: space-between;
 	gap: 0.75rem;
 	padding: 1rem 1.5rem;
-	background: var(--c-page-2);
+	background: var(--color-base-300);
 	border-radius: var(--r-xl) var(--r-xl) 0 0;
 }
 :scope .dc-sb-title {
@@ -196,7 +196,7 @@
 	font-size: var(--t-xl);
 	font-weight: 500;
 	line-height: 1.7;
-	color: var(--c-text);
+	color: var(--color-base-content);
 }
 .dc-sb-return {
 	border: 0;
@@ -204,12 +204,12 @@
 	padding: 0;
 	font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
 	font-size: var(--t-xs);
-	color: var(--c-faint);
+	color: var(--color-base-content-faint);
 	cursor: pointer;
 	transition: color 0.15s;
 }
 .dc-sb-return:hover {
-	color: var(--c-text);
+	color: var(--color-base-content);
 }
 :scope .dc-sb-body {
 	flex: 1;
@@ -218,7 +218,7 @@
 	padding: 1rem 1.5rem 1.5rem;
 	font-size: var(--t-md);
 	line-height: 1.7;
-	color: var(--c-muted);
+	color: var(--color-base-content-muted);
 }
 /* Body rhythm, card-owned (same rationale as above): prose-matched block
    margins, muted text — consumer utility classes cannot and should not
@@ -227,6 +227,6 @@
 :scope .dc-sb-body ul,
 :scope .dc-sb-body ol {
 	margin: 0 0 1.1rem;
-	color: var(--c-muted);
+	color: var(--color-base-content-muted);
 }
 }

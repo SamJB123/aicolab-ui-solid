@@ -16,8 +16,8 @@ export function Levels() {
 export function AccentAndLive() {
 	return (
 		<div style={COL_64}>
-			<Meter value={9} max={12} color="var(--c-accent)" />
-			<Meter value={5} max={12} color="var(--c-live)" />
+			<Meter value={9} max={12} color="var(--color-primary)" />
+			<Meter value={5} max={12} color="var(--color-success)" />
 		</div>
 	)
 }
@@ -32,7 +32,7 @@ export function Labelled() {
 						'font-size': '10px',
 						'text-transform': 'uppercase',
 						'letter-spacing': '0.2em',
-						color: 'var(--c-faint)',
+						color: 'var(--color-base-content-faint)',
 					}}
 				>
 					studio 4 occupancy
@@ -42,13 +42,13 @@ export function Labelled() {
 						'font-family': 'var(--font-data)',
 						'font-size': '0.75rem',
 						'line-height': '1rem',
-						color: 'var(--c-muted)',
+						color: 'var(--color-base-content-muted)',
 					}}
 				>
 					9/12
 				</span>
 			</div>
-			<Meter value={9} max={12} color="var(--c-accent)" />
+			<Meter value={9} max={12} color="var(--color-primary)" />
 		</div>
 	)
 }

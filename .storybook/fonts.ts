@@ -4,7 +4,7 @@
 //
 // `spec` is the css2 API family value (axes must be alphabetical; ranges are
 // each family's published variable axes — static families list fixed
-// weights). `id: 'default'` means "whatever theme.css declares" — nothing is
+// weights). `id: 'default'` means "whatever theme-defaults.css declares" — nothing is
 // loaded and the token is left untouched. For the LABEL role, "default"
 // means UNSET: the micro-label voice (eyebrows/chips/kickers/field labels)
 // falls back to whatever --font-data resolves to.
@@ -35,6 +35,12 @@ export const FONT_OPTIONS: Record<FontRole, FontOption[]> = {
 			label: 'Playfair Display',
 			spec: 'Playfair Display:wght@400..900',
 			stack: '"Playfair Display", Georgia, serif',
+		},
+		{
+			id: 'spectral',
+			label: 'Spectral',
+			spec: 'Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400',
+			stack: '"Spectral", Georgia, serif',
 		},
 		{
 			id: 'dm-serif',
@@ -72,6 +78,18 @@ export const FONT_OPTIONS: Record<FontRole, FontOption[]> = {
 			label: 'Instrument Serif',
 			spec: 'Instrument Serif:ital@0;1',
 			stack: '"Instrument Serif", Georgia, serif',
+		},
+		{
+			id: 'libre-baskerville',
+			label: 'Libre Baskerville',
+			spec: 'Libre Baskerville:ital,wght@0,400;0,700;1,400',
+			stack: '"Libre Baskerville", Georgia, serif',
+		},
+		{
+			id: 'finlandica-headline',
+			label: 'Finlandica Headline',
+			spec: 'Finlandica Headline:ital,wght@0,400..700;1,400..700',
+			stack: '"Finlandica Headline", ui-sans-serif, system-ui, sans-serif',
 		},
 		{
 			id: 'young-serif',
@@ -174,6 +192,30 @@ export const FONT_OPTIONS: Record<FontRole, FontOption[]> = {
 			stack: '"Manrope", ui-sans-serif, system-ui, sans-serif',
 		},
 		{
+			id: 'finlandica',
+			label: 'Finlandica',
+			spec: 'Finlandica:ital,wght@0,400..700;1,400..700',
+			stack: '"Finlandica", ui-sans-serif, system-ui, sans-serif',
+		},
+		{
+			id: 'finlandica-text',
+			label: 'Finlandica Text',
+			spec: 'Finlandica Text:ital,wght@0,400..700;1,400..700',
+			stack: '"Finlandica Text", ui-sans-serif, system-ui, sans-serif',
+		},
+		{
+			id: 'space-grotesk',
+			label: 'Space Grotesk',
+			spec: 'Space Grotesk:wght@300..700',
+			stack: '"Space Grotesk", ui-sans-serif, system-ui, sans-serif',
+		},
+		{
+			id: 'jakarta',
+			label: 'Plus Jakarta Sans',
+			spec: 'Plus Jakarta Sans:wght@300..800',
+			stack: '"Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif',
+		},
+		{
 			id: 'instrument',
 			label: 'Instrument Sans',
 			spec: 'Instrument Sans:wght@400..700',
@@ -224,8 +266,6 @@ export const FONT_OPTIONS: Record<FontRole, FontOption[]> = {
 		},
 	],
 	data: [
-		// theme.css itself loads + declares Azeret Mono for --font-data
-		// (canonical since 2026-08-07), so "default" already renders it.
 		{ id: 'default', label: 'Theme default (Azeret Mono)' },
 		{
 			id: 'jetbrains',

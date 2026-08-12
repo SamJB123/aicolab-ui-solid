@@ -16,7 +16,7 @@ export function AboveHeading() {
 					'font-size': '1.5rem',
 					'line-height': '2rem',
 					'font-weight': '500',
-					color: 'var(--c-text)',
+					color: 'var(--color-base-content)',
 				}}
 			>
 				Autumn cohort

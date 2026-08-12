@@ -16,7 +16,7 @@ export function Sparkline(props: { data: number[]; w?: number; h?: number; strok
 		const area = `0,${h} ${line} ${w},${h}`
 		return { w, h, line, area, last: pts[pts.length - 1] }
 	})
-	const color = () => props.colorBase ? 'var(--ui-mark)' : (props.strokeColor ?? 'var(--c-accent)')
+	const color = () => props.colorBase ? 'var(--ui-mark)' : (props.strokeColor ?? 'var(--color-primary)')
 	return (
 		<svg
 			{...colorTreatmentData(props)}

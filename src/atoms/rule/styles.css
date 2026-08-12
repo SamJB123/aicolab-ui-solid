@@ -5,7 +5,7 @@
 	:scope > .ui-rule-line {
 		height: 1px;
 		flex: 1;
-		background: var(--c-line);
+		background: var(--color-border);
 	}
 	:scope[data-ui-color-base] > .ui-rule-line { background: var(--ui-mark); }
 	:scope[data-ui-color-base] .ui-eyebrow { color: inherit; }

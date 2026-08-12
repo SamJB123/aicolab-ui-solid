@@ -13,7 +13,7 @@
 	.ui-logo-name {
 		font-family: var(--font-data, ui-monospace, monospace);
 		font-size: var(--t-md);
-		color: var(--c-faint);
+		color: var(--color-base-content-faint);
 	}
 	.ui-logo-item img {
 		max-height: 40px;

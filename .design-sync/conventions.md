@@ -59,7 +59,8 @@ not exist and will silently do nothing. Three styling surfaces exist:
    colours, variants (via props like `tone`/`variant`) are built in. Don't
    restyle their interiors.
 2. **The token contract** for every colour/font you write yourself. Never
-   hard-code colours or fonts. Defined in `tokens/theme.css` as
+   hard-code colours or fonts. Defined by the canonical `src/styles.css`
+   import graph as
    `light-dark()` pairs — dark mode via `class="theme-dark"` (or
    `data-theme="dark"`) on any ancestor:
    - surfaces `--color-base-100` through `--color-base-300`
@@ -68,9 +69,7 @@ not exist and will silently do nothing. Three styling surfaces exist:
      `--color-neutral`, `--color-info`, `--color-success`, `--color-warning`,
      and `--color-error`, each paired with `--color-*-content`
    - hairlines `--color-border` / `--color-border-strong`
-   - legacy `--c-*` names are compatibility outputs; never author a new theme
-     through them
-   - font roles `--font-display` / `--font-sans` / `--font-data`, plus
+	- font roles `--font-display` / `--font-sans` / `--font-data`, plus
      optional `--font-label` for the micro-label voice (eyebrows, chips,
      panel kickers, field labels) — unset it falls back to `--font-data`
 3. **Inline `style={{ ... }}` for layout glue and one-off text styling** —
@@ -85,7 +84,8 @@ not exist and will silently do nothing. Three styling surfaces exist:
 
 - `guidelines/solid-cheatsheet.md` — Solid 2 API + the 1.x/React footgun list. Read first.
 - `components/<Group>/<Name>/<Name>.prompt.md` — verified Solid usage examples per component (each example rendered and reviewed).
-- `styles.css` → `tokens/theme.css` + `_ds_bundle.css` — the complete styling surface (semantic component classes only; no utilities).
+- `src/styles.css` — the single complete styling surface: typed properties,
+  canonical default theme, resolver and semantic component classes.
 - Composition tips learned building the previews: `Panel` children are a flex
   column (wrap inline children in an `align-self: flex-start` div); `Waveform`
   needs an explicit-height parent (e.g. `style={{ height: '2.5rem', width:

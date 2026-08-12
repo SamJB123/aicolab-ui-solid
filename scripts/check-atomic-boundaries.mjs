@@ -7,6 +7,15 @@ const tiers = ['atoms', 'molecules', 'organisms']
 const rank = new Map(tiers.map((tier, index) => [tier, index]))
 const sourceExtensions = new Set(['.ts', '.tsx', '.css'])
 const componentNames = new Set(tiers.flatMap((tier) => readdirSync(resolve(src, tier))))
+const privateResolverProperties = [
+	'--ui-color-base-key',
+	'--ui-color-base',
+	'--ui-color-level',
+	'--ui-color-variant',
+	'--ui-color',
+	'--ui-content',
+	'--ui-family-ink',
+]
 
 const walk = (directory) => readdirSync(directory).flatMap((name) => {
 	const path = resolve(directory, name)
@@ -39,9 +48,18 @@ const nodeFor = (tier, component) => `${tier}/${component}`
 for (const tier of tiers) {
 	const root = resolve(src, tier)
 	for (const importer of walk(root).filter((path) => sourceExtensions.has(extname(path)))) {
+		const source = readFileSync(importer, 'utf8')
 		const [importerTier, importerComponent] = describe(importer)
 		// Tier barrels are public aggregators, not component implementations.
 		if (!importerComponent || importerComponent === 'index.ts') continue
+		for (const property of privateResolverProperties) {
+			if (source.includes(`var(${property})`)) {
+				violations.push(`${relative(src, importer)} consumes private resolver input ${property}`)
+			}
+		}
+		if (/(?:color-mix|oklch|contrast-color|light-dark)\([^;{}]*var\(--ui-/s.test(source)) {
+			violations.push(`${relative(src, importer)} derives colour from a resolved --ui-* presentation role`)
+		}
 		const importerNode = nodeFor(importerTier, importerComponent)
 		if (!graph.has(importerNode)) graph.set(importerNode, new Set())
 		for (const specifier of importsIn(importer)) {

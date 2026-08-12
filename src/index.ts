@@ -56,7 +56,7 @@ export {
 	Button,
 	Chip,
 	type ClassProp,
-	type Appearance,
+	type Variant,
 	type ColorLevel,
 	type ColorBase,
 	type ColorTreatmentProps,

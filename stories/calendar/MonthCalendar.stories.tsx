@@ -56,7 +56,7 @@ export const WithDaySlot: Story = {
 					day={(date) => (
 						<Show when={events.some((e) => sameDay(e, date()))}>
 							<span style={{ display: 'inline-flex', gap: '3px', 'margin-top': '4px' }}>
-								<StatusDot status={{ color: 'var(--c-accent)' }} size={5} />
+								<StatusDot status={{ color: 'var(--color-primary)' }} size={5} />
 							</span>
 						</Show>
 					)}

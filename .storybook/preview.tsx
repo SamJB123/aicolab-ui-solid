@@ -2,7 +2,7 @@
 // Preview annotations for @aicolab/ui-solid.
 //
 // Theming model under test: every colour token is ONE light-dark() pair
-// (see ../.design-sync/theme/theme.css); the mode is selected purely by
+// (see ../src/theme-defaults.css); the mode is selected purely by
 // `color-scheme` — `[data-theme]` / `.theme-light` / `.theme-dark` on ANY
 // ancestor flips it for that subtree, and the default follows the OS via
 // `color-scheme: light dark` on :root.
@@ -20,8 +20,7 @@
 // (and the <html> attribute, via the effect) without a remount storm.
 
 // styles.css @imports the base reset itself (since 2026-08-07), so the
-// package floor is these two sheets — same as any consuming app.
-import '../.design-sync/theme/theme.css'
+// package floor is this one sheet — exactly the same as any consuming app.
 import '../src/styles.css'
 import './preview.css'
 
@@ -34,17 +33,30 @@ type ThemeMode = 'auto' | 'light' | 'dark' | 'split'
 const themeMode = (value: unknown): ThemeMode =>
 	value === 'light' || value === 'dark' || value === 'split' ? value : 'auto'
 
-// Split-mode support: styles.css REGISTERS every token via @property with
+// Split-mode support: styles.css registers typed theme properties via @property. A
 // syntax "<color>", and a registered property's light-dark() resolves
 // against the color-scheme of the element it is DECLARED on (:root here) —
 // descendants inherit the already-resolved colour, so wrapping a subtree in
 // .theme-dark alone cannot flip registered tokens declared only at :root
 // (probe-verified in Chrome 149; unregistered tokens DO flip per-usage).
-// Fix without forking the palette: re-host the :root custom-property
-// declarations on each pane, so they re-resolve under the pane's forced
-// color-scheme. Values are read from the loaded stylesheets at mount, so
-// theme.css stays the single source of truth.
-const rehostRootTokens = (el: HTMLElement) => {
+// Fix without forking the palette: re-host ONLY authored theme anchors on each
+// pane. The pane is a .ui-theme boundary, so ui-solid derives its entire role
+// set locally. Storybook therefore exercises the same anchor-only contract as
+// a consumer application instead of copying a derived token matrix.
+const THEME_ANCHORS = new Set([
+	'--color-base-100',
+	'--color-base-content',
+	'--color-primary',
+	'--color-secondary',
+	'--color-accent',
+	'--color-neutral',
+	'--color-info',
+	'--color-success',
+	'--color-warning',
+	'--color-error',
+])
+
+const rehostThemeAnchors = (el: HTMLElement) => {
 	for (let s = 0; s < document.styleSheets.length; s++) {
 		let rules: CSSRuleList
 		try {
@@ -57,7 +69,7 @@ const rehostRootTokens = (el: HTMLElement) => {
 			if (!(rule instanceof CSSStyleRule) || rule.selectorText !== ':root') continue
 			for (let d = 0; d < rule.style.length; d++) {
 				const name = rule.style.item(d)
-				if (name.startsWith('--')) el.style.setProperty(name, rule.style.getPropertyValue(name))
+				if (THEME_ANCHORS.has(name)) el.style.setProperty(name, rule.style.getPropertyValue(name))
 			}
 		}
 	}
@@ -67,11 +79,13 @@ const rehostRootTokens = (el: HTMLElement) => {
 // toolbar writes --font-* there): the pane's re-hosted stylesheet values
 // are inline on the pane itself, which would beat inherited html overrides.
 const applyPaneTokens = (el: HTMLElement) => {
-	rehostRootTokens(el)
+	rehostThemeAnchors(el)
 	const rootStyle = document.documentElement.style
 	for (let i = 0; i < rootStyle.length; i++) {
 		const name = rootStyle.item(i)
-		if (name.startsWith('--')) el.style.setProperty(name, rootStyle.getPropertyValue(name))
+		if (THEME_ANCHORS.has(name) || name.startsWith('--font-')) {
+			el.style.setProperty(name, rootStyle.getPropertyValue(name))
+		}
 	}
 }
 
@@ -90,7 +104,7 @@ const withTheme = createJSXDecorator((Story, context) => {
 		label: fontOption('label', context.globals.fontLabel),
 	})
 
-	// Forced single mode rides <html data-theme> → theme.css maps it to
+	// Forced single mode rides <html data-theme> → theme-defaults.css maps it to
 	// `color-scheme`. Auto and Split clear it (Split's panes force their own).
 	createEffect(
 		() => ({ m: mode(), fonts: fontChoices() }),
@@ -123,7 +137,7 @@ const withTheme = createJSXDecorator((Story, context) => {
 		<Show when={mode() === 'split'} fallback={<Story />}>
 			<div class="sb-theme-split">
 				<section
-					class="sb-theme-pane theme-light"
+					class="sb-theme-pane theme-light ui-theme"
 					ref={(el) => {
 						lightPane = el
 						applyPaneTokens(el)
@@ -135,7 +149,7 @@ const withTheme = createJSXDecorator((Story, context) => {
 					<Story />
 				</section>
 				<section
-					class="sb-theme-pane theme-dark"
+					class="sb-theme-pane theme-dark ui-theme"
 					ref={(el) => {
 						darkPane = el
 						applyPaneTokens(el)
@@ -211,7 +225,7 @@ const preview: Preview = {
 	},
 	parameters: {
 		layout: 'padded',
-		// The page surface comes from the token contract (--c-page), not from
+		// The page surface comes from the token contract (--color-base-200), not from
 		// Storybook's white/dark background presets.
 		backgrounds: { disable: true },
 	},

@@ -19,7 +19,7 @@ export const Default: Story = {
 			title="One membership, every room"
 			lede="The default column is 48rem — comfortable for prose."
 		>
-			<p style={{ color: 'var(--c-muted)' }}>
+			<p style={{ color: 'var(--color-base-content-muted)' }}>
 				Sections keep a consistent vertical rhythm and column width across a marketing page, so
 				stacked content reads as one document rather than a pile of blocks.
 			</p>

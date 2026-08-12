@@ -17,7 +17,7 @@ export const Default: Story = {
 }
 
 export const AccentFill: Story = {
-	args: { value: 87, max: 100, fillColor: 'var(--c-accent)' },
+	args: { value: 87, max: 100, fillColor: 'var(--color-primary)' },
 }
 
 export const Levels: Story = {
@@ -25,16 +25,16 @@ export const Levels: Story = {
 		<div style={{ display: 'grid', gap: '12px', 'max-width': '360px' }}>
 			<Eyebrow>Room occupancy</Eyebrow>
 			<Meter value={12} max={100} />
-			<Meter value={45} max={100} fillColor="var(--c-live)" />
-			<Meter value={87} max={100} fillColor="var(--c-accent)" />
-			<Meter value={140} max={100} fillColor="var(--c-accent)" />
+			<Meter value={45} max={100} fillColor="var(--color-success)" />
+			<Meter value={87} max={100} fillColor="var(--color-primary)" />
+			<Meter value={140} max={100} fillColor="var(--color-primary)" />
 		</div>
 	),
 }
 
 export const ThreeAxes: Story = {
-	name: 'Color base × level × appearance',
-	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, appearance }) => (
-		<div style={{ width: '120px' }}><Meter colorBase={colorBase} colorLevel={colorLevel} appearance={appearance} value={68} max={100} /></div>
+	name: 'Color base × level × variant',
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, variant }) => (
+		<div style={{ width: '120px' }}><Meter colorBase={colorBase} colorLevel={colorLevel} variant={variant} value={68} max={100} /></div>
 	)} />,
 }

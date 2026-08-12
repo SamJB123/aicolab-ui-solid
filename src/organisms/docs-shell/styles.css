@@ -12,7 +12,7 @@
 		z-index: 60;
 		width: 100%;
 		height: 3px;
-		background: var(--c-accent);
+		background: var(--color-primary);
 		transform-origin: 0 50%;
 		transform: scaleX(0);
 		animation: docs-progress linear both;
@@ -33,7 +33,7 @@
 	padding: 0.3rem 0.6rem;
 	border-radius: var(--r-sm);
 	font-size: var(--t-md);
-	color: var(--c-muted);
+	color: var(--color-base-content-muted);
 	text-decoration: none;
 	transition:
 		color 0.15s,
@@ -41,8 +41,8 @@
 }
 .docs-nav-link:hover,
 .docs-toc-link:hover {
-	color: var(--c-text);
-	background: var(--c-page-2);
+	color: var(--color-base-content);
+	background: var(--color-base-300);
 }
 .docs-nav-sub,
 .docs-toc-sub {
@@ -51,8 +51,8 @@
 }
 .docs-nav-current,
 .docs-toc-current {
-	color: var(--c-accent);
-	background: var(--c-accent-soft);
+	color: var(--color-primary);
+	background: var(--color-primary-soft);
 }
 }
 
@@ -61,7 +61,7 @@
 :scope {
 	font-size: var(--t-lg);
 	line-height: 1.7;
-	color: var(--c-text);
+	color: var(--color-base-content);
 }
 :scope h1 {
 	font-family: var(--font-display);
@@ -88,7 +88,7 @@
 }
 :scope p {
 	margin: 0 0 1.1rem;
-	color: color-mix(in oklab, var(--c-text) 88%, transparent);
+	color: color-mix(in oklab, var(--color-base-content) 88%, transparent);
 }
 :scope ul,
 :scope ol {
@@ -96,26 +96,26 @@
 	padding-left: 1.4rem;
 	display: grid;
 	gap: 0.4rem;
-	color: color-mix(in oklab, var(--c-text) 84%, transparent);
+	color: color-mix(in oklab, var(--color-base-content) 84%, transparent);
 }
 :scope li::marker {
-	color: var(--c-accent);
+	color: var(--color-primary);
 }
 :scope blockquote {
 	margin: 1.5rem 0;
 	padding: 0.2rem 0 0.2rem 1.2rem;
-	border-left: 3px solid var(--c-accent);
-	color: var(--c-muted);
+	border-left: 3px solid var(--color-primary);
+	color: var(--color-base-content-muted);
 	font-style: italic;
 }
 :scope a {
-	color: var(--c-accent);
+	color: var(--color-primary);
 	text-decoration: underline;
-	text-decoration-color: color-mix(in oklab, var(--c-accent) 40%, transparent);
+	text-decoration-color: color-mix(in oklab, var(--color-primary) 40%, transparent);
 	text-underline-offset: 0.2em;
 }
 :scope a:hover {
-	text-decoration-color: var(--c-accent);
+	text-decoration-color: var(--color-primary);
 }
 }
 

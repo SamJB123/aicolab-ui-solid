@@ -5,7 +5,7 @@
 		font-size: var(--t-2xs);
 		text-transform: uppercase;
 		letter-spacing: 0.32em;
-		color: var(--c-faint);
+		color: var(--color-base-content-faint);
 	}
 	:scope[data-ui-color-base] { color: var(--ui-mark); }
 }

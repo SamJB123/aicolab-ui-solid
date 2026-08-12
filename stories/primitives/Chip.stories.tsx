@@ -37,6 +37,6 @@ export const AllTones: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Color base × level × appearance',
-	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, appearance }) => <Chip colorBase={colorBase} colorLevel={colorLevel} appearance={appearance}>exhibit</Chip>} />,
+	name: 'Color base × level × variant',
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, variant }) => <Chip colorBase={colorBase} colorLevel={colorLevel} variant={variant}>exhibit</Chip>} />,
 }

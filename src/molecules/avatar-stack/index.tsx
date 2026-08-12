@@ -27,7 +27,7 @@ export function AvatarStack(props: {
 							'margin-left': i() === 0 ? '0' : `-${overlap()}px`,
 							'box-shadow': props.colorBase
 								? '0 0 0 2px var(--ui-surface-raised)'
-								: `0 0 0 2px ${props.ring ?? 'var(--c-page)'}`,
+								: `0 0 0 2px ${props.ring ?? 'var(--color-base-200)'}`,
 							'z-index': String(shown().length - i()),
 						}}
 					>
@@ -35,10 +35,10 @@ export function AvatarStack(props: {
 							name={p.name}
 							faceColor={props.colorBase ? 'var(--ui-ink)' : p.color}
 							size={size()}
-							ring={props.colorBase ? 'var(--ui-surface-occluding)' : (props.ring ?? 'var(--c-page)')}
+							ring={props.colorBase ? 'var(--ui-surface-occluding)' : (props.ring ?? 'var(--color-base-200)')}
 							colorBase={props.colorBase}
 							colorLevel={props.colorLevel}
-							appearance={props.appearance}
+							variant={props.variant}
 						/>
 					</span>
 				)}
@@ -52,7 +52,7 @@ export function AvatarStack(props: {
 						height: `${size()}px`,
 						'box-shadow': props.colorBase
 							? '0 0 0 2px var(--ui-surface-raised), inset 0 0 0 1px var(--ui-border)'
-							: `0 0 0 2px ${props.ring ?? 'var(--c-page)'}, inset 0 0 0 1px var(--c-line)`,
+							: `0 0 0 2px ${props.ring ?? 'var(--color-base-200)'}, inset 0 0 0 1px var(--color-border)`,
 					}}
 				>
 					+{extra()}

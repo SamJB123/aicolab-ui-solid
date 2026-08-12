@@ -20,8 +20,8 @@
 		border-radius: var(--r-pill);
 		font-family: var(--font-data, ui-monospace, monospace);
 		font-size: var(--t-xs);
-		color: var(--c-muted);
-		background: var(--c-panel-2);
+		color: var(--color-base-content-muted);
+		background: var(--color-base-150);
 	}
 	:scope[data-ui-color-base] > .ui-avatar-stack-extra {
 		color: var(--ui-ink-muted);

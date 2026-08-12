@@ -42,8 +42,8 @@ export const BottomBarFan: Story = {
 						width: '3.2rem',
 						height: '3.2rem',
 						'border-radius': '999px',
-						background: 'var(--c-accent-soft)',
-						'box-shadow': '0 0 0 1px var(--c-line-strong)',
+						background: 'var(--color-primary-soft)',
+						'box-shadow': '0 0 0 1px var(--color-border-strong)',
 					}}
 				>
 					{glyph('🌍')}
@@ -76,18 +76,18 @@ export const DownwardFan: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Color base × level × appearance',
+	name: 'Color base × level × variant',
 	args: { id: 'axis-radial', items: [] },
-	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, appearance }) => (
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, variant }) => (
 		<RadialMenu
-			id={`axis-radial-${colorBase}-${colorLevel}-${appearance}`}
+			id={`axis-radial-${colorBase}-${colorLevel}-${variant}`}
 			label={`${colorBase} actions`}
 			items={[
 				{ id: 'one', label: 'One', icon: glyph('1'), onSelect: () => {} },
 				{ id: 'two', label: 'Two', icon: glyph('2'), onSelect: () => {} },
 			]}
 		>
-			<span data-ui-color-base={colorBase} data-ui-color-level={colorLevel} data-ui-appearance={appearance} style={{ display: 'grid', 'place-items': 'center', width: '38px', height: '38px', 'border-radius': '999px', background: 'var(--ui-surface)', color: 'var(--ui-ink)', 'box-shadow': 'inset 0 0 0 1px var(--ui-border)' }}>
+			<span data-ui-color-base={colorBase} data-ui-color-level={colorLevel} data-ui-color-variant={variant} style={{ display: 'grid', 'place-items': 'center', width: '38px', height: '38px', 'border-radius': '999px', background: 'var(--ui-surface)', color: 'var(--ui-ink)', 'box-shadow': 'inset 0 0 0 1px var(--ui-border)' }}>
 				{glyph('⋯')}
 			</span>
 		</RadialMenu>

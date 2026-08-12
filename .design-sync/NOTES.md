@@ -47,10 +47,12 @@
   (@solidjs/web) on `window.AicolabUiSolid`. Preview .tsx imports of
   `solid-js` / `@solidjs/web` / `@aicolab/ui-solid` are shimmed to those
   globals, so cards exercise the real uploaded bundle.
-- The package ships NO palette by design (apps own values). Default theme
-  curated into `.design-sync/theme/theme.css`: light = playground/template,
-  dark = playground/audit-corpus (minus its app-specific severity ramp),
-  selector `.theme-dark` / `[data-theme="dark"]`.
+- The package ships its canonical dual-mode default theme through
+  `src/styles.css` → `src/theme-defaults.css`. Applications may override the
+  public anchors, but design-sync must consume the same shipped stylesheet and
+  must not maintain a copied palette. Both design-sync theme-source entries
+  therefore point to `src/styles.css`; `.theme-dark` / `.theme-light` (or the
+  corresponding `data-theme` value) selects a forced scheme.
 - NO utility vocabulary (2026-08-07): the package migrated off Tailwind to
   semantic `.ui-*` classes + the token contract, and the previews were
   rewritten to inline `style={{}}` glue. conventions.md now tells the design
@@ -95,9 +97,9 @@
 - Solid 2 beta bumps (catalog: 2.0.0-beta.17): a version bump changes bundle
   bytes → styleSha/bundleSha move → re-upload; grades still carry (sourceKeys
   are preview+config only). babel-preset-solid must be bumped in lockstep.
-- Theme values were COPIED from the two playground apps' styles.css on
-  2026-07-14 — if those palettes evolve, `.design-sync/theme/theme.css` goes
-  stale silently.
+- Theme values have no design-sync copy. `src/styles.css` is the only styling
+  entrypoint design-sync consumes, so its previews exercise the same default
+  theme and resolver as package consumers.
 - The Solid cheatsheet was copied from
   `~/GitHub/reference-material/solid/packages/solid/CHEATSHEET.md` (branch
   `next`, beta.17) — re-copy on Solid version bumps.

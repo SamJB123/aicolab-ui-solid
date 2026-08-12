@@ -10,9 +10,9 @@
 		flex-direction: column;
 		gap: 12px;
 		border-radius: var(--r-lg);
-		background: var(--c-panel);
+		background: var(--color-base-100);
 		padding: 24px;
-		box-shadow: 0 0 0 1px var(--c-line);
+		box-shadow: 0 0 0 1px var(--color-border);
 	}
 	.ui-feature-icon {
 		display: inline-grid;
@@ -27,11 +27,11 @@
 		font-family: var(--font-display, Georgia, serif);
 		font-size: var(--t-xl);
 		font-weight: 500;
-		color: var(--c-text);
+		color: var(--color-base-content);
 	}
 	.ui-feature-body {
 		font-size: var(--t-lg);
 		line-height: 1.625;
-		color: var(--c-muted);
+		color: var(--color-base-content-muted);
 	}
 }

@@ -11,11 +11,11 @@
 		font: inherit;
 		cursor: pointer;
 		background: transparent;
-		color: var(--c-muted);
-		box-shadow: 0 0 0 1px var(--c-line);
+		color: var(--color-base-content-muted);
+		box-shadow: 0 0 0 1px var(--color-border);
 		transition: all 0.2s;
 	}
-	:scope:hover:not(:disabled) { background: var(--c-panel-2); color: var(--c-text); }
+	:scope:hover:not(:disabled) { background: var(--color-base-150); color: var(--color-base-content); }
 	:scope:active:not(:disabled) { transform: scale(0.9); }
 	:scope:disabled { cursor: not-allowed; opacity: 0.35; }
 }

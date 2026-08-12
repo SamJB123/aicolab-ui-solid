@@ -23,8 +23,8 @@ export function FeatureGrid(props: { items: Feature[]; columns?: 2 | 3; class?: 
 							<span
 								class="ui-feature-icon"
 								style={{
-									background: `color-mix(in oklab, ${item.accent ?? 'var(--c-accent)'} 12%, transparent)`,
-									color: item.accent ?? 'var(--c-accent)',
+									background: `color-mix(in oklab, ${item.accent ?? 'var(--color-primary)'} 12%, transparent)`,
+									color: item.accent ?? 'var(--color-primary)',
 								}}
 							>
 								{item.icon}

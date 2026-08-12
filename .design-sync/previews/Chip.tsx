@@ -14,7 +14,7 @@ export function Tones() {
 export function WithDot() {
 	return (
 		<Chip tone="live">
-			<StatusDot status={{ color: 'var(--c-live)', live: true }} size={6} />
+			<StatusDot status={{ color: 'var(--color-success)', live: true }} size={6} />
 			recording
 		</Chip>
 	)

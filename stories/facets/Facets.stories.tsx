@@ -9,7 +9,7 @@ const ITEMS: FacetItem[] = [
 		content: () => (
 			<div>
 				<h3 style={{ margin: '0 0 8px' }}>Spaces</h3>
-				<p style={{ margin: 0, color: 'var(--c-muted)' }}>
+				<p style={{ margin: 0, color: 'var(--color-base-content-muted)' }}>
 					Two floors of studios, a workshop, and the commons — bookable by any member, programmed by
 					everyone.
 				</p>
@@ -22,7 +22,7 @@ const ITEMS: FacetItem[] = [
 		content: () => (
 			<div>
 				<h3 style={{ margin: '0 0 8px' }}>Programs</h3>
-				<p style={{ margin: 0, color: 'var(--c-muted)' }}>
+				<p style={{ margin: 0, color: 'var(--color-base-content-muted)' }}>
 					Weekly critique nights, member-led courses, and the seasonal exhibition cycle.
 				</p>
 			</div>
@@ -34,7 +34,7 @@ const ITEMS: FacetItem[] = [
 		content: () => (
 			<div>
 				<h3 style={{ margin: '0 0 8px' }}>Membership</h3>
-				<p style={{ margin: 0, color: 'var(--c-muted)' }}>
+				<p style={{ margin: 0, color: 'var(--color-base-content-muted)' }}>
 					Flat monthly rate, cooperative governance, and a vote in every season's program.
 				</p>
 			</div>

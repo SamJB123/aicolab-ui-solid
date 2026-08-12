@@ -8,15 +8,15 @@
 .ui-mark-underline {
 	background-image: linear-gradient(
 		to right,
-		color-mix(in oklab, var(--c-accent) 75%, transparent),
-		var(--c-accent)
+		color-mix(in oklab, var(--color-primary) 75%, transparent),
+		var(--color-primary)
 	);
 	background-repeat: no-repeat;
 	background-position: 0 96%;
 	background-size: 100% 0.12em;
 }
 .ui-mark-highlight {
-	background: var(--c-accent-soft);
+	background: var(--color-primary-soft);
 	box-decoration-break: clone;
 	-webkit-box-decoration-break: clone;
 	/* OFF-LADDER ON PURPOSE: an inline highlight must scale with the text it

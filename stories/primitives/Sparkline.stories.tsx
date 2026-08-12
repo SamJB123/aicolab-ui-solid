@@ -18,7 +18,7 @@ export const Default: Story = {
 }
 
 export const LiveColour: Story = {
-	args: { data: [40, 42, 38, 45, 43, 48, 52, 50, 55, 61], strokeColor: 'var(--c-live)' },
+	args: { data: [40, 42, 38, 45, 43, 48, 52, 50, 55, 61], strokeColor: 'var(--color-success)' },
 }
 
 export const Wide: Story = {
@@ -27,7 +27,7 @@ export const Wide: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Color base × level × appearance',
+	name: 'Color base × level × variant',
 	args: { data: DATA },
-	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, appearance }) => <Sparkline colorBase={colorBase} colorLevel={colorLevel} appearance={appearance} data={DATA} />} />,
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, variant }) => <Sparkline colorBase={colorBase} colorLevel={colorLevel} variant={variant} data={DATA} />} />,
 }

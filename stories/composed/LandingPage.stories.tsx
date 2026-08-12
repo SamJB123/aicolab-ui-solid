@@ -35,8 +35,8 @@ export const Full: Story = {
 				lede="Workshops, working groups, and shared infrastructure for people building with AI in the public interest."
 				actions={() => (
 					<>
-						<Button appearance="solid">Join a session</Button>
-						<Button appearance="ghost">Read the model</Button>
+						<Button variant="solid">Join a session</Button>
+						<Button variant="ghost">Read the model</Button>
 					</>
 				)}
 			/>

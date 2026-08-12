@@ -18,6 +18,6 @@ export const Labelled: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Color base × level × appearance',
-	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, appearance }) => <div style={{ width: '100%' }}><Rule colorBase={colorBase} colorLevel={colorLevel} appearance={appearance} label="This week" /></div>} />,
+	name: 'Color base × level × variant',
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, variant }) => <div style={{ width: '100%' }}><Rule colorBase={colorBase} colorLevel={colorLevel} variant={variant} label="This week" /></div>} />,
 }

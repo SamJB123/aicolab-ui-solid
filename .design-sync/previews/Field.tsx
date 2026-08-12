@@ -11,12 +11,12 @@ export function WithInput() {
 					value="Atrium West"
 					style={{
 						'border-radius': '8px',
-						background: 'var(--c-panel)',
+						background: 'var(--color-base-100)',
 						padding: '8px 12px',
 						'font-size': '0.875rem',
 						'line-height': '1.25rem',
-						color: 'var(--c-text)',
-						'box-shadow': '0 0 0 1px var(--c-line-strong)',
+						color: 'var(--color-base-content)',
+						'box-shadow': '0 0 0 1px var(--color-border-strong)',
 						border: 'none',
 						outline: 'none',
 					}}

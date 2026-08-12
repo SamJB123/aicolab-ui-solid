@@ -6,7 +6,7 @@
 		font-size: var(--t-2xs);
 		text-transform: uppercase;
 		letter-spacing: 0.2em;
-		color: var(--c-faint);
+		color: var(--color-base-content-faint);
 	}
 	/* Opt-in content-hugging controls (field-sizing, Chromium/FF-beta). */
 	:scope.ui-autosize :is(input, textarea, select) {

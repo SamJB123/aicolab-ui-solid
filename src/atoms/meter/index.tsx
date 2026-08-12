@@ -24,7 +24,7 @@ export function Meter(props: { value: number; max: number; fillColor?: string } 
 				data-pct={`${pct()}%`}
 				style={{
 					width: cssOwnsWidth() ? undefined : `${pct()}%`,
-					background: props.colorBase ? 'var(--ui-mark)' : (props.fillColor ?? 'var(--c-text)'),
+					background: props.colorBase ? 'var(--ui-mark)' : (props.fillColor ?? 'var(--color-base-content)'),
 				}}
 			/>
 		</div>

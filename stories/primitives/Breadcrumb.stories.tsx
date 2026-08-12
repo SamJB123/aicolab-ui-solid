@@ -65,8 +65,8 @@ export const DeepTrailWraps: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Color base × level × appearance',
-	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, appearance }) => (
-		<Breadcrumb colorBase={colorBase} colorLevel={colorLevel} appearance={appearance} items={[{ label: 'Home', onSelect: () => {} }, { label: 'Gallery', onSelect: () => {} }, { label: 'Exhibit' }]} />
+	name: 'Color base × level × variant',
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, variant }) => (
+		<Breadcrumb colorBase={colorBase} colorLevel={colorLevel} variant={variant} items={[{ label: 'Home', onSelect: () => {} }, { label: 'Gallery', onSelect: () => {} }, { label: 'Exhibit' }]} />
 	)} />,
 }

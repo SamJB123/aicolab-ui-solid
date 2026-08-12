@@ -1,14 +1,11 @@
 /** @jsxImportSource @solidjs/web */
 // Theme Lab — the whole token contract as Storybook controls.
 //
-// Every colour token is a light/dark PAIR of colour pickers (the package's
-// theming model is one light-dark() declaration per token), and each font
-// role offers the curated Google Fonts candidates from the toolbar. Edits
-// apply live to the specimen collage below — including the derived tokens
-// (muted/faint content, borders and primary-soft), which are
-// re-hosted onto the lab wrapper so their color-mix() recomputes from YOUR
-// ink/accent — and the generated `:root` block at the bottom is ready to
-// paste into .design-sync/theme/theme.css.
+// Each genuine anchor is a light/dark pair. The browser derives the surface
+// ladder, content hierarchy, borders, content partners and remaining semantic
+// families through ui-solid's canonical theme layer. Controls therefore edit
+// anchors only; the specimen matrix shows the resulting computed system. The
+// generated `:root` block is ready to paste into a consumer theme unchanged.
 //
 // Preset swatches (theme-presets.ts) offer curated starting points: light
 // and dark rails are independent, so any light pick combines with any dark
@@ -17,7 +14,7 @@
 //
 // Tip: combine with the Theme toolbar's Split mode to tune both schemes
 // side by side.
-import { createMemo, For } from 'solid-js'
+import { createMemo, createSignal, For, Show } from 'solid-js'
 import { useArgs } from 'storybook/preview-api'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { DARK_PRESETS, LIGHT_PRESETS, type SchemeValues, type ThemePreset } from './theme-presets'
@@ -28,47 +25,79 @@ import {
 	type FontRole,
 	fontOption,
 } from '../../.storybook/fonts'
-import { Button, Chip, Counter, Eyebrow, Meter, Panel, Rule, Sparkline } from '../../src/primitives'
+import {
+	Avatar,
+	AvatarStack,
+	Breadcrumb,
+	Button,
+	Chip,
+	Counter,
+	Eyebrow,
+	Meter,
+	Panel,
+	Rule,
+	Sparkline,
+	StatusDot,
+	Waveform,
+	type Variant,
+	type ColorBase,
+	type ColorLevel,
+} from '../../src/primitives'
+import { Field, IconButton, Segmented } from '../../src/controls'
+import { Accordion, AccordionItem, Mark } from '../../src/marketing'
 import { createEffect } from '../../src/solid-v2'
 
 type ThemeLabArgs = {
-	pageLight: string
-	pageDark: string
-	page2Light: string
-	page2Dark: string
-	panelLight: string
-	panelDark: string
-	panel2Light: string
-	panel2Dark: string
-	textLight: string
-	textDark: string
+	baseLight: string
+	baseDark: string
+	contentLight: string
+	contentDark: string
+	primaryLight: string
+	primaryDark: string
+	secondaryLight: string
+	secondaryDark: string
 	accentLight: string
 	accentDark: string
-	liveLight: string
-	liveDark: string
+	neutralLight: string
+	neutralDark: string
+	infoLight: string
+	infoDark: string
+	successLight: string
+	successDark: string
+	warningLight: string
+	warningDark: string
+	errorLight: string
+	errorDark: string
 	fontDisplay: string
 	fontSans: string
 	fontData: string
 	fontLabel: string
 }
 
-// Canonical values from .design-sync/theme/theme.css (light = Marigold,
-// adopted from the preset rail 2026-08-07).
+// Canonical values from src/theme-defaults.css (light = Marigold,
+// dark = Lantern Gold). Empty values are the families intentionally left to
+// ui-solid's canonical CSS derivation layer.
 const CANONICAL: ThemeLabArgs = {
-	pageLight: '#fff9e8',
-	pageDark: '#12100b',
-	page2Light: '#f6ecc7',
-	page2Dark: '#191610',
-	panelLight: '#fffffb',
-	panelDark: '#1e1a12',
-	panel2Light: '#fbf3d6',
-	panel2Dark: '#262117',
-	textLight: '#241c0b',
-	textDark: '#ede7da',
-	accentLight: '#e8b04c',
-	accentDark: '#e8b04c',
-	liveLight: '#43913a',
-	liveDark: '#5aa179',
+	baseLight: '#fffffb',
+	baseDark: '#000512',
+	contentLight: '#241c0b',
+	contentDark: '#ede7da',
+	primaryLight: '#e8b04c',
+	primaryDark: '#e8b04c',
+	secondaryLight: '#005682',
+	secondaryDark: '#005682',
+	accentLight: '#b9c27a',
+	accentDark: '#b9c27a',
+	neutralLight: '',
+	neutralDark: '',
+	infoLight: 'oklch(0.58 0.12 230)',
+	infoDark: 'oklch(0.58 0.12 230)',
+	successLight: '#43913a',
+	successDark: '#5aa179',
+	warningLight: '#fcb700',
+	warningDark: '#fcb700',
+	errorLight: '#c50035',
+	errorDark: '#c50035',
 	fontDisplay: 'default',
 	fontSans: 'default',
 	fontData: 'default',
@@ -79,6 +108,12 @@ const colorArg = (name: string, category: string) => ({
 	name,
 	control: { type: 'color' } as const,
 	table: { category },
+})
+
+const optionalColorArg = (name: string) => ({
+	name,
+	control: { type: 'text' } as const,
+	table: { category: 'Optional semantic overrides' },
 })
 
 const fontArg = (role: FontRole) => ({
@@ -94,20 +129,26 @@ const meta = {
 	title: 'Tokens/Theme Lab',
 	args: CANONICAL,
 	argTypes: {
-		pageLight: colorArg('--color-base-200 (light)', 'Base ladder'),
-		pageDark: colorArg('--color-base-200 (dark)', 'Base ladder'),
-		page2Light: colorArg('--color-base-300 (light)', 'Base ladder'),
-		page2Dark: colorArg('--color-base-300 (dark)', 'Base ladder'),
-		panelLight: colorArg('--color-base-100 (light)', 'Base ladder'),
-		panelDark: colorArg('--color-base-100 (dark)', 'Base ladder'),
-		panel2Light: colorArg('--color-base-150 (light)', 'Base ladder'),
-		panel2Dark: colorArg('--color-base-150 (dark)', 'Base ladder'),
-		textLight: colorArg('--color-base-content (light)', 'Content'),
-		textDark: colorArg('--color-base-content (dark)', 'Content'),
-		accentLight: colorArg('--color-primary (light)', 'Semantic families'),
-		accentDark: colorArg('--color-primary (dark)', 'Semantic families'),
-		liveLight: colorArg('--color-success (light)', 'Semantic families'),
-		liveDark: colorArg('--color-success (dark)', 'Semantic families'),
+		baseLight: colorArg('--color-base-100 anchor (light)', 'Surface anchor'),
+		baseDark: colorArg('--color-base-100 anchor (dark)', 'Surface anchor'),
+		contentLight: colorArg('--color-base-content (light)', 'Content'),
+		contentDark: colorArg('--color-base-content (dark)', 'Content'),
+		primaryLight: colorArg('--color-primary (light)', 'Semantic families'),
+		primaryDark: colorArg('--color-primary (dark)', 'Semantic families'),
+		secondaryLight: optionalColorArg('--color-secondary override (light)'),
+		secondaryDark: optionalColorArg('--color-secondary override (dark)'),
+		accentLight: optionalColorArg('--color-accent override (light)'),
+		accentDark: optionalColorArg('--color-accent override (dark)'),
+		neutralLight: optionalColorArg('--color-neutral override (light)'),
+		neutralDark: optionalColorArg('--color-neutral override (dark)'),
+		infoLight: optionalColorArg('--color-info override (light)'),
+		infoDark: optionalColorArg('--color-info override (dark)'),
+		successLight: colorArg('--color-success (light)', 'Semantic families'),
+		successDark: colorArg('--color-success (dark)', 'Semantic families'),
+		warningLight: optionalColorArg('--color-warning override (light)'),
+		warningDark: optionalColorArg('--color-warning override (dark)'),
+		errorLight: optionalColorArg('--color-error override (light)'),
+		errorDark: optionalColorArg('--color-error override (dark)'),
 		fontDisplay: { name: '--font-display', ...fontArg('display') },
 		fontSans: { name: '--font-sans', ...fontArg('sans') },
 		fontData: { name: '--font-data', ...fontArg('data') },
@@ -121,62 +162,35 @@ export default meta
 type Story = StoryObj<ThemeLabArgs>
 
 const PAIRS = [
-	['--color-base-200', 'pageLight', 'pageDark'],
-	['--color-base-300', 'page2Light', 'page2Dark'],
-	['--color-base-100', 'panelLight', 'panelDark'],
-	['--color-base-150', 'panel2Light', 'panel2Dark'],
-	['--color-base-content', 'textLight', 'textDark'],
-	['--color-primary', 'accentLight', 'accentDark'],
-	['--color-success', 'liveLight', 'liveDark'],
+	['--color-base-100', 'baseLight', 'baseDark'],
+	['--color-base-content', 'contentLight', 'contentDark'],
+	['--color-primary', 'primaryLight', 'primaryDark'],
+	['--color-success', 'successLight', 'successDark'],
 ] satisfies [string, keyof ThemeLabArgs, keyof ThemeLabArgs][]
 
-const LEGACY_ALIASES = [
-	['--c-page', '--color-base-200'],
-	['--c-page-2', '--color-base-300'],
-	['--c-panel', '--color-base-100'],
-	['--c-panel-2', '--color-base-150'],
-	['--c-text', '--color-base-content'],
-	['--c-muted', '--color-base-content-muted'],
-	['--c-faint', '--color-base-content-faint'],
-	['--c-accent', '--color-primary'],
-	['--c-live', '--color-success'],
-	['--c-line', '--color-border'],
-	['--c-line-strong', '--color-border-strong'],
-	['--c-accent-soft', '--color-primary-soft'],
-] as const
+const OPTIONAL_PAIRS = [
+	['--color-secondary', 'secondaryLight', 'secondaryDark'],
+	['--color-accent', 'accentLight', 'accentDark'],
+	['--color-neutral', 'neutralLight', 'neutralDark'],
+	['--color-info', 'infoLight', 'infoDark'],
+	['--color-warning', 'warningLight', 'warningDark'],
+	['--color-error', 'errorLight', 'errorDark'],
+] satisfies [string, keyof ThemeLabArgs, keyof ThemeLabArgs][]
+
+const optionalDefault = (token: string) =>
+	`var(${token.replace('--color-', '--ui-theme-')}-default)`
 
 const DERIVED = [
+	'--color-base-150',
+	'--color-base-200',
+	'--color-base-300',
 	'--color-base-content-muted',
 	'--color-base-content-faint',
 	'--color-border',
 	'--color-border-strong',
 	'--color-primary-soft',
+	'--color-ring',
 ]
-
-const FAMILY_DERIVATIONS = [
-	'--color-primary-content: #2b210d;',
-	'--color-primary-content: color-mix(in oklch, var(--color-primary) 22%, contrast-color(var(--color-primary)));',
-	'--color-secondary: oklch(from var(--color-primary) l calc(c * 0.72) calc(h + 35));',
-	'--color-secondary-content: #2b210d;',
-	'--color-secondary-content: contrast-color(var(--color-secondary));',
-	'--color-accent: oklch(from var(--color-primary) l c calc(h - 55));',
-	'--color-accent-content: #2b210d;',
-	'--color-accent-content: contrast-color(var(--color-accent));',
-	'--color-neutral: oklch(from var(--color-base-content) l calc(c * 0.35) h);',
-	'--color-neutral-content: light-dark(#fffffb, #12100b);',
-	'--color-neutral-content: contrast-color(var(--color-neutral));',
-	'--color-info: oklch(0.58 0.12 230);',
-	'--color-info-content: #fffffb;',
-	'--color-info-content: contrast-color(var(--color-info));',
-	'--color-success-content: #fffffb;',
-	'--color-success-content: contrast-color(var(--color-success));',
-	'--color-warning: oklch(0.72 0.16 75);',
-	'--color-warning-content: #2b210d;',
-	'--color-warning-content: contrast-color(var(--color-warning));',
-	'--color-error: oklch(0.58 0.18 28);',
-	'--color-error-content: #fffffb;',
-	'--color-error-content: contrast-color(var(--color-error));',
-] as const
 
 const SEMANTIC_FAMILIES = [
 	'primary',
@@ -194,6 +208,90 @@ const SEMANTIC_TOKENS = SEMANTIC_FAMILIES.flatMap((family) => [
 ])
 const COLOR_LEVELS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const
 
+function ColorLevelSwatch(props: { color: (typeof SEMANTIC_FAMILIES)[number]; level: (typeof COLOR_LEVELS)[number] }) {
+	let swatch: HTMLButtonElement | undefined
+	const [resolvedColor, setResolvedColor] = createSignal('')
+	const [hovered, setHovered] = createSignal(false)
+	const [copied, setCopied] = createSignal(false)
+	const resolveColor = () => {
+		if (!swatch) return ''
+		const value = getComputedStyle(swatch).backgroundColor
+		setResolvedColor(value)
+		setHovered(true)
+		return value
+	}
+	const copyColor = async () => {
+		const value = resolveColor()
+		if (!value) return
+		await navigator.clipboard.writeText(value)
+		setCopied(true)
+	}
+
+	return (
+		<button
+			ref={swatch}
+			type="button"
+			data-ui-color-base={props.color}
+			data-ui-color-level={props.level}
+			onPointerEnter={resolveColor}
+			onPointerLeave={() => {
+				setHovered(false)
+				setCopied(false)
+			}}
+			onFocus={resolveColor}
+			onBlur={() => {
+				setHovered(false)
+				setCopied(false)
+			}}
+			onClick={copyColor}
+			aria-label={`Copy resolved ${props.color} ${props.level} colour`}
+			title={`${props.color} ${props.level}${resolvedColor() ? ` — ${resolvedColor()} — click to copy` : ' — click to copy'}`}
+			style={{
+				background: 'var(--ui-surface)',
+				color: 'var(--ui-ink)',
+				'border-radius': 'var(--r-sm)',
+				'block-size': '42px',
+				'box-shadow': 'inset 0 0 0 1px color-mix(in oklab, var(--color-base-content) 12%, transparent)',
+				display: 'grid',
+				'place-items': 'center',
+				'font-family': 'var(--font-data)',
+				'font-size': 'var(--t-2xs)',
+				'font-weight': 700,
+				position: 'relative',
+				border: 'none',
+				padding: 0,
+				cursor: 'copy',
+			}}
+		>
+			{props.level}
+			<Show when={hovered() && resolvedColor()} keyed>
+				{(value) => (
+					<code
+						style={{
+							position: 'absolute',
+							'z-index': 20,
+							inset: 'auto auto calc(100% + 7px) 50%',
+							transform: 'translateX(-50%)',
+							'white-space': 'nowrap',
+							background: 'var(--color-base-100)',
+							color: 'var(--color-base-content)',
+							border: '1px solid var(--color-border-strong)',
+							'border-radius': 'var(--r-sm)',
+							padding: '5px 7px',
+							'box-shadow': '0 4px 14px color-mix(in oklab, black 18%, transparent)',
+							'font-size': '10px',
+							'font-weight': 500,
+							'pointer-events': 'none',
+						}}
+					>
+						{copied() ? `Copied ${value}` : `${value} · click to copy`}
+					</code>
+				)}
+			</Show>
+		</button>
+	)
+}
+
 function ColorBaseLevelMatrix() {
 	return (
 		<div style={{ overflow: 'auto', 'padding-block-end': '4px' }}>
@@ -203,19 +301,7 @@ function ColorBaseLevelMatrix() {
 						<div style={{ display: 'grid', 'grid-template-columns': '88px repeat(11, minmax(56px, 1fr))', gap: '6px', 'align-items': 'center' }}>
 							<strong style={{ 'font-size': 'var(--t-xs)' }}>{color}</strong>
 							<For each={COLOR_LEVELS}>
-								{(level) => (
-									<div
-										data-ui-color-base={color}
-										data-ui-color-level={level}
-										title={`${color} ${level}`}
-										style={{
-											background: 'var(--ui-mark)',
-											'border-radius': 'var(--r-sm)',
-											'block-size': '42px',
-											'box-shadow': 'inset 0 0 0 1px color-mix(in oklab, var(--color-base-content) 12%, transparent)',
-										}}
-									/>
-								)}
+								{(level) => <ColorLevelSwatch color={color} level={level} />}
 							</For>
 						</div>
 					)}
@@ -225,7 +311,7 @@ function ColorBaseLevelMatrix() {
 	)
 }
 
-// Default stacks from theme.css, used when a role stays on 'default'.
+// Default stacks from theme-defaults.css, used when a role stays on 'default'.
 // --font-label has NO default stack on purpose: unset, the micro-label
 // voice falls through to whatever --font-data resolves to.
 const DEFAULT_STACKS: Record<'display' | 'sans' | 'data', string> = {
@@ -234,112 +320,123 @@ const DEFAULT_STACKS: Record<'display' | 'sans' | 'data', string> = {
 	data: '"Azeret Mono", ui-monospace, "SFMono-Regular", monospace',
 }
 
-// Copy the :root token declarations from the loaded stylesheets onto the
-// lab wrapper, so the derived color-mix() tokens recompute against the
-// wrapper's overridden inputs (registered @property values resolve where
-// they are DECLARED — see the preview decorator note).
-const rehostRootTokens = (el: HTMLElement) => {
-	for (let s = 0; s < document.styleSheets.length; s++) {
-		let rules: CSSRuleList
-		try {
-			rules = document.styleSheets[s].cssRules
-		} catch {
-			continue
-		}
-		for (let r = 0; r < rules.length; r++) {
-			const rule = rules[r]
-			if (!(rule instanceof CSSStyleRule) || rule.selectorText !== ':root') continue
-			for (let d = 0; d < rule.style.length; d++) {
-				const name = rule.style.item(d)
-				if (name.startsWith('--')) el.style.setProperty(name, rule.style.getPropertyValue(name))
-			}
-		}
-	}
-}
-
 // Map a preset's scheme-agnostic values onto the lab's per-scheme arg keys.
 const schemeArgs = (v: SchemeValues, scheme: 'light' | 'dark'): Partial<ThemeLabArgs> =>
 	scheme === 'light'
 		? {
-				pageLight: v.page,
-				page2Light: v.page2,
-				panelLight: v.panel,
-				panel2Light: v.panel2,
-				textLight: v.text,
-				accentLight: v.accent,
-				liveLight: v.live,
+				baseLight: v.base,
+				contentLight: v.content,
+				primaryLight: v.primary,
+				successLight: v.success,
+				secondaryLight: v.secondary ?? '',
+				accentLight: v.accent ?? '',
+				neutralLight: v.neutral ?? '',
+				infoLight: v.info ?? '',
+				warningLight: v.warning ?? '',
+				errorLight: v.error ?? '',
 			}
 		: {
-				pageDark: v.page,
-				page2Dark: v.page2,
-				panelDark: v.panel,
-				panel2Dark: v.panel2,
-				textDark: v.text,
-				accentDark: v.accent,
-				liveDark: v.live,
+				baseDark: v.base,
+				contentDark: v.content,
+				primaryDark: v.primary,
+				successDark: v.success,
+				secondaryDark: v.secondary ?? '',
+				accentDark: v.accent ?? '',
+				neutralDark: v.neutral ?? '',
+				infoDark: v.info ?? '',
+				warningDark: v.warning ?? '',
+				errorDark: v.error ?? '',
 			}
 
-// The shipped theme.css values as a preset, one per rail, for an easy reset.
+// The shipped theme-defaults.css values as a preset, one per rail, for an easy reset.
 const canonicalPreset = (scheme: 'light' | 'dark'): ThemePreset => ({
 	name: scheme === 'light' ? 'Marigold' : 'Lantern Gold',
-	note: `Canonical — the shipped theme.css ${scheme} scheme`,
+	note: `Canonical — the shipped ui-solid ${scheme} scheme`,
 	values:
 		scheme === 'light'
 			? {
-					page: CANONICAL.pageLight,
-					page2: CANONICAL.page2Light,
-					panel: CANONICAL.panelLight,
-					panel2: CANONICAL.panel2Light,
-					text: CANONICAL.textLight,
+					base: CANONICAL.baseLight,
+					content: CANONICAL.contentLight,
+					primary: CANONICAL.primaryLight,
+					success: CANONICAL.successLight,
+					secondary: CANONICAL.secondaryLight,
 					accent: CANONICAL.accentLight,
-					live: CANONICAL.liveLight,
+					info: CANONICAL.infoLight,
+					warning: CANONICAL.warningLight,
+					error: CANONICAL.errorLight,
 				}
 			: {
-					page: CANONICAL.pageDark,
-					page2: CANONICAL.page2Dark,
-					panel: CANONICAL.panelDark,
-					panel2: CANONICAL.panel2Dark,
-					text: CANONICAL.textDark,
+					base: CANONICAL.baseDark,
+					content: CANONICAL.contentDark,
+					primary: CANONICAL.primaryDark,
+					success: CANONICAL.successDark,
+					secondary: CANONICAL.secondaryDark,
 					accent: CANONICAL.accentDark,
-					live: CANONICAL.liveDark,
+					info: CANONICAL.infoDark,
+					warning: CANONICAL.warningDark,
+					error: CANONICAL.errorDark,
 				},
 })
 
-// Preset cards render their own hexes (not tokens) so each card previews its
-// palette faithfully regardless of the currently applied theme.
+// Each card is an independent canonical theme boundary: it supplies anchors
+// and previews the roles produced by ui-solid's real derivation layer.
 function PresetCard(props: { preset: ThemePreset; onApply: () => void }) {
 	const v = () => props.preset.values
 	return (
 		<button
+			class="ui-theme"
 			type="button"
 			onClick={() => props.onApply()}
 			title={`Apply ${props.preset.name}`}
 			style={{
-				background: v().page,
-				color: v().text,
+				'--color-base-100': v().base,
+				'--color-base-content': v().content,
+				'--color-primary': v().primary,
+				'--color-success': v().success,
+				...(v().secondary ? { '--color-secondary': v().secondary } : {}),
+				...(v().accent ? { '--color-accent': v().accent } : {}),
+				...(v().neutral ? { '--color-neutral': v().neutral } : {}),
+				...(v().info ? { '--color-info': v().info } : {}),
+				...(v().warning ? { '--color-warning': v().warning } : {}),
+				...(v().error ? { '--color-error': v().error } : {}),
+				background: 'var(--color-base-200)',
+				color: 'var(--color-base-content)',
 				border: 'none',
-				'box-shadow': `inset 0 0 0 1px color-mix(in oklab, ${v().text} 28%, transparent)`,
+				'box-shadow': 'inset 0 0 0 1px var(--color-border-strong)',
 				'border-radius': '10px',
 				padding: '10px 12px',
 				display: 'grid',
 				gap: '7px',
 				'justify-items': 'start',
 				cursor: 'pointer',
-				width: '168px',
+				width: '190px',
 				'text-align': 'left',
 				font: 'inherit',
 			}}
 		>
-			<span style={{ display: 'flex', gap: '5px' }}>
-				<For each={[v().page2, v().panel, v().accent, v().live, v().text]}>
-					{(hex) => (
+			<span style={{ display: 'grid', 'grid-template-columns': 'repeat(6, 15px)', gap: '5px' }}>
+				<For each={[
+					'--color-base-300',
+					'--color-base-100',
+					'--color-base-content',
+					'--color-primary',
+					'--color-secondary',
+					'--color-accent',
+					'--color-neutral',
+					'--color-info',
+					'--color-success',
+					'--color-warning',
+					'--color-error',
+					'--color-ring',
+				]}>
+					{(token) => (
 						<span
 							style={{
 								width: '15px',
 								height: '15px',
 								'border-radius': '50%',
-								background: hex,
-								'box-shadow': `inset 0 0 0 1px color-mix(in oklab, ${v().text} 30%, transparent)`,
+								background: `var(${token})`,
+								'box-shadow': 'inset 0 0 0 1px var(--color-border-strong)',
 							}}
 						/>
 					)}
@@ -350,7 +447,7 @@ function PresetCard(props: { preset: ThemePreset; onApply: () => void }) {
 				style={{
 					'font-size': '10.5px',
 					'line-height': '1.35',
-					color: `color-mix(in oklab, ${v().text} 62%, transparent)`,
+					color: 'var(--color-base-content-muted)',
 				}}
 			>
 				{props.preset.note}
@@ -380,11 +477,421 @@ function Swatch(props: { token: string }) {
 	)
 }
 
+const cssColorToHex = (color: string): string => {
+	const canvas = document.createElement('canvas')
+	canvas.width = 1
+	canvas.height = 1
+	const context = canvas.getContext('2d')
+	if (!context) return '#000000'
+	context.clearRect(0, 0, 1, 1)
+	context.fillStyle = color
+	context.fillRect(0, 0, 1, 1)
+	const [red, green, blue] = context.getImageData(0, 0, 1, 1).data
+	return `#${[red, green, blue].map((channel) => channel.toString(16).padStart(2, '0')).join('')}`
+}
+
+const BUILDER_FIELDS = [
+	['Surface', 'baseLight', 'baseDark'],
+	['Content', 'contentLight', 'contentDark'],
+	['Primary', 'primaryLight', 'primaryDark'],
+	['Success', 'successLight', 'successDark'],
+] as const satisfies readonly [string, keyof ThemeLabArgs, keyof ThemeLabArgs][]
+
+const OPTIONAL_BUILDER_FIELDS = [
+	['Secondary', '--color-secondary', 'secondaryLight', 'secondaryDark', 'Derived by canonical CSS from primary'],
+	['Accent', '--color-accent', 'accentLight', 'accentDark', 'Derived by canonical CSS from primary'],
+	['Neutral', '--color-neutral', 'neutralLight', 'neutralDark', 'Derived by canonical CSS from content'],
+	['Info', '--color-info', 'infoLight', 'infoDark', 'Canonical semantic CSS default'],
+	['Warning', '--color-warning', 'warningLight', 'warningDark', 'Canonical semantic CSS default'],
+	['Error', '--color-error', 'errorLight', 'errorDark', 'Canonical semantic CSS default'],
+] as const satisfies readonly [string, string, keyof ThemeLabArgs, keyof ThemeLabArgs, string][]
+
+function ThemeBuilder(props: {
+	args: ThemeLabArgs
+	onChange: (patch: Partial<ThemeLabArgs>) => void
+}) {
+	const schemeBoundary = (
+		scheme: 'light' | 'dark',
+		token: string,
+		lightKey: keyof ThemeLabArgs,
+		darkKey: keyof ThemeLabArgs,
+	) => {
+		const light = props.args[lightKey].trim()
+		const dark = props.args[darkKey].trim()
+		const suffix = scheme === 'light' ? 'Light' : 'Dark'
+		const style: Record<string, string> = {
+			'color-scheme': scheme,
+			'--color-base-100': props.args[`base${suffix}` as keyof ThemeLabArgs],
+			'--color-base-content': props.args[`content${suffix}` as keyof ThemeLabArgs],
+			'--color-primary': props.args[`primary${suffix}` as keyof ThemeLabArgs],
+			'--color-success': props.args[`success${suffix}` as keyof ThemeLabArgs],
+		}
+		const override = scheme === 'light' ? light : dark
+		if (override) style[token] = override
+		return style
+	}
+	return (
+		<div style={{ display: 'grid', gap: '14px' }}>
+			<div style={{ display: 'flex', gap: '8px', 'flex-wrap': 'wrap' }}>
+				<Button variant="soft" onClick={() => props.onChange(CANONICAL)}>
+					Reset to canonical
+				</Button>
+				<Button
+					variant="outline"
+					onClick={() => props.onChange({
+						baseLight: '#ffffff',
+						baseDark: '#202020',
+						contentLight: '#202020',
+						contentDark: '#f2f2f2',
+						primaryLight: '#666666',
+						primaryDark: '#b8b8b8',
+						successLight: '#4f7a56',
+						successDark: '#85b28d',
+						secondaryLight: '', secondaryDark: '',
+						accentLight: '', accentDark: '',
+						neutralLight: '', neutralDark: '',
+						infoLight: '', infoDark: '',
+						warningLight: '', warningDark: '',
+						errorLight: '', errorDark: '',
+					})}
+				>
+					Start from neutral
+				</Button>
+			</div>
+			<div style={{ display: 'grid', 'grid-template-columns': 'minmax(100px, .7fr) repeat(2, minmax(150px, 1fr))', gap: '8px 12px', 'align-items': 'center' }}>
+				<strong style={{ 'font-size': 'var(--t-xs)' }}>Anchor</strong>
+				<Eyebrow>Light</Eyebrow>
+				<Eyebrow>Dark</Eyebrow>
+				<For each={BUILDER_FIELDS}>
+					{([label, lightKey, darkKey]) => (
+						<>
+							<label for={`builder-${String(lightKey)}`} style={{ 'font-size': 'var(--t-sm)', 'font-weight': 600 }}>{label}</label>
+							<div style={{ display: 'flex', gap: '8px', 'align-items': 'center' }}>
+								<input
+									id={`builder-${String(lightKey)}`}
+									type="color"
+									value={props.args[lightKey]}
+									onInput={(event) => props.onChange({ [lightKey]: event.currentTarget.value } as Partial<ThemeLabArgs>)}
+								/>
+								<code>{props.args[lightKey]}</code>
+							</div>
+							<div style={{ display: 'flex', gap: '8px', 'align-items': 'center' }}>
+								<input
+									id={`builder-${String(darkKey)}`}
+									type="color"
+									value={props.args[darkKey]}
+									onInput={(event) => props.onChange({ [darkKey]: event.currentTarget.value } as Partial<ThemeLabArgs>)}
+								/>
+								<code>{props.args[darkKey]}</code>
+							</div>
+						</>
+					)}
+				</For>
+				<div style={{ 'grid-column': '1 / -1', 'border-top': '1px solid var(--color-border)', 'margin-block': '4px' }} />
+				<strong style={{ 'font-size': 'var(--t-xs)' }}>Optional base override</strong>
+				<span style={{ 'font-size': 'var(--t-2xs)', color: 'var(--color-base-content-muted)' }}>Light CSS colour</span>
+				<span style={{ 'font-size': 'var(--t-2xs)', color: 'var(--color-base-content-muted)' }}>Dark CSS colour</span>
+				<For each={OPTIONAL_BUILDER_FIELDS}>
+					{([label, token, lightKey, darkKey, explanation]) => {
+						let lightProbe: HTMLSpanElement | undefined
+						let darkProbe: HTMLSpanElement | undefined
+						const [lightPicker, setLightPicker] = createSignal('#000000')
+						const [darkPicker, setDarkPicker] = createSignal('#000000')
+						createEffect(
+							() => JSON.stringify({
+								baseLight: props.args.baseLight,
+								baseDark: props.args.baseDark,
+								contentLight: props.args.contentLight,
+								contentDark: props.args.contentDark,
+								primaryLight: props.args.primaryLight,
+								primaryDark: props.args.primaryDark,
+								light: props.args[lightKey],
+								dark: props.args[darkKey],
+							}),
+							() => {
+								requestAnimationFrame(() => {
+									if (lightProbe) setLightPicker(cssColorToHex(getComputedStyle(lightProbe).backgroundColor))
+									if (darkProbe) setDarkPicker(cssColorToHex(getComputedStyle(darkProbe).backgroundColor))
+								})
+							},
+						)
+						return <>
+							<span style={{ display: 'grid', gap: '5px' }}>
+								<strong style={{ 'font-size': 'var(--t-sm)' }}>{label}</strong>
+								<span style={{ display: 'flex', gap: '6px', 'align-items': 'center' }}>
+									<span ref={lightProbe} class="ui-theme theme-light" title={`Light ${token}`} style={{ ...schemeBoundary('light', token, lightKey, darkKey), width: '28px', height: '20px', 'border-radius': '5px', background: `var(${token})`, 'box-shadow': 'inset 0 0 0 1px var(--color-border-strong)' }} />
+									<span ref={darkProbe} class="ui-theme theme-dark" title={`Dark ${token}`} style={{ ...schemeBoundary('dark', token, lightKey, darkKey), width: '28px', height: '20px', 'border-radius': '5px', background: `var(${token})`, 'box-shadow': 'inset 0 0 0 1px var(--color-border-strong)' }} />
+									<small style={{ color: 'var(--color-base-content-muted)' }}>
+										{props.args[lightKey].trim() || props.args[darkKey].trim() ? 'explicit override where supplied; derivation/default elsewhere' : explanation}
+									</small>
+								</span>
+							</span>
+							<div style={{ display: 'flex', gap: '7px', 'align-items': 'center' }}>
+								<input type="color" aria-label={`${label} light override`} value={lightPicker()} onInput={(event) => props.onChange({ [lightKey]: event.currentTarget.value } as Partial<ThemeLabArgs>)} />
+								<input type="text" value={props.args[lightKey]} placeholder="leave blank to derive" onInput={(event) => props.onChange({ [lightKey]: event.currentTarget.value } as Partial<ThemeLabArgs>)} />
+							</div>
+							<div style={{ display: 'flex', gap: '7px', 'align-items': 'center' }}>
+								<input type="color" aria-label={`${label} dark override`} value={darkPicker()} onInput={(event) => props.onChange({ [darkKey]: event.currentTarget.value } as Partial<ThemeLabArgs>)} />
+								<input type="text" value={props.args[darkKey]} placeholder="leave blank to derive" onInput={(event) => props.onChange({ [darkKey]: event.currentTarget.value } as Partial<ThemeLabArgs>)} />
+							</div>
+						</>
+					}}
+				</For>
+			</div>
+			<p style={{ margin: 0, color: 'var(--color-base-content-muted)', 'font-size': 'var(--t-sm)' }}>
+				Preset clicks seed the four core anchors. Optional bases accept any CSS colour. Each light or dark override applies independently; an empty side retains its canonical derivation/default.
+			</p>
+		</div>
+	)
+}
+
+const VARIANTS = ['solid', 'soft', 'outline', 'ghost', 'text'] as const
+
+const SURFACE_ROLES = [
+	['--ui-surface', 'resting surface'],
+	['--ui-surface-hover', 'hover surface'],
+	['--ui-surface-active', 'active surface'],
+	['--ui-surface-selected', 'selected surface'],
+	['--ui-surface-disabled', 'disabled surface'],
+] as const
+
+function RoleLabel(props: { token: string; meaning: string }) {
+	return (
+		<span style={{ display: 'grid', gap: '2px' }}>
+			<code style={{ 'font-size': 'var(--t-2xs)', 'font-weight': 700 }}>{props.token}</code>
+			<span style={{ 'font-size': 'var(--t-2xs)', color: 'color-mix(in oklab, currentColor 72%, transparent)' }}>{props.meaning}</span>
+		</span>
+	)
+}
+
+function ResolverAnatomy(props: { colorBase: ColorBase; colorLevel: ColorLevel; variant: Variant }) {
+	return (
+		<div
+			data-ui-color-base={props.colorBase}
+			data-ui-color-level={props.colorLevel}
+			data-ui-color-variant={props.variant}
+			style={{ display: 'grid', gap: '16px' }}
+		>
+			<div style={{ display: 'grid', 'grid-template-columns': 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px' }}>
+				<For each={SURFACE_ROLES}>
+					{([token, meaning]) => (
+						<div style={{ display: 'grid', gap: '7px' }}>
+							<div
+								style={{
+									background: `var(${token})`,
+									border: '1px solid var(--ui-border)',
+									'border-radius': 'var(--r-sm)',
+									'block-size': '54px',
+								}}
+							/>
+							<RoleLabel token={token} meaning={meaning} />
+						</div>
+					)}
+				</For>
+			</div>
+
+			<div style={{ display: 'grid', 'grid-template-columns': 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+				<div
+					style={{
+						background: 'var(--ui-surface)',
+						color: 'var(--ui-ink)',
+						border: '2px solid var(--ui-border)',
+						'border-radius': 'var(--r-md)',
+						padding: '14px',
+						display: 'grid',
+						gap: '8px',
+					}}
+				>
+					<strong style={{ color: 'var(--ui-ink)' }}>Foreground on the component surface</strong>
+					<span style={{ color: 'var(--ui-ink-muted)' }}>Muted supporting foreground</span>
+					<span style={{ color: 'var(--ui-ink-faint)' }}>Faint tertiary foreground</span>
+					<div style={{ display: 'grid', gap: '5px', 'margin-top': '6px' }}>
+						<RoleLabel token="--ui-ink" meaning="primary text/icons on --ui-surface" />
+						<RoleLabel token="--ui-ink-muted" meaning="secondary text on --ui-surface" />
+						<RoleLabel token="--ui-ink-faint" meaning="tertiary text on --ui-surface" />
+						<RoleLabel token="--ui-border" meaning="edge around --ui-surface" />
+					</div>
+				</div>
+
+				<div
+					style={{
+						background: 'var(--color-base-200)',
+						color: 'var(--color-base-content)',
+						border: '1px solid var(--color-border)',
+						'border-radius': 'var(--r-md)',
+						padding: '14px',
+						display: 'grid',
+						gap: '12px',
+					}}
+				>
+					<strong>Graphics on the ambient page/panel surface</strong>
+					<div style={{ height: '6px', 'border-radius': 'var(--r-pill)', background: 'var(--ui-track)', overflow: 'hidden' }}>
+						<div style={{ width: '68%', height: '100%', background: 'var(--ui-mark)' }} />
+					</div>
+					<div style={{ display: 'flex', gap: '8px', 'align-items': 'center' }}>
+						<span style={{ width: '12px', height: '12px', 'border-radius': '50%', background: 'var(--ui-mark)' }} />
+						<span style={{ width: '64px', height: '3px', background: 'var(--ui-mark-muted)' }} />
+					</div>
+					<RoleLabel token="--ui-mark" meaning="data/status graphic on the ambient surface" />
+					<RoleLabel token="--ui-mark-muted" meaning="de-emphasised ambient graphic" />
+					<RoleLabel token="--ui-track" meaning="track behind an ambient graphic" />
+				</div>
+			</div>
+		</div>
+	)
+}
+
+/** A system-wide specimen, intentionally composed only through public
+ * component props and canonical presentation roles. */
+function SystemCatalogue() {
+	const [segment, setSegment] = createSignal<'overview' | 'activity' | 'members'>('overview')
+	const [showcaseBase, setShowcaseBase] = createSignal<ColorBase>('info')
+	const [showcaseLevel, setShowcaseLevel] = createSignal<ColorLevel>(600)
+	const [showcaseVariant, setShowcaseVariant] = createSignal<Variant>('outline')
+	const people = [
+		{ name: 'Ada Lovelace', color: 'currentColor' },
+		{ name: 'Grace Hopper', color: 'currentColor' },
+		{ name: 'Alan Turing', color: 'currentColor' },
+		{ name: 'Katherine Johnson', color: 'currentColor' },
+	]
+
+	return (
+		<div style={{ display: 'grid', gap: '24px' }}>
+			<div style={{ display: 'grid', gap: '12px', overflow: 'auto' }}>
+				<Eyebrow>All semantic bases × all variants</Eyebrow>
+				<div style={{ display: 'grid', gap: '10px', 'min-width': '850px' }}>
+					<For each={SEMANTIC_FAMILIES}>
+						{(colorBase) => (
+							<div style={{ display: 'grid', 'grid-template-columns': '90px repeat(5, 1fr)', gap: '8px', 'align-items': 'center' }}>
+								<strong style={{ 'font-size': 'var(--t-xs)' }}>{colorBase}</strong>
+								<For each={VARIANTS}>
+									{(variant) => (
+										<Button colorBase={colorBase} colorLevel={500} variant={variant}>
+											{variant}
+										</Button>
+									)}
+								</For>
+							</div>
+						)}
+					</For>
+				</div>
+			</div>
+
+			<div style={{ display: 'grid', gap: '12px' }}>
+				<Eyebrow>Shared treatment across component shapes</Eyebrow>
+				<div style={{ display: 'flex', gap: '8px', 'flex-wrap': 'wrap', 'align-items': 'center' }}>
+					<For each={VARIANTS}>
+						{(variant) => (
+							<Chip colorBase="info" colorLevel={600} variant={variant}>
+								info · {variant}
+							</Chip>
+						)}
+					</For>
+					<StatusDot colorBase="success" colorLevel={600} variant="solid" status={{ color: 'currentColor', live: true }} />
+					<Counter colorBase="warning" colorLevel={600} variant="text" value={1284} />
+				</div>
+				<div style={{ display: 'grid', 'grid-template-columns': 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px' }}>
+					<For each={VARIANTS}>
+						{(variant, index) => (
+							<Panel
+								index={`0${index() + 1}`}
+								title={variant}
+								kicker="One resolver; component-local geometry"
+								colorBase="accent"
+								colorLevel={500}
+								variant={variant}
+							>
+								<p style={{ margin: 0, color: 'var(--ui-ink-muted)', 'font-size': 'var(--t-sm)' }}>
+									Surface, border, ink, hierarchy and interaction states all come from shared roles.
+								</p>
+							</Panel>
+						)}
+					</For>
+				</div>
+			</div>
+
+			<Panel title="Configurable specimen" kicker="Public three-axis component contract" colorBase={showcaseBase()} colorLevel={showcaseLevel()} variant={showcaseVariant()}>
+				<div style={{ display: 'flex', gap: '12px', 'flex-wrap': 'wrap', 'align-items': 'end' }}>
+					<Field label="colorBase">
+						<select value={showcaseBase()} onChange={(event) => setShowcaseBase(event.currentTarget.value as ColorBase)}>
+							<For each={SEMANTIC_FAMILIES}>{(value) => <option value={value}>{value}</option>}</For>
+						</select>
+					</Field>
+					<Field label="colorLevel">
+						<select value={showcaseLevel()} onChange={(event) => setShowcaseLevel(Number(event.currentTarget.value) as ColorLevel)}>
+							<For each={COLOR_LEVELS}>{(value) => <option value={value}>{value}</option>}</For>
+						</select>
+					</Field>
+					<Field label="variant">
+						<select value={showcaseVariant()} onChange={(event) => setShowcaseVariant(event.currentTarget.value as Variant)}>
+							<For each={VARIANTS}>{(value) => <option value={value}>{value}</option>}</For>
+						</select>
+					</Field>
+					<Chip colorBase={showcaseBase()} colorLevel={showcaseLevel()} variant={showcaseVariant()}>
+						{showcaseBase()} · {showcaseLevel()} · {showcaseVariant()}
+					</Chip>
+				</div>
+			</Panel>
+
+			<Panel title="Resolver anatomy" kicker={`${showcaseBase()} · ${showcaseLevel()} · ${showcaseVariant()}`}>
+				<ResolverAnatomy colorBase={showcaseBase()} colorLevel={showcaseLevel()} variant={showcaseVariant()} />
+			</Panel>
+
+			<div style={{ display: 'grid', 'grid-template-columns': 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', 'align-items': 'start' }}>
+				<Panel title="Identity and wayfinding" kicker={`${showcaseBase()} · ${showcaseLevel()} · ${showcaseVariant()}`} colorBase={showcaseBase()} colorLevel={showcaseLevel()} variant={showcaseVariant()}>
+					<div style={{ display: 'grid', gap: '16px' }}>
+						<Breadcrumb
+							items={[{ label: 'Commons', href: '#' }, { label: 'Research', href: '#' }, { label: 'Theme system' }]}
+							colorBase="neutral"
+							variant="solid"
+						/>
+						<div style={{ display: 'flex', gap: '14px', 'align-items': 'center', 'flex-wrap': 'wrap' }}>
+							<Avatar name="Ada Lovelace" faceColor="currentColor" status={{ color: 'var(--color-success)', live: true }} colorBase="primary" variant="soft" />
+							<AvatarStack people={people} max={3} colorBase="secondary" variant="outline" />
+							<IconButton label="Add collaborator">＋</IconButton>
+						</div>
+					</div>
+				</Panel>
+
+				<Panel title="Data marks" kicker={`${showcaseBase()} · ${showcaseLevel()} · ${showcaseVariant()}`} colorBase={showcaseBase()} colorLevel={showcaseLevel()} variant={showcaseVariant()}>
+					<div style={{ display: 'grid', gap: '14px' }}>
+						<Counter colorBase={showcaseBase()} colorLevel={showcaseLevel()} variant={showcaseVariant()} value={72} format={(n) => `${Math.round(n)}%`} />
+						<Meter colorBase={showcaseBase()} colorLevel={showcaseLevel()} variant={showcaseVariant()} value={72} max={100} />
+						<Sparkline colorBase={showcaseBase()} colorLevel={showcaseLevel()} variant={showcaseVariant()} data={[12, 18, 14, 27, 24, 39, 35, 52]} />
+						<Waveform colorBase={showcaseBase()} colorLevel={showcaseLevel()} variant={showcaseVariant()} bars={[0.2, 0.55, 0.35, 0.9, 0.68, 0.42, 0.78, 0.3, 0.62]} />
+						<Rule colorBase={showcaseBase()} colorLevel={showcaseLevel()} variant={showcaseVariant()} label="derived mark hierarchy" />
+					</div>
+				</Panel>
+
+				<Panel title="Native interaction" kicker={`${showcaseBase()} · ${showcaseLevel()} · ${showcaseVariant()}`} colorBase={showcaseBase()} colorLevel={showcaseLevel()} variant={showcaseVariant()}>
+					<div style={{ display: 'grid', gap: '16px' }}>
+						<Segmented
+							options={[{ id: 'overview', label: 'Overview' }, { id: 'activity', label: 'Activity' }, { id: 'members', label: 'Members' }]}
+							value={segment()}
+							onChange={setSegment}
+						/>
+						<Field label="Selected view">
+							<input value={segment()} readonly />
+						</Field>
+						<Accordion label="Resolver details" density="compact" spacing="separated">
+							<AccordionItem summary="What does the theme author?" open>
+								Only genuine anchors. <Mark tone="highlight">Every displayed role is derived.</Mark>
+							</AccordionItem>
+							<AccordionItem summary="What does a component consume?">
+								Presentation roles such as surface, ink, border, mark and focus ring.
+							</AccordionItem>
+						</Accordion>
+					</div>
+				</Panel>
+			</div>
+		</div>
+	)
+}
+
 export const Lab: Story = {
 	name: 'Theme Lab (all tokens live)',
 	render: (args) => {
 		let wrap: HTMLDivElement | undefined
-		let rehosted = false
 		const [, updateArgs] = useArgs<ThemeLabArgs>()
 
 		const stacks = createMemo(() => ({
@@ -400,12 +907,14 @@ export const Lab: Story = {
 			for (const [token, lightKey, darkKey] of PAIRS) {
 				out[token] = `light-dark(${args[lightKey]}, ${args[darkKey]})`
 			}
-			out['--color-base-content-muted'] = 'color-mix(in oklab, var(--color-base-content) 58%, transparent)'
-			out['--color-base-content-faint'] = 'color-mix(in oklab, var(--color-base-content) 36%, transparent)'
-			out['--color-border'] = 'color-mix(in oklab, var(--color-base-content) 10%, transparent)'
-			out['--color-border-strong'] = 'color-mix(in oklab, var(--color-base-content) 20%, transparent)'
-			out['--color-primary-soft'] = 'color-mix(in oklab, var(--color-primary) 14%, transparent)'
-			for (const [legacy, semantic] of LEGACY_ALIASES) out[legacy] = `var(${semantic})`
+			for (const [token, lightKey, darkKey] of OPTIONAL_PAIRS) {
+				const light = args[lightKey].trim()
+				const dark = args[darkKey].trim()
+				if (light || dark) {
+					const fallback = optionalDefault(token)
+					out[token] = `light-dark(${light || fallback}, ${dark || fallback})`
+				}
+			}
 			const s = stacks()
 			for (const role of FONT_ROLES) {
 				const stack = s[role]
@@ -416,9 +925,8 @@ export const Lab: Story = {
 
 		createEffect(overrides, (values) => {
 			if (!wrap) return
-			if (!rehosted) {
-				rehostRootTokens(wrap)
-				rehosted = true
+			for (const [token] of OPTIONAL_PAIRS) {
+				if (!(token in values)) wrap.style.removeProperty(token)
 			}
 			for (const role of FONT_ROLES) {
 				const choice = fontOption(
@@ -447,14 +955,16 @@ export const Lab: Story = {
 					([token, lightKey, darkKey]) =>
 						`\t${token}: light-dark(${args[lightKey]}, ${args[darkKey]});`,
 				),
-				...FAMILY_DERIVATIONS.map((declaration) => `\t${declaration}`),
-				'\t--color-base-content-muted: color-mix(in oklab, var(--color-base-content) 58%, transparent);',
-				'\t--color-base-content-faint: color-mix(in oklab, var(--color-base-content) 36%, transparent);',
-				'\t--color-border: color-mix(in oklab, var(--color-base-content) 10%, transparent);',
-				'\t--color-border-strong: color-mix(in oklab, var(--color-base-content) 20%, transparent);',
-				'\t--color-primary-soft: color-mix(in oklab, var(--color-primary) 14%, transparent);',
-				'\t/* Legacy compatibility outputs. */',
-				...LEGACY_ALIASES.map(([legacy, semantic]) => `\t${legacy}: var(${semantic});`),
+				...OPTIONAL_PAIRS.flatMap(([token, lightKey, darkKey]) => {
+					const light = args[lightKey].trim()
+					const dark = args[darkKey].trim()
+					const fallback = optionalDefault(token)
+					return light || dark
+						? [`\t${token}: light-dark(${light || fallback}, ${dark || fallback});`]
+						: []
+				}),
+				'\t/* ui-solid derives the surface ladder, content hierarchy, */',
+				'\t/* borders, content partners and remaining colour families. */',
 				`\t--font-display: ${s.display};`,
 				`\t--font-sans: ${s.sans};`,
 				`\t--font-data: ${s.data};`,
@@ -468,6 +978,7 @@ export const Lab: Story = {
 
 		return (
 			<div
+				class="ui-theme"
 				ref={wrap}
 				style={{
 					background: 'var(--color-base-200)',
@@ -504,6 +1015,9 @@ export const Lab: Story = {
 						</For>
 					</div>
 				</div>
+
+				<Rule label="Custom theme builder" />
+				<ThemeBuilder args={args} onChange={(patch) => updateArgs(patch)} />
 
 				<Rule label="Type specimens" />
 				{/* ── Type specimens, one per font role ── */}
@@ -553,64 +1067,10 @@ export const Lab: Story = {
 				<Rule label="Colour base × perceptual level" />
 				<ColorBaseLevelMatrix />
 
-				<Rule label="Components on these tokens" />
-				<div
-					style={{
-						display: 'grid',
-						'grid-template-columns': 'repeat(auto-fit, minmax(300px, 1fr))',
-						gap: '20px',
-						'align-items': 'start',
-					}}
-				>
-					<Panel index="01" title="Studio occupancy" kicker="Live across both floors" glow>
-						<div style={{ display: 'grid', gap: '12px' }}>
-							<div style={{ display: 'flex', gap: '8px' }}>
-								<Chip tone="live">live</Chip>
-								<Chip tone="accent">peak</Chip>
-								<Chip>floor 2</Chip>
-							</div>
-							<div style={{ display: 'flex', 'align-items': 'baseline', gap: '10px' }}>
-								<Counter value={87} format={(n) => `${Math.round(n)}%`} class="font-data" />
-								<Eyebrow>capacity</Eyebrow>
-							</div>
-							<Meter value={87} max={100} fillColor="var(--color-primary)" />
-							<Sparkline data={[12, 18, 14, 22, 30, 26, 38, 34, 41, 39, 47, 52]} />
-						</div>
-					</Panel>
-					<div style={{ display: 'grid', gap: '12px', 'align-content': 'start' }}>
-						<div style={{ display: 'flex', gap: '10px' }}>
-							<Button appearance="solid">Primary action</Button>
-							<Button colorBase="info" appearance="soft">Information</Button>
-							<Button colorBase="error" appearance="outline">Error</Button>
-							<Button>Ghost action</Button>
-						</div>
-						<div
-							style={{
-								background: 'var(--color-base-300)',
-								padding: '14px',
-								'border-radius': '10px',
-								'box-shadow': 'inset 0 0 0 1px var(--color-border)',
-								color: 'var(--color-base-content-muted)',
-								'font-size': '13.5px',
-							}}
-						>
-							Recessed surface (base-300) with a derived border and muted content.
-						</div>
-						<div
-							style={{
-								background: 'var(--color-primary-soft)',
-								padding: '14px',
-								'border-radius': '10px',
-								color: 'var(--color-primary)',
-								'font-size': '13.5px',
-							}}
-						>
-							Primary-soft wash with primary content.
-						</div>
-					</div>
-				</div>
+				<Rule label="System catalogue" />
+				<SystemCatalogue />
 
-				<Rule label="theme.css output" />
+				<Rule label="theme output" />
 				<div style={{ display: 'grid', gap: '10px', 'justify-items': 'start' }}>
 					<pre
 						style={{
@@ -628,7 +1088,7 @@ export const Lab: Story = {
 					>
 						{cssBlock()}
 					</pre>
-					<Button appearance="solid" onClick={() => navigator.clipboard.writeText(cssBlock())}>
+					<Button variant="solid" onClick={() => navigator.clipboard.writeText(cssBlock())}>
 						Copy :root block
 					</Button>
 				</div>

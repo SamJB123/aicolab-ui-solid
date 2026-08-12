@@ -6,9 +6,9 @@
 		flex-direction: column;
 		overflow: hidden;
 		border-radius: var(--r-lg);
-		background: var(--c-panel);
+		background: var(--color-base-100);
 		padding: var(--ui-panel-pad);
-		box-shadow: 0 0 0 1px var(--c-line);
+		box-shadow: 0 0 0 1px var(--color-border);
 	}
 	:scope[data-ui-color-base] {
 		background: var(--ui-surface);
@@ -21,7 +21,7 @@
 		position: absolute;
 		inset: 0 0 auto 0;
 		height: 1px;
-		background: linear-gradient(to right, transparent, var(--c-line-strong), transparent);
+		background: linear-gradient(to right, transparent, var(--color-border-strong), transparent);
 	}
 	:scope[data-ui-color-base]::before {
 		background: linear-gradient(to right, transparent, var(--ui-border), transparent);
@@ -34,7 +34,7 @@
 		width: 176px;
 		height: 176px;
 		border-radius: var(--r-pill);
-		background: var(--c-accent);
+		background: var(--color-primary);
 		opacity: 0.07;
 		filter: blur(48px);
 	}
@@ -61,7 +61,7 @@
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
 		font-size: var(--t-xs);
 		letter-spacing: 0.1em;
-		color: var(--c-faint);
+		color: var(--color-base-content-faint);
 	}
 	:scope[data-ui-color-base] > header .ui-panel-index {
 		color: var(--ui-ink-faint);
@@ -73,7 +73,7 @@
 		font-size: var(--ui-panel-title);
 		font-weight: 500;
 		line-height: 1;
-		color: var(--c-text);
+		color: var(--color-base-content);
 	}
 	:scope[data-ui-color-base] > header h2 {
 		color: var(--ui-ink);
@@ -84,7 +84,7 @@
 		font-size: var(--t-2xs);
 		text-transform: uppercase;
 		letter-spacing: 0.2em;
-		color: var(--c-faint);
+		color: var(--color-base-content-faint);
 	}
 	:scope[data-ui-color-base] > header .ui-panel-kicker {
 		color: var(--ui-ink-faint);

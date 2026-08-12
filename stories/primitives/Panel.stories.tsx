@@ -37,7 +37,7 @@ export const IndexActionGlow: Story = {
 		title: 'Occupancy',
 		kicker: 'Rolling 7-day average',
 		glow: true,
-		action: () => <Button appearance="ghost">Export</Button>,
+		action: () => <Button variant="ghost">Export</Button>,
 		children: 'Peak load lands on Wednesday afternoons.',
 	},
 }
@@ -74,7 +74,7 @@ export const ComposedDashboardCard: Story = {
 				title="Studio occupancy"
 				kicker="Live across both floors"
 				glow
-				action={() => <Button appearance="solid">Book</Button>}
+				action={() => <Button variant="solid">Book</Button>}
 			>
 				<div style={{ display: 'grid', gap: '14px' }}>
 					<div style={{ display: 'flex', gap: '8px', 'align-items': 'center' }}>
@@ -86,7 +86,7 @@ export const ComposedDashboardCard: Story = {
 						<Counter value={87} format={(n) => `${Math.round(n)}%`} class="font-data" />
 						<Eyebrow>capacity</Eyebrow>
 					</div>
-					<Meter value={87} max={100} fillColor="var(--c-accent)" />
+					<Meter value={87} max={100} fillColor="var(--color-primary)" />
 					<Sparkline data={[12, 18, 14, 22, 30, 26, 38, 34, 41, 39, 47, 52]} />
 					<Rule label="On site" />
 					<AvatarStack
@@ -98,7 +98,7 @@ export const ComposedDashboardCard: Story = {
 							{ name: 'Katherine Johnson', color: '#9a6fb8' },
 							{ name: 'Dorothy Vaughan', color: '#5f8f8a' },
 						]}
-						ring="var(--c-panel)"
+						ring="var(--color-base-100)"
 					/>
 				</div>
 			</Panel>
@@ -107,12 +107,12 @@ export const ComposedDashboardCard: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Color base × level × appearance',
-	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, appearance }) => (
+	name: 'Color base × level × variant',
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, variant }) => (
 		<Panel
 			colorBase={colorBase}
 			colorLevel={colorLevel}
-			appearance={appearance}
+			variant={variant}
 			index="01"
 			title="Gallery activity"
 			kicker="Live specimen"

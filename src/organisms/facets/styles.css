@@ -2,14 +2,14 @@
 @scope (.facets) {
 :scope {
 	border-radius: var(--r-xl);
-	background: var(--c-panel);
-	box-shadow: inset 0 0 0 1px var(--c-line);
+	background: var(--color-base-100);
+	box-shadow: inset 0 0 0 1px var(--color-border);
 	overflow: hidden;
 }
 .facets-tabs {
 	position: relative;
 	display: flex;
-	border-bottom: 1px solid var(--c-line);
+	border-bottom: 1px solid var(--color-border);
 }
 .facets-tab {
 	position: relative;
@@ -19,13 +19,13 @@
 	background: none;
 	font: inherit;
 	font-size: var(--t-md);
-	color: var(--c-muted);
+	color: var(--color-base-content-muted);
 	transition:
 		color 0.2s,
 		background 0.2s;
 }
 .facets-tab:hover {
-	color: var(--c-text);
+	color: var(--color-base-content);
 }
 
 /* Variant: full-width divided bar (legacy-faithful). */
@@ -35,11 +35,11 @@
 	text-align: center;
 }
 .facets-tabs-bar .facets-tab + .facets-tab {
-	border-inline-start: 1px solid var(--c-line);
+	border-inline-start: 1px solid var(--color-border);
 }
 .facets-tabs-bar .facets-tab-active {
-	background: var(--c-page-2);
-	color: var(--c-text);
+	background: var(--color-base-300);
+	color: var(--color-base-content);
 	font-weight: 600;
 }
 
@@ -61,10 +61,10 @@
 }
 .facets-tabs-pill .facets-tab-active,
 .facets-tabs-stretch .facets-tab-active {
-	color: var(--c-text);
+	color: var(--color-base-content);
 	/* Fallback indicator where anchor positioning is unavailable. */
-	background: var(--c-panel-2);
-	box-shadow: inset 0 0 0 1px var(--c-line-strong);
+	background: var(--color-base-150);
+	box-shadow: inset 0 0 0 1px var(--color-border-strong);
 }
 .facets-pill {
 	display: none;
@@ -85,8 +85,8 @@
 		width: anchor-size(width);
 		height: anchor-size(height);
 		border-radius: var(--r-pill);
-		background: var(--c-panel-2);
-		box-shadow: inset 0 0 0 1px var(--c-line-strong);
+		background: var(--color-base-150);
+		box-shadow: inset 0 0 0 1px var(--color-border-strong);
 		transition:
 			top 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
 			left 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
@@ -104,14 +104,14 @@
 	flex-direction: column;
 	flex: 0 0 auto;
 	width: 5rem;
-	border-inline-end: 1px solid var(--c-line);
+	border-inline-end: 1px solid var(--color-border);
 }
 .facets-rail-btn {
 	display: grid;
 	place-items: center;
 	height: 5rem;
 	border: 0;
-	border-bottom: 1px solid var(--c-line);
+	border-bottom: 1px solid var(--color-border);
 	background: none;
 	font-size: var(--t-3xl);
 	cursor: pointer;
@@ -123,12 +123,12 @@
 		background 0.25s;
 }
 .facets-rail-btn:hover {
-	background: color-mix(in oklab, var(--c-page-2) 55%, transparent);
+	background: color-mix(in oklab, var(--color-base-300) 55%, transparent);
 	opacity: 0.75;
 }
 .facets-rail-active,
 .facets-rail-active:hover {
-	background: var(--c-page-2);
+	background: var(--color-base-300);
 	filter: none;
 	opacity: 1;
 }

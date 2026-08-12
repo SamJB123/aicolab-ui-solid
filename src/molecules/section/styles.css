@@ -19,7 +19,7 @@
 		font-size: var(--t-3xl);
 		font-weight: 500;
 		letter-spacing: -0.01em;
-		color: var(--c-text);
+		color: var(--color-base-content);
 		text-wrap: balance;
 	}
 	.ui-section-head .ui-section-lede {
@@ -27,7 +27,7 @@
 		max-width: 42rem;
 		font-size: var(--t-lg);
 		line-height: 1.625;
-		color: var(--c-muted);
+		color: var(--color-base-content-muted);
 		text-wrap: pretty;
 	}
 	@media (min-width: 640px) { :scope > .ui-section-head h2 { font-size: var(--t-4xl); } }

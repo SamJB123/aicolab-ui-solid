@@ -14,7 +14,7 @@ export function Live() {
 export function Muted() {
 	return (
 		<div style={{ height: '2rem', width: '10rem' }}>
-			<Waveform bars={BARS.map((v) => v * 0.5)} color="var(--c-muted)" />
+			<Waveform bars={BARS.map((v) => v * 0.5)} color="var(--color-base-content-muted)" />
 		</div>
 	)
 }

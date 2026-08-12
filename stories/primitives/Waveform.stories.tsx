@@ -17,8 +17,8 @@ function AnimatedAxesWaveforms() {
 
 	return (
 		<ColorTreatmentStory
-			render={({ colorBase, colorLevel, appearance }) => (
-				<Waveform colorBase={colorBase} colorLevel={colorLevel} appearance={appearance} bars={bars()} />
+			render={({ colorBase, colorLevel, variant }) => (
+				<Waveform colorBase={colorBase} colorLevel={colorLevel} variant={variant} bars={bars()} />
 			)}
 		/>
 	)
@@ -38,7 +38,7 @@ export const Default: Story = {
 }
 
 export const LiveColour: Story = {
-	args: { bars: BARS, barColor: 'var(--c-live)' },
+	args: { bars: BARS, barColor: 'var(--color-success)' },
 }
 
 export const Animated: Story = {
@@ -56,6 +56,6 @@ export const Animated: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Color base × level × appearance',
+	name: 'Color base × level × variant',
 	render: () => <AnimatedAxesWaveforms />,
 }

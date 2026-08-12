@@ -1,7 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
 import { createSignal, For } from 'solid-js'
-import type { Appearance, ColorLevel, ColorBase } from '../../src/primitives'
+import type { Variant, ColorLevel, ColorBase } from '../../src/primitives'
 
 export const COLOR_ROLES = [
 	'primary',
@@ -16,20 +16,20 @@ export const COLOR_ROLES = [
 
 export const COLOR_LEVELS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const satisfies readonly ColorLevel[]
 
-export const APPEARANCES = ['solid', 'soft', 'outline', 'ghost', 'text'] as const satisfies readonly Appearance[]
+export const VARIANTS = ['solid', 'soft', 'outline', 'ghost', 'text'] as const satisfies readonly Variant[]
 
 export type ColorTreatmentContext = {
 	colorBase: ColorBase
 	colorLevel: ColorLevel
-	appearance: Appearance
+	variant: Variant
 	/** Canonical presentation mark for the selected base × level. */
 	markColor: string
-	/** Canonical appearance-resolved surface behind the specimen. */
+	/** Canonical variant-resolved surface behind the specimen. */
 	surfaceColor: string
 }
 
 /** Shared interactive specimen matrix. The level rail changes one independent
- * axis while the grid keeps every colour-base × appearance combination visible. */
+ * axis while the grid keeps every colour-base × variant combination visible. */
 export function ColorTreatmentStory(props: {
 	render: (context: ColorTreatmentContext) => JSX.Element
 }) {
@@ -75,17 +75,17 @@ export function ColorTreatmentStory(props: {
 					<For each={COLOR_ROLES}>
 						{(role) => <strong style={{ 'font-size': 'var(--t-xs)', padding: '0 4px' }}>{role}</strong>}
 					</For>
-					<For each={APPEARANCES}>
-						{(appearance) => (
+					<For each={VARIANTS}>
+						{(variant) => (
 							<>
-								<strong style={{ 'font-size': 'var(--t-xs)', padding: '12px 4px' }}>{appearance}</strong>
+								<strong style={{ 'font-size': 'var(--t-xs)', padding: '12px 4px' }}>{variant}</strong>
 								<For each={COLOR_ROLES}>
 									{(colorBase) => (
 										<div style={{ 'min-block-size': '76px', display: 'grid', 'place-items': 'center', padding: '8px' }}>
 											{props.render({
 												colorBase,
 												colorLevel: level(),
-												appearance,
+												variant,
 												markColor: 'var(--ui-mark)',
 												surfaceColor: 'var(--ui-surface)',
 											})}

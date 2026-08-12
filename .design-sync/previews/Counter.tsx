@@ -5,7 +5,7 @@ const BIG_NUM = {
 	'font-family': 'var(--font-data)',
 	'font-size': '1.875rem',
 	'line-height': '2.25rem',
-	color: 'var(--c-text)',
+	color: 'var(--color-base-content)',
 }
 
 export function Plain() {
@@ -29,7 +29,7 @@ export function Formatted() {
 					'line-height': '1rem',
 					'text-transform': 'uppercase',
 					'letter-spacing': '0.2em',
-					color: 'var(--c-faint)',
+					color: 'var(--color-base-content-faint)',
 				}}
 			>
 				occupancy

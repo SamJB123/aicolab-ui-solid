@@ -21,6 +21,6 @@ export const AccentInk: Story = {
 }
 
 export const ThreeAxes: Story = {
-	name: 'Color base × level × appearance',
-	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, appearance }) => <Eyebrow colorBase={colorBase} colorLevel={colorLevel} appearance={appearance}>Commons · Live</Eyebrow>} />,
+	name: 'Color base × level × variant',
+	render: () => <ColorTreatmentStory render={({ colorBase, colorLevel, variant }) => <Eyebrow colorBase={colorBase} colorLevel={colorLevel} variant={variant}>Commons · Live</Eyebrow>} />,
 }

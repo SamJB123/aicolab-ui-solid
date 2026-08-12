@@ -34,7 +34,7 @@ export const FormRow: Story = {
 					/>
 				</Field>
 				<Field label="Actions">
-					<Button appearance="solid">Apply</Button>
+					<Button variant="solid">Apply</Button>
 				</Field>
 			</div>
 		)

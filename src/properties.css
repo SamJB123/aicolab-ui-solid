@@ -1,63 +1,138 @@
 /* ── Registered token contract (typed, animatable, canonical initials) ── */
-@property --c-page {
+@property --color-base-200 {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: #fff9e8;
 }
-@property --c-page-2 {
+@property --color-base-300 {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: #f6ecc7;
 }
-@property --c-panel {
+@property --color-base-100 {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: #fffffb;
 }
-@property --c-panel-2 {
+@property --color-base-150 {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: #fbf3d6;
 }
-@property --c-text {
+@property --color-base-content {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: #241c0b;
 }
-@property --c-muted {
+@property --color-base-content-muted {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: #78705e;
 }
-@property --c-faint {
+@property --color-base-content-faint {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: #a9a290;
 }
-@property --c-accent {
+@property --color-primary {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: #e8b04c;
 }
-@property --c-live {
+@property --color-primary-content {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #2b210d;
+}
+@property --color-secondary {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #005682;
+}
+@property --color-secondary-content {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #2b210d;
+}
+@property --color-accent {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #b9c27a;
+}
+@property --color-accent-content {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #2b210d;
+}
+@property --color-neutral {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #302b20;
+}
+@property --color-neutral-content {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #fffffb;
+}
+@property --color-info {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: oklch(0.58 0.12 230);
+}
+@property --color-info-content {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #fffffb;
+}
+@property --color-success {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: #43913a;
 }
-@property --c-line {
+@property --color-success-content {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #fffffb;
+}
+@property --color-warning {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #fcb700;
+}
+@property --color-warning-content {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #2b210d;
+}
+@property --color-error {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #c50035;
+}
+@property --color-error-content {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #fffffb;
+}
+@property --color-border {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: #e6e0cf;
 }
-@property --c-line-strong {
+@property --color-border-strong {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: #cec8b6;
 }
-@property --c-accent-soft {
+@property --color-primary-soft {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: #fae5cc;
+}
+@property --color-ring {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #e8b04c;
 }
 @property --font-display {
 	syntax: "*";
@@ -180,9 +255,8 @@
 
 /* ── Semantic colour system ────────────────────────────────────────────────
    The public palette follows DaisyUI's familiar family/content vocabulary,
-   under Tailwind's --color-* namespace. The existing --c-* properties stay
-   registered above as compatibility inputs during migration; these canonical
-   tokens read them by default, so existing application themes keep working.
+   under Tailwind's --color-* namespace. There is one canonical contract; no
+   compatibility token generation sits beneath it.
 
    Base colours and ladder positions are deliberately orthogonal. Components set
    --ui-color-base from data-ui-color-base and a lightness/chroma transform
@@ -203,7 +277,7 @@
 	inherits: true;
 	initial-value: 500;
 }
-@property --ui-appearance {
+@property --ui-color-variant {
 	syntax: "solid | soft | outline | ghost | text";
 	inherits: true;
 	initial-value: solid;

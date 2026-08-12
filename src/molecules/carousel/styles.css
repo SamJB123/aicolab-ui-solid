@@ -23,11 +23,11 @@
 	width: 8px;
 	height: 8px;
 	border-radius: var(--r-pill);
-	background: var(--c-line-strong);
+	background: var(--color-border-strong);
 	transition: background 0.2s;
 }
 :scope > *::scroll-marker:target-current {
-	background: var(--c-accent);
+	background: var(--color-primary);
 }
 :scope::scroll-marker-group {
 	display: flex;
@@ -42,9 +42,9 @@
 	width: 2.4rem;
 	height: 2.4rem;
 	border-radius: var(--r-pill);
-	border: 1px solid var(--c-line-strong);
-	background: var(--c-panel);
-	color: var(--c-text);
+	border: 1px solid var(--color-border-strong);
+	background: var(--color-base-100);
+	color: var(--color-base-content);
 	cursor: pointer;
 }
 :scope::scroll-button(left) {

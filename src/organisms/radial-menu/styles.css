@@ -133,10 +133,10 @@
 		width: var(--radial-chip);
 		height: var(--radial-chip);
 		border-radius: var(--r-pill);
-		background: var(--c-panel);
-		color: var(--c-text);
+		background: var(--color-base-100);
+		color: var(--color-base-content);
 		box-shadow:
-			0 0 0 1px var(--c-line-strong),
+			0 0 0 1px var(--color-border-strong),
 			0 10px 24px -8px rgb(0 0 0 / 0.45);
 	}
 	.ui-radial-chip > * {
@@ -165,7 +165,7 @@
 	@media (hover: hover) {
 	.ui-radial-item:hover .ui-radial-chip {
 		box-shadow:
-			0 0 0 2px color-mix(in oklab, var(--c-accent) 70%, transparent),
+			0 0 0 2px color-mix(in oklab, var(--color-primary) 70%, transparent),
 			0 10px 24px -8px rgb(0 0 0 / 0.45);
 	}
 }

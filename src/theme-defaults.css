@@ -1,79 +1,91 @@
-/* A low-priority standalone fallback keeps the package styled when a consumer
-   imports styles.css without a theme. Any unlayered app/theme declaration
-   wins regardless of stylesheet order. The semantic palette is the source;
-   --c-* names point downstream for compatibility, never the reverse. */
+/* Low-priority canonical theme defaults. Consumers author the genuine anchors
+   (--color-base-100, --color-base-content and semantic family anchors); this
+   layer derives the surface ladder, content hierarchy and presentation roles.
+   Any unlayered consumer anchor wins regardless of stylesheet order. */
 @layer ui-token-defaults {
 	:root {
-		--color-base-100: #fffffb;
-		--color-base-150: #fbf3d6;
-		--color-base-200: #fff9e8;
-		--color-base-300: #f6ecc7;
-		--color-base-content: #241c0b;
-		--color-base-content-muted: color-mix(in oklab, var(--color-base-content) 58%, transparent);
-		--color-base-content-faint: color-mix(in oklab, var(--color-base-content) 36%, transparent);
-		--color-primary: #e8b04c;
-		--color-primary-content: #2b210d;
-		--color-secondary: oklch(from var(--color-primary) l calc(c * 0.72) calc(h + 35));
-		--color-secondary-content: #2b210d;
+		color-scheme: light dark;
+
+		/* Genuine authored anchors. A theme may override any of these. */
+		--color-base-100: light-dark(#fffffb, #000512);
+		--color-base-content: light-dark(#241c0b, #ede7da);
+		--color-primary: light-dark(#e8b04c, #e8b04c);
+		--color-secondary: light-dark(#005682, #005682);
+		--color-accent: light-dark(#b9c27a, #b9c27a);
+		--color-info: var(--ui-theme-info-default);
+		--color-success: light-dark(#43913a, #5aa179);
+		--color-warning: var(--ui-theme-warning-default);
+		--color-error: var(--ui-theme-error-default);
+		--font-display: ui-sans-serif, system-ui, sans-serif;
+		--font-sans: ui-sans-serif, system-ui, sans-serif;
+		--font-data: "Azeret Mono", ui-monospace, "SFMono-Regular", monospace;
+	}
+
+	/* Automatic mode follows the user's preference. On the root element these
+	   selectors force the document scheme. A forced subtree is an explicit
+	   `.ui-theme` boundary that hosts its own authored anchors; registered root
+	   colours otherwise inherit as values already computed in the root scheme. */
+	.theme-dark,
+	[data-theme="dark"] {
+		color-scheme: dark;
+	}
+	.theme-light,
+	[data-theme="light"] {
+		color-scheme: light;
+	}
+
+	/* A .ui-theme element is an explicit nested theme boundary. It receives
+	   anchors from its author (or inherits unspecified anchors) and derives the
+	   same complete role set as :root. */
+	:where(:root, .ui-theme) {
+		/* Named canonical defaults are reusable CSS outputs. Theme tooling can
+		   preserve an unoverridden scheme by referring to these roles instead of
+		   copying the derivation algorithms into application code. */
+		--ui-theme-secondary-default: oklch(from var(--color-primary) l calc(c * 0.72) calc(h + 35));
+		--ui-theme-accent-default: oklch(from var(--color-primary) l c calc(h - 55));
+		--ui-theme-neutral-default: oklch(from var(--color-base-content) l calc(c * 0.35) h);
+		--ui-theme-info-default: oklch(0.58 0.12 230);
+		--ui-theme-warning-default: #fcb700;
+		--ui-theme-error-default: #c50035;
+		/* Base-100 is the single surface anchor (the raised/clean material).
+		   Dark themes step downward perceptually. Near-white anchors have no
+		   lightness headroom, so light themes instead acquire opaque scenery
+		   tint from their own primary/content identity. This preserves meaningful
+		   differences between light themes without a second surface anchor. */
+		--ui-theme-scenery: color-mix(in oklch, var(--color-primary) 50%, var(--color-base-content));
+		--color-base-150: light-dark(
+			color-mix(in oklch, var(--color-base-100) 97%, var(--ui-theme-scenery)),
+			oklch(from var(--color-base-100) calc(l - 0.025) calc(c * 1.02) h)
+		);
+		--color-base-200: light-dark(
+			color-mix(in oklch, var(--color-base-100) 93%, var(--ui-theme-scenery)),
+			oklch(from var(--color-base-100) calc(l - 0.055) calc(c * 1.04) h)
+		);
+		--color-base-300: light-dark(
+			color-mix(in oklch, var(--color-base-100) 86%, var(--ui-theme-scenery)),
+			oklch(from var(--color-base-100) calc(l - 0.11) calc(c * 1.08) h)
+		);
+		--color-base-content-muted: color-mix(in oklab, var(--color-base-content) 76%, transparent);
+		--color-base-content-faint: color-mix(in oklab, var(--color-base-content) 58%, transparent);
+		--color-primary-content: contrast-color(var(--color-primary));
+		--color-secondary: var(--ui-theme-secondary-default);
 		--color-secondary-content: contrast-color(var(--color-secondary));
-		--color-accent: oklch(from var(--color-primary) l c calc(h - 55));
-		--color-accent-content: #2b210d;
+		--color-accent: var(--ui-theme-accent-default);
 		--color-accent-content: contrast-color(var(--color-accent));
-		--color-neutral: oklch(from var(--color-base-content) l calc(c * 0.35) h);
-		--color-neutral-content: #fffffb;
+		--color-neutral: var(--ui-theme-neutral-default);
 		--color-neutral-content: contrast-color(var(--color-neutral));
-		--color-info: oklch(0.58 0.12 230);
-		--color-info-content: #fffffb;
 		--color-info-content: contrast-color(var(--color-info));
-		--color-success: #43913a;
-		--color-success-content: #fffffb;
 		--color-success-content: contrast-color(var(--color-success));
-		--color-warning: oklch(0.72 0.16 75);
-		--color-warning-content: #2b210d;
 		--color-warning-content: contrast-color(var(--color-warning));
-		--color-error: oklch(0.58 0.18 28);
-		--color-error-content: #fffffb;
 		--color-error-content: contrast-color(var(--color-error));
 		--color-border: color-mix(in oklab, var(--color-base-content) 10%, transparent);
 		--color-border-strong: color-mix(in oklab, var(--color-base-content) 20%, transparent);
 		--color-primary-soft: color-mix(in oklab, var(--color-primary) 14%, transparent);
 		--color-ring: var(--color-primary);
-
-		--c-page: var(--color-base-200);
-		--c-page-2: var(--color-base-300);
-		--c-panel: var(--color-base-100);
-		--c-panel-2: var(--color-base-150);
-		--c-text: var(--color-base-content);
-		--c-muted: var(--color-base-content-muted);
-		--c-faint: var(--color-base-content-faint);
-		--c-accent: var(--color-primary);
-		--c-live: var(--color-success);
-		--c-line: var(--color-border);
-		--c-line-strong: var(--color-border-strong);
-		--c-accent-soft: var(--color-primary-soft);
 	}
-}
 
-/* New themes can author only base-100 and base-content and opt into a
-   perceptual generated surface ladder. Explicit declarations still win when
-   a palette needs deliberate hue/material changes between surfaces. */
-.ui-theme[data-base-ladder="derived"] {
-	--color-base-150: oklch(
-		from var(--color-base-100)
-		calc(l - 0.025)
-		calc(c * 1.02)
-		h
-	);
-	--color-base-200: oklch(
-		from var(--color-base-100)
-		calc(l - 0.055)
-		calc(c * 1.04)
-		h
-	);
-	--color-base-300: oklch(
-		from var(--color-base-100)
-		calc(l - 0.11)
-		calc(c * 1.08)
-		h
-	);
+	body {
+		color: var(--color-base-content);
+		background: var(--color-base-200);
+	}
 }

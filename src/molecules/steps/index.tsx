@@ -19,7 +19,7 @@ export type StepNodeSize = 'sm' | 'md' | 'lg'
 const NODE_SIZE: Record<StepNodeSize, string> = { sm: '2.75rem', md: '5rem', lg: '10rem' }
 
 function StepNode(props: { step: Step; index: number; size: StepNodeSize }) {
-	const accent = () => props.step.accent ?? 'var(--c-accent)'
+	const accent = () => props.step.accent ?? 'var(--color-primary)'
 	return (
 		<div
 			class="ui-step-disc"
@@ -39,7 +39,7 @@ function StepNode(props: { step: Step; index: number; size: StepNodeSize }) {
 function StepText(props: { step: Step }) {
 	return (
 		<div class="ui-step-text">
-			<h3 style={{ color: props.step.accent ?? 'var(--c-text)' }}>{props.step.title}</h3>
+			<h3 style={{ color: props.step.accent ?? 'var(--color-base-content)' }}>{props.step.title}</h3>
 			<div class="ui-step-body">{props.step.body}</div>
 			<Show when={props.step.bullets?.length}>
 				<ul class="ui-step-bullets">

@@ -21,7 +21,7 @@ export function Button(
 			class={['ui-btn', props.class]}
 			data-ui-color-base={props.colorBase ?? 'primary'}
 			data-ui-color-level={props.colorLevel ?? 500}
-			data-ui-appearance={props.appearance ?? 'solid'}
+			data-ui-color-variant={props.variant ?? 'solid'}
 		>
 			{props.children}
 		</button>
