@@ -1,6 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { type Step, Steps } from '../../src/marketing'
+import { treatmentArgTypes } from '../primitives/color-treatment-story'
 
 const STEPS: Step[] = [
 	{
@@ -32,13 +33,22 @@ const meta = {
 	component: Steps,
 	parameters: { layout: 'fullscreen' },
 	argTypes: {
+		...treatmentArgTypes,
 		variant: { control: 'radio', options: ['zigzag', 'rail'] },
 		node: { control: 'radio', options: ['sm', 'md', 'lg'] },
+		nodeSize: { control: 'text', table: { category: 'knobs' } },
+		gap: { control: 'text', table: { category: 'knobs' } },
+		lineInk: { control: 'text', table: { category: 'knobs' } },
+		accent: { control: 'text', table: { category: 'knobs' } },
 	},
 } satisfies Meta<typeof Steps>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: { steps: STEPS },
+}
 
 export const Zigzag: Story = {
 	name: 'Zigzag (default, lg nodes)',

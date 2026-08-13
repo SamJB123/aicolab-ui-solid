@@ -2,6 +2,16 @@
 import type { JSX } from '@solidjs/web'
 import { createEffect, createSignal, onSettled, Show } from 'solid-js'
 import type { ClassProp } from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
+
+/** Per-instance styling contract (see shared/knobs.ts). SceneStage paints
+ * no family surface (its picture IS the renderer's output; the error box
+ * is semantically the error family already), so it carries knobs without
+ * the treatment axes — the same exemption class as presence. */
+const knobs = defineKnobs('ui-scene', {
+	surface: '<color>',
+	statusInk: '<color>',
+})
 
 export interface SceneStageMountContext<Events, Configuration> {
 	canvas: HTMLCanvasElement
@@ -39,7 +49,7 @@ export function SceneStage<Command, Events, Configuration = undefined>(props: {
 	class?: ClassProp
 	canvasClass?: ClassProp
 	children?: JSX.Element
-}) {
+} & KnobProps<typeof knobs.spec>) {
 	let canvas: HTMLCanvasElement | undefined
 	let host: HTMLDivElement | undefined
 	const [settled, setSettled] = createSignal(false)
@@ -96,6 +106,8 @@ export function SceneStage<Command, Events, Configuration = undefined>(props: {
 			class={['ui-scene-stage', props.class]}
 			data-ready={ready() ? '' : undefined}
 			data-error={error() ? '' : undefined}
+			{...knobs.attributes(props)}
+			style={mergeKnobStyle(knobs.style(props), undefined)}
 		>
 			<canvas
 				ref={(element) => {

@@ -7,12 +7,21 @@ const tiers = ['atoms', 'molecules', 'organisms']
 const rank = new Map(tiers.map((tier, index) => [tier, index]))
 const sourceExtensions = new Set(['.ts', '.tsx', '.css'])
 const componentNames = new Set(tiers.flatMap((tier) => readdirSync(resolve(src, tier))))
+// The resolver's PRIVATE inputs (see the "Private environmental inputs"
+// comment in resolver.css). Everything else in the --ui- namespace is
+// public: the role derivations (--ui-surface…, --ui-ink…, --ui-border…),
+// the strong statement PAIR --ui-color + --ui-content (painted together
+// wherever the full family colour is a surface), and component-owned
+// contracts (knob variables, mandatory wires like --ui-attribution-color).
+// Components may DERIVE from public roles (color-mix voices mirroring the
+// resolver's own muted/faint recipes); they may never consume these.
 const privateResolverProperties = [
 	'--ui-color-base-key',
 	'--ui-color-base',
 	'--ui-color-level',
 	'--ui-color-variant',
-	'--ui-content',
+	'--ui-level-light-shift',
+	'--ui-level-chroma-scale',
 	'--ui-family-ink',
 ]
 
@@ -48,22 +57,14 @@ for (const tier of tiers) {
 	const root = resolve(src, tier)
 	for (const importer of walk(root).filter((path) => sourceExtensions.has(extname(path)))) {
 		const source = readFileSync(importer, 'utf8')
-		const locallyOwnedProperties = new Set(
-			[...source.matchAll(/(--ui-[\w-]+)\s*:/g)].map((match) => match[1]),
-		)
 		const [importerTier, importerComponent] = describe(importer)
 		// Tier barrels are public aggregators, not component implementations.
 		if (!importerComponent || importerComponent === 'index.ts') continue
+		/* Private-input consumption covers derivation too: a var(--private)
+		   inside color-mix()/oklch() is still a var(--private). */
 		for (const property of privateResolverProperties) {
 			if (source.includes(`var(${property})`)) {
 				violations.push(`${relative(src, importer)} consumes private resolver input ${property}`)
-			}
-		}
-		for (const match of source.matchAll(
-			/(?:color-mix|oklch|contrast-color|light-dark)\([^;{}]*var\((--ui-[\w-]+)/gs,
-		)) {
-			if (!locallyOwnedProperties.has(match[1])) {
-				violations.push(`${relative(src, importer)} derives colour from resolved presentation role ${match[1]}`)
 			}
 		}
 		const importerNode = nodeFor(importerTier, importerComponent)

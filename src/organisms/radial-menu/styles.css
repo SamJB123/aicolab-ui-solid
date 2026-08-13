@@ -22,12 +22,38 @@
 	padding: 0;
 }
 }
+@property --_ui-radial-chip-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 3rem;
+}
+@property --_ui-radial-chip-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-radial-chip-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-radial-hover-ring {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+
 @scope (.ui-radial) {
 :scope {
 	/* Design tokens — the ONLY authored quantities; everything else is
 	   derived. (--radial-radius/--radial-sweep/--radial-down arrive from
-	   the component as its public props.) */
-	--radial-chip: 3rem; /* chip diameter */
+	   the component as its public props; the chip pair and hover ring ride
+	   the knob wires, family-retargeted when treated.) */
+	--_ui-radial-chip-size: var(--ui-radial-chip-size, 3rem);
+	--_ui-radial-chip-surface: var(--ui-radial-chip-surface, var(--color-base-100));
+	--_ui-radial-chip-ink: var(--ui-radial-chip-ink, var(--color-base-content));
+	--_ui-radial-hover-ring: var(--ui-radial-hover-ring, color-mix(in oklab, var(--color-primary) 70%, transparent));
+	--radial-chip: var(--_ui-radial-chip-size); /* chip diameter */
 	--radial-label-gap: 0.4rem; /* chip edge ↔ label breathing room */
 	--radial-label-line: 0.8rem; /* one label line box */
 	--radial-label-lines: 2; /* wrap budget within the lane */
@@ -41,6 +67,9 @@
 	padding: 0;
 	overflow: visible;
 	background: none;
+}
+:scope[data-ui-color-base] {
+	--_ui-radial-hover-ring: var(--ui-radial-hover-ring, color-mix(in oklab, var(--ui-color) 70%, transparent));
 }
 @supports (anchor-name: --x) {
 	/* position-anchor arrives inline from the component (per-instance). */
@@ -133,8 +162,8 @@
 		width: var(--radial-chip);
 		height: var(--radial-chip);
 		border-radius: var(--r-pill);
-		background: var(--color-base-100);
-		color: var(--color-base-content);
+		background: var(--_ui-radial-chip-surface);
+		color: var(--_ui-radial-chip-ink);
 		box-shadow:
 			0 0 0 1px var(--color-border-strong),
 			0 10px 24px -8px rgb(0 0 0 / 0.45);
@@ -165,10 +194,23 @@
 	@media (hover: hover) {
 	.ui-radial-item:hover .ui-radial-chip {
 		box-shadow:
-			0 0 0 2px color-mix(in oklab, var(--color-primary) 70%, transparent),
+			0 0 0 2px var(--_ui-radial-hover-ring),
 			0 10px 24px -8px rgb(0 0 0 / 0.45);
 	}
 }
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-radial-chip-size: attr(data-ui-radial-chip-size type(<length>), var(--ui-radial-chip-size, 3rem));
+			--_ui-radial-chip-surface: attr(data-ui-radial-chip-surface type(<color>), var(--ui-radial-chip-surface, var(--color-base-100)));
+			--_ui-radial-chip-ink: attr(data-ui-radial-chip-ink type(<color>), var(--ui-radial-chip-ink, var(--color-base-content)));
+			--_ui-radial-hover-ring: attr(data-ui-radial-hover-ring type(<color>), var(--ui-radial-hover-ring, color-mix(in oklab, var(--color-primary) 70%, transparent)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-radial-hover-ring: attr(data-ui-radial-hover-ring type(<color>), var(--ui-radial-hover-ring, color-mix(in oklab, var(--ui-color) 70%, transparent)));
+		}
+	}
 }
 /* Entrance: chips launch from the trigger, staggered along the fan. */
 @scope (.ui-radial) {

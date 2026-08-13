@@ -1,6 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { type FacetItem, Facets } from '../../src/facets'
+import { treatmentArgTypes } from '../primitives/color-treatment-story'
 
 const ITEMS: FacetItem[] = [
 	{
@@ -46,12 +47,24 @@ const meta = {
 	title: 'Organisms/Facets',
 	component: Facets,
 	argTypes: {
+		...treatmentArgTypes,
 		tabStyle: { control: 'radio', options: ['bar', 'pill', 'pill-stretch'] },
+		radius: { control: 'text', table: { category: 'knobs' } },
+		railWidth: { control: 'text', table: { category: 'knobs' } },
+		panePadBlock: { control: 'text', table: { category: 'knobs' } },
+		panePadInline: { control: 'text', table: { category: 'knobs' } },
+		activeSurface: { control: 'text', table: { category: 'knobs' } },
+		activeInk: { control: 'text', table: { category: 'knobs' } },
+		pillSurface: { control: 'text', table: { category: 'knobs' } },
 	},
 } satisfies Meta<typeof Facets>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: { items: ITEMS, tabStyle: 'pill', label: 'About the commons' },
+}
 
 export const Bar: Story = {
 	name: 'Tab style: bar (legacy-faithful)',

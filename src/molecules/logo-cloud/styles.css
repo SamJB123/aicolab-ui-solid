@@ -1,23 +1,74 @@
+/* ── LogoCloud ──
+   Knobs on the usual two wires, assigned on :scope; treated clouds re-pair
+   the text-fallback name ink to the family's faint ink. */
+@property --_ui-logocloud-column-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 48px;
+}
+@property --_ui-logocloud-row-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 32px;
+}
+@property --_ui-logocloud-logo-max-height {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 40px;
+}
+@property --_ui-logocloud-logo-max-width {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 9rem;
+}
+@property --_ui-logocloud-name-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-logo-cloud) {
 	:scope {
+		--_ui-logocloud-column-gap: var(--ui-logocloud-column-gap, 48px);
+		--_ui-logocloud-row-gap: var(--ui-logocloud-row-gap, 32px);
+		--_ui-logocloud-logo-max-height: var(--ui-logocloud-logo-max-height, 40px);
+		--_ui-logocloud-logo-max-width: var(--ui-logocloud-logo-max-width, 9rem);
+		--_ui-logocloud-name-ink: var(--ui-logocloud-name-ink, var(--color-base-content-faint));
 		margin: 0;
 		display: flex;
 		list-style: none;
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: center;
-		column-gap: 48px;
-		row-gap: 32px;
+		column-gap: var(--_ui-logocloud-column-gap);
+		row-gap: var(--_ui-logocloud-row-gap);
 		padding: 0;
+	}
+	:scope[data-ui-color-base] {
+		--_ui-logocloud-name-ink: var(--ui-logocloud-name-ink, var(--ui-ink-faint));
 	}
 	.ui-logo-name {
 		font-family: var(--font-data, ui-monospace, monospace);
 		font-size: var(--t-md);
-		color: var(--color-base-content-faint);
+		color: var(--_ui-logocloud-name-ink);
 	}
 	.ui-logo-item img {
-		max-height: 40px;
+		max-height: var(--_ui-logocloud-logo-max-height);
 		width: auto;
-		max-width: 9rem;
+		max-width: var(--_ui-logocloud-logo-max-width);
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-logocloud-column-gap: attr(data-ui-logocloud-column-gap type(<length>), var(--ui-logocloud-column-gap, 48px));
+			--_ui-logocloud-row-gap: attr(data-ui-logocloud-row-gap type(<length>), var(--ui-logocloud-row-gap, 32px));
+			--_ui-logocloud-logo-max-height: attr(data-ui-logocloud-logo-max-height type(<length>), var(--ui-logocloud-logo-max-height, 40px));
+			--_ui-logocloud-logo-max-width: attr(data-ui-logocloud-logo-max-width type(<length>), var(--ui-logocloud-logo-max-width, 9rem));
+			--_ui-logocloud-name-ink: attr(data-ui-logocloud-name-ink type(<color>), var(--ui-logocloud-name-ink, var(--color-base-content-faint)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-logocloud-name-ink: attr(data-ui-logocloud-name-ink type(<color>), var(--ui-logocloud-name-ink, var(--ui-ink-faint)));
+		}
 	}
 }

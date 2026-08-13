@@ -2,7 +2,31 @@
 import type { JSX } from '@solidjs/web'
 import { createMemo, createSignal, For, Show } from 'solid-js'
 import { VisuallyHidden } from '../../atoms/visually-hidden'
-import type { ClassProp } from '../../shared/color-treatment'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
+
+/** Per-instance styling contracts (see shared/knobs.ts). The palette's
+ * treated contexts retarget the family surfaces per the organisms rule:
+ * the active row is a painted family pair, the kind label and input focus
+ * seam are accents, the body stays the structural base surface. */
+const triggerKnobs = defineKnobs('ui-cmdtrigger', {
+	hoverBorder: '<color>',
+})
+const knobs = defineKnobs('ui-palette', {
+	width: '<length>',
+	topOffset: '<length>',
+	radius: '<length-percentage>',
+	listMaxHeight: '<length>',
+	activeSurface: '<color>',
+	activeInk: '<color>',
+	kindInk: '<color>',
+	detailInk: '<color>',
+	focusSeam: '<color>',
+})
 
 export interface CommandPaletteItem {
 	id: string
@@ -30,13 +54,17 @@ export function CommandPaletteTrigger(props: {
 	shortcut?: JSX.Element
 	children?: JSX.Element
 	class?: ClassProp
-}) {
+} & ColorTreatmentProps &
+	KnobProps<typeof triggerKnobs.spec>) {
 	return (
 		<button
 			type="button"
 			class={['ui-command-palette-trigger', props.class]}
 			popovertarget={props.target}
 			aria-label={props.label}
+			{...colorTreatmentData(props)}
+			{...triggerKnobs.attributes(props)}
+			style={mergeKnobStyle(triggerKnobs.style(props), undefined)}
 		>
 			<Show when={props.shortcut}>
 				{(shortcut) => (
@@ -87,7 +115,8 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 	class?: ClassProp
 	ref?: (root: HTMLDivElement, input: HTMLInputElement) => void
 	onOpen?: () => void
-}) {
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec>) {
 	const [query, setQuery] = createSignal('')
 	const [active, setActive] = createSignal(0)
 	let rootEl: HTMLDivElement | undefined
@@ -176,6 +205,9 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 			id={props.id}
 			popover="auto"
 			class={['ui-command-palette', props.class]}
+			{...colorTreatmentData(props)}
+			{...knobs.attributes(props)}
+			style={mergeKnobStyle(knobs.style(props), undefined)}
 			ref={(element) => {
 				rootEl = element
 				exposeRefs()

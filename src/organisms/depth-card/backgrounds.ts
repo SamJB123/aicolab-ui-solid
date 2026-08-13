@@ -21,6 +21,8 @@ export const presetColorSchemes: Record<string, ColorScheme> = {
 
 export interface CardBackgroundHandle {
 	dispose(): void
+	/** Re-point the animation's scheme (the RAF loop repaints next frame). */
+	setColors(colors: ColorScheme): void
 }
 
 /** Per-card animation phase so simultaneous cards don't move in lockstep. */

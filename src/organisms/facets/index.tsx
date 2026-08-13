@@ -14,9 +14,27 @@
 
 import type { JSX } from '@solidjs/web'
 import { createSignal, createUniqueId, For } from 'solid-js'
-import type { ClassProp } from '../../shared/color-treatment'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 import { createEffect } from '../../solid-v2'
 import { withScopedViewTransition } from '../../vt'
+
+/** Per-instance styling contract (see shared/knobs.ts). The active tab and
+ * its sliding pill are painted family pairs when treated; the frame stays
+ * the structural base surface. */
+const knobs = defineKnobs('ui-facets', {
+	radius: '<length-percentage>',
+	railWidth: '<length>',
+	panePadBlock: '<length>',
+	panePadInline: '<length>',
+	activeSurface: '<color>',
+	activeInk: '<color>',
+	pillSurface: '<color>',
+})
 
 export type FacetItem = {
 	/** Rail glyph — emoji or any inline JSX; grayscaled when inactive. */
@@ -37,7 +55,8 @@ export function Facets(props: {
 	tabStyle?: FacetTabStyle
 	label?: string
 	class?: ClassProp
-}) {
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec>) {
 	const uid = createUniqueId()
 	const anchor = `--facets-${uid}`
 	const [active, setActive] = createSignal(0)
@@ -72,7 +91,12 @@ export function Facets(props: {
 	}
 
 	return (
-		<div class={['facets', props.class]}>
+		<div
+			class={['facets', props.class]}
+			{...colorTreatmentData(props)}
+			{...knobs.attributes(props)}
+			style={mergeKnobStyle(knobs.style(props), undefined)}
+		>
 			<div
 				class={{
 					'facets-tabs': true,

@@ -1,6 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { type Feature, FeatureGrid } from '../../src/marketing'
+import { treatmentArgTypes } from '../primitives/color-treatment-story'
 
 const FEATURES: Feature[] = [
 	{
@@ -27,12 +28,21 @@ const meta = {
 	component: FeatureGrid,
 	parameters: { layout: 'fullscreen' },
 	argTypes: {
+		...treatmentArgTypes,
 		columns: { control: 'radio', options: [2, 3] },
+		gap: { control: 'text', table: { category: 'knobs' } },
+		iconSize: { control: 'text', table: { category: 'knobs' } },
+		iconRadius: { control: 'text', table: { category: 'knobs' } },
+		accent: { control: 'text', table: { category: 'knobs' } },
 	},
 } satisfies Meta<typeof FeatureGrid>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: { items: FEATURES },
+}
 
 export const ThreeColumns: Story = {
 	args: { items: FEATURES },

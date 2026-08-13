@@ -1,18 +1,93 @@
 /* ── DepthCard (CSS tilt / flip / conic glow) ──
       Perspective tilt via --dc-tx/--dc-ty (set by JS), flip on the inner
-      wrapper, pointer-angled conic edge glow. ── */
+      wrapper, pointer-angled conic edge glow. Knobs on the usual two wires,
+      assigned on :scope. Treated cards paint the face PAIR (surface + ink,
+      every face voice re-paired), the glow/band ride the family, and the
+      --_dc-scheme-* adapters are the CSS→TSL BRIDGE: registered <color>
+      properties compute to REAL colours (color-mix resolved), which the
+      component reads back with getComputedStyle to drive the GPU
+      background. Untreated bridge defaults are the legacy emerald triad. ── */
 @property --dc-angle {
 	syntax: "<angle>";
 	inherits: true;
 	initial-value: 0deg;
 }
+@property --_ui-depth-radius {
+	syntax: "<length-percentage>";
+	inherits: true;
+	initial-value: 20px;
+}
+@property --_ui-depth-pad {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 1.5rem;
+}
+@property --_ui-depth-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-depth-glow {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-depth-band-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-depth-media-height {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 12rem;
+}
+@property --_ui-depth-media-radius {
+	syntax: "<length-percentage>";
+	inherits: true;
+	initial-value: 10px;
+}
+@property --_dc-scheme-1 {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #047857;
+}
+@property --_dc-scheme-2 {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #10b981;
+}
+@property --_dc-scheme-3 {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #34d399;
+}
+
 @scope (.depth-card) {
 :scope {
 	--dc-tx: 0deg;
 	--dc-ty: 0deg;
+	--_ui-depth-radius: var(--ui-depth-radius, var(--r-xl));
+	--_ui-depth-pad: var(--ui-depth-pad, 1.5rem);
+	--_ui-depth-surface: var(--ui-depth-surface, var(--color-base-100));
+	--_ui-depth-glow: var(--ui-depth-glow, var(--dc-glow, var(--color-primary)));
+	--_ui-depth-band-surface: var(--ui-depth-band-surface, var(--color-base-300));
+	--_ui-depth-media-height: var(--ui-depth-media-height, 12rem);
+	--_ui-depth-media-radius: var(--ui-depth-media-radius, var(--r-md));
+	--_dc-scheme-1: var(--ui-depth-scheme-primary, #047857);
+	--_dc-scheme-2: var(--ui-depth-scheme-secondary, #10B981);
+	--_dc-scheme-3: var(--ui-depth-scheme-accent, #34D399);
 	position: relative;
 	perspective: 1400px;
 	cursor: pointer;
+}
+:scope[data-ui-color-base] {
+	--_ui-depth-surface: var(--ui-depth-surface, var(--ui-surface));
+	--_ui-depth-glow: var(--ui-depth-glow, var(--dc-glow, var(--ui-color)));
+	--_ui-depth-band-surface: var(--ui-depth-band-surface, var(--ui-surface-inset));
+	--_dc-scheme-1: var(--ui-depth-scheme-primary, var(--ui-color));
+	--_dc-scheme-2: var(--ui-depth-scheme-secondary, color-mix(in oklab, var(--ui-color) 65%, white));
+	--_dc-scheme-3: var(--ui-depth-scheme-accent, color-mix(in oklab, var(--ui-color) 40%, white));
 }
 .dc-inner {
 	position: relative;
@@ -31,12 +106,15 @@
 	   corners come from border-radius alone, and face content is INSET (own
 	   radii), so nothing needs clipping. Free-form slot consumers with
 	   full-bleed content must round/clip it themselves. */
-	border-radius: var(--r-xl);
-	background: var(--color-base-100);
+	border-radius: var(--_ui-depth-radius);
+	background: var(--_ui-depth-surface);
 	box-shadow: inset 0 0 0 1px var(--color-border);
 	backface-visibility: hidden;
 	transform-style: preserve-3d;
 	transition: transform 0.6s cubic-bezier(0.4, 0.1, 0.2, 1);
+}
+:scope[data-ui-color-base] .dc-face {
+	box-shadow: inset 0 0 0 1px var(--ui-border);
 }
 :scope .dc-back {
 	transform: rotateY(180deg);
@@ -58,7 +136,7 @@
 	background: conic-gradient(
 		from var(--dc-angle),
 		transparent 12%,
-		var(--dc-glow, var(--color-primary)) 50%,
+		var(--_ui-depth-glow) 50%,
 		transparent 88%
 	);
 	mask:
@@ -83,13 +161,14 @@
       Front: title → description → inset media, icon bottom-center. The
       content blocks ride real translateZ planes (legacy CardItem z map:
       title 50 / description 60 / media 50) so the pointer tilt parallaxes
-      them. ── */
+      them. Surfaces and inks travel as PAIRS: the treated face re-pairs
+      every voice against its family surface. */
 .dc-sf {
 	position: relative;
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	padding: 1.5rem;
+	padding: var(--_ui-depth-pad);
 	transform-style: preserve-3d;
 }
 /* SELF-CONTAINED TYPOGRAPHY: docs pages wrap cards in .ui-prose, whose base
@@ -116,11 +195,13 @@
 	transform: translateZ(60px);
 	backface-visibility: hidden;
 }
+:scope[data-ui-color-base] .dc-sf-title { color: var(--ui-ink); }
+:scope[data-ui-color-base] .dc-sf-desc { color: var(--ui-ink-muted); }
 .dc-sf-media {
 	position: relative;
 	margin-top: 1rem;
-	height: 12rem;
-	border-radius: var(--r-md);
+	height: var(--_ui-depth-media-height);
+	border-radius: var(--_ui-depth-media-radius);
 	overflow: hidden;
 	transform: translateZ(50px);
 	backface-visibility: hidden;
@@ -161,6 +242,7 @@
 	color: var(--color-base-content-muted);
 	backface-visibility: hidden;
 }
+:scope[data-ui-color-base] .dc-sf-icon { color: var(--ui-ink-muted); }
 
 /* Back: tinted header band (title + ← Back), scrollable body, watermark. */
 .dc-sb {
@@ -178,6 +260,7 @@
 	opacity: 0.1;
 	pointer-events: none;
 }
+:scope[data-ui-color-base] .dc-sb-watermark { color: var(--ui-ink); }
 .dc-sb-watermark svg {
 	transform: scale(4);
 }
@@ -186,9 +269,9 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: 0.75rem;
-	padding: 1rem 1.5rem;
-	background: var(--color-base-300);
-	border-radius: var(--r-xl) var(--r-xl) 0 0;
+	padding: 1rem var(--_ui-depth-pad);
+	background: var(--_ui-depth-band-surface);
+	border-radius: var(--_ui-depth-radius) var(--_ui-depth-radius) 0 0;
 }
 :scope .dc-sb-title {
 	margin: 0;
@@ -198,6 +281,7 @@
 	line-height: 1.7;
 	color: var(--color-base-content);
 }
+:scope[data-ui-color-base] .dc-sb-title { color: var(--ui-ink); }
 .dc-sb-return {
 	border: 0;
 	background: transparent;
@@ -211,11 +295,13 @@
 .dc-sb-return:hover {
 	color: var(--color-base-content);
 }
+:scope[data-ui-color-base] .dc-sb-return { color: var(--ui-ink-faint); }
+:scope[data-ui-color-base] .dc-sb-return:hover { color: var(--ui-ink); }
 :scope .dc-sb-body {
 	flex: 1;
 	min-height: 0;
 	overflow-y: auto;
-	padding: 1rem 1.5rem 1.5rem;
+	padding: 1rem var(--_ui-depth-pad) var(--_ui-depth-pad);
 	font-size: var(--t-md);
 	line-height: 1.7;
 	color: var(--color-base-content-muted);
@@ -228,5 +314,35 @@
 :scope .dc-sb-body ol {
 	margin: 0 0 1.1rem;
 	color: var(--color-base-content-muted);
+}
+:scope[data-ui-color-base] .dc-sb-body,
+:scope[data-ui-color-base] .dc-sb-body p,
+:scope[data-ui-color-base] .dc-sb-body ul,
+:scope[data-ui-color-base] .dc-sb-body ol {
+	color: var(--ui-ink-muted);
+}
+
+/* ── Frontier knob boundary (see select-control for the pattern) ── */
+@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+	:scope {
+		--_ui-depth-radius: attr(data-ui-depth-radius type(<length-percentage>), var(--ui-depth-radius, var(--r-xl)));
+		--_ui-depth-pad: attr(data-ui-depth-pad type(<length>), var(--ui-depth-pad, 1.5rem));
+		--_ui-depth-surface: attr(data-ui-depth-surface type(<color>), var(--ui-depth-surface, var(--color-base-100)));
+		--_ui-depth-glow: attr(data-ui-depth-glow type(<color>), var(--ui-depth-glow, var(--dc-glow, var(--color-primary))));
+		--_ui-depth-band-surface: attr(data-ui-depth-band-surface type(<color>), var(--ui-depth-band-surface, var(--color-base-300)));
+		--_ui-depth-media-height: attr(data-ui-depth-media-height type(<length>), var(--ui-depth-media-height, 12rem));
+		--_ui-depth-media-radius: attr(data-ui-depth-media-radius type(<length-percentage>), var(--ui-depth-media-radius, var(--r-md)));
+		--_dc-scheme-1: attr(data-ui-depth-scheme-primary type(<color>), var(--ui-depth-scheme-primary, #047857));
+		--_dc-scheme-2: attr(data-ui-depth-scheme-secondary type(<color>), var(--ui-depth-scheme-secondary, #10B981));
+		--_dc-scheme-3: attr(data-ui-depth-scheme-accent type(<color>), var(--ui-depth-scheme-accent, #34D399));
+	}
+	:scope[data-ui-color-base] {
+		--_ui-depth-surface: attr(data-ui-depth-surface type(<color>), var(--ui-depth-surface, var(--ui-surface)));
+		--_ui-depth-glow: attr(data-ui-depth-glow type(<color>), var(--ui-depth-glow, var(--dc-glow, var(--ui-color))));
+		--_ui-depth-band-surface: attr(data-ui-depth-band-surface type(<color>), var(--ui-depth-band-surface, var(--ui-surface-inset)));
+		--_dc-scheme-1: attr(data-ui-depth-scheme-primary type(<color>), var(--ui-depth-scheme-primary, var(--ui-color)));
+		--_dc-scheme-2: attr(data-ui-depth-scheme-secondary type(<color>), var(--ui-depth-scheme-secondary, color-mix(in oklab, var(--ui-color) 65%, white)));
+		--_dc-scheme-3: attr(data-ui-depth-scheme-accent type(<color>), var(--ui-depth-scheme-accent, color-mix(in oklab, var(--ui-color) 40%, white)));
+	}
 }
 }

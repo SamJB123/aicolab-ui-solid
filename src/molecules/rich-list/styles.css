@@ -1,3 +1,77 @@
+/* ── RichList ──
+   Knobs on the usual two wires, adapters assigned on each row (the
+   attribute-bearing element — rows ALWAYS carry treatment attrs, family
+   defaulting to primary/500, so role-based defaults are always live) and
+   inherited by the row's children. The collection re-defaults rows through
+   the inheriting public variables. Hover on an UNSELECTED row deliberately
+   paints the SELECTED pair (a preview of selection); hover on a selected
+   row brightens through the hover pair — a settled crossover, not a bug. */
+@property --_ui-rl-row-radius {
+	syntax: "<length-percentage>";
+	inherits: true;
+	initial-value: 8px;
+}
+@property --_ui-rl-row-pad-block {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0.55rem;
+}
+@property --_ui-rl-row-pad-inline {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0.25rem;
+}
+@property --_ui-rl-row-gap {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0.65rem;
+}
+@property --_ui-rl-title-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0.9rem;
+}
+@property --_ui-rl-title-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-rl-description-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0.75rem;
+}
+@property --_ui-rl-description-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-rl-trailing-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-rl-leading-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-rl-metadata-primary-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-rl-metadata-secondary-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-rl-divider {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-rich-list) {
 	:scope {
 		list-style: none;
@@ -11,18 +85,31 @@
 	.ui-rich-list-entry { margin: 0; }
 
 	.ui-rich-list-item {
+		--_ui-rl-row-radius: var(--ui-rl-row-radius, var(--r-sm));
+		--_ui-rl-row-pad-block: var(--ui-rl-row-pad-block, 0.55rem);
+		--_ui-rl-row-pad-inline: var(--ui-rl-row-pad-inline, 0.25rem);
+		--_ui-rl-row-gap: var(--ui-rl-row-gap, 0.65rem);
+		--_ui-rl-title-size: var(--ui-rl-title-size, 0.9rem);
+		--_ui-rl-title-ink: var(--ui-rl-title-ink, var(--color-base-content));
+		--_ui-rl-description-size: var(--ui-rl-description-size, 0.75rem);
+		--_ui-rl-description-ink: var(--ui-rl-description-ink, var(--color-base-content-faint));
+		--_ui-rl-trailing-ink: var(--ui-rl-trailing-ink, var(--color-base-content-faint));
+		--_ui-rl-leading-ink: var(--ui-rl-leading-ink, var(--ui-color-foreground));
+		--_ui-rl-metadata-primary-ink: var(--ui-rl-metadata-primary-ink, var(--color-base-content-muted));
+		--_ui-rl-metadata-secondary-ink: var(--ui-rl-metadata-secondary-ink, var(--color-base-content-faint));
+		--_ui-rl-divider: var(--ui-rl-divider, var(--color-border));
 		display: grid;
 		grid-template-columns: auto 1fr auto;
 		align-items: center;
-		gap: 0.65rem;
+		gap: var(--_ui-rl-row-gap);
 		width: 100%;
-		padding: 0.55rem 0.25rem;
+		padding: var(--_ui-rl-row-pad-block) var(--_ui-rl-row-pad-inline);
 		border: 0;
 		background: none;
 		font: inherit;
 		text-align: left;
 		color: inherit;
-		border-radius: var(--r-sm);
+		border-radius: var(--_ui-rl-row-radius);
 		transition:
 			background-color 160ms cubic-bezier(0.4, 0, 0.2, 1),
 			color 160ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -39,8 +126,18 @@
 		font-style: italic;
 	}
 
+	/* Surfaces and inks travel as PAIRS: every state that paints a row
+	   surface re-assigns ALL the child ink adapters against it — title,
+	   description, leading, trailing, and the metadata voices (which take
+	   the paired ink's muted/faint companions). */
 	@media (hover: hover) {
 		:is(button, a).ui-rich-list-item:hover:not([data-selected]) {
+			--_ui-rl-title-ink: var(--ui-ink-selected);
+			--_ui-rl-description-ink: var(--ui-ink-selected);
+			--_ui-rl-leading-ink: var(--ui-ink-selected);
+			--_ui-rl-trailing-ink: var(--ui-ink-selected);
+			--_ui-rl-metadata-primary-ink: color-mix(in oklab, var(--ui-ink-selected) 78%, transparent);
+			--_ui-rl-metadata-secondary-ink: color-mix(in oklab, var(--ui-ink-selected) 60%, transparent);
 			background: var(--ui-surface-selected);
 			color: var(--ui-ink-selected);
 			box-shadow:
@@ -49,6 +146,12 @@
 		}
 
 		:is(button, a).ui-rich-list-item[data-selected]:hover {
+			--_ui-rl-title-ink: var(--ui-ink-hover);
+			--_ui-rl-description-ink: var(--ui-ink-hover);
+			--_ui-rl-leading-ink: var(--ui-ink-hover);
+			--_ui-rl-trailing-ink: var(--ui-ink-hover);
+			--_ui-rl-metadata-primary-ink: color-mix(in oklab, var(--ui-ink-hover) 78%, transparent);
+			--_ui-rl-metadata-secondary-ink: color-mix(in oklab, var(--ui-ink-hover) 60%, transparent);
 			background: var(--ui-surface-hover);
 			color: var(--ui-ink-hover);
 			box-shadow:
@@ -58,6 +161,12 @@
 	}
 
 	.ui-rich-list-item[data-selected] {
+		--_ui-rl-title-ink: var(--ui-ink);
+		--_ui-rl-description-ink: var(--ui-ink);
+		--_ui-rl-leading-ink: var(--ui-ink);
+		--_ui-rl-trailing-ink: var(--ui-ink);
+		--_ui-rl-metadata-primary-ink: var(--ui-ink-muted);
+		--_ui-rl-metadata-secondary-ink: var(--ui-ink-faint);
 		background: var(--ui-surface);
 		color: var(--ui-ink);
 		box-shadow:
@@ -71,7 +180,7 @@
 	}
 
 	.ui-rich-list-entry + .ui-rich-list-entry .ui-rich-list-item {
-		box-shadow: 0 -1px 0 var(--color-border);
+		box-shadow: 0 -1px 0 var(--_ui-rl-divider);
 	}
 
 	/* Navigation is a distinct RichList presentation: content lists retain
@@ -85,7 +194,6 @@
 	:scope[data-navigation] .ui-rich-list-item {
 		position: relative;
 		z-index: 1;
-		border-radius: var(--r-sm);
 	}
 
 	:scope[data-navigation] .ui-rich-list-entry + .ui-rich-list-entry .ui-rich-list-item,
@@ -104,8 +212,11 @@
 	}
 
 	/* Compatibility boundary: without anchor positioning, the selected row
-	   above remains a complete static primary box. Supporting browsers move
-	   this single surface between anchors, allowing position to interpolate. */
+	   above remains a complete static family box. Supporting browsers move
+	   this single surface between anchors, allowing position to interpolate.
+	   The surface reads the LIST-level roles (--ui-color) — the collection
+	   root carries the treatment attrs for exactly this — and the row-radius
+	   PUBLIC var directly (the adapters live on the rows). */
 	@supports (anchor-name: --ui-rich-list-active) {
 		:scope[data-navigation]::before {
 			content: "";
@@ -114,8 +225,8 @@
 			inset-inline: 0;
 			top: anchor(--ui-rich-list-active top);
 			height: anchor-size(--ui-rich-list-active height);
-			background: var(--color-primary);
-			border-radius: var(--r-sm);
+			background: var(--ui-color);
+			border-radius: var(--ui-rl-row-radius, var(--r-sm));
 			pointer-events: none;
 			transition:
 				top 240ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -128,7 +239,7 @@
 		}
 	}
 
-	.ui-rich-list-leading { color: var(--ui-color-foreground); }
+	.ui-rich-list-leading { color: var(--_ui-rl-leading-ink); }
 
 	.ui-rich-list-main {
 		display: flex;
@@ -138,26 +249,17 @@
 	}
 
 	.ui-rich-list-title {
-		color: var(--color-base-content);
-		font-size: 0.9rem;
-	}
-
-	.ui-rich-list-item[data-selected] :is(
-		.ui-rich-list-leading,
-		.ui-rich-list-title,
-		.ui-rich-list-description,
-		.ui-rich-list-trailing
-	) {
-		color: var(--ui-ink);
+		color: var(--_ui-rl-title-ink);
+		font-size: var(--_ui-rl-title-size);
 	}
 
 	.ui-rich-list-description {
-		color: var(--color-base-content-faint);
-		font-size: 0.75rem;
+		color: var(--_ui-rl-description-ink);
+		font-size: var(--_ui-rl-description-size);
 	}
 
 	.ui-rich-list-trailing {
-		color: var(--color-base-content-faint);
+		color: var(--_ui-rl-trailing-ink);
 		align-self: center;
 		white-space: nowrap;
 	}
@@ -173,12 +275,12 @@
 	}
 
 	.ui-rich-list-metadata-primary {
-		color: var(--color-base-content-muted);
+		color: var(--_ui-rl-metadata-primary-ink);
 		font-weight: 650;
 	}
 
 	.ui-rich-list-metadata-secondary {
-		color: var(--color-base-content-faint);
+		color: var(--_ui-rl-metadata-secondary-ink);
 		font-family: var(--font-data);
 		font-size: var(--t-2xs);
 		font-variant-numeric: tabular-nums;
@@ -202,5 +304,24 @@
 
 	@media (prefers-reduced-motion: reduce) {
 		:scope[data-navigation]::before { transition: none; }
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		.ui-rich-list-item {
+			--_ui-rl-row-radius: attr(data-ui-rl-row-radius type(<length-percentage>), var(--ui-rl-row-radius, var(--r-sm)));
+			--_ui-rl-row-pad-block: attr(data-ui-rl-row-pad-block type(<length>), var(--ui-rl-row-pad-block, 0.55rem));
+			--_ui-rl-row-pad-inline: attr(data-ui-rl-row-pad-inline type(<length>), var(--ui-rl-row-pad-inline, 0.25rem));
+			--_ui-rl-row-gap: attr(data-ui-rl-row-gap type(<length>), var(--ui-rl-row-gap, 0.65rem));
+			--_ui-rl-title-size: attr(data-ui-rl-title-size type(<length>), var(--ui-rl-title-size, 0.9rem));
+			--_ui-rl-title-ink: attr(data-ui-rl-title-ink type(<color>), var(--ui-rl-title-ink, var(--color-base-content)));
+			--_ui-rl-description-size: attr(data-ui-rl-description-size type(<length>), var(--ui-rl-description-size, 0.75rem));
+			--_ui-rl-description-ink: attr(data-ui-rl-description-ink type(<color>), var(--ui-rl-description-ink, var(--color-base-content-faint)));
+			--_ui-rl-trailing-ink: attr(data-ui-rl-trailing-ink type(<color>), var(--ui-rl-trailing-ink, var(--color-base-content-faint)));
+			--_ui-rl-leading-ink: attr(data-ui-rl-leading-ink type(<color>), var(--ui-rl-leading-ink, var(--ui-color-foreground)));
+			--_ui-rl-metadata-primary-ink: attr(data-ui-rl-metadata-primary-ink type(<color>), var(--ui-rl-metadata-primary-ink, var(--color-base-content-muted)));
+			--_ui-rl-metadata-secondary-ink: attr(data-ui-rl-metadata-secondary-ink type(<color>), var(--ui-rl-metadata-secondary-ink, var(--color-base-content-faint)));
+			--_ui-rl-divider: attr(data-ui-rl-divider type(<color>), var(--ui-rl-divider, var(--color-border)));
+		}
 	}
 }

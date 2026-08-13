@@ -1,17 +1,69 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { Show } from 'solid-js'
-import type { ClassProp } from '../../shared/color-treatment'
+import { createContext, Show, useContext, type Accessor } from 'solid-js'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 
-export function RichList(props: { label?: string; navigation?: boolean; class?: ClassProp; children?: JSX.Element }) {
+/** Per-instance styling contract (see shared/knobs.ts). Adapters resolve on
+ * each row (the treatment attrs always ride the rows, so role-based defaults
+ * are always live); the collection accepts the same knob props as defaults
+ * for every row via the inheriting public variables. */
+const knobs = defineKnobs('ui-rl', {
+	rowRadius: '<length-percentage>',
+	rowPadBlock: '<length>',
+	rowPadInline: '<length>',
+	rowGap: '<length>',
+	titleSize: '<length>',
+	titleInk: '<color>',
+	descriptionSize: '<length>',
+	descriptionInk: '<color>',
+	trailingInk: '<color>',
+	leadingInk: '<color>',
+	metadataPrimaryInk: '<color>',
+	metadataSecondaryInk: '<color>',
+	divider: '<color>',
+})
+
+/** Collection-level treatment; rows use it as their per-prop default. */
+type RichListContextValue = { treatment: Accessor<ColorTreatmentProps> }
+const RichListContext = createContext<RichListContextValue>({ treatment: () => ({}) })
+
+export function RichList(
+	props: {
+		label?: string
+		navigation?: boolean
+		class?: ClassProp
+		children?: JSX.Element
+	} & ColorTreatmentProps &
+		KnobProps<typeof knobs.spec>,
+) {
+	/* The family defaults to primary/500 — the classic rich-list look. */
+	const treatment = (): ColorTreatmentProps => ({
+		colorBase: props.colorBase ?? 'primary',
+		colorLevel: props.colorLevel,
+		variant: props.variant,
+	})
 	return (
-		<ul
-			class={['ui-rich-list', props.class]}
-			aria-label={props.label}
-			data-navigation={props.navigation ? '' : undefined}
-		>
-			{props.children}
-		</ul>
+		<RichListContext value={{ treatment }}>
+			<ul
+				class={['ui-rich-list', props.class]}
+				aria-label={props.label}
+				data-navigation={props.navigation ? '' : undefined}
+				/* List-level roles feed the navigation mode's shared sliding
+				   surface (::before reads --ui-color on this element). Row knob
+				   defaults ride the inheriting public variables — no data
+				   attributes here, since attr() reads the matched element and
+				   these are consumed on the rows. */
+				{...colorTreatmentData(treatment())}
+				style={knobs.style(props)}
+			>
+				{props.children}
+			</ul>
+		</RichListContext>
 	)
 }
 
@@ -37,20 +89,34 @@ export function RichListMetadata(props: {
 
 /** A compound information row. Supplying onSelect makes the whole row one
  * native action; omitting it produces the same anatomy as static content. */
-export function RichListItem(props: {
-	leading?: JSX.Element
-	leadingWidth?: 'auto' | 'wide'
-	title: JSX.Element
-	description?: JSX.Element
-	trailing?: JSX.Element
-	onSelect?: () => void
-	href?: string
-	/** Persistent selection, distinct from the transient hover affordance. */
-	selected?: boolean
-	muted?: boolean
-	label?: string
-	class?: ClassProp
-}) {
+export function RichListItem(
+	props: {
+		leading?: JSX.Element
+		leadingWidth?: 'auto' | 'wide'
+		title: JSX.Element
+		description?: JSX.Element
+		trailing?: JSX.Element
+		onSelect?: () => void
+		href?: string
+		/** Persistent selection, distinct from the transient hover affordance. */
+		selected?: boolean
+		muted?: boolean
+		label?: string
+		class?: ClassProp
+	} & ColorTreatmentProps &
+		KnobProps<typeof knobs.spec>,
+) {
+	const list = useContext(RichListContext)
+	/* The surrounding RichList's treatment is the per-prop default; the row's
+	   own props win. `variant` means THE SELECTED LOOK (default solid) —
+	   unselected rows always drop to the soft roles: that switch is selection
+	   semantics, not styling. */
+	const treatment = (): ColorTreatmentProps => ({
+		colorBase: props.colorBase ?? list.treatment().colorBase ?? 'primary',
+		colorLevel: props.colorLevel ?? list.treatment().colorLevel,
+		variant: props.selected ? (props.variant ?? list.treatment().variant ?? 'solid') : 'soft',
+	})
+
 	const content = () => (
 		<>
 			<Show when={props.leading}>
@@ -76,9 +142,9 @@ export function RichListItem(props: {
 		class: ['ui-rich-list-item', props.class],
 		'data-selected': props.selected ? '' : undefined,
 		'data-muted': props.muted ? '' : undefined,
-		'data-ui-color-base': 'primary',
-		'data-ui-color-level': 500,
-		'data-ui-color-variant': props.selected ? 'solid' : 'soft',
+		...colorTreatmentData(treatment()),
+		...knobs.attributes(props),
+		style: mergeKnobStyle(knobs.style(props), undefined),
 	})
 
 	return (

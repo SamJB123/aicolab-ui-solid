@@ -13,7 +13,15 @@
 	--ui-level-light-shift: 0;
 	--ui-level-chroma-scale: 1;
 
-	/* One Baseline relative-colour calculation serves every base and level. */
+	/* One Baseline relative-colour calculation serves every base and level.
+	   PUBLIC ROLES begin here: --ui-color and --ui-content are the family's
+	   strong statement PAIR (the exact family colour and the content ink
+	   paired to sit on it) — components paint them together wherever the
+	   full family colour is the surface (selected days, chosen options,
+	   today rings, mark highlights, chrome bands). They are part of the
+	   public role vocabulary alongside the --ui-surface*/--ui-ink*/
+	   --ui-border* derivations below; only the inputs commented above are
+	   private. */
 	--ui-color: oklch(
 		from var(--ui-color-base)
 		clamp(

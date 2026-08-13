@@ -1,12 +1,81 @@
+/* ── Section ──
+   Knobs on the usual two wires, assigned on :scope. The wide mode and the
+   width media query re-assign adapters with the knob still first in the
+   chain, so explicit knobs outrank both. Treated sections re-pair heading
+   inks to the family. */
+@property --_ui-section-max-width {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 48rem;
+}
+@property --_ui-section-pad-block {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 56px;
+}
+@property --_ui-section-head-gap {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 12px;
+}
+@property --_ui-section-head-margin {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 40px;
+}
+@property --_ui-section-title-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 30px;
+}
+@property --_ui-section-title-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-section-lede-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 18px;
+}
+@property --_ui-section-lede-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-section) {
-	:scope { margin-inline: auto; width: 100%; max-width: 48rem; padding: 56px 24px; }
-	:scope[data-wide] { max-width: 72rem; }
-	@media (min-width: 640px) { :scope { padding-block: 80px; } }
+	:scope {
+		--_ui-section-max-width: var(--ui-section-max-width, 48rem);
+		--_ui-section-pad-block: var(--ui-section-pad-block, 56px);
+		--_ui-section-head-gap: var(--ui-section-head-gap, 12px);
+		--_ui-section-head-margin: var(--ui-section-head-margin, 40px);
+		--_ui-section-title-size: var(--ui-section-title-size, var(--t-3xl));
+		--_ui-section-title-ink: var(--ui-section-title-ink, var(--color-base-content));
+		--_ui-section-lede-size: var(--ui-section-lede-size, var(--t-lg));
+		--_ui-section-lede-ink: var(--ui-section-lede-ink, var(--color-base-content-muted));
+		margin-inline: auto;
+		width: 100%;
+		max-width: var(--_ui-section-max-width);
+		padding-block: var(--_ui-section-pad-block);
+		padding-inline: 24px;
+	}
+	:scope[data-wide] {
+		--_ui-section-max-width: var(--ui-section-max-width, 72rem);
+	}
+	:scope[data-ui-color-base] {
+		--_ui-section-title-ink: var(--ui-section-title-ink, var(--ui-ink));
+		--_ui-section-lede-ink: var(--ui-section-lede-ink, var(--ui-ink-muted));
+	}
+	@media (min-width: 640px) {
+		:scope { --_ui-section-pad-block: var(--ui-section-pad-block, 80px); }
+		:scope { --_ui-section-title-size: var(--ui-section-title-size, var(--t-4xl)); }
+	}
 	:scope > .ui-section-head {
-		margin-bottom: 40px;
+		margin-bottom: var(--_ui-section-head-margin);
 		display: flex;
 		flex-direction: column;
-		gap: 12px;
+		gap: var(--_ui-section-head-gap);
 	}
 	:scope > .ui-section-head[data-center] {
 		align-items: center;
@@ -16,19 +85,39 @@
 		margin: 0;
 		font-family: var(--font-display, Georgia, serif);
 		font-optical-sizing: auto;
-		font-size: var(--t-3xl);
+		font-size: var(--_ui-section-title-size);
 		font-weight: 500;
 		letter-spacing: -0.01em;
-		color: var(--color-base-content);
+		color: var(--_ui-section-title-ink);
 		text-wrap: balance;
 	}
 	.ui-section-head .ui-section-lede {
 		margin: 0;
 		max-width: 42rem;
-		font-size: var(--t-lg);
+		font-size: var(--_ui-section-lede-size);
 		line-height: 1.625;
-		color: var(--color-base-content-muted);
+		color: var(--_ui-section-lede-ink);
 		text-wrap: pretty;
 	}
-	@media (min-width: 640px) { :scope > .ui-section-head h2 { font-size: var(--t-4xl); } }
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-section-max-width: attr(data-ui-section-max-width type(<length>), var(--ui-section-max-width, 48rem));
+			--_ui-section-pad-block: attr(data-ui-section-pad-block type(<length>), var(--ui-section-pad-block, 56px));
+			--_ui-section-head-gap: attr(data-ui-section-head-gap type(<length>), var(--ui-section-head-gap, 12px));
+			--_ui-section-head-margin: attr(data-ui-section-head-margin type(<length>), var(--ui-section-head-margin, 40px));
+			--_ui-section-title-size: attr(data-ui-section-title-size type(<length>), var(--ui-section-title-size, var(--t-3xl)));
+			--_ui-section-title-ink: attr(data-ui-section-title-ink type(<color>), var(--ui-section-title-ink, var(--color-base-content)));
+			--_ui-section-lede-size: attr(data-ui-section-lede-size type(<length>), var(--ui-section-lede-size, var(--t-lg)));
+			--_ui-section-lede-ink: attr(data-ui-section-lede-ink type(<color>), var(--ui-section-lede-ink, var(--color-base-content-muted)));
+		}
+		:scope[data-wide] {
+			--_ui-section-max-width: attr(data-ui-section-max-width type(<length>), var(--ui-section-max-width, 72rem));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-section-title-ink: attr(data-ui-section-title-ink type(<color>), var(--ui-section-title-ink, var(--ui-ink)));
+			--_ui-section-lede-ink: attr(data-ui-section-lede-ink type(<color>), var(--ui-section-lede-ink, var(--ui-ink-muted)));
+		}
+	}
 }

@@ -1,37 +1,90 @@
+/* ── FeatureGrid ──
+   Cards are composed Panels (surface/radius/pad belong to Panel's knob
+   contract); this sheet owns the grid, the icon chip, and the card's
+   marketing typography via compound tuning classes (ui.molecules outranks
+   ui.atoms). The per-item accent adapter lives on the CARD (which bears the
+   per-item attr); its wash and tint derive in CSS. */
+@property --_ui-feature-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 20px;
+}
+@property --_ui-feature-icon-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 40px;
+}
+@property --_ui-feature-icon-radius {
+	syntax: "<length-percentage>";
+	inherits: true;
+	initial-value: 10px;
+}
+@property --_ui-feature-accent {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-feature-grid) {
-	:scope { display: grid; gap: 20px; }
+	:scope {
+		--_ui-feature-gap: var(--ui-feature-gap, 20px);
+		--_ui-feature-icon-size: var(--ui-feature-icon-size, 40px);
+		--_ui-feature-icon-radius: var(--ui-feature-icon-radius, var(--r-md));
+		display: grid;
+		gap: var(--_ui-feature-gap);
+	}
 	@media (min-width: 640px) { :scope { grid-template-columns: repeat(2, 1fr); } }
-	.docs-nav, .docs-toc { display: none; }
 	@media (min-width: 1024px) {
 		:scope[data-columns="3"] { grid-template-columns: repeat(3, 1fr); }
 	}
-	:scope > .ui-feature-card {
+
+	/* Composed-Panel tuning: marketing card anatomy over Panel's chrome. */
+	.ui-panel.ui-feature-card {
+		--_ui-feature-accent: var(--ui-feature-accent, var(--color-primary));
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
-		border-radius: var(--r-lg);
-		background: var(--color-base-100);
-		padding: 24px;
-		box-shadow: 0 0 0 1px var(--color-border);
 	}
-	.ui-feature-icon {
-		display: inline-grid;
-		width: 40px;
-		height: 40px;
-		place-items: center;
-		border-radius: var(--r-md);
-		font-size: var(--t-xl);
+	.ui-panel.ui-feature-card[data-ui-color-base] {
+		--_ui-feature-accent: var(--ui-feature-accent, var(--ui-color-foreground));
 	}
-	.ui-feature-card h3 {
-		margin: 0;
+	.ui-panel.ui-feature-card > header h2 {
 		font-family: var(--font-display, Georgia, serif);
 		font-size: var(--t-xl);
 		font-weight: 500;
-		color: var(--color-base-content);
+	}
+	.ui-feature-icon {
+		order: -1;
+		display: inline-grid;
+		width: var(--_ui-feature-icon-size);
+		height: var(--_ui-feature-icon-size);
+		place-items: center;
+		border-radius: var(--_ui-feature-icon-radius);
+		font-size: var(--t-xl);
+		color: var(--_ui-feature-accent);
+		background: color-mix(in oklab, var(--_ui-feature-accent) 12%, transparent);
 	}
 	.ui-feature-body {
 		font-size: var(--t-lg);
 		line-height: 1.625;
 		color: var(--color-base-content-muted);
+	}
+	.ui-panel.ui-feature-card[data-ui-color-base] .ui-feature-body {
+		color: var(--ui-ink-muted);
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-feature-gap: attr(data-ui-feature-gap type(<length>), var(--ui-feature-gap, 20px));
+			--_ui-feature-icon-size: attr(data-ui-feature-icon-size type(<length>), var(--ui-feature-icon-size, 40px));
+			--_ui-feature-icon-radius: attr(data-ui-feature-icon-radius type(<length-percentage>), var(--ui-feature-icon-radius, var(--r-md)));
+		}
+		.ui-panel.ui-feature-card {
+			--_ui-feature-accent: attr(data-ui-feature-accent type(<color>), var(--ui-feature-accent, var(--color-primary)));
+		}
+		.ui-panel.ui-feature-card[data-ui-color-base] {
+			--_ui-feature-accent: attr(data-ui-feature-accent type(<color>), var(--ui-feature-accent, var(--ui-color-foreground)));
+		}
 	}
 }

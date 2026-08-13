@@ -18,7 +18,23 @@
 
 import type { JSX } from '@solidjs/web'
 import { For } from 'solid-js'
-import type { ClassProp } from '../../shared/color-treatment'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
+
+/** Per-instance styling contract (see shared/knobs.ts). The chip is a
+ * painted pair; the hover ring is the accent (family when treated). The
+ * label ink stays deliberately mode-invariant — contrast is against the
+ * ::backdrop veil, never the page. */
+const knobs = defineKnobs('ui-radial', {
+	chipSize: '<length>',
+	chipSurface: '<color>',
+	chipInk: '<color>',
+	hoverRing: '<color>',
+})
 
 export interface RadialMenuItem {
 	id: string
@@ -51,7 +67,8 @@ export function RadialMenu(props: {
 	class?: ClassProp
 	/** Trigger content. */
 	children?: JSX.Element
-}) {
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec>) {
 	let menuEl: HTMLDivElement | undefined
 	return (
 		<>
@@ -74,13 +91,15 @@ export function RadialMenu(props: {
 				class={['ui-radial', props.class]}
 				role="menu"
 				aria-label={props.label ?? 'Radial menu'}
-				style={{
+				{...colorTreatmentData(props)}
+				{...knobs.attributes(props)}
+				style={mergeKnobStyle(knobs.style(props), {
 					'position-anchor': `--${props.id}`,
 					'--radial-radius': `${props.radius ?? 6.4}rem`,
 					'--radial-sweep': `${props.sweep ?? 150}deg`,
 					'--radial-down': props.direction === 'down' ? '1' : '0',
 					'--radial-count': String(props.items.length),
-				}}
+				})}
 				ref={(el) => {
 					menuEl = el
 				}}

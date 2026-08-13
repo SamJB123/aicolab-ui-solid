@@ -1,6 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { LogoCloud } from '../../src/marketing'
+import { treatmentArgTypes } from '../primitives/color-treatment-story'
 
 // A tiny inline SVG "logo" so the image path is exercised without any
 // external asset (Storybook builds must stay self-contained).
@@ -14,10 +15,29 @@ const meta = {
 	title: 'Molecules/LogoCloud',
 	component: LogoCloud,
 	parameters: { layout: 'fullscreen' },
+	argTypes: {
+		...treatmentArgTypes,
+		columnGap: { control: 'text', table: { category: 'knobs' } },
+		rowGap: { control: 'text', table: { category: 'knobs' } },
+		logoMaxHeight: { control: 'text', table: { category: 'knobs' } },
+		logoMaxWidth: { control: 'text', table: { category: 'knobs' } },
+		nameInk: { control: 'text', table: { category: 'knobs' } },
+	},
 } satisfies Meta<typeof LogoCloud>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: {
+		logos: [
+			{ name: 'City Library' },
+			{ name: 'Demo Co-op', src: DEMO_LOGO },
+			{ name: 'Makers Guild' },
+			{ name: 'Civic Studio' },
+		],
+	},
+}
 
 export const NamesOnly: Story = {
 	args: {

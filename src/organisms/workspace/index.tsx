@@ -3,7 +3,25 @@ import type { JSX } from '@solidjs/web'
 import { createEffect, createSignal, createUniqueId, Show } from 'solid-js'
 import { IconButton } from '../../atoms/icon-button'
 import { RichList, RichListItem } from '../../molecules/rich-list'
-import type { ClassProp } from '../../shared/color-treatment'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
+
+/** Per-instance styling contract (see shared/knobs.ts). Structural surfaces
+ * stay base chrome (knobbable); the treatment axes retarget only the ACCENT
+ * (the bound-inspector seam), per the organisms surfaces rule. */
+const knobs = defineKnobs('ui-workspace', {
+	gutter: '<length>',
+	navWidth: '<length>',
+	inspectorWidth: '<length>',
+	surface: '<color>',
+	navSurface: '<color>',
+	inspectorSurface: '<color>',
+	accent: '<color>',
+})
 
 export type InspectorDetent = 'peek' | 'half' | 'full'
 
@@ -45,12 +63,16 @@ export function WorkspaceShell(props: {
 	captureTarget?: string
 	class?: ClassProp
 	children?: JSX.Element
-}) {
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec>) {
 	return (
 		<div
 			class={['ui-workspace', props.class]}
 			data-ui-workspace-raised={props.hasRaisedSheet ? '' : undefined}
 			data-capture-target={props.captureTarget}
+			{...colorTreatmentData(props)}
+			{...knobs.attributes(props)}
+			style={mergeKnobStyle(knobs.style(props), undefined)}
 		>
 			{props.navigation}
 			{props.stage}
@@ -86,13 +108,20 @@ export function WorkspaceNavigationGroup(props: {
 	label: string
 	class?: ClassProp
 	children?: JSX.Element
-}) {
+} & ColorTreatmentProps) {
 	return (
 		<section class={['ui-workspace-navigation-group', props.class]}>
 			<h2 class="ui-workspace-navigation-group-label ui-eyebrow" id={props.id}>
 				{props.label}
 			</h2>
-			<RichList navigation class="ui-workspace-navigation-list" label={props.label}>
+			<RichList
+				navigation
+				class="ui-workspace-navigation-list"
+				label={props.label}
+				colorBase={props.colorBase}
+				colorLevel={props.colorLevel}
+				variant={props.variant}
+			>
 				{props.children}
 			</RichList>
 		</section>
@@ -103,8 +132,19 @@ export function WorkspaceNavigationList(props: {
 	label: string
 	class?: ClassProp
 	children?: JSX.Element
-}) {
-	return <RichList navigation class={workspaceClass('ui-workspace-navigation-list', props.class)} label={props.label}>{props.children}</RichList>
+} & ColorTreatmentProps) {
+	return (
+		<RichList
+			navigation
+			class={workspaceClass('ui-workspace-navigation-list', props.class)}
+			label={props.label}
+			colorBase={props.colorBase}
+			colorLevel={props.colorLevel}
+			variant={props.variant}
+		>
+			{props.children}
+		</RichList>
+	)
 }
 
 export function WorkspaceNavigationItem(props: {

@@ -1,7 +1,8 @@
 /** @jsxImportSource @solidjs/web */
 import { createSignal, onSettled } from 'solid-js'
 import { IconButton } from '../../atoms/icon-button'
-import type { ClassProp } from '../../shared/color-treatment'
+import type { ClassProp, ColorTreatmentProps } from '../../shared/color-treatment'
+import type { UiColor, UiLength, UiLengthPercentage } from '../../shared/knobs'
 
 export type ThemeMode = 'auto' | 'light' | 'dark'
 
@@ -16,7 +17,18 @@ const applyTheme = (mode: ThemeMode): void => {
 /** Shared Auto → Light → Dark control for ui-solid's light-dark() theme.
  *  The server renders Auto; persisted client preference is restored after
  *  settlement so the control remains hydration-safe in document shells. */
-export function ThemeToggle(props: { class?: ClassProp; storageKey?: string }) {
+export function ThemeToggle(
+	props: {
+		class?: ClassProp
+		storageKey?: string
+		/** Composed-IconButton styling, drilled straight through. */
+		size?: 'sm' | 'md' | 'lg' | UiLength
+		radius?: UiLengthPercentage
+		ring?: UiColor
+		hoverSurface?: UiColor
+		hoverInk?: UiColor
+	} & ColorTreatmentProps,
+) {
 	const [mode, setMode] = createSignal<ThemeMode>('auto')
 
 	onSettled(() => {
@@ -43,6 +55,14 @@ export function ThemeToggle(props: { class?: ClassProp; storageKey?: string }) {
 			label={`Theme: ${THEME_NAME[mode()]}`}
 			title={`${THEME_NAME[mode()]} theme; activate to change`}
 			onClick={cycle}
+			colorBase={props.colorBase}
+			colorLevel={props.colorLevel}
+			variant={props.variant}
+			size={props.size}
+			radius={props.radius}
+			ring={props.ring}
+			hoverSurface={props.hoverSurface}
+			hoverInk={props.hoverInk}
 		>
 			<span aria-hidden="true">{THEME_ICON[mode()]}</span>
 		</IconButton>

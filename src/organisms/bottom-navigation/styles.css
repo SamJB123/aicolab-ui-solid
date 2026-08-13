@@ -1,7 +1,75 @@
+/* ── BottomNavigation ──
+   Knobs on the usual two wires, assigned on :scope (attribute-bearing) and
+   inherited by the items and centre chip. Organisms surfaces rule: the bar
+   is structural base chrome; the active wash and centre chip are painted
+   family PAIRS (primary by default, family roles when treated), and the
+   chip's ring/glow derive from the chip surfaces. */
+@property --_ui-bnav-height {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 3.8rem;
+}
+@property --_ui-bnav-label-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0.55rem;
+}
+@property --_ui-bnav-chip-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 3rem;
+}
+@property --_ui-bnav-active-wash {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-bnav-active-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-bnav-chip-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-bnav-chip-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-bnav-chip-active-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-bnav-chip-active-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-bottom-navigation) {
 	:scope {
-		--ui-bottom-navigation-height: calc(3.8rem + env(safe-area-inset-bottom, 0px));
+		--_ui-bnav-height: var(--ui-bnav-height, 3.8rem);
+		--_ui-bnav-label-size: var(--ui-bnav-label-size, 0.55rem);
+		--_ui-bnav-chip-size: var(--ui-bnav-chip-size, 3rem);
+		--_ui-bnav-active-wash: var(--ui-bnav-active-wash, var(--color-primary-soft));
+		--_ui-bnav-active-ink: var(--ui-bnav-active-ink, var(--color-base-content));
+		--_ui-bnav-chip-surface: var(--ui-bnav-chip-surface, light-dark(color-mix(in oklab, var(--color-primary) 22%, var(--color-base-100)), color-mix(in oklab, var(--color-primary) 38%, var(--color-base-100))));
+		--_ui-bnav-chip-ink: var(--ui-bnav-chip-ink, var(--color-base-content));
+		--_ui-bnav-chip-active-surface: var(--ui-bnav-chip-active-surface, var(--color-primary));
+		--_ui-bnav-chip-active-ink: var(--ui-bnav-chip-active-ink, var(--color-primary-content));
+		--ui-bottom-navigation-height: calc(var(--_ui-bnav-height) + env(safe-area-inset-bottom, 0px));
 		display: none;
+	}
+	:scope[data-ui-color-base] {
+		--_ui-bnav-active-wash: var(--ui-bnav-active-wash, var(--ui-surface-selected));
+		--_ui-bnav-active-ink: var(--ui-bnav-active-ink, var(--ui-ink-selected));
+		--_ui-bnav-chip-surface: var(--ui-bnav-chip-surface, light-dark(color-mix(in oklab, var(--ui-color) 22%, var(--color-base-100)), color-mix(in oklab, var(--ui-color) 38%, var(--color-base-100))));
+		--_ui-bnav-chip-active-surface: var(--ui-bnav-chip-active-surface, var(--ui-color));
+		--_ui-bnav-chip-active-ink: var(--ui-bnav-chip-active-ink, var(--ui-content));
 	}
 
 	@media (max-width: 900px) {
@@ -36,7 +104,7 @@
 			color: var(--color-base-content-muted);
 		}
 
-		.ui-bottom-navigation-item[data-active] { color: var(--color-base-content); }
+		.ui-bottom-navigation-item[data-active] { color: var(--_ui-bnav-active-ink); }
 
 		.ui-bottom-navigation-item-icon {
 			display: grid;
@@ -53,12 +121,12 @@
 		}
 
 		.ui-bottom-navigation-item[data-active] .ui-bottom-navigation-item-icon {
-			background: var(--color-primary-soft);
+			background: var(--_ui-bnav-active-wash);
 		}
 
 		.ui-bottom-navigation-item-label {
 			font-family: var(--font-data);
-			font-size: 0.55rem;
+			font-size: var(--_ui-bnav-label-size);
 			letter-spacing: 0.1em;
 			text-transform: uppercase;
 			white-space: nowrap;
@@ -91,27 +159,24 @@
 		.ui-bottom-navigation-centre-chip {
 			display: grid;
 			place-items: center;
-			width: 3rem;
-			height: 3rem;
-			margin-top: -1.6rem;
+			width: var(--_ui-bnav-chip-size);
+			height: var(--_ui-bnav-chip-size);
+			margin-top: calc(var(--_ui-bnav-chip-size) * -0.5333);
 			border-radius: var(--r-pill);
-			background: light-dark(
-				color-mix(in oklab, var(--color-primary) 22%, var(--color-base-100)),
-				color-mix(in oklab, var(--color-primary) 38%, var(--color-base-100))
-			);
-			color: var(--color-base-content);
+			background: var(--_ui-bnav-chip-surface);
+			color: var(--_ui-bnav-chip-ink);
 			box-shadow:
-				0 0 0 1px color-mix(in oklab, var(--color-primary) 45%, transparent),
+				0 0 0 1px color-mix(in oklab, var(--_ui-bnav-chip-active-surface) 45%, transparent),
 				inset 0 1px 0 color-mix(in oklab, white 14%, transparent),
 				0 8px 20px -8px rgb(0 0 0 / 0.5);
 		}
 
 		.ui-bottom-navigation-centre-chip[data-active] {
-			background: var(--color-primary);
-			color: var(--color-primary-content);
+			background: var(--_ui-bnav-chip-active-surface);
+			color: var(--_ui-bnav-chip-active-ink);
 			box-shadow:
-				0 0 0 1px var(--color-primary),
-				0 0 1.25rem var(--color-primary);
+				0 0 0 1px var(--_ui-bnav-chip-active-surface),
+				0 0 1.25rem var(--_ui-bnav-chip-active-surface);
 		}
 
 		.ui-bottom-navigation-centre-chip > * {
@@ -123,6 +188,28 @@
 			display: flex;
 			flex: 1 1 0;
 			min-width: 0;
+		}
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-bnav-height: attr(data-ui-bnav-height type(<length>), var(--ui-bnav-height, 3.8rem));
+			--_ui-bnav-label-size: attr(data-ui-bnav-label-size type(<length>), var(--ui-bnav-label-size, 0.55rem));
+			--_ui-bnav-chip-size: attr(data-ui-bnav-chip-size type(<length>), var(--ui-bnav-chip-size, 3rem));
+			--_ui-bnav-active-ink: attr(data-ui-bnav-active-ink type(<color>), var(--ui-bnav-active-ink, var(--color-base-content)));
+			--_ui-bnav-chip-ink: attr(data-ui-bnav-chip-ink type(<color>), var(--ui-bnav-chip-ink, var(--color-base-content)));
+			--_ui-bnav-active-wash: attr(data-ui-bnav-active-wash type(<color>), var(--ui-bnav-active-wash, var(--color-primary-soft)));
+			--_ui-bnav-chip-surface: attr(data-ui-bnav-chip-surface type(<color>), var(--ui-bnav-chip-surface, light-dark(color-mix(in oklab, var(--color-primary) 22%, var(--color-base-100)), color-mix(in oklab, var(--color-primary) 38%, var(--color-base-100)))));
+			--_ui-bnav-chip-active-surface: attr(data-ui-bnav-chip-active-surface type(<color>), var(--ui-bnav-chip-active-surface, var(--color-primary)));
+			--_ui-bnav-chip-active-ink: attr(data-ui-bnav-chip-active-ink type(<color>), var(--ui-bnav-chip-active-ink, var(--color-primary-content)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-bnav-active-wash: attr(data-ui-bnav-active-wash type(<color>), var(--ui-bnav-active-wash, var(--ui-surface-selected)));
+			--_ui-bnav-active-ink: attr(data-ui-bnav-active-ink type(<color>), var(--ui-bnav-active-ink, var(--ui-ink-selected)));
+			--_ui-bnav-chip-surface: attr(data-ui-bnav-chip-surface type(<color>), var(--ui-bnav-chip-surface, light-dark(color-mix(in oklab, var(--ui-color) 22%, var(--color-base-100)), color-mix(in oklab, var(--ui-color) 38%, var(--color-base-100)))));
+			--_ui-bnav-chip-active-surface: attr(data-ui-bnav-chip-active-surface type(<color>), var(--ui-bnav-chip-active-surface, var(--ui-color)));
+			--_ui-bnav-chip-active-ink: attr(data-ui-bnav-chip-active-ink type(<color>), var(--ui-bnav-chip-active-ink, var(--ui-content)));
 		}
 	}
 }

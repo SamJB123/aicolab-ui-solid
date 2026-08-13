@@ -5,10 +5,25 @@
 // can share an instance via the `core` prop.
 //
 // Structural CSS lives in styles.css under "── DepthCard ──".
+//
+// CSS → TSL BRIDGE: the generated backgrounds render on the GPU from plain
+// colour values, while the treatment family lives in CSS. The stylesheet
+// resolves a three-colour scheme into REGISTERED adapters (registration
+// makes them compute to real colours, color-mix included); when no explicit
+// colorScheme is given, the mount reads those adapters off the canvas with
+// getComputedStyle, normalises through a canvas fillStyle parse (oklch →
+// rgb, which THREE.Color can digest), and feeds the untouched renderer.
+// Untreated bridge defaults ARE the legacy emerald triad, so the classic
+// look is byte-identical; a treated card derives its scheme from the family.
 
 import type { JSX } from '@solidjs/web'
-import { onCleanup, Show } from 'solid-js'
-import type { ClassProp } from '../../shared/color-treatment'
+import { createEffect, onCleanup, Show } from 'solid-js'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 import {
 	type BackgroundStyle,
 	type CardBackgroundHandle,
@@ -17,6 +32,53 @@ import {
 } from './backgrounds'
 import { DepthCardCore } from './core'
 import { CardIcon, type CardIconName } from './icons'
+
+/** Per-instance styling contract (see shared/knobs.ts). The face is a
+ * painted pair (treated → family surface/ink); glow and the back band ride
+ * the family; the scheme knobs feed the CSS→TSL bridge above. */
+const knobs = defineKnobs('ui-depth', {
+	radius: '<length-percentage>',
+	pad: '<length>',
+	surface: '<color>',
+	glow: '<color>',
+	bandSurface: '<color>',
+	mediaHeight: '<length>',
+	mediaRadius: '<length-percentage>',
+	schemePrimary: '<color>',
+	schemeSecondary: '<color>',
+	schemeAccent: '<color>',
+})
+
+/* Normalise ANY computed CSS colour (oklch/oklab/color-mix output) to an
+   "rgb(r, g, b)" string THREE.Color can parse. fillStyle keeps its previous
+   value on invalid input, so a failed parse yields the fallback black. */
+let parseCanvas: CanvasRenderingContext2D | null = null
+const cssColorToRgb = (css: string): string | null => {
+	if (!parseCanvas) {
+		const canvas = document.createElement('canvas')
+		canvas.width = 1
+		canvas.height = 1
+		parseCanvas = canvas.getContext('2d', { willReadFrequently: true })
+	}
+	const ctx = parseCanvas
+	if (!ctx || !css) return null
+	ctx.fillStyle = '#000'
+	ctx.fillStyle = css
+	ctx.fillRect(0, 0, 1, 1)
+	const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data
+	return `rgb(${r}, ${g}, ${b})`
+}
+
+/** Read the stylesheet-resolved scheme adapters off the (laid-out) canvas. */
+const resolveSchemeFromCss = async (element: HTMLElement): Promise<ColorScheme | null> => {
+	await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+	const computed = getComputedStyle(element)
+	const primary = cssColorToRgb(computed.getPropertyValue('--_dc-scheme-1'))
+	const secondary = cssColorToRgb(computed.getPropertyValue('--_dc-scheme-2'))
+	const accent = cssColorToRgb(computed.getPropertyValue('--_dc-scheme-3'))
+	if (!primary || !secondary) return null
+	return { primary, secondary, accent: accent ?? undefined }
+}
 
 /** Structured content — the legacy Glowing3DCardFlip design: front is
  *  title → description → inset media (image or generated background) with the
@@ -33,6 +95,8 @@ export type DepthCardContent = {
 	icon?: CardIconName
 	/** Generated background for imageless fronts (legacy charter look). */
 	backgroundStyle?: BackgroundStyle
+	/** Explicit scheme (legacy presets or literal). Omit to derive from the
+	 *  card's treatment family / scheme knobs (emerald when untreated). */
 	colorScheme?: string | ColorScheme
 	/** Back body — lazy slot (hydration-safe). Presence enables flipping. */
 	back?: () => JSX.Element
@@ -46,11 +110,12 @@ export function DepthCard(props: {
 	back?: () => JSX.Element
 	/** Fixed card height in px (legacy cards were 400). */
 	height?: number
-	/** Glow accent; defaults to the theme accent. */
+	/** @deprecated Use the `glow` knob. */
 	glowColor?: string
 	core?: DepthCardCore
 	class?: ClassProp
-}) {
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec>) {
 	const core = props.core ?? new DepthCardCore()
 	const height = () => props.height ?? 400
 	const hasBack = () => Boolean(props.back ?? props.content?.back)
@@ -86,10 +151,13 @@ export function DepthCard(props: {
 		<div
 			ref={anchor}
 			class={['depth-card', { 'depth-card-flipped': core.flipped() }, props.class]}
-			style={{
+			{...colorTreatmentData(props)}
+			{...knobs.attributes(props)}
+			style={mergeKnobStyle(knobs.style(props), {
 				height: `${height()}px`,
+				/* Legacy escape hatch — the glow adapter chains through it. */
 				...(props.glowColor ? { '--dc-glow': props.glowColor } : {}),
-			}}
+			})}
 			onPointerMove={onPointerMove}
 			onPointerLeave={onPointerLeave}
 			onClick={onClick}
@@ -97,7 +165,23 @@ export function DepthCard(props: {
 			<div class="dc-inner">
 				<div class="dc-face dc-front">
 					<Show when={props.content} fallback={props.front?.()}>
-						{(c) => <StructuredFront content={c()} />}
+						{(c) => (
+							<StructuredFront
+								content={c()}
+								/* Everything that can move the CSS-derived scheme: when it
+								   changes, the mounted background re-reads the bridge. */
+								schemeSignature={() =>
+									[
+										props.colorBase,
+										props.colorLevel,
+										props.variant,
+										props.schemePrimary,
+										props.schemeSecondary,
+										props.schemeAccent,
+									].join('|')
+								}
+							/>
+						)}
 					</Show>
 				</div>
 				<Show when={hasBack()}>
@@ -114,9 +198,28 @@ export function DepthCard(props: {
 
 // ── Structured faces — the legacy Glowing3DCardFlip design ──────────────────
 
-function StructuredFront(props: { content: DepthCardContent }) {
+function StructuredFront(props: {
+	content: DepthCardContent
+	schemeSignature: () => string
+}) {
 	const c = props.content
 	let bgHandle: Promise<CardBackgroundHandle | null> | null = null
+	let bgCanvas: HTMLCanvasElement | undefined
+
+	// Reactive bridge: a treatment/scheme-knob change re-derives the scheme
+	// from the resolved CSS adapters and re-points the running animation.
+	// (Explicit content.colorScheme opts out — that path is caller-owned.)
+	createEffect(
+		() => props.schemeSignature(),
+		() => {
+			if (c.colorScheme || !bgCanvas || !bgHandle) return
+			const el = bgCanvas
+			void (async () => {
+				const [handle, scheme] = await Promise.all([bgHandle, resolveSchemeFromCss(el)])
+				if (handle && scheme) handle.setColors(scheme)
+			})()
+		},
+	)
 
 	return (
 		<div class="dc-sf">
@@ -131,12 +234,15 @@ function StructuredFront(props: { content: DepthCardContent }) {
 								class="dc-sf-bgc"
 								ref={(el) => {
 									// Animated generated background (client-only mount; the
-									// TSL renderer chunk loads lazily on first card).
-									bgHandle = mountCardBackground(
-										el,
-										c.backgroundStyle ?? 'gradient',
-										c.colorScheme ?? 'emerald',
-									)
+									// TSL renderer chunk loads lazily on first card). Without
+									// an explicit scheme, the CSS→TSL bridge derives one from
+									// the resolved adapters (family when treated).
+									bgCanvas = el
+									bgHandle = (async () => {
+										const scheme =
+											c.colorScheme ?? (await resolveSchemeFromCss(el)) ?? 'emerald'
+										return mountCardBackground(el, c.backgroundStyle ?? 'gradient', scheme)
+									})()
 									onCleanup(() => {
 										void bgHandle?.then((bg) => bg?.dispose())
 										bgHandle = null

@@ -1,21 +1,71 @@
 /* ── Carousel — the Baseline-2026 contract is a swipeable scroll-snap strip.
       Generated buttons and markers remain a compatibility-gated enhancement
-      until the CSS carousel pseudos are Baseline. ── */
+      until the CSS carousel pseudos are Baseline. Knobs on the usual two
+      wires, assigned on :scope (adapters inherit so the item and marker
+      pseudo-elements can read them); the active marker rides the family
+      colour when treated. ── */
+@property --_ui-carousel-item-width {
+	syntax: "<length-percentage>";
+	inherits: true;
+	initial-value: 26rem;
+}
+@property --_ui-carousel-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 1rem;
+}
+@property --_ui-carousel-marker-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 8px;
+}
+@property --_ui-carousel-marker-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-carousel-marker-active-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-carousel-button-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-carousel-button-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-carousel) {
 :scope {
+	--_ui-carousel-item-width: var(--ui-carousel-item-width, min(26rem, 85%));
+	--_ui-carousel-gap: var(--ui-carousel-gap, 1rem);
+	--_ui-carousel-marker-size: var(--ui-carousel-marker-size, 8px);
+	--_ui-carousel-marker-ink: var(--ui-carousel-marker-ink, var(--color-border-strong));
+	--_ui-carousel-marker-active-ink: var(--ui-carousel-marker-active-ink, var(--color-primary));
+	--_ui-carousel-button-surface: var(--ui-carousel-button-surface, var(--color-base-100));
+	--_ui-carousel-button-ink: var(--ui-carousel-button-ink, var(--color-base-content));
 	display: flex;
-	gap: 1rem;
+	gap: var(--_ui-carousel-gap);
 	overflow-x: auto;
 	overscroll-behavior-x: contain;
 	scroll-snap-type: x mandatory;
 	scrollbar-width: none;
 	padding: 0.25rem;
 }
+:scope[data-ui-color-base] {
+	--_ui-carousel-marker-active-ink: var(--ui-carousel-marker-active-ink, var(--ui-color));
+	--_ui-carousel-button-ink: var(--ui-carousel-button-ink, var(--ui-color-foreground));
+}
 :scope::-webkit-scrollbar {
 	display: none;
 }
 :scope > * {
-	flex: 0 0 min(26rem, 85%);
+	flex: 0 0 var(--_ui-carousel-item-width);
 	scroll-snap-align: center;
 }
 
@@ -28,14 +78,14 @@
 	}
 	:scope > *::scroll-marker {
 		content: "";
-		width: 8px;
-		height: 8px;
+		width: var(--_ui-carousel-marker-size);
+		height: var(--_ui-carousel-marker-size);
 		border-radius: var(--r-pill);
-		background: var(--color-border-strong);
+		background: var(--_ui-carousel-marker-ink);
 		transition: background 0.2s;
 	}
 	:scope > *::scroll-marker:target-current {
-		background: var(--color-primary);
+		background: var(--_ui-carousel-marker-active-ink);
 	}
 	:scope::scroll-marker-group {
 		display: flex;
@@ -51,8 +101,8 @@
 		height: 2.4rem;
 		border-radius: var(--r-pill);
 		border: 1px solid var(--color-border-strong);
-		background: var(--color-base-100);
-		color: var(--color-base-content);
+		background: var(--_ui-carousel-button-surface);
+		color: var(--_ui-carousel-button-ink);
 		cursor: pointer;
 	}
 	:scope::scroll-button(left) {
@@ -64,6 +114,23 @@
 	:scope::scroll-button(*):disabled {
 		opacity: 0.3;
 		cursor: default;
+	}
+}
+
+/* ── Frontier knob boundary (see select-control for the pattern) ── */
+@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+	:scope {
+		--_ui-carousel-item-width: attr(data-ui-carousel-item-width type(<length-percentage>), var(--ui-carousel-item-width, min(26rem, 85%)));
+		--_ui-carousel-gap: attr(data-ui-carousel-gap type(<length>), var(--ui-carousel-gap, 1rem));
+		--_ui-carousel-marker-size: attr(data-ui-carousel-marker-size type(<length>), var(--ui-carousel-marker-size, 8px));
+		--_ui-carousel-marker-ink: attr(data-ui-carousel-marker-ink type(<color>), var(--ui-carousel-marker-ink, var(--color-border-strong)));
+		--_ui-carousel-marker-active-ink: attr(data-ui-carousel-marker-active-ink type(<color>), var(--ui-carousel-marker-active-ink, var(--color-primary)));
+		--_ui-carousel-button-surface: attr(data-ui-carousel-button-surface type(<color>), var(--ui-carousel-button-surface, var(--color-base-100)));
+		--_ui-carousel-button-ink: attr(data-ui-carousel-button-ink type(<color>), var(--ui-carousel-button-ink, var(--color-base-content)));
+	}
+	:scope[data-ui-color-base] {
+		--_ui-carousel-marker-active-ink: attr(data-ui-carousel-marker-active-ink type(<color>), var(--ui-carousel-marker-active-ink, var(--ui-color)));
+		--_ui-carousel-button-ink: attr(data-ui-carousel-button-ink type(<color>), var(--ui-carousel-button-ink, var(--ui-color-foreground)));
 	}
 }
 }

@@ -1,5 +1,64 @@
+/* ── CommandPalette ──
+   Knobs on the usual two wires, assigned on the attribute-bearing roots.
+   Organisms surfaces rule: the ACTIVE row is a painted family pair
+   (untreated primary-soft wash with resting inks; treated → the selected
+   pair, re-assigning ALL child inks against it), the kind label and input
+   focus seam are ACCENTS (treated → family), the body stays the
+   structural base surface. */
+@property --_ui-cmdtrigger-hover-border {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --_ui-palette-width {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 34rem;
+}
+@property --_ui-palette-top-offset {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 14dvh;
+}
+@property --_ui-palette-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 16px;
+}
+@property --_ui-palette-list-max-height {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 46dvh;
+}
+@property --_ui-palette-active-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-palette-active-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-palette-kind-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-palette-detail-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-palette-focus-seam {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+
 @scope (.ui-command-palette-trigger) {
 	:scope {
+		--_ui-cmdtrigger-hover-border: var(--ui-cmdtrigger-hover-border, color-mix(in oklab, var(--color-primary) 60%, transparent));
 		display: inline-flex;
 		align-items: center;
 		gap: 0.6rem;
@@ -14,10 +73,13 @@
 		backdrop-filter: blur(10px);
 		transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
 	}
+	:scope[data-ui-color-base] {
+		--_ui-cmdtrigger-hover-border: var(--ui-cmdtrigger-hover-border, color-mix(in oklab, var(--ui-color) 60%, transparent));
+	}
 
 	@media (hover: hover) {
 		:scope:hover {
-			border-color: color-mix(in oklab, var(--color-primary) 60%, transparent);
+			border-color: var(--_ui-cmdtrigger-hover-border);
 		}
 	}
 
@@ -42,19 +104,38 @@
 	@media (prefers-reduced-motion: reduce) {
 		:scope { transition-duration: 1ms; }
 	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-cmdtrigger-hover-border: attr(data-ui-cmdtrigger-hover-border type(<color>), var(--ui-cmdtrigger-hover-border, color-mix(in oklab, var(--color-primary) 60%, transparent)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-cmdtrigger-hover-border: attr(data-ui-cmdtrigger-hover-border type(<color>), var(--ui-cmdtrigger-hover-border, color-mix(in oklab, var(--ui-color) 60%, transparent)));
+		}
+	}
 }
 
 @scope (.ui-command-palette) {
 	:scope {
+		--_ui-palette-width: var(--ui-palette-width, min(34rem, 92vw));
+		--_ui-palette-top-offset: var(--ui-palette-top-offset, 14dvh);
+		--_ui-palette-radius: var(--ui-palette-radius, var(--r-lg));
+		--_ui-palette-list-max-height: var(--ui-palette-list-max-height, 46dvh);
+		--_ui-palette-active-surface: var(--ui-palette-active-surface, var(--color-primary-soft));
+		--_ui-palette-active-ink: var(--ui-palette-active-ink, var(--color-base-content));
+		--_ui-palette-kind-ink: var(--ui-palette-kind-ink, var(--color-primary));
+		--_ui-palette-detail-ink: var(--ui-palette-detail-ink, var(--color-base-content-faint));
+		--_ui-palette-focus-seam: var(--ui-palette-focus-seam, var(--color-primary));
 		position: fixed;
-		top: 14dvh;
+		top: var(--_ui-palette-top-offset);
 		left: 50%;
 		translate: -50% 0;
-		width: min(34rem, 92vw);
+		width: var(--_ui-palette-width);
 		margin: 0;
 		border: 0;
 		padding: 0;
-		border-radius: var(--r-lg);
+		border-radius: var(--_ui-palette-radius);
 		background: var(--color-base-100);
 		color: var(--color-base-content);
 		box-shadow:
@@ -69,6 +150,12 @@
 			scale 200ms cubic-bezier(0.4, 0, 0.2, 1),
 			display 200ms allow-discrete,
 			overlay 200ms allow-discrete;
+	}
+	:scope[data-ui-color-base] {
+		--_ui-palette-active-surface: var(--ui-palette-active-surface, var(--ui-surface-selected));
+		--_ui-palette-active-ink: var(--ui-palette-active-ink, var(--ui-ink-selected));
+		--_ui-palette-kind-ink: var(--ui-palette-kind-ink, var(--ui-color-foreground));
+		--_ui-palette-focus-seam: var(--ui-palette-focus-seam, var(--ui-color));
 	}
 
 	:scope:not(:popover-open) {
@@ -108,7 +195,7 @@
 
 	.ui-command-palette-input:focus-visible {
 		box-shadow:
-			inset 0 -2px 0 var(--color-primary),
+			inset 0 -2px 0 var(--_ui-palette-focus-seam),
 			0 1px 0 var(--color-border);
 	}
 
@@ -118,7 +205,7 @@
 
 	.ui-command-palette-list {
 		padding: 0.4rem;
-		max-height: 46dvh;
+		max-height: var(--_ui-palette-list-max-height);
 		overflow: auto;
 		overscroll-behavior: contain;
 		scrollbar-gutter: stable;
@@ -146,7 +233,15 @@
 	}
 
 	.ui-command-palette-item[data-active] {
-		background: var(--color-primary-soft);
+		background: var(--_ui-palette-active-surface);
+		color: var(--_ui-palette-active-ink);
+	}
+	/* Surfaces and inks travel as PAIRS: the treated active surface can be a
+	   strong family colour, so its child voices re-pair against the active
+	   ink (untreated keeps the soft wash + resting inks — today's look). */
+	:scope[data-ui-color-base] .ui-command-palette-item[data-active] {
+		--_ui-palette-kind-ink: var(--_ui-palette-active-ink);
+		--_ui-palette-detail-ink: color-mix(in oklab, var(--_ui-palette-active-ink) 72%, transparent);
 	}
 
 	.ui-command-palette-label {
@@ -158,14 +253,14 @@
 		font-size: var(--t-2xs);
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
-		color: var(--color-primary);
+		color: var(--_ui-palette-kind-ink);
 		text-align: right;
 	}
 
 	.ui-command-palette-detail {
 		grid-column: 1 / -1;
 		font-size: var(--t-xs);
-		color: var(--color-base-content-faint);
+		color: var(--_ui-palette-detail-ink);
 	}
 
 	.ui-command-palette-empty {
@@ -176,14 +271,14 @@
 	}
 
 	.ui-command-palette-item:focus-visible {
-		outline: 2px solid color-mix(in oklab, var(--color-primary) 60%, transparent);
+		outline: 2px solid color-mix(in oklab, var(--_ui-palette-focus-seam) 60%, transparent);
 		outline-offset: 2px;
 	}
 
 	@media (max-width: 900px) {
 		:scope {
-			top: 6dvh;
-			width: min(34rem, 94vw);
+			--_ui-palette-top-offset: var(--ui-palette-top-offset, 6dvh);
+			--_ui-palette-width: var(--ui-palette-width, min(34rem, 94vw));
 		}
 	}
 
@@ -191,6 +286,27 @@
 		:scope,
 		:scope::backdrop {
 			transition-duration: 1ms;
+		}
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-palette-width: attr(data-ui-palette-width type(<length>), var(--ui-palette-width, min(34rem, 92vw)));
+			--_ui-palette-top-offset: attr(data-ui-palette-top-offset type(<length>), var(--ui-palette-top-offset, 14dvh));
+			--_ui-palette-radius: attr(data-ui-palette-radius type(<length-percentage>), var(--ui-palette-radius, var(--r-lg)));
+			--_ui-palette-list-max-height: attr(data-ui-palette-list-max-height type(<length>), var(--ui-palette-list-max-height, 46dvh));
+			--_ui-palette-active-surface: attr(data-ui-palette-active-surface type(<color>), var(--ui-palette-active-surface, var(--color-primary-soft)));
+			--_ui-palette-active-ink: attr(data-ui-palette-active-ink type(<color>), var(--ui-palette-active-ink, var(--color-base-content)));
+			--_ui-palette-kind-ink: attr(data-ui-palette-kind-ink type(<color>), var(--ui-palette-kind-ink, var(--color-primary)));
+			--_ui-palette-detail-ink: attr(data-ui-palette-detail-ink type(<color>), var(--ui-palette-detail-ink, var(--color-base-content-faint)));
+			--_ui-palette-focus-seam: attr(data-ui-palette-focus-seam type(<color>), var(--ui-palette-focus-seam, var(--color-primary)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-palette-active-surface: attr(data-ui-palette-active-surface type(<color>), var(--ui-palette-active-surface, var(--ui-surface-selected)));
+			--_ui-palette-active-ink: attr(data-ui-palette-active-ink type(<color>), var(--ui-palette-active-ink, var(--ui-ink-selected)));
+			--_ui-palette-kind-ink: attr(data-ui-palette-kind-ink type(<color>), var(--ui-palette-kind-ink, var(--ui-color-foreground)));
+			--_ui-palette-focus-seam: attr(data-ui-palette-focus-seam type(<color>), var(--ui-palette-focus-seam, var(--ui-color)));
 		}
 	}
 }

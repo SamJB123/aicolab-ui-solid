@@ -1,18 +1,44 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
 import { Show } from 'solid-js'
-import type { ClassProp } from '../../shared/color-treatment'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 
-export function ApplicationHeader(props: {
-	title: JSX.Element
-	eyebrow?: JSX.Element
-	/** Lazy slots keep reactive control state owned by the header subtree. */
-	actions?: () => JSX.Element
-	status?: () => JSX.Element
-	class?: ClassProp
-}) {
+/** Per-instance styling contract (see shared/knobs.ts). The treatment axes
+ * retarget the ACCENT family (double border, shadow tint) — the surface
+ * stays the app chrome's base unless the surface knob says otherwise. */
+const knobs = defineKnobs('ui-apph', {
+	accent: '<color>',
+	borderWidth: '<length>',
+	surface: '<color>',
+	padBlock: '<length>',
+	padInline: '<length>',
+	titleInk: '<color>',
+	eyebrowInk: '<color>',
+})
+
+export function ApplicationHeader(
+	props: {
+		title: JSX.Element
+		eyebrow?: JSX.Element
+		/** Lazy slots keep reactive control state owned by the header subtree. */
+		actions?: () => JSX.Element
+		status?: () => JSX.Element
+		class?: ClassProp
+	} & ColorTreatmentProps &
+		KnobProps<typeof knobs.spec>,
+) {
 	return (
-		<header class={['ui-application-header', props.class]}>
+		<header
+			class={['ui-application-header', props.class]}
+			{...colorTreatmentData(props)}
+			{...knobs.attributes(props)}
+			style={mergeKnobStyle(knobs.style(props), undefined)}
+		>
 			<div class="ui-application-header-heading">
 				<Show when={props.eyebrow}>
 					{(eyebrow) => <div class="ui-application-header-eyebrow">{eyebrow()}</div>}

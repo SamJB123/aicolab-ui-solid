@@ -1,12 +1,54 @@
+/* ── ToggleGroup ──
+   Knobs on the usual two wires, assigned on :scope (the attribute-bearing
+   tray). The tray surface/border travel as a pair: base tokens plain, the
+   family roles when treated, the overlay tokens inside an overlay
+   environment (environment re-defaults ride the knob chain, so an explicit
+   knob still wins). */
+@property --_ui-tg-tray-surface {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --_ui-tg-tray-border {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --_ui-tg-tray-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 8px;
+}
+@property --_ui-tg-tray-pad {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0.25rem;
+}
+@property --_ui-tg-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0.25rem;
+}
+
 @scope (.ui-toggle-group) {
 	:scope {
+		--_ui-tg-tray-surface: var(--ui-tg-tray-surface, var(--color-base-200));
+		--_ui-tg-tray-border: var(--ui-tg-tray-border, var(--color-border));
+		--_ui-tg-tray-radius: var(--ui-tg-tray-radius, var(--r-sm));
+		--_ui-tg-tray-pad: var(--ui-tg-tray-pad, 0.25rem);
+		--_ui-tg-gap: var(--ui-tg-gap, 0.25rem);
 		display: flex;
 		align-items: stretch;
-		gap: 0.25rem;
-		padding: 0.25rem;
-		border-radius: var(--r-sm);
-		background: var(--color-base-200);
-		box-shadow: inset 0 0 0 1px var(--color-border);
+		gap: var(--_ui-tg-gap);
+		padding: var(--_ui-tg-tray-pad);
+		border-radius: var(--_ui-tg-tray-radius);
+		background: var(--_ui-tg-tray-surface);
+		box-shadow: inset 0 0 0 1px var(--_ui-tg-tray-border);
+	}
+
+	:scope[data-ui-color-base] {
+		--_ui-tg-tray-surface: var(--ui-tg-tray-surface, var(--ui-surface));
+		--_ui-tg-tray-border: var(--ui-tg-tray-border, var(--ui-border));
 	}
 
 	.ui-btn {
@@ -22,8 +64,23 @@
 
 	@container ui-treatment-context style(--ui-environment: overlay) {
 		:scope {
-			background: var(--color-overlay-soft);
-			box-shadow: inset 0 0 0 1px var(--color-overlay-border);
+			--_ui-tg-tray-surface: var(--ui-tg-tray-surface, var(--color-overlay-soft));
+			--_ui-tg-tray-border: var(--ui-tg-tray-border, var(--color-overlay-border));
+		}
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-tg-tray-surface: attr(data-ui-tg-tray-surface type(<color>), var(--ui-tg-tray-surface, var(--color-base-200)));
+			--_ui-tg-tray-border: attr(data-ui-tg-tray-border type(<color>), var(--ui-tg-tray-border, var(--color-border)));
+			--_ui-tg-tray-radius: attr(data-ui-tg-tray-radius type(<length-percentage>), var(--ui-tg-tray-radius, var(--r-sm)));
+			--_ui-tg-tray-pad: attr(data-ui-tg-tray-pad type(<length>), var(--ui-tg-tray-pad, 0.25rem));
+			--_ui-tg-gap: attr(data-ui-tg-gap type(<length>), var(--ui-tg-gap, 0.25rem));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-tg-tray-surface: attr(data-ui-tg-tray-surface type(<color>), var(--ui-tg-tray-surface, var(--ui-surface)));
+			--_ui-tg-tray-border: attr(data-ui-tg-tray-border type(<color>), var(--ui-tg-tray-border, var(--ui-border)));
 		}
 	}
 }

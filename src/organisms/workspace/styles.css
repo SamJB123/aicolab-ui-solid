@@ -1,21 +1,72 @@
+/* ── WorkspaceShell ──
+   Knobs on the usual two wires, assigned on :scope. Structural surfaces
+   stay base chrome; the treatment axes retarget only the ACCENT (the
+   bound-inspector seam). The old element-level --ui-workspace-gutter
+   literal became the gutter knob's adapter, so instances (and ancestors,
+   via the public variable) can finally reach it. */
+@property --_ui-workspace-gutter {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 1rem;
+}
+@property --_ui-workspace-nav-width {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 13.5rem;
+}
+@property --_ui-workspace-inspector-width {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 21rem;
+}
+@property --_ui-workspace-surface {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --_ui-workspace-nav-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-workspace-inspector-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-workspace-accent {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-workspace) {
 	:scope {
-		--ui-workspace-gutter: 1rem;
+		--_ui-workspace-gutter: var(--ui-workspace-gutter, 1rem);
+		--_ui-workspace-nav-width: var(--ui-workspace-nav-width, 13.5rem);
+		--_ui-workspace-inspector-width: var(--ui-workspace-inspector-width, 21rem);
+		--_ui-workspace-surface: var(--ui-workspace-surface, var(--color-base-200));
+		--_ui-workspace-nav-surface: var(--ui-workspace-nav-surface, var(--color-base-100));
+		--_ui-workspace-inspector-surface: var(--ui-workspace-inspector-surface, var(--color-base-300));
+		--_ui-workspace-accent: var(--ui-workspace-accent, var(--color-primary));
 		--ui-bottom-navigation-height: calc(3.8rem + env(safe-area-inset-bottom, 0px));
 		display: flex;
 		height: 100%;
-		background: var(--color-base-200);
+		background: var(--_ui-workspace-surface);
 		color: var(--color-base-content);
+	}
+	:scope[data-ui-color-base] {
+		--_ui-workspace-accent: var(--ui-workspace-accent, var(--ui-color));
 	}
 
 	.ui-workspace-navigation {
 		flex: none;
-		width: 13.5rem;
+		width: var(--_ui-workspace-nav-width);
 		display: flex;
 		flex-direction: column;
 		gap: 0.9rem;
-		padding: var(--ui-workspace-gutter) calc(var(--ui-workspace-gutter) - 0.25rem);
-		background: var(--color-base-100);
+		padding: var(--_ui-workspace-gutter) calc(var(--_ui-workspace-gutter) - 0.25rem);
+		background: var(--_ui-workspace-nav-surface);
 		box-shadow: 1px 0 0 var(--color-border);
 	}
 
@@ -115,8 +166,8 @@
 
 	.ui-responsive-inspector {
 		flex: none;
-		width: 21rem;
-		background: var(--color-base-300);
+		width: var(--_ui-workspace-inspector-width);
+		background: var(--_ui-workspace-inspector-surface);
 		box-shadow: -1px 0 0 var(--color-border);
 		min-height: 0;
 		display: flex;
@@ -127,7 +178,7 @@
 	.ui-responsive-inspector[data-bound] {
 		box-shadow:
 			-1px 0 0 var(--color-border),
-			inset 2px 0 0 var(--color-primary);
+			inset 2px 0 0 var(--_ui-workspace-accent);
 	}
 
 	.ui-responsive-inspector-grip {
@@ -140,7 +191,7 @@
 		overflow: auto;
 		overscroll-behavior: contain;
 		scrollbar-gutter: stable;
-		padding: var(--ui-workspace-gutter) var(--ui-workspace-gutter) 1.5rem;
+		padding: var(--_ui-workspace-gutter) var(--_ui-workspace-gutter) 1.5rem;
 		display: flex;
 		flex-direction: column;
 		gap: 0.9rem;
@@ -260,7 +311,7 @@
 		.ui-responsive-inspector[data-bound] {
 			box-shadow:
 				0 -1px 0 var(--color-border),
-				inset 0 2px 0 var(--color-primary),
+				inset 0 2px 0 var(--_ui-workspace-accent),
 				0 -18px 40px rgb(0 0 0 / 0.35);
 		}
 
@@ -337,5 +388,21 @@
 		.ui-responsive-inspector-content { animation: none; }
 		.ui-workspace-navigation-item,
 		.ui-responsive-inspector { transition-duration: 1ms; }
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-workspace-gutter: attr(data-ui-workspace-gutter type(<length>), var(--ui-workspace-gutter, 1rem));
+			--_ui-workspace-nav-width: attr(data-ui-workspace-nav-width type(<length>), var(--ui-workspace-nav-width, 13.5rem));
+			--_ui-workspace-inspector-width: attr(data-ui-workspace-inspector-width type(<length>), var(--ui-workspace-inspector-width, 21rem));
+			--_ui-workspace-surface: attr(data-ui-workspace-surface type(<color>), var(--ui-workspace-surface, var(--color-base-200)));
+			--_ui-workspace-nav-surface: attr(data-ui-workspace-nav-surface type(<color>), var(--ui-workspace-nav-surface, var(--color-base-100)));
+			--_ui-workspace-inspector-surface: attr(data-ui-workspace-inspector-surface type(<color>), var(--ui-workspace-inspector-surface, var(--color-base-300)));
+			--_ui-workspace-accent: attr(data-ui-workspace-accent type(<color>), var(--ui-workspace-accent, var(--color-primary)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-workspace-accent: attr(data-ui-workspace-accent type(<color>), var(--ui-workspace-accent, var(--ui-color)));
+		}
 	}
 }

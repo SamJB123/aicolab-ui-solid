@@ -1,6 +1,23 @@
 import { createSignal, For, onSettled, type ParentProps, Show } from 'solid-js'
 import { Eyebrow } from '../../atoms/eyebrow'
 import { RichList, RichListItem } from '../../molecules/rich-list'
+import {
+	colorTreatmentData,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
+
+/** Per-instance styling contract (see shared/knobs.ts). The treatment axes
+ * retarget the shell's accents — the reading-progress bar, the composed
+ * navigation RichLists, and the article's prose accents (markers, links,
+ * blockquote seams) via the inheriting --ui-prose-accent variable. */
+const knobs = defineKnobs('ui-docs', {
+	maxWidth: '<length>',
+	sideWidth: '<length>',
+	gap: '<length>',
+	progressInk: '<color>',
+	progressHeight: '<length>',
+})
 
 export type DocsNavItem = {
 	label: string
@@ -20,7 +37,11 @@ export type DocsNavItem = {
  * id so deep links work pre-hydration too). Highlighting rides an
  * IntersectionObserver — the one thing here CSS cannot do yet.
  */
-export function DocsShell(props: ParentProps<{ nav?: DocsNavItem[]; navLabel?: string }>) {
+export function DocsShell(
+	props: ParentProps<{ nav?: DocsNavItem[]; navLabel?: string }> &
+		ColorTreatmentProps &
+		KnobProps<typeof knobs.spec>,
+) {
 	let article: HTMLElement | undefined
 	const [toc, setToc] = createSignal<{ id: string; label: string; depth: 2 | 3 }[]>([])
 	const [active, setActive] = createSignal('')
@@ -49,13 +70,23 @@ export function DocsShell(props: ParentProps<{ nav?: DocsNavItem[]; navLabel?: s
 	})
 
 	return (
-		<div class="docs-shell">
+		<div
+			class="docs-shell"
+			{...colorTreatmentData(props)}
+			{...knobs.attributes(props)}
+			style={mergeKnobStyle(knobs.style(props), undefined)}
+		>
 			<div class="docs-progress" aria-hidden="true" />
 			<Show when={props.nav?.length}>
 				<nav class="docs-nav" aria-label={props.navLabel ?? 'Chapters'}>
 					<div class="docs-side">
-						<Eyebrow>{props.navLabel ?? 'Chapters'}</Eyebrow>
-						<RichList navigation label={props.navLabel ?? 'Chapters'}>
+						<Eyebrow colorBase={props.colorBase}>{props.navLabel ?? 'Chapters'}</Eyebrow>
+						<RichList
+							navigation
+							label={props.navLabel ?? 'Chapters'}
+							colorBase={props.colorBase}
+							colorLevel={props.colorLevel}
+						>
 							<For each={props.nav}>
 								{(item) => (
 									<RichListItem
@@ -76,8 +107,13 @@ export function DocsShell(props: ParentProps<{ nav?: DocsNavItem[]; navLabel?: s
 			<nav class="docs-toc" aria-label="On this page">
 				<div class="docs-side">
 					<Show when={toc().length}>
-						<Eyebrow>On this page</Eyebrow>
-						<RichList navigation label="On this page">
+						<Eyebrow colorBase={props.colorBase}>On this page</Eyebrow>
+						<RichList
+							navigation
+							label="On this page"
+							colorBase={props.colorBase}
+							colorLevel={props.colorLevel}
+						>
 							<For each={toc()}>
 								{(item) => (
 									<RichListItem

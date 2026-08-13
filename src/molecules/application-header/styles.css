@@ -1,16 +1,67 @@
+/* ── ApplicationHeader ──
+   Knobs on the usual two wires, assigned on :scope. The treatment axes
+   retarget the ACCENT family: the double border and its shadow tint ride
+   --ui-color when treated (primary by default); the chrome surface stays
+   base unless the surface knob overrides. */
+@property --_ui-apph-accent {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-apph-border-width {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 4px;
+}
+@property --_ui-apph-surface {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --_ui-apph-pad-block {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0.75rem;
+}
+@property --_ui-apph-pad-inline {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 1.5rem;
+}
+@property --_ui-apph-title-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-apph-eyebrow-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-application-header) {
 	:scope {
+		--_ui-apph-accent: var(--ui-apph-accent, var(--color-primary));
+		--_ui-apph-border-width: var(--ui-apph-border-width, 4px);
+		--_ui-apph-surface: var(--ui-apph-surface, var(--color-base-100));
+		--_ui-apph-pad-block: var(--ui-apph-pad-block, 0.75rem);
+		--_ui-apph-pad-inline: var(--ui-apph-pad-inline, clamp(1rem, 3vw, 2.5rem));
+		--_ui-apph-title-ink: var(--ui-apph-title-ink, var(--color-base-content));
+		--_ui-apph-eyebrow-ink: var(--ui-apph-eyebrow-ink, var(--color-base-content-muted));
 		z-index: 5;
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: center;
 		gap: 0.75rem 1rem;
-		padding: 0.75rem clamp(1rem, 3vw, 2.5rem);
-		border-bottom: 4px double var(--color-primary);
-		background: var(--color-base-100);
+		padding: var(--_ui-apph-pad-block) var(--_ui-apph-pad-inline);
+		border-bottom: var(--_ui-apph-border-width) double var(--_ui-apph-accent);
+		background: var(--_ui-apph-surface);
 		color: var(--color-base-content);
 		container: ui-application-header / inline-size;
-		box-shadow: 0 0.35rem 1.4rem color-mix(in oklab, var(--color-primary) 12%, transparent);
+		box-shadow: 0 0.35rem 1.4rem color-mix(in oklab, var(--_ui-apph-accent) 12%, transparent);
+	}
+	:scope[data-ui-color-base] {
+		--_ui-apph-accent: var(--ui-apph-accent, var(--ui-color));
 	}
 
 	.ui-application-header-heading { min-width: 0; }
@@ -22,6 +73,7 @@
 		font-weight: 700;
 		line-height: 1;
 		text-wrap: balance;
+		color: var(--_ui-apph-title-ink);
 	}
 
 	.ui-application-header-eyebrow {
@@ -31,7 +83,7 @@
 		font-weight: 700;
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
-		color: var(--color-base-content-muted);
+		color: var(--_ui-apph-eyebrow-ink);
 	}
 
 	.ui-application-header-end,
@@ -58,5 +110,21 @@
 
 	@container ui-application-header (width < 34rem) {
 		.ui-application-header-title { font-size: clamp(1.35rem, 7cqw, 2rem); }
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-apph-accent: attr(data-ui-apph-accent type(<color>), var(--ui-apph-accent, var(--color-primary)));
+			--_ui-apph-border-width: attr(data-ui-apph-border-width type(<length>), var(--ui-apph-border-width, 4px));
+			--_ui-apph-surface: attr(data-ui-apph-surface type(<color>), var(--ui-apph-surface, var(--color-base-100)));
+			--_ui-apph-pad-block: attr(data-ui-apph-pad-block type(<length>), var(--ui-apph-pad-block, 0.75rem));
+			--_ui-apph-pad-inline: attr(data-ui-apph-pad-inline type(<length>), var(--ui-apph-pad-inline, clamp(1rem, 3vw, 2.5rem)));
+			--_ui-apph-title-ink: attr(data-ui-apph-title-ink type(<color>), var(--ui-apph-title-ink, var(--color-base-content)));
+			--_ui-apph-eyebrow-ink: attr(data-ui-apph-eyebrow-ink type(<color>), var(--ui-apph-eyebrow-ink, var(--color-base-content-muted)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-apph-accent: attr(data-ui-apph-accent type(<color>), var(--ui-apph-accent, var(--ui-color)));
+		}
 	}
 }

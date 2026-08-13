@@ -180,5 +180,8 @@ export async function mountTslCardBackground(
 				raf = 0
 			}
 		},
+		setColors(colors: ColorScheme): void {
+			target.colors = colors
+		},
 	}
 }

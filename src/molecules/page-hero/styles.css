@@ -1,33 +1,83 @@
+/* ── PageHero ──
+   Knobs on the usual two wires, assigned on :scope (attribute-bearing) and
+   inherited by the heading children. The width media query re-assigns the
+   title-size adapter with the knob still first in the chain, so an explicit
+   knob outranks the environment. Treated heroes re-pair the heading inks to
+   the family (soft/ghost inks stay readable on the page surface). */
+@property --_ui-hero-max-width {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 56rem;
+}
+@property --_ui-hero-gap {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 24px;
+}
+@property --_ui-hero-title-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 48px;
+}
+@property --_ui-hero-title-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-hero-lede-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 20px;
+}
+@property --_ui-hero-lede-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-hero) {
 	:scope {
+		--_ui-hero-max-width: var(--ui-hero-max-width, 56rem);
+		--_ui-hero-gap: var(--ui-hero-gap, 24px);
+		--_ui-hero-title-size: var(--ui-hero-title-size, var(--t-4xl));
+		--_ui-hero-title-ink: var(--ui-hero-title-ink, var(--color-base-content));
+		--_ui-hero-lede-size: var(--ui-hero-lede-size, var(--t-xl));
+		--_ui-hero-lede-ink: var(--ui-hero-lede-ink, var(--color-base-content-muted));
 		margin-inline: auto;
 		display: flex;
 		width: 100%;
-		max-width: 56rem;
+		max-width: var(--_ui-hero-max-width);
 		flex-direction: column;
-		gap: 24px;
+		gap: var(--_ui-hero-gap);
 		padding: 80px 24px 64px;
+	}
+	:scope[data-ui-color-base] {
+		--_ui-hero-title-ink: var(--ui-hero-title-ink, var(--ui-ink));
+		--_ui-hero-lede-ink: var(--ui-hero-lede-ink, var(--ui-ink-muted));
 	}
 	:scope[data-align="center"] { align-items: center; text-align: center; }
 	:scope[data-align="start"] { align-items: flex-start; }
-	@media (min-width: 640px) { :scope { padding-top: 112px; } }
+	@media (min-width: 640px) {
+		:scope { padding-top: 112px; }
+		:scope { --_ui-hero-title-size: var(--ui-hero-title-size, var(--t-5xl)); }
+	}
 	:scope > h1 {
 		margin: 0;
 		font-family: var(--font-display, Georgia, serif);
 		font-optical-sizing: auto;
-		font-size: var(--t-4xl);
+		font-size: var(--_ui-hero-title-size);
 		font-weight: 500;
 		line-height: 1.08;
 		letter-spacing: -0.015em;
-		color: var(--color-base-content);
+		color: var(--_ui-hero-title-ink);
 		text-wrap: balance;
 	}
 	:scope > .ui-hero-lede {
 		margin: 0;
 		max-width: 42rem;
-		font-size: var(--t-xl);
+		font-size: var(--_ui-hero-lede-size);
 		line-height: 1.625;
-		color: var(--color-base-content-muted);
+		color: var(--_ui-hero-lede-ink);
 		text-wrap: pretty;
 	}
 	:scope > .ui-hero-actions {
@@ -38,5 +88,20 @@
 		justify-content: center;
 		gap: 12px;
 	}
-	@media (min-width: 640px) { :scope > h1 { font-size: var(--t-5xl); } }
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-hero-max-width: attr(data-ui-hero-max-width type(<length>), var(--ui-hero-max-width, 56rem));
+			--_ui-hero-gap: attr(data-ui-hero-gap type(<length>), var(--ui-hero-gap, 24px));
+			--_ui-hero-title-size: attr(data-ui-hero-title-size type(<length>), var(--ui-hero-title-size, var(--t-4xl)));
+			--_ui-hero-title-ink: attr(data-ui-hero-title-ink type(<color>), var(--ui-hero-title-ink, var(--color-base-content)));
+			--_ui-hero-lede-size: attr(data-ui-hero-lede-size type(<length>), var(--ui-hero-lede-size, var(--t-xl)));
+			--_ui-hero-lede-ink: attr(data-ui-hero-lede-ink type(<color>), var(--ui-hero-lede-ink, var(--color-base-content-muted)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-hero-title-ink: attr(data-ui-hero-title-ink type(<color>), var(--ui-hero-title-ink, var(--ui-ink)));
+			--_ui-hero-lede-ink: attr(data-ui-hero-lede-ink type(<color>), var(--ui-hero-lede-ink, var(--ui-ink-muted)));
+		}
+	}
 }

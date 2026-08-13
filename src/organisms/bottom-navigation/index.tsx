@@ -1,13 +1,33 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
 import { For, Show } from 'solid-js'
-import type { ClassProp } from '../../shared/color-treatment'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 
 export interface BottomNavigationItem<Id extends string = string> {
 	id: Id
 	label: string
 	icon: JSX.Element
 }
+
+/** Per-instance styling contract (see shared/knobs.ts). The bar itself is
+ * structural base chrome; the ACTIVE wash and the raised centre chip are
+ * painted family surfaces (pairs), primary by default. */
+const knobs = defineKnobs('ui-bnav', {
+	height: '<length>',
+	labelSize: '<length>',
+	chipSize: '<length>',
+	activeWash: '<color>',
+	activeInk: '<color>',
+	chipSurface: '<color>',
+	chipInk: '<color>',
+	chipActiveSurface: '<color>',
+	chipActiveInk: '<color>',
+})
 
 /** Canonical raised-centre anatomy for a BottomNavigation action.
  *  It is intentionally independent of the action mechanism, so it can sit
@@ -27,17 +47,20 @@ export function BottomNavigationCentreContent(props: {
 	)
 }
 
-export function BottomNavigation<Id extends string>(props: {
-	label?: string
-	items: readonly BottomNavigationItem<Id>[]
-	activeId?: Id | null
-	onSelect: (id: Id) => void
-	/** Elevated action occupies the centre slot between the two item halves. */
-	centre: JSX.Element
-	trailing?: JSX.Element
-	accessoryClass?: ClassProp
-	class?: ClassProp
-}) {
+export function BottomNavigation<Id extends string>(
+	props: {
+		label?: string
+		items: readonly BottomNavigationItem<Id>[]
+		activeId?: Id | null
+		onSelect: (id: Id) => void
+		/** Elevated action occupies the centre slot between the two item halves. */
+		centre: JSX.Element
+		trailing?: JSX.Element
+		accessoryClass?: ClassProp
+		class?: ClassProp
+	} & ColorTreatmentProps &
+		KnobProps<typeof knobs.spec>,
+) {
 	const split = (): number => Math.ceil(props.items.length / 2)
 	const renderItems = (items: readonly BottomNavigationItem<Id>[]) => (
 		<For each={items}>
@@ -57,7 +80,13 @@ export function BottomNavigation<Id extends string>(props: {
 	)
 
 	return (
-		<nav class={['ui-bottom-navigation', props.class]} aria-label={props.label ?? 'Main'}>
+		<nav
+			class={['ui-bottom-navigation', props.class]}
+			aria-label={props.label ?? 'Main'}
+			{...colorTreatmentData(props)}
+			{...knobs.attributes(props)}
+			style={mergeKnobStyle(knobs.style(props), undefined)}
+		>
 			{renderItems(props.items.slice(0, split()))}
 			<span class="ui-bottom-navigation-centre-slot" aria-hidden="true" />
 			<div class="ui-bottom-navigation-centre">{props.centre}</div>

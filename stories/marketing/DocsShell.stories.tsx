@@ -1,11 +1,20 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { DocsShell } from '../../src/marketing'
+import { treatmentArgTypes } from '../primitives/color-treatment-story'
 
 const meta = {
 	title: 'Organisms/DocsShell',
 	component: DocsShell,
 	parameters: { layout: 'fullscreen' },
+	argTypes: {
+		...treatmentArgTypes,
+		maxWidth: { control: 'text', table: { category: 'knobs' } },
+		sideWidth: { control: 'text', table: { category: 'knobs' } },
+		gap: { control: 'text', table: { category: 'knobs' } },
+		progressInk: { control: 'text', table: { category: 'knobs' } },
+		progressHeight: { control: 'text', table: { category: 'knobs' } },
+	},
 } satisfies Meta<typeof DocsShell>
 
 export default meta
@@ -13,8 +22,9 @@ type Story = StoryObj<typeof meta>
 
 export const FullDocument: Story = {
 	name: 'Full document (nav + TOC + progress)',
-	render: () => (
+	render: (args) => (
 		<DocsShell
+			{...args}
 			navLabel="Handbook"
 			nav={[
 				{ label: 'Welcome', href: '#welcome' },
