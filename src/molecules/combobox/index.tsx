@@ -1,6 +1,12 @@
 /** @jsxImportSource @solidjs/web */
-import { createMemo, createSignal, createUniqueId, For, Show } from 'solid-js'
-import type { ClassProp } from '../../shared/color-treatment'
+import { createEffect, createMemo, createSignal, createUniqueId, For, Show } from 'solid-js'
+import { TextInput, textInputKnobs } from '../../atoms/form-control'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 
 const safeId = (value: string): string => value.replace(/[^\w-]/g, '-')
 const normalizeSearchText = (value: string): string =>
@@ -10,10 +16,28 @@ const normalizeSearchText = (value: string): string =>
 		.trim()
 		.toLocaleLowerCase()
 
+/** Per-instance styling contract (see shared/knobs.ts), emitted on the pop.
+ * The input side needs no contract of its own: the composed TextInput's
+ * knobs are drilled straight through under their own names. */
+const knobs = defineKnobs('ui-cb', {
+	listMaxHeight: '<length>',
+	gap: '<length>',
+	optionRadius: '<length-percentage>',
+	optionPadBlock: '<length>',
+	optionPadInline: '<length>',
+	activeSurface: '<color>',
+	activeInk: '<color>',
+	selectedSurface: '<color>',
+	selectedInk: '<color>',
+})
+
 /**
  * A searchable single-selection combobox. Consumers provide domain data and
  * its textual projections; the molecule owns filtering, focus, keyboard
- * navigation and the WAI-ARIA combobox/listbox relationship.
+ * navigation and the WAI-ARIA combobox/listbox relationship. The field is a
+ * composed TextInput; the results list is a top-layer `.ui-anchored` popover
+ * anchored to it (manual, since the combobox owns open/close from focus and
+ * typing), matching the input's width via anchor-size().
  */
 export function Combobox<T>(props: {
 	items: readonly T[]
@@ -29,14 +53,17 @@ export function Combobox<T>(props: {
 	maxResults?: number
 	disabled?: boolean
 	class?: ClassProp
-}) {
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec> &
+	KnobProps<typeof textInputKnobs.spec>) {
 	const id = createUniqueId()
+	const anchor = `--cb-${createUniqueId()}`
 	const [query, setQuery] = createSignal('')
 	const [open, setOpen] = createSignal(false)
 	const [activeIndex, setActiveIndex] = createSignal(0)
 	let root: HTMLDivElement | undefined
-	let input: HTMLInputElement | undefined
 	let list: HTMLDivElement | undefined
+	const input = (): HTMLInputElement | null => root?.querySelector('input') ?? null
 
 	const selectedItem = createMemo(() =>
 		props.items.find((item) => props.getKey(item) === props.value),
@@ -57,6 +84,18 @@ export function Combobox<T>(props: {
 	const activeItem = (): T | undefined => filteredItems()[activeIndex()]
 	const optionId = (item: T): string => `${id}-option-${safeId(props.getKey(item))}`
 
+	// The popover element is always mounted; open/close drives its top-layer
+	// presence so @starting-style entry animation and anchor tracking apply.
+	createEffect(open, (isOpen) => {
+		const element = list
+		if (!element) return
+		if (isOpen) {
+			if (!element.matches(':popover-open')) element.showPopover()
+		} else if (element.matches(':popover-open')) {
+			element.hidePopover()
+		}
+	})
+
 	const revealActive = (index: number): void => {
 		const count = filteredItems().length
 		if (!count) return
@@ -70,7 +109,7 @@ export function Combobox<T>(props: {
 		setQuery(props.getLabel(item))
 		setOpen(false)
 		props.onChange(props.getKey(item), item)
-		input?.focus()
+		input()?.focus()
 	}
 
 	const onKeyDown = (event: KeyboardEvent): void => {
@@ -111,10 +150,7 @@ export function Combobox<T>(props: {
 				if (!root?.contains(event.relatedTarget as Node | null)) setOpen(false)
 			}}
 		>
-			<input
-				ref={(element) => {
-					input = element
-				}}
+			<TextInput
 				class="ui-combobox-input"
 				type="search"
 				role="combobox"
@@ -141,17 +177,36 @@ export function Combobox<T>(props: {
 					setOpen(true)
 				}}
 				onKeyDown={onKeyDown}
+				style={{ 'anchor-name': anchor }}
+				colorBase={props.colorBase}
+				colorLevel={props.colorLevel}
+				variant={props.variant}
+				radius={props.radius}
+				minHeight={props.minHeight}
+				padBlock={props.padBlock}
+				padInline={props.padInline}
+				hoverBorder={props.hoverBorder}
+				focusBorder={props.focusBorder}
+				focusRing={props.focusRing}
+				placeholderInk={props.placeholderInk}
+				selectionSurface={props.selectionSurface}
+				selectionInk={props.selectionInk}
+				caret={props.caret}
 			/>
-			<Show when={open()}>
-				<div
-					id={`${id}-listbox`}
-					class="ui-combobox-listbox"
-					role="listbox"
-					aria-label={`${props.label} results`}
-					ref={(element) => {
-						list = element
-					}}
-				>
+			<div
+				id={`${id}-listbox`}
+				popover="manual"
+				class="ui-anchored ui-combobox-pop"
+				role="listbox"
+				aria-label={`${props.label} results`}
+				ref={(element) => {
+					list = element
+				}}
+				{...colorTreatmentData(props)}
+				{...knobs.attributes(props)}
+				style={mergeKnobStyle(knobs.style(props), { 'position-anchor': anchor })}
+			>
+				<Show when={open()}>
 					<For each={filteredItems()}>
 						{(item, index) => (
 							<div
@@ -176,8 +231,8 @@ export function Combobox<T>(props: {
 					<Show when={!filteredItems().length}>
 						<p class="ui-combobox-empty">{props.emptyMessage ?? 'No matching results.'}</p>
 					</Show>
-				</div>
-			</Show>
+				</Show>
+			</div>
 		</div>
 	)
 }

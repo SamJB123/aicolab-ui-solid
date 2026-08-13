@@ -70,7 +70,6 @@ export function Avatar(props: AvatarProps) {
 		ink: props.ink ?? props.faceColor,
 		ring: props.ring,
 	})
-	const sizeCss = () => toLength(props.size) ?? '36px'
 	return (
 		<span
 			{...attributes}
@@ -94,7 +93,7 @@ export function Avatar(props: AvatarProps) {
 			<Show when={props.status}>
 				{(s) => (
 					<span class="ui-avatar-badge">
-						<StatusDot status={s()} size={`max(7px, calc(${sizeCss()} * 0.2))`} />
+						<StatusDot status={s()} />
 					</span>
 				)}
 			</Show>

@@ -13,11 +13,22 @@ export { AccordionItemContext, type AccordionItemContextValue } from './context'
 
 /** Per-instance styling contract (see shared/knobs.ts). Density/spacing stay
  * with the Accordion collection (see molecules/accordion), which owns the
- * presentation context its items share. */
+ * presentation context its items share — the collection also accepts these
+ * same knob props as defaults for every row (they ride the inheriting public
+ * variables; a knob set on an individual item wins). */
 const knobs = defineKnobs('ui-acc', {
+	padBlock: '<length>',
+	padInline: '<length>',
+	gap: '<length>',
+	radius: '<length-percentage>',
+	iconSize: '<length>',
 	iconInk: '<color>',
+	summaryFontSize: '<length>',
+	bodyInk: '<color>',
+	bodySurface: '<color>',
 	divider: '<color>',
 })
+export { knobs as accordionItemKnobs }
 
 type AccordionItemProps = Omit<JSX.DetailsHtmlAttributes<HTMLDetailsElement>, 'class'> & {
 	class?: ClassProp
@@ -30,6 +41,14 @@ type AccordionItemProps = Omit<JSX.DetailsHtmlAttributes<HTMLDetailsElement>, 'c
 export function AccordionItem(props: AccordionItemProps) {
 	const accordion = useAccordionItemContext()
 	const group = () => props.group ?? accordion.group()
+	/* A surrounding Accordion's colour treatment is the per-prop default; the
+	   item's own props win. (Knob defaults need no JS relay — they inherit as
+	   public custom properties from the collection root.) */
+	const treatment = (): ColorTreatmentProps => ({
+		colorBase: props.colorBase ?? accordion.treatment().colorBase,
+		colorLevel: props.colorLevel ?? accordion.treatment().colorLevel,
+		variant: props.variant ?? accordion.treatment().variant,
+	})
 	const attributes = omit(
 		props,
 		'class',
@@ -41,13 +60,21 @@ export function AccordionItem(props: AccordionItemProps) {
 		'colorBase',
 		'colorLevel',
 		'variant',
+		'padBlock',
+		'padInline',
+		'gap',
+		'radius',
+		'iconSize',
 		'iconInk',
+		'summaryFontSize',
+		'bodyInk',
+		'bodySurface',
 		'divider',
 	)
 	return (
 		<details
 			{...attributes}
-			{...colorTreatmentData(props)}
+			{...colorTreatmentData(treatment())}
 			{...knobs.attributes(props)}
 			name={group()}
 			class={['ui-acc', props.class]}

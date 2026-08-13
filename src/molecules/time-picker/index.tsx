@@ -1,8 +1,24 @@
+/** @jsxImportSource @solidjs/web */
 import { createSignal, createUniqueId, For } from 'solid-js'
+import { Button } from '../../atoms/button'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
 import { fmtTime } from '../../shared/calendar'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 import { createEffect } from '../../solid-v2'
+import { PickerTrigger } from '../pickers/trigger'
 
-const triggerClass = 'ui-picker-trigger'
+/** Per-instance styling contract (see shared/knobs.ts); emitted on the pop
+ * panel, whose descendants consume the inheriting public variables. */
+const knobs = defineKnobs('ui-tp', {
+	wheelHeight: '<length>',
+	itemHeight: '<length>',
+	bandSurface: '<color>',
+	activeInk: '<color>',
+})
 
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 1)
 const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5)
@@ -62,7 +78,13 @@ function Wheel(props: {
 	)
 }
 
-export function TimePicker(props: { value: number; onChange: (min: number) => void }) {
+export function TimePicker(
+	props: KnobProps<typeof knobs.spec> & {
+		value: number
+		onChange: (min: number) => void
+		class?: ClassProp
+	} & ColorTreatmentProps,
+) {
 	const popId = `tp-${createUniqueId()}`
 	const anchor = `--pk-${createUniqueId()}`
 	const [open, setOpen] = createSignal(false)
@@ -73,18 +95,16 @@ export function TimePicker(props: { value: number; onChange: (min: number) => vo
 	}
 
 	return (
-		<div class="ui-picker">
-			<button
-				type="button"
-				popovertarget={popId}
-				class={triggerClass}
-				style={{ 'anchor-name': anchor }}
-			>
-				<span aria-hidden="true" class="ui-picker-trigger-icon">
-					◔
-				</span>
-				<span class="ui-picker-trigger-value">{fmtTime(props.value)}</span>
-			</button>
+		<div class={['ui-picker', props.class]}>
+			<PickerTrigger
+				popoverTarget={popId}
+				anchorName={anchor}
+				icon="◔"
+				colorBase={props.colorBase}
+				colorLevel={props.colorLevel}
+				variant={props.variant}
+				value={fmtTime(props.value)}
+			/>
 			<div
 				ref={(el) => {
 					el.addEventListener('toggle', (e) => {
@@ -93,8 +113,10 @@ export function TimePicker(props: { value: number; onChange: (min: number) => vo
 				}}
 				id={popId}
 				popover="auto"
-				class="ui-picker-pop"
-				style={{ 'position-anchor': anchor }}
+				class="ui-anchored ui-picker-pop"
+				style={mergeKnobStyle(knobs.style(props), { 'position-anchor': anchor })}
+				{...colorTreatmentData(props)}
+				{...knobs.attributes(props)}
 			>
 				<div class="ui-tp-readout">{fmtTime(props.value)}</div>
 				<div class="ui-tp-row">
@@ -121,14 +143,20 @@ export function TimePicker(props: { value: number; onChange: (min: number) => vo
 					<div class="ui-tp-ampm-col">
 						<For each={[false, true]}>
 							{(pm) => (
-								<button
-									type="button"
-									onClick={() => setPart({ pm })}
+								<Button
 									class="ui-tp-ampm"
-									data-active={parts().pm === pm ? '' : undefined}
+									pressed={parts().pm === pm}
+									onClick={() => setPart({ pm })}
+									colorBase={props.colorBase ?? 'primary'}
+									colorLevel={props.colorLevel}
+									variant={props.variant ?? 'ghost'}
+									radius="var(--r-sm)"
+									padBlock="8px"
+									padInline="12px"
+									fontSize="var(--t-sm)"
 								>
 									{pm ? 'PM' : 'AM'}
-								</button>
+								</Button>
 							)}
 						</For>
 					</div>
@@ -136,9 +164,19 @@ export function TimePicker(props: { value: number; onChange: (min: number) => vo
 				<div class="ui-tp-presets">
 					<For each={PRESETS}>
 						{(p) => (
-							<button type="button" onClick={() => props.onChange(p)} class="ui-tp-preset">
+							<Button
+								class="ui-tp-preset"
+								onClick={() => props.onChange(p)}
+								colorBase={props.colorBase ?? 'neutral'}
+								colorLevel={props.colorLevel}
+								variant={props.variant ?? 'ghost'}
+								radius="var(--r-pill)"
+								padBlock="4px"
+								padInline="10px"
+								fontSize="var(--t-xs)"
+							>
 								{fmtTime(p)}
-							</button>
+							</Button>
 						)}
 					</For>
 				</div>

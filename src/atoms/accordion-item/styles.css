@@ -1,13 +1,61 @@
 /* ── Accordion — native <details> animated via ::details-content ──
-   Knobs (iconInk, divider) on the usual wires. iconInk is consumed on a
-   DESCENDANT element (.ui-acc-icon), which a frontier attr() read cannot
-   reach (attr() reads the matched element's own attributes, and the
-   attribute lives on the <details>) — so iconInk rides the inheriting
-   variable wire in both eras and has no attr() swap. */
+   Knobs on the usual two wires. Every adapter is assigned on :scope (the
+   attribute-bearing <details>), so all knobs carry frontier attr() swaps;
+   descendant consumers (summary, body, icon) read the inheriting adapters.
+   Fallback chains thread a --ui-accordion-* MODE CARRIER between the public
+   knob and the context default: the Accordion collection's spacing/density
+   modes (and its width query) set those carriers, so an explicit knob — on
+   the item, or inherited from the collection root — always outranks a mode
+   preset (see molecules/accordion).
+   Treated items paint the role PAIR — background --ui-surface with text
+   --ui-ink (body in the muted ink) — and default to an inline inset plus a
+   small radius so the surface never presses against the text. The ghost
+   variant's surface role is transparent, so ghost items stay see-through
+   by design. */
+@property --_ui-acc-pad-block {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 1.1rem;
+}
+@property --_ui-acc-pad-inline {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+@property --_ui-acc-gap {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 1rem;
+}
+@property --_ui-acc-radius {
+	syntax: "<length-percentage>";
+	inherits: true;
+	initial-value: 0px;
+}
+@property --_ui-acc-icon-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0.85rem;
+}
 @property --_ui-acc-icon-ink {
 	syntax: "<color>";
-	inherits: false;
+	inherits: true;
 	initial-value: currentColor;
+}
+@property --_ui-acc-summary-font-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 16px;
+}
+@property --_ui-acc-body-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-acc-body-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
 }
 @property --_ui-acc-divider {
 	syntax: "<color>";
@@ -17,39 +65,72 @@
 
 @scope (.ui-acc) {
 	:scope {
+		--_ui-acc-pad-block: var(--ui-acc-pad-block, var(--ui-accordion-pad-block, 1.1rem));
+		--_ui-acc-pad-inline: var(--ui-acc-pad-inline, var(--ui-accordion-pad-inline, 0px));
+		--_ui-acc-gap: var(--ui-acc-gap, var(--ui-accordion-summary-gap, 1rem));
+		--_ui-acc-radius: var(--ui-acc-radius, var(--ui-accordion-radius, 0px));
+		--_ui-acc-icon-size: var(--ui-acc-icon-size, 0.85rem);
+		--_ui-acc-icon-ink: var(--ui-acc-icon-ink, var(--color-primary));
+		--_ui-acc-summary-font-size: var(--ui-acc-summary-font-size, var(--ui-accordion-summary-font-size, 1em));
+		--_ui-acc-body-ink: var(--ui-acc-body-ink, var(--color-base-content-muted));
+		--_ui-acc-body-surface: var(--ui-acc-body-surface, color-mix(in oklab, var(--color-base-content) 4%, transparent));
 		--_ui-acc-divider: var(--ui-acc-divider, var(--color-border));
 		border-bottom: 1px solid var(--_ui-acc-divider);
+		border-radius: var(--_ui-acc-radius);
 		/* Compatibility note: unsupported engines still use native <details> and
 		   simply snap between closed/open sizes. Remove this note/gating concern
 		   once interpolate-size is Baseline. */
 		interpolate-size: allow-keywords;
 	}
+	/* Surfaces and inks travel as PAIRS: the treated item paints --ui-surface
+	   with --ui-ink, and every state that swaps the surface re-pairs its ink. */
+	:scope[data-ui-color-base] {
+		--_ui-acc-pad-inline: var(--ui-acc-pad-inline, var(--ui-accordion-pad-inline, 1rem));
+		--_ui-acc-radius: var(--ui-acc-radius, var(--ui-accordion-radius, var(--r-md)));
+		/* The icon sits ON the item's painted surface, so it pairs with
+		   --ui-ink; --ui-color-foreground would pair with the page scheme
+		   instead and vanish on solid surfaces. */
+		--_ui-acc-icon-ink: var(--ui-acc-icon-ink, var(--ui-ink));
+		--_ui-acc-body-ink: var(--ui-acc-body-ink, var(--ui-ink-muted));
+		--_ui-acc-body-surface: var(--ui-acc-body-surface, var(--ui-surface-inset));
+		--_ui-acc-divider: var(--ui-acc-divider, var(--ui-border));
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+	}
 	:scope summary {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
-		gap: 1rem;
-		padding: 1.1rem 0;
+		gap: var(--_ui-acc-gap);
+		padding: var(--_ui-acc-pad-block) var(--_ui-acc-pad-inline);
+		border-radius: var(--_ui-acc-radius);
 		cursor: pointer;
 		list-style: none;
 		color: var(--color-base-content);
+		font-size: var(--_ui-acc-summary-font-size);
 		font-weight: 500;
+		transition:
+			background-color 0.2s,
+			color 0.2s;
+	}
+	:scope summary:hover {
+		background: var(--color-base-150);
+	}
+	:scope[data-ui-color-base] summary {
+		color: var(--ui-ink);
+	}
+	:scope[data-ui-color-base] summary:hover {
+		background: var(--ui-surface-hover);
+		color: var(--ui-ink-hover);
 	}
 	:scope summary::-webkit-details-marker {
 		display: none;
 	}
-	:scope[data-ui-color-base] {
-		--_ui-acc-divider: var(--ui-acc-divider, var(--ui-border));
-	}
-	:scope[data-ui-color-base] .ui-acc-icon {
-		--_ui-acc-icon-ink: var(--ui-acc-icon-ink, var(--ui-color-foreground));
-	}
 	:scope .ui-acc-icon {
-		--_ui-acc-icon-ink: var(--ui-acc-icon-ink, var(--color-primary));
 		position: relative;
 		flex: 0 0 auto;
-		width: 0.85rem;
-		height: 0.85rem;
+		width: var(--_ui-acc-icon-size);
+		height: var(--_ui-acc-icon-size);
 		align-self: center;
 		color: var(--_ui-acc-icon-ink);
 	}
@@ -83,18 +164,38 @@
 	:scope[open]::details-content {
 		height: auto;
 	}
+	/* The expanded region reads as a recess: an inset wash distinct from the
+	   collapsed surface (role --ui-surface-inset when treated; a faint ink
+	   tint that works on any page background when plain). Its bottom corners
+	   follow the item's radius since the body is the item's last box. */
 	:scope .ui-acc-body {
-		padding: 0 0 1.25rem;
-		color: var(--color-base-content-muted);
+		padding: 0.9rem var(--_ui-acc-pad-inline) 1.25rem;
+		border-radius: 0 0 var(--_ui-acc-radius) var(--_ui-acc-radius);
+		background: var(--_ui-acc-body-surface);
+		color: var(--_ui-acc-body-ink);
 		line-height: 1.65;
 	}
 
-	/* ── Frontier knob boundary (divider only — see header note) ── */
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
+			--_ui-acc-pad-block: attr(data-ui-acc-pad-block type(<length>), var(--ui-acc-pad-block, var(--ui-accordion-pad-block, 1.1rem)));
+			--_ui-acc-pad-inline: attr(data-ui-acc-pad-inline type(<length>), var(--ui-acc-pad-inline, var(--ui-accordion-pad-inline, 0px)));
+			--_ui-acc-gap: attr(data-ui-acc-gap type(<length>), var(--ui-acc-gap, var(--ui-accordion-summary-gap, 1rem)));
+			--_ui-acc-radius: attr(data-ui-acc-radius type(<length-percentage>), var(--ui-acc-radius, var(--ui-accordion-radius, 0px)));
+			--_ui-acc-icon-size: attr(data-ui-acc-icon-size type(<length>), var(--ui-acc-icon-size, 0.85rem));
+			--_ui-acc-icon-ink: attr(data-ui-acc-icon-ink type(<color>), var(--ui-acc-icon-ink, var(--color-primary)));
+			--_ui-acc-summary-font-size: attr(data-ui-acc-summary-font-size type(<length>), var(--ui-acc-summary-font-size, var(--ui-accordion-summary-font-size, 1em)));
+			--_ui-acc-body-ink: attr(data-ui-acc-body-ink type(<color>), var(--ui-acc-body-ink, var(--color-base-content-muted)));
+			--_ui-acc-body-surface: attr(data-ui-acc-body-surface type(<color>), var(--ui-acc-body-surface, color-mix(in oklab, var(--color-base-content) 4%, transparent)));
 			--_ui-acc-divider: attr(data-ui-acc-divider type(<color>), var(--ui-acc-divider, var(--color-border)));
 		}
 		:scope[data-ui-color-base] {
+			--_ui-acc-pad-inline: attr(data-ui-acc-pad-inline type(<length>), var(--ui-acc-pad-inline, var(--ui-accordion-pad-inline, 1rem)));
+			--_ui-acc-radius: attr(data-ui-acc-radius type(<length-percentage>), var(--ui-acc-radius, var(--ui-accordion-radius, var(--r-md))));
+			--_ui-acc-icon-ink: attr(data-ui-acc-icon-ink type(<color>), var(--ui-acc-icon-ink, var(--ui-ink)));
+			--_ui-acc-body-ink: attr(data-ui-acc-body-ink type(<color>), var(--ui-acc-body-ink, var(--ui-ink-muted)));
+			--_ui-acc-body-surface: attr(data-ui-acc-body-surface type(<color>), var(--ui-acc-body-surface, var(--ui-surface-inset)));
 			--_ui-acc-divider: attr(data-ui-acc-divider type(<color>), var(--ui-acc-divider, var(--ui-border)));
 		}
 	}

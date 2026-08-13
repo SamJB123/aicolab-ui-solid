@@ -1,25 +1,59 @@
+/* ── DatePicker panel anatomy ──
+   Nav arrows are composed IconButtons (no styles here). Day-cell knobs ride
+   the inheriting variable wire (consumed on descendants of the treated pop
+   root); treated contexts re-default the highlight surfaces to the family
+   roles. */
+@property --_ui-dp-day-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 32px;
+}
+@property --_ui-dp-day-radius {
+	syntax: "<length-percentage>";
+	inherits: true;
+	initial-value: 8px;
+}
+@property --_ui-dp-hover-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-dp-hover-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-dp-selected-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-dp-selected-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-picker-pop) {
-	:scope { padding: 12px; }
-.ui-dp-head {
+	:scope {
+		--_ui-dp-day-size: var(--ui-dp-day-size, 32px);
+		--_ui-dp-day-radius: var(--ui-dp-day-radius, var(--r-sm));
+		--_ui-dp-hover-surface: var(--ui-dp-hover-surface, var(--color-primary-soft));
+		--_ui-dp-hover-ink: var(--ui-dp-hover-ink, var(--color-primary));
+		--_ui-dp-selected-surface: var(--ui-dp-selected-surface, var(--color-primary));
+		--_ui-dp-selected-ink: var(--ui-dp-selected-ink, var(--color-base-200));
+	}
+	:scope[data-ui-color-base] {
+		--_ui-dp-hover-surface: var(--ui-dp-hover-surface, var(--ui-surface-hover));
+		--_ui-dp-hover-ink: var(--ui-dp-hover-ink, var(--ui-ink-hover));
+		--_ui-dp-selected-surface: var(--ui-dp-selected-surface, var(--ui-color));
+		--_ui-dp-selected-ink: var(--ui-dp-selected-ink, var(--ui-content));
+	}
+	.ui-dp-head {
 		margin-bottom: 8px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-	}
-	.ui-dp-nav {
-		display: grid;
-		width: 28px;
-		height: 28px;
-		place-items: center;
-		border: 0;
-		border-radius: var(--r-sm);
-		font: inherit;
-		cursor: pointer;
-		background: transparent;
-		color: var(--color-base-content-muted);
-	}
-	.ui-dp-nav:hover {
-		background: var(--color-base-100);
 	}
 	.ui-dp-title {
 		font-family: var(--font-display, Georgia, serif);
@@ -43,10 +77,10 @@
 	}
 	.ui-dp-day {
 		display: grid;
-		height: 32px;
+		height: var(--_ui-dp-day-size);
 		place-items: center;
 		border: 0;
-		border-radius: var(--r-sm);
+		border-radius: var(--_ui-dp-day-radius);
 		font-family: var(--font-data, ui-monospace, monospace);
 		font-size: var(--t-sm);
 		font-variant-numeric: tabular-nums;
@@ -58,16 +92,15 @@
 			color 0.2s;
 	}
 	.ui-dp-day:hover:not([data-selected]) {
-		background: var(--color-primary-soft);
-		color: var(--color-primary);
+		background: var(--_ui-dp-hover-surface);
+		color: var(--_ui-dp-hover-ink);
 	}
 	.ui-dp-day[data-selected] {
-		background: var(--color-primary);
+		background: var(--_ui-dp-selected-surface);
 		font-weight: 600;
-		color: var(--color-base-200);
+		color: var(--_ui-dp-selected-ink);
 	}
 	.ui-dp-day[data-today]:not([data-selected]) {
 		box-shadow: 0 0 0 1px var(--color-border-strong);
 	}
-
 }

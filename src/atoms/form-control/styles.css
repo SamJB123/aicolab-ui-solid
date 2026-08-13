@@ -134,6 +134,11 @@
 		--_ui-input-hover-border: var(--ui-input-hover-border, var(--ui-border-hover));
 		--_ui-input-focus-border: var(--ui-input-focus-border, var(--ui-border-active));
 		--_ui-input-focus-ring: var(--ui-input-focus-ring, var(--ui-focus-ring));
+		/* Placeholder and selection re-pair with the treated surface:
+		   --ui-ink-faint is the paired ink's faint companion, and the
+		   selection wash trades primary for the family colour. */
+		--_ui-input-placeholder-ink: var(--ui-input-placeholder-ink, var(--ui-ink-faint));
+		--_ui-input-selection-surface: var(--ui-input-selection-surface, color-mix(in oklab, var(--ui-color) 30%, transparent));
 		border-color: var(--ui-border);
 		background: var(--ui-surface);
 		color: var(--ui-ink);
@@ -185,6 +190,8 @@
 			--_ui-input-hover-border: attr(data-ui-input-hover-border type(<color>), var(--ui-input-hover-border, var(--ui-border-hover)));
 			--_ui-input-focus-border: attr(data-ui-input-focus-border type(<color>), var(--ui-input-focus-border, var(--ui-border-active)));
 			--_ui-input-focus-ring: attr(data-ui-input-focus-ring type(<color>), var(--ui-input-focus-ring, var(--ui-focus-ring)));
+			--_ui-input-placeholder-ink: attr(data-ui-input-placeholder-ink type(<color>), var(--ui-input-placeholder-ink, var(--ui-ink-faint)));
+			--_ui-input-selection-surface: attr(data-ui-input-selection-surface type(<color>), var(--ui-input-selection-surface, color-mix(in oklab, var(--ui-color) 30%, transparent)));
 		}
 	}
 }

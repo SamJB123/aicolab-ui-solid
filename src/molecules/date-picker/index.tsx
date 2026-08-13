@@ -1,15 +1,45 @@
+/** @jsxImportSource @solidjs/web */
 import { createSignal, createUniqueId, For, Show, untrack } from 'solid-js'
-import { daysInMonth, firstWeekday, MONTHS, todayYMD, WEEKDAYS, weekdayOf, type YMD } from '../../shared/calendar'
+import { IconButton } from '../../atoms/icon-button'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import {
+	daysInMonth,
+	firstWeekday,
+	MONTHS,
+	todayYMD,
+	WEEKDAYS,
+	weekdayOf,
+	type YMD,
+} from '../../shared/calendar'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
+import { PickerTrigger } from '../pickers/trigger'
 
 const sameDay = (a: YMD, b: YMD) => a.y === b.y && a.m === b.m && a.d === b.d
-const triggerClass = 'ui-picker-trigger'
 
-export function DatePicker(props: {
-	value: YMD
-	onChange: (v: YMD) => void
-	/** The date ringed as "today". Defaults to the real current date. */
-	today?: YMD
-}) {
+/** Per-instance styling contract (see shared/knobs.ts); emitted on the pop
+ * panel, whose descendants consume the inheriting public variables. */
+const knobs = defineKnobs('ui-dp', {
+	daySize: '<length>',
+	dayRadius: '<length-percentage>',
+	hoverSurface: '<color>',
+	hoverInk: '<color>',
+	selectedSurface: '<color>',
+	selectedInk: '<color>',
+})
+
+export function DatePicker(
+	props: KnobProps<typeof knobs.spec> & {
+		value: YMD
+		onChange: (v: YMD) => void
+		/** The date ringed as "today". Defaults to the real current date. */
+		today?: YMD
+		class?: ClassProp
+	} & ColorTreatmentProps,
+) {
 	const popId = `dp-${createUniqueId()}`
 	const anchor = `--pk-${createUniqueId()}`
 	const today = () => props.today ?? todayYMD()
@@ -37,21 +67,21 @@ export function DatePicker(props: {
 	}
 
 	return (
-		<div class="ui-picker">
-			<button
-				type="button"
-				popovertarget={popId}
-				class={triggerClass}
-				style={{ 'anchor-name': anchor }}
-			>
-				<span aria-hidden="true" class="ui-picker-trigger-icon">
-					◷
-				</span>
-				<span class="ui-picker-trigger-value">
-					{WEEKDAYS[weekdayOf(props.value.y, props.value.m, props.value.d)]} {props.value.d}{' '}
-					{MONTHS[props.value.m].slice(0, 3)}
-				</span>
-			</button>
+		<div class={['ui-picker', props.class]}>
+			<PickerTrigger
+				popoverTarget={popId}
+				anchorName={anchor}
+				icon="◷"
+				colorBase={props.colorBase}
+				colorLevel={props.colorLevel}
+				variant={props.variant}
+				value={
+					<>
+						{WEEKDAYS[weekdayOf(props.value.y, props.value.m, props.value.d)]} {props.value.d}{' '}
+						{MONTHS[props.value.m].slice(0, 3)}
+					</>
+				}
+			/>
 			<div
 				ref={(el) => {
 					pop = el
@@ -59,24 +89,41 @@ export function DatePicker(props: {
 				}}
 				id={popId}
 				popover="auto"
-				class="ui-picker-pop"
-				style={{ 'position-anchor': anchor }}
+				class="ui-anchored ui-picker-pop"
+				style={mergeKnobStyle(knobs.style(props), { 'position-anchor': anchor })}
+				{...colorTreatmentData(props)}
+				{...knobs.attributes(props)}
 			>
 				<div class="ui-dp-head">
-					<button
-						type="button"
-						aria-label="Previous month"
+					<IconButton
+						label="Previous month"
+						size="28px"
+						radius="var(--r-sm)"
+						ring="transparent"
+						hoverSurface={props.colorBase ? undefined : 'var(--color-base-100)'}
+						colorBase={props.colorBase}
+						colorLevel={props.colorLevel}
+						variant={props.variant}
 						onClick={() => shift(-1)}
-						class="ui-dp-nav"
 					>
 						‹
-					</button>
+					</IconButton>
 					<span class="ui-dp-title">
 						{MONTHS[view().m]} {view().y}
 					</span>
-					<button type="button" aria-label="Next month" onClick={() => shift(1)} class="ui-dp-nav">
+					<IconButton
+						label="Next month"
+						size="28px"
+						radius="var(--r-sm)"
+						ring="transparent"
+						hoverSurface={props.colorBase ? undefined : 'var(--color-base-100)'}
+						colorBase={props.colorBase}
+						colorLevel={props.colorLevel}
+						variant={props.variant}
+						onClick={() => shift(1)}
+					>
 						›
-					</button>
+					</IconButton>
 				</div>
 				<div class="ui-dp-grid">
 					<For each={WEEKDAYS}>{(w) => <span class="ui-dp-wd">{w[0]}</span>}</For>

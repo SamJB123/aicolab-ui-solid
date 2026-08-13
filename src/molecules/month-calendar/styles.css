@@ -1,6 +1,80 @@
-/* ── MonthCalendar ── */
+/* ── MonthCalendar ──
+   Knobs ride the inheriting variable wire (consumed on descendants of the
+   treated root); treated contexts re-default the highlight surfaces to the
+   family roles. Nav arrows and the Today button are composed atoms. */
+@property --_ui-cal-cell-min-height {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 84px;
+}
+@property --_ui-cal-grid-gap {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 4px;
+}
+@property --_ui-cal-day-radius {
+	syntax: "<length-percentage>";
+	inherits: true;
+	initial-value: 12px;
+}
+@property --_ui-cal-daynum-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 24px;
+}
+@property --_ui-cal-selected-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-cal-selected-border {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-cal-selected-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-cal-daynum-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-cal-today-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-cal-today-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-cal) {
-	:scope { display: flex; flex-direction: column; }
+	:scope {
+		--_ui-cal-cell-min-height: var(--ui-cal-cell-min-height, 84px);
+		--_ui-cal-grid-gap: var(--ui-cal-grid-gap, 4px);
+		--_ui-cal-day-radius: var(--ui-cal-day-radius, var(--r-md));
+		--_ui-cal-daynum-size: var(--ui-cal-daynum-size, 24px);
+		--_ui-cal-selected-surface: var(--ui-cal-selected-surface, var(--color-primary-soft));
+		--_ui-cal-selected-border: var(--ui-cal-selected-border, color-mix(in oklab, var(--color-primary) 45%, transparent));
+		--_ui-cal-selected-ink: var(--ui-cal-selected-ink, var(--color-base-content));
+		--_ui-cal-daynum-ink: var(--color-base-content-muted);
+		--_ui-cal-today-surface: var(--ui-cal-today-surface, var(--color-primary));
+		--_ui-cal-today-ink: var(--ui-cal-today-ink, var(--color-base-200));
+		display: flex;
+		flex-direction: column;
+	}
+	:scope[data-ui-color-base] {
+		--_ui-cal-selected-surface: var(--ui-cal-selected-surface, var(--ui-surface-selected));
+		--_ui-cal-selected-border: var(--ui-cal-selected-border, var(--ui-border-selected));
+		--_ui-cal-selected-ink: var(--ui-cal-selected-ink, var(--ui-ink-selected));
+		--_ui-cal-today-surface: var(--ui-cal-today-surface, var(--ui-color));
+		--_ui-cal-today-ink: var(--ui-cal-today-ink, var(--ui-content));
+	}
 	/* flex-wrap: at extreme narrowness the controls drop to a second row
 	   instead of forcing the whole calendar past its container. */
 	:scope > .ui-cal-head {
@@ -35,30 +109,16 @@
 		align-items: center;
 		gap: 8px;
 	}
-	.ui-cal-today-btn {
-		border: 0;
-		border-radius: var(--r-pill);
-		padding: 6px 12px;
+	/* Composed-Button tuning: label voice for the Today control. */
+	.ui-btn.ui-cal-today-btn {
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-		font-size: var(--t-xs);
 		text-transform: uppercase;
 		letter-spacing: 0.16em;
-		cursor: pointer;
-		background: transparent;
-		color: var(--color-base-content-muted);
-		box-shadow: 0 0 0 1px var(--color-border);
-		transition:
-			color 0.2s,
-			background-color 0.2s;
-	}
-	.ui-cal-today-btn:hover {
-		background: var(--color-base-150);
-		color: var(--color-base-content);
 	}
 	:scope > .ui-cal-weekdays {
 		display: grid;
 		grid-template-columns: repeat(7, 1fr);
-		gap: 4px;
+		gap: var(--_ui-cal-grid-gap);
 		border-bottom: 1px solid var(--color-border);
 		padding-bottom: 8px;
 	}
@@ -74,18 +134,18 @@
 		margin-top: 4px;
 		display: grid;
 		grid-template-columns: repeat(7, 1fr);
-		gap: 4px;
+		gap: var(--_ui-cal-grid-gap);
 	}
 	.ui-cal-blank {
-		min-height: 84px;
+		min-height: var(--_ui-cal-cell-min-height);
 	}
 	.ui-cal-day {
 		display: flex;
-		min-height: 84px;
+		min-height: var(--_ui-cal-cell-min-height);
 		flex-direction: column;
 		gap: 4px;
 		border: 1px solid transparent;
-		border-radius: var(--r-md);
+		border-radius: var(--_ui-cal-day-radius);
 		padding: 6px;
 		text-align: left;
 		font: inherit;
@@ -96,28 +156,39 @@
 			background-color 0.2s,
 			border-color 0.2s;
 	}
+	/* Surfaces and inks travel as PAIRS: whenever a rule paints a role
+	   surface, the paired role ink is painted with it — the day-number ink
+	   adapter re-pairs per state so the digits keep contrast on hover and
+	   selection in any family. */
 	.ui-cal-day:hover:not([data-selected]) {
 		background: var(--color-base-150);
 	}
+	:scope[data-ui-color-base] .ui-cal-day:hover:not([data-selected]) {
+		--_ui-cal-daynum-ink: var(--ui-ink-hover);
+		background: var(--ui-surface-hover);
+		color: var(--ui-ink-hover);
+	}
 	.ui-cal-day[data-selected] {
-		border-color: color-mix(in oklab, var(--color-primary) 45%, transparent);
-		background: var(--color-primary-soft);
+		--_ui-cal-daynum-ink: var(--_ui-cal-selected-ink);
+		border-color: var(--_ui-cal-selected-border);
+		background: var(--_ui-cal-selected-surface);
+		color: var(--_ui-cal-selected-ink);
 	}
 	.ui-cal-daynum {
 		display: grid;
-		width: 24px;
-		height: 24px;
+		width: var(--_ui-cal-daynum-size);
+		height: var(--_ui-cal-daynum-size);
 		place-items: center;
 		border-radius: var(--r-pill);
 		font-family: var(--font-data, ui-monospace, monospace);
 		font-size: var(--t-sm);
 		font-variant-numeric: tabular-nums;
-		color: var(--color-base-content-muted);
+		color: var(--_ui-cal-daynum-ink);
 	}
 	.ui-cal-daynum[data-today] {
-		background: var(--color-primary);
+		background: var(--_ui-cal-today-surface);
 		font-weight: 600;
-		color: var(--color-base-200);
+		color: var(--_ui-cal-today-ink);
 	}
 }
 

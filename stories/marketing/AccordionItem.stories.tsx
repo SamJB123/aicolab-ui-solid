@@ -10,7 +10,15 @@ const meta = {
 	args: { summary: 'What does membership cost?' },
 	argTypes: {
 		...treatmentArgTypes,
+		padBlock: { control: 'text', table: { category: 'knobs' } },
+		padInline: { control: 'text', table: { category: 'knobs' } },
+		gap: { control: 'text', table: { category: 'knobs' } },
+		radius: { control: 'text', table: { category: 'knobs' } },
+		iconSize: { control: 'text', table: { category: 'knobs' } },
 		iconInk: { control: 'text', table: { category: 'knobs' } },
+		summaryFontSize: { control: 'text', table: { category: 'knobs' } },
+		bodyInk: { control: 'text', table: { category: 'knobs' } },
+		bodySurface: { control: 'text', table: { category: 'knobs' } },
 		divider: { control: 'text', table: { category: 'knobs' } },
 	},
 } satisfies Meta<typeof AccordionItem>

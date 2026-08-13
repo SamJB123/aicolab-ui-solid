@@ -64,19 +64,55 @@
 }
 
 /* ── Anchored top-layer popover ──
-   A Popover-API panel anchored to its trigger, flipped within the viewport by
-   position-try, animated with @starting-style + allow-discrete. Top-layer
-   means it is never clipped by an ancestor. Set `position-anchor` (and an
-   `anchor-name` on the trigger) inline per instance. */
+   THE shared overlay shell: a Popover-API panel anchored to its trigger,
+   flipped within the viewport by position-try, animated with
+   @starting-style + allow-discrete. Top-layer means it is never clipped by
+   an ancestor. Set `position-anchor` (and an `anchor-name` on the trigger)
+   inline per instance. Knobs (width, maxWidth, pad, radius, surface) on the
+   usual two wires; composing surfaces (e.g. .ui-picker-pop) re-default them
+   per context. The surface adapter inherits so children (fade masks) can
+   blend into it. */
+@property --_ui-anchored-width {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 224px;
+}
+@property --_ui-anchored-max-width {
+	syntax: "<length>";
+	inherits: false;
+	/* Dummy — the real default is viewport-relative and lives below. */
+	initial-value: 9999px;
+}
+@property --_ui-anchored-pad {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 14px;
+}
+@property --_ui-anchored-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 16px;
+}
+@property --_ui-anchored-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
 @scope (.ui-anchored) {
 	:scope {
+	--_ui-anchored-width: var(--ui-anchored-width, 224px);
+	--_ui-anchored-max-width: var(--ui-anchored-max-width, calc(100vw - 1.5rem));
+	--_ui-anchored-pad: var(--ui-anchored-pad, 14px);
+	--_ui-anchored-radius: var(--ui-anchored-radius, var(--r-lg));
+	--_ui-anchored-surface: var(--ui-anchored-surface, var(--color-base-150));
 	margin: 0;
 	inset: auto;
-	width: 224px;
-	padding: 14px;
+	width: var(--_ui-anchored-width);
+	max-width: var(--_ui-anchored-max-width);
+	padding: var(--_ui-anchored-pad);
 	border: 0;
-	border-radius: var(--r-lg);
-	background: var(--color-base-150);
+	border-radius: var(--_ui-anchored-radius);
+	background: var(--_ui-anchored-surface);
 	color: var(--color-base-content);
 	outline: 1px solid var(--color-border-strong);
 	box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.7);
@@ -100,6 +136,17 @@
 			position-area: block-end span-inline-end;
 			margin-top: 8px;
 			position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+		}
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-anchored-width: attr(data-ui-anchored-width type(<length>), var(--ui-anchored-width, 224px));
+			--_ui-anchored-max-width: attr(data-ui-anchored-max-width type(<length>), var(--ui-anchored-max-width, calc(100vw - 1.5rem)));
+			--_ui-anchored-pad: attr(data-ui-anchored-pad type(<length>), var(--ui-anchored-pad, 14px));
+			--_ui-anchored-radius: attr(data-ui-anchored-radius type(<length-percentage>), var(--ui-anchored-radius, var(--r-lg)));
+			--_ui-anchored-surface: attr(data-ui-anchored-surface type(<color>), var(--ui-anchored-surface, var(--color-base-150)));
 		}
 	}
 }

@@ -12,6 +12,11 @@
 	inherits: false;
 	initial-value: 999px;
 }
+@property --_ui-iconbtn-ring {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
 @property --_ui-iconbtn-hover-surface {
 	syntax: "<color>";
 	inherits: false;
@@ -27,6 +32,7 @@
 	:scope {
 		--_ui-iconbtn-size: var(--ui-iconbtn-size, 36px);
 		--_ui-iconbtn-radius: var(--ui-iconbtn-radius, var(--r-pill));
+		--_ui-iconbtn-ring: var(--ui-iconbtn-ring, var(--color-border));
 		--_ui-iconbtn-hover-surface: var(--ui-iconbtn-hover-surface, var(--color-base-150));
 		--_ui-iconbtn-hover-ink: var(--ui-iconbtn-hover-ink, var(--color-base-content));
 
@@ -41,16 +47,17 @@
 		cursor: pointer;
 		background: transparent;
 		color: var(--color-base-content-muted);
-		box-shadow: 0 0 0 1px var(--color-border);
+		box-shadow: 0 0 0 1px var(--_ui-iconbtn-ring);
 		transition: all 0.2s;
 	}
 	:scope[data-size="sm"] { --_ui-iconbtn-size: var(--ui-iconbtn-size, 30px); }
 	:scope[data-size="lg"] { --_ui-iconbtn-size: var(--ui-iconbtn-size, 44px); }
 	:scope[data-ui-color-base] {
+		--_ui-iconbtn-ring: var(--ui-iconbtn-ring, var(--ui-border));
 		--_ui-iconbtn-hover-surface: var(--ui-iconbtn-hover-surface, var(--ui-surface-hover));
 		--_ui-iconbtn-hover-ink: var(--ui-iconbtn-hover-ink, var(--ui-ink-hover));
 		color: var(--ui-color-foreground);
-		box-shadow: 0 0 0 1px var(--ui-border);
+		box-shadow: 0 0 0 1px var(--_ui-iconbtn-ring);
 	}
 	:scope:hover:not(:disabled) {
 		background: var(--_ui-iconbtn-hover-surface);
@@ -64,12 +71,14 @@
 		:scope {
 			--_ui-iconbtn-size: attr(data-ui-iconbtn-size type(<length>), var(--ui-iconbtn-size, 36px));
 			--_ui-iconbtn-radius: attr(data-ui-iconbtn-radius type(<length-percentage>), var(--ui-iconbtn-radius, var(--r-pill)));
+			--_ui-iconbtn-ring: attr(data-ui-iconbtn-ring type(<color>), var(--ui-iconbtn-ring, var(--color-border)));
 			--_ui-iconbtn-hover-surface: attr(data-ui-iconbtn-hover-surface type(<color>), var(--ui-iconbtn-hover-surface, var(--color-base-150)));
 			--_ui-iconbtn-hover-ink: attr(data-ui-iconbtn-hover-ink type(<color>), var(--ui-iconbtn-hover-ink, var(--color-base-content)));
 		}
 		:scope[data-size="sm"] { --_ui-iconbtn-size: attr(data-ui-iconbtn-size type(<length>), var(--ui-iconbtn-size, 30px)); }
 		:scope[data-size="lg"] { --_ui-iconbtn-size: attr(data-ui-iconbtn-size type(<length>), var(--ui-iconbtn-size, 44px)); }
 		:scope[data-ui-color-base] {
+			--_ui-iconbtn-ring: attr(data-ui-iconbtn-ring type(<color>), var(--ui-iconbtn-ring, var(--ui-border)));
 			--_ui-iconbtn-hover-surface: attr(data-ui-iconbtn-hover-surface type(<color>), var(--ui-iconbtn-hover-surface, var(--ui-surface-hover)));
 			--_ui-iconbtn-hover-ink: attr(data-ui-iconbtn-hover-ink type(<color>), var(--ui-iconbtn-hover-ink, var(--ui-ink-hover)));
 		}

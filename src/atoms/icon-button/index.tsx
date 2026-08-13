@@ -12,6 +12,7 @@ import { defineKnobs, mergeKnobStyle, type KnobProps, type UiLength } from '../.
 const knobs = defineKnobs('ui-iconbtn', {
 	size: '<length>',
 	radius: '<length-percentage>',
+	ring: '<color>',
 	hoverSurface: '<color>',
 	hoverInk: '<color>',
 })
@@ -39,6 +40,7 @@ export function IconButton(props: IconButtonProps) {
 		'colorLevel',
 		'variant',
 		'radius',
+		'ring',
 		'hoverSurface',
 		'hoverInk',
 	)
@@ -53,6 +55,7 @@ export function IconButton(props: IconButtonProps) {
 	const knobValues = () => ({
 		size: measuredSize(),
 		radius: props.radius,
+		ring: props.ring,
 		hoverSurface: props.hoverSurface,
 		hoverInk: props.hoverInk,
 	})

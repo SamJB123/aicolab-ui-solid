@@ -1,11 +1,31 @@
 import type { JSX } from '@solidjs/web'
 import { createMemo, For, Show } from 'solid-js'
+import { Button } from '../../atoms/button'
 import { IconButton } from '../../atoms/icon-button'
-import type { ClassProp } from '../../shared/color-treatment'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 import { withViewTransition } from '../../vt'
 import { MONTHS, WEEKDAYS, addMonths, monthCells, monthIndex, sameDay, todayYMD, type YM, type YMD } from '../../shared/calendar'
 
-export function MonthCalendar(props: {
+/** Per-instance styling contract (see shared/knobs.ts); the values are
+ * consumed on descendants via the inheriting public variables. */
+const knobs = defineKnobs('ui-cal', {
+	cellMinHeight: '<length>',
+	gridGap: '<length>',
+	dayRadius: '<length-percentage>',
+	daynumSize: '<length>',
+	selectedSurface: '<color>',
+	selectedBorder: '<color>',
+	selectedInk: '<color>',
+	todaySurface: '<color>',
+	todayInk: '<color>',
+})
+
+export function MonthCalendar(props: KnobProps<typeof knobs.spec> & {
 	month: YM
 	/** Called inside a view transition — set your month signal here. */
 	onMonthChange: (next: YM) => void
@@ -26,7 +46,7 @@ export function MonthCalendar(props: {
 	/** Content of a day cell, under the day number. */
 	day?: (date: () => YMD) => JSX.Element
 	class?: ClassProp
-}) {
+} & ColorTreatmentProps) {
 	const today = () => props.today ?? todayYMD()
 	const cells = createMemo(() => monthCells(props.month.y, props.month.m))
 
@@ -55,7 +75,12 @@ export function MonthCalendar(props: {
 		(props.showTodayButton ?? true) && inRange(monthIndex({ y: today().y, m: today().m }))
 
 	return (
-		<div class={['ui-cal', props.class]}>
+		<div
+			class={['ui-cal', props.class]}
+			{...colorTreatmentData(props)}
+			{...knobs.attributes(props)}
+			style={mergeKnobStyle(knobs.style(props), undefined)}
+		>
 			<div class="ui-cal-head">
 				<div class="ui-cal-head-left">
 					<h2>{MONTHS[props.month.m]}</h2>
@@ -63,18 +88,38 @@ export function MonthCalendar(props: {
 				</div>
 				<div class="ui-cal-head-controls">
 					<Show when={showToday()}>
-						<button type="button" onClick={goToday} class="ui-cal-today-btn">
+						<Button
+							class="ui-cal-today-btn"
+							onClick={goToday}
+							colorBase={props.colorBase ?? 'neutral'}
+							colorLevel={props.colorLevel}
+							variant={props.variant ?? 'ghost'}
+							radius="var(--r-pill)"
+							padBlock="6px"
+							padInline="12px"
+							fontSize="var(--t-xs)"
+						>
 							Today
-						</button>
+						</Button>
 					</Show>
 					<IconButton
 						label="Previous month"
 						disabled={!canShift(-1)}
+						colorBase={props.colorBase}
+						colorLevel={props.colorLevel}
+						variant={props.variant}
 						onClick={() => shiftMonth(-1)}
 					>
 						‹
 					</IconButton>
-					<IconButton label="Next month" disabled={!canShift(1)} onClick={() => shiftMonth(1)}>
+					<IconButton
+						label="Next month"
+						disabled={!canShift(1)}
+						colorBase={props.colorBase}
+						colorLevel={props.colorLevel}
+						variant={props.variant}
+						onClick={() => shiftMonth(1)}
+					>
 						›
 					</IconButton>
 				</div>

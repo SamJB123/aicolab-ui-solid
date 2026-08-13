@@ -74,6 +74,10 @@
 		border-radius: var(--r-pill);
 		padding: 2px;
 		background: var(--_ui-avatar-ring);
+		/* The dot sizes from the avatar: supply StatusDot's PUBLIC knob var,
+		   derived from the size adapter — correct however the size arrives
+		   (prop, inherited public var, or a container's re-default). */
+		--ui-dot-size: max(7px, calc(var(--_ui-avatar-size) * 0.2));
 	}
 	:scope[data-ui-color-base] > .ui-avatar-badge {
 		background: var(--ui-surface-raised);

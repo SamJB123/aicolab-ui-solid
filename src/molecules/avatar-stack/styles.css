@@ -1,30 +1,114 @@
-/* ── AvatarStack ── */
+/* ── AvatarStack ──
+   Knobs on the usual two wires; adapters inherit because the items, the +N
+   chip and the composed Avatars consume them. The separator ring fakes a
+   cutout, so it defaults to the surface the stack sits on: the page base
+   when plain, --ui-context-surface when treated (the resolver's notion of
+   the surrounding scenery). The +N chip's surface and ink travel as a PAIR.
+   Overlap derives from the avatar size in CSS (outer eighth, 2px minimum)
+   unless the overlap knob overrides it. */
+@property --_ui-avstack-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 32px;
+}
+@property --_ui-avstack-overlap {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 4px;
+}
+@property --_ui-avstack-ring {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-avstack-ring-width {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 2px;
+}
+@property --_ui-avstack-extra-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-avstack-extra-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-avatar-stack) {
 	:scope {
+		--_ui-avstack-size: var(--ui-avstack-size, 32px);
+		--_ui-avstack-overlap: var(--ui-avstack-overlap, max(2px, calc(var(--_ui-avstack-size) * 0.125)));
+		--_ui-avstack-ring: var(--ui-avstack-ring, var(--color-base-200));
+		--_ui-avstack-ring-width: var(--ui-avstack-ring-width, 2px);
+		--_ui-avstack-extra-surface: var(--ui-avstack-extra-surface, var(--color-base-150));
+		--_ui-avstack-extra-ink: var(--ui-avstack-extra-ink, var(--color-base-content-muted));
+		/* The avatars size and back from the stack: supply the atom's PUBLIC
+		   knob variables for the subtree (Field pattern); an explicit knob on
+		   an individual Avatar still wins. */
+		--ui-avatar-size: var(--_ui-avstack-size);
+		--ui-avatar-ring: var(--_ui-avstack-ring);
 		display: flex;
 		align-items: center;
 	}
-	:scope[data-ui-color-base] { color: var(--ui-color-foreground); }
+	:scope[data-ui-color-base] {
+		--_ui-avstack-ring: var(--ui-avstack-ring, var(--ui-context-surface));
+		--_ui-avstack-extra-surface: var(--ui-avstack-extra-surface, var(--ui-surface-raised));
+		--_ui-avstack-extra-ink: var(--ui-avstack-extra-ink, var(--ui-ink-muted));
+		/* Treated faces keep the Avatar's own backing role (occluding surface),
+		   not the separator colour — reset so the atom's fallback fires. */
+		--ui-avatar-ring: initial;
+	}
 	:scope > .ui-avatar-stack-item {
 		position: relative;
 		display: grid;
 		place-items: center;
 		line-height: 0;
 		border-radius: var(--r-pill);
+		box-shadow: 0 0 0 var(--_ui-avstack-ring-width) var(--_ui-avstack-ring);
+	}
+	:scope > .ui-avatar-stack-item + .ui-avatar-stack-item,
+	:scope > * + .ui-avatar-stack-extra {
+		margin-inline-start: calc(-1 * var(--_ui-avstack-overlap));
 	}
 	:scope > .ui-avatar-stack-extra {
 		position: relative;
 		z-index: 0;
 		display: grid;
 		place-items: center;
+		width: var(--_ui-avstack-size);
+		height: var(--_ui-avstack-size);
 		border-radius: var(--r-pill);
 		font-family: var(--font-data, ui-monospace, monospace);
 		font-size: var(--t-xs);
-		color: var(--color-base-content-muted);
-		background: var(--color-base-150);
+		color: var(--_ui-avstack-extra-ink);
+		background: var(--_ui-avstack-extra-surface);
+		box-shadow:
+			0 0 0 var(--_ui-avstack-ring-width) var(--_ui-avstack-ring),
+			inset 0 0 0 1px var(--color-border);
 	}
 	:scope[data-ui-color-base] > .ui-avatar-stack-extra {
-		color: var(--ui-ink-muted);
-		background: var(--ui-surface-raised);
+		box-shadow:
+			0 0 0 var(--_ui-avstack-ring-width) var(--_ui-avstack-ring),
+			inset 0 0 0 1px var(--ui-border);
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-avstack-size: attr(data-ui-avstack-size type(<length>), var(--ui-avstack-size, 32px));
+			--_ui-avstack-overlap: attr(data-ui-avstack-overlap type(<length>), var(--ui-avstack-overlap, max(2px, calc(var(--_ui-avstack-size) * 0.125))));
+			--_ui-avstack-ring: attr(data-ui-avstack-ring type(<color>), var(--ui-avstack-ring, var(--color-base-200)));
+			--_ui-avstack-ring-width: attr(data-ui-avstack-ring-width type(<length>), var(--ui-avstack-ring-width, 2px));
+			--_ui-avstack-extra-surface: attr(data-ui-avstack-extra-surface type(<color>), var(--ui-avstack-extra-surface, var(--color-base-150)));
+			--_ui-avstack-extra-ink: attr(data-ui-avstack-extra-ink type(<color>), var(--ui-avstack-extra-ink, var(--color-base-content-muted)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-avstack-ring: attr(data-ui-avstack-ring type(<color>), var(--ui-avstack-ring, var(--ui-context-surface)));
+			--_ui-avstack-extra-surface: attr(data-ui-avstack-extra-surface type(<color>), var(--ui-avstack-extra-surface, var(--ui-surface-raised)));
+			--_ui-avstack-extra-ink: attr(data-ui-avstack-extra-ink type(<color>), var(--ui-avstack-extra-ink, var(--ui-ink-muted)));
+		}
 	}
 }

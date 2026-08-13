@@ -1,80 +1,164 @@
+/* ── Combobox ──
+   The field is a composed TextInput (its knobs arrive drilled through under
+   their own names); this sheet only widens it to the wrapper. The results
+   list rides the shared `.ui-anchored` popover shell — top-layer, anchored
+   to the input, never clipped — with the shell knobs re-defaulted to the
+   classic listbox look, and matches the input's width via anchor-size()
+   unless the shell's width knob overrides it.
+   Option states are DISTINCT: active (keyboard/pointer cursor) is a subtle
+   wash, the chosen option is the strong statement — each a surface⇄ink
+   PAIR, re-defaulted to the family roles when treated (active → hover pair,
+   chosen → --ui-color/--ui-content, mirroring DatePicker's selected day). */
+@property --_ui-cb-list-max-height {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 20rem;
+}
+@property --_ui-cb-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 8px;
+}
+@property --_ui-cb-option-radius {
+	syntax: "<length-percentage>";
+	inherits: true;
+	initial-value: 4px;
+}
+@property --_ui-cb-option-pad-block {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0.5rem;
+}
+@property --_ui-cb-option-pad-inline {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0.6rem;
+}
+@property --_ui-cb-active-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-cb-active-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-cb-selected-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-cb-selected-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-combobox) {
 	:scope {
 		position: relative;
 		width: 100%;
 	}
-
-	.ui-combobox-input {
-		box-sizing: border-box;
+	/* Composed-TextInput tuning: the field fills the combobox (the atom is
+	   content-sized by default). */
+	.ui-text-input.ui-combobox-input {
 		width: 100%;
-		min-height: 2.25rem;
-		border: 1px solid var(--color-border-strong);
-		border-radius: var(--r-xs);
-		corner-shape: squircle;
-		padding: 0.45rem 0.55rem;
-		background: var(--color-base-100);
-		color: var(--color-base-content);
-		font: inherit;
-		transition:
-			border-color 160ms ease,
-			box-shadow 220ms linear(0, 0.45, 0.82, 1.08, 1);
 	}
+}
 
-	.ui-combobox-input:hover:not(:disabled) { border-color: var(--color-primary); }
-
-	.ui-combobox-input:focus-visible {
-		border-color: var(--color-primary);
-		outline: 2px solid color-mix(in oklab, var(--color-primary) 54%, transparent);
-		outline-offset: 1px;
-		box-shadow: 0 0 1rem color-mix(in oklab, var(--color-primary) 26%, transparent);
-	}
-
-	.ui-combobox-listbox {
-		position: absolute;
-		z-index: 20;
-		inset-block-start: calc(100% + 0.3rem);
-		inset-inline: 0;
-		max-height: min(20rem, 45vh);
+@scope (.ui-combobox-pop) {
+	:scope {
+		/* Shell re-defaults: the classic listbox look on the shared surface. */
+		--_ui-anchored-pad: var(--ui-anchored-pad, 0.3rem);
+		--_ui-anchored-radius: var(--ui-anchored-radius, var(--r-sm));
+		--_ui-anchored-surface: var(--ui-anchored-surface, var(--color-base-100));
+		--_ui-cb-list-max-height: var(--ui-cb-list-max-height, min(20rem, 45vh));
+		--_ui-cb-gap: var(--ui-cb-gap, 8px);
+		--_ui-cb-option-radius: var(--ui-cb-option-radius, var(--r-xs));
+		--_ui-cb-option-pad-block: var(--ui-cb-option-pad-block, 0.5rem);
+		--_ui-cb-option-pad-inline: var(--ui-cb-option-pad-inline, 0.6rem);
+		--_ui-cb-active-surface: var(--ui-cb-active-surface, var(--color-base-150));
+		--_ui-cb-active-ink: var(--ui-cb-active-ink, var(--color-base-content));
+		--_ui-cb-selected-surface: var(--ui-cb-selected-surface, var(--color-primary));
+		--_ui-cb-selected-ink: var(--ui-cb-selected-ink, var(--color-primary-content));
+		max-height: var(--_ui-cb-list-max-height);
 		overflow-y: auto;
 		overscroll-behavior: contain;
-		border: 1px solid var(--color-border-strong);
-		border-radius: var(--r-sm);
-		corner-shape: squircle;
-		padding: 0.3rem;
-		background: var(--color-base-100);
-		color: var(--color-base-content);
-		box-shadow:
-			0 0 0 1px var(--color-border),
-			0 0.75rem 2.5rem -0.75rem color-mix(in oklab, var(--color-base-content) 28%, transparent);
+	}
+	:scope[data-ui-color-base] {
+		--_ui-cb-active-surface: var(--ui-cb-active-surface, var(--ui-surface-hover));
+		--_ui-cb-active-ink: var(--ui-cb-active-ink, var(--ui-ink-hover));
+		--_ui-cb-selected-surface: var(--ui-cb-selected-surface, var(--ui-color));
+		--_ui-cb-selected-ink: var(--ui-cb-selected-ink, var(--ui-content));
+		outline-color: var(--ui-border);
+	}
+	@supports (anchor-name: --a) {
+		:scope {
+			width: var(--ui-anchored-width, anchor-size(width));
+			margin-top: var(--_ui-cb-gap);
+		}
 	}
 
 	.ui-combobox-option {
 		display: grid;
 		gap: 0.12rem;
-		padding: 0.5rem 0.6rem;
-		border-radius: var(--r-xs);
+		padding: var(--_ui-cb-option-pad-block) var(--_ui-cb-option-pad-inline);
+		border-radius: var(--_ui-cb-option-radius);
 		cursor: pointer;
 	}
-
-	.ui-combobox-option:is([data-active], [aria-selected="true"]) {
-		background: var(--color-primary);
-		color: var(--color-primary-content);
+	/* The chosen option outranks the roving cursor when both coincide. */
+	.ui-combobox-option[data-active]:not([aria-selected="true"]) {
+		background: var(--_ui-cb-active-surface);
+		color: var(--_ui-cb-active-ink);
+	}
+	.ui-combobox-option[aria-selected="true"] {
+		background: var(--_ui-cb-selected-surface);
+		color: var(--_ui-cb-selected-ink);
 	}
 
-	.ui-combobox-option-label { font-weight: 650; }
-
+	.ui-combobox-option-label {
+		font-weight: 650;
+	}
 	.ui-combobox-option-description {
 		color: var(--color-base-content-faint);
 		font-size: 0.76rem;
 	}
-
-	.ui-combobox-option:is([data-active], [aria-selected="true"]) .ui-combobox-option-description {
-		color: color-mix(in oklab, var(--color-primary-content) 78%, transparent);
+	/* Descriptions re-pair against whichever state surface they sit on. */
+	.ui-combobox-option[data-active]:not([aria-selected="true"]) .ui-combobox-option-description {
+		color: color-mix(in oklab, var(--_ui-cb-active-ink) 72%, transparent);
+	}
+	.ui-combobox-option[aria-selected="true"] .ui-combobox-option-description {
+		color: color-mix(in oklab, var(--_ui-cb-selected-ink) 78%, transparent);
 	}
 
 	.ui-combobox-empty {
 		margin: 0;
 		padding: 0.65rem;
 		color: var(--color-base-content-faint);
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-anchored-pad: attr(data-ui-anchored-pad type(<length>), var(--ui-anchored-pad, 0.3rem));
+			--_ui-anchored-radius: attr(data-ui-anchored-radius type(<length-percentage>), var(--ui-anchored-radius, var(--r-sm)));
+			--_ui-anchored-surface: attr(data-ui-anchored-surface type(<color>), var(--ui-anchored-surface, var(--color-base-100)));
+			--_ui-cb-list-max-height: attr(data-ui-cb-list-max-height type(<length>), var(--ui-cb-list-max-height, min(20rem, 45vh)));
+			--_ui-cb-gap: attr(data-ui-cb-gap type(<length>), var(--ui-cb-gap, 8px));
+			--_ui-cb-option-radius: attr(data-ui-cb-option-radius type(<length-percentage>), var(--ui-cb-option-radius, var(--r-xs)));
+			--_ui-cb-option-pad-block: attr(data-ui-cb-option-pad-block type(<length>), var(--ui-cb-option-pad-block, 0.5rem));
+			--_ui-cb-option-pad-inline: attr(data-ui-cb-option-pad-inline type(<length>), var(--ui-cb-option-pad-inline, 0.6rem));
+			--_ui-cb-active-surface: attr(data-ui-cb-active-surface type(<color>), var(--ui-cb-active-surface, var(--color-base-150)));
+			--_ui-cb-active-ink: attr(data-ui-cb-active-ink type(<color>), var(--ui-cb-active-ink, var(--color-base-content)));
+			--_ui-cb-selected-surface: attr(data-ui-cb-selected-surface type(<color>), var(--ui-cb-selected-surface, var(--color-primary)));
+			--_ui-cb-selected-ink: attr(data-ui-cb-selected-ink type(<color>), var(--ui-cb-selected-ink, var(--color-primary-content)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-cb-active-surface: attr(data-ui-cb-active-surface type(<color>), var(--ui-cb-active-surface, var(--ui-surface-hover)));
+			--_ui-cb-active-ink: attr(data-ui-cb-active-ink type(<color>), var(--ui-cb-active-ink, var(--ui-ink-hover)));
+			--_ui-cb-selected-surface: attr(data-ui-cb-selected-surface type(<color>), var(--ui-cb-selected-surface, var(--ui-color)));
+			--_ui-cb-selected-ink: attr(data-ui-cb-selected-ink type(<color>), var(--ui-cb-selected-ink, var(--ui-content)));
+		}
 	}
 }

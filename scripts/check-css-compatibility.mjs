@@ -68,6 +68,8 @@ requireAll(
 		/data-ui-accordion-density="compact"/,
 		/@container ui-accordion style\(--ui-accordion-spacing: separated\)/,
 		/@container ui-accordion style\(--ui-accordion-density: compact\)/,
+		/--_ui-accordion-item-gap: var\(--ui-accordion-item-gap, 0\.75rem\)/,
+		/--_ui-accordion-item-gap: attr\(data-ui-accordion-item-gap type\(<length>\), var\(--ui-accordion-item-gap, 0\.75rem\)\)/,
 	],
 	'accordion style-query fallback',
 )
@@ -148,6 +150,12 @@ requireAll(
 		/--_ui-acc-divider: var\(--ui-acc-divider, var\(--color-border\)\)/,
 		/--_ui-acc-divider: attr\(data-ui-acc-divider type\(<color>\), var\(--ui-acc-divider, var\(--color-border\)\)\)/,
 		/--_ui-acc-icon-ink: var\(--ui-acc-icon-ink, var\(--color-primary\)\)/,
+		/--_ui-acc-icon-ink: attr\(data-ui-acc-icon-ink type\(<color>\), var\(--ui-acc-icon-ink, var\(--color-primary\)\)\)/,
+		/* Treated items paint the surface⇄ink role pair. */
+		/background: var\(--ui-surface\);\n\t\tcolor: var\(--ui-ink\);/,
+		/* Mode carriers sit between the public knob and the context default. */
+		/--_ui-acc-pad-inline: var\(--ui-acc-pad-inline, var\(--ui-accordion-pad-inline, 1rem\)\)/,
+		/--_ui-acc-radius: attr\(data-ui-acc-radius type\(<length-percentage>\), var\(--ui-acc-radius, var\(--ui-accordion-radius, var\(--r-md\)\)\)\)/,
 	],
 	'accordion-item knob boundary',
 )
@@ -159,34 +167,46 @@ requireAll(
 requireAll(workspace, [/@supports \(container-type: scroll-state\)/], 'workspace scroll-state boundary')
 requireAll(prosekit, [/@supports \(container-type: scroll-state\)/], 'ProseKit scroll-state boundary')
 
-/* ── Generic knob-wire pairing check (all atoms, ALL knobs) ──────────────
-   Parses every atom stylesheet and enforces, for every knob:
+/* ── Generic knob-wire pairing check (foundations + all tiers, ALL knobs) ─
+   Parses every knob-bearing stylesheet and enforces, for every knob:
    1. each frontier attr() assignment reads the attribute pairing its public
       variable (data-ui-x ⇄ --ui-x);
    2. each frontier assignment's fallback is byte-identical to a compat
-      assignment of the same adapter — the two wires cannot disagree;
-   3. every @property-registered private adapter is assigned somewhere, and
-      every assigned adapter is registered.
+      assignment of the same adapter IN THAT SHEET — the two wires cannot
+      disagree (per-context re-defaults live with their own swaps);
+   3. registration/assignment pairing is checked GLOBALLY — shared adapters
+      (the .ui-anchored shell) are registered once and re-defaulted by
+      composing sheets.
    Knobs consumed on descendants/child-state contexts legitimately have no
    attr() swap (attr() reads only the matched element) — they simply
    contribute no frontier lines. */
-const atomsDir = new URL('../src/atoms/', import.meta.url)
-for (const entry of readdirSync(atomsDir, { withFileTypes: true })) {
-	if (!entry.isDirectory()) continue
-	let source
-	try {
-		source = await read(`../src/atoms/${entry.name}/styles.css`)
-	} catch {
-		continue
+const knobSheets = ['../src/foundations.css']
+for (const tier of ['atoms', 'molecules', 'organisms']) {
+	for (const entry of readdirSync(new URL(`../src/${tier}/`, import.meta.url), {
+		withFileTypes: true,
+	})) {
+		if (entry.isDirectory()) knobSheets.push(`../src/${tier}/${entry.name}/styles.css`)
 	}
-	const registered = new Set([...source.matchAll(/@property (--_[\w-]+)/g)].map((m) => m[1]))
+}
+const globallyRegistered = new Set()
+const globallyAssigned = new Map()
+const sheetSources = new Map()
+for (const sheet of knobSheets) {
+	try {
+		sheetSources.set(sheet, await read(sheet))
+	} catch {}
+}
+for (const source of sheetSources.values()) {
+	for (const match of source.matchAll(/@property (--_[\w-]+)/g)) globallyRegistered.add(match[1])
+}
+for (const [sheet, source] of sheetSources) {
+	const name = sheet.replace('../src/', '')
 	const compat = new Set()
-	const assigned = new Set()
 	for (const line of source.split('\n')) {
 		const assignment = line.match(/^\s*(--_[\w-]+):\s*(.+);$/)
 		if (!assignment) continue
 		const [, adapter, value] = assignment
-		assigned.add(adapter)
+		globallyAssigned.set(adapter, name)
 		const viaVar = value.match(/^var\((--ui-[\w-]+),\s*(.+)\)$/)
 		if (viaVar) compat.add(`${adapter}|${viaVar[1]}|${viaVar[2]}`)
 		const viaAttr = value.match(/^attr\((data-[\w-]+)\s+type\(<[\w-]+>\),\s*var\((--ui-[\w-]+),\s*(.+)\)\)$/)
@@ -195,20 +215,24 @@ for (const entry of readdirSync(atomsDir, { withFileTypes: true })) {
 			assert.equal(
 				attribute,
 				`data-${publicVar.slice(2)}`,
-				`${entry.name}: frontier attribute ${attribute} does not pair with ${publicVar}`,
+				`${name}: frontier attribute ${attribute} does not pair with ${publicVar}`,
 			)
 			assert.ok(
 				compat.has(`${adapter}|${publicVar}|${fallback}`),
-				`${entry.name}: frontier swap for ${adapter} has no byte-identical compat assignment (fallback: ${fallback})`,
+				`${name}: frontier swap for ${adapter} has no byte-identical compat assignment (fallback: ${fallback})`,
 			)
 		}
+		assert.ok(
+			globallyRegistered.has(adapter),
+			`${name}: assigned adapter ${adapter} is not @property-registered anywhere`,
+		)
 	}
-	for (const adapter of registered) {
-		assert.ok(assigned.has(adapter), `${entry.name}: registered adapter ${adapter} is never assigned`)
-	}
-	for (const adapter of assigned) {
-		assert.ok(registered.has(adapter), `${entry.name}: assigned adapter ${adapter} is not @property-registered`)
-	}
+}
+for (const adapter of globallyRegistered) {
+	assert.ok(
+		globallyAssigned.has(adapter),
+		`registered adapter ${adapter} is never assigned in any sheet`,
+	)
 }
 
 console.log('CSS compatibility contracts valid: Baseline fallbacks and frontier gates are present')

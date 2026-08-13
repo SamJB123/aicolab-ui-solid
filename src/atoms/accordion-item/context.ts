@@ -1,8 +1,12 @@
 import { createContext, useContext, type Accessor } from 'solid-js'
+import type { ColorTreatmentProps } from '../../shared/color-treatment'
 
 /** Composition protocol for containers that coordinate AccordionItem atoms. */
 export type AccordionItemContextValue = {
 	group: Accessor<string | undefined>
+	/** Collection-level colour treatment; items use it as their per-prop
+	 *  default (an item's own treatment props win). */
+	treatment: Accessor<ColorTreatmentProps>
 }
 
 /**
@@ -12,6 +16,7 @@ export type AccordionItemContextValue = {
  */
 const standaloneAccordionItemContext: AccordionItemContextValue = {
 	group: () => undefined,
+	treatment: () => ({}),
 }
 
 export const AccordionItemContext = createContext<AccordionItemContextValue>(standaloneAccordionItemContext)

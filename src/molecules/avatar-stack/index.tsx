@@ -1,42 +1,80 @@
 /** @jsxImportSource @solidjs/web */
 import { createMemo, For, Show } from 'solid-js'
 import { Avatar } from '../../atoms/avatar'
+import type { StatusVisual } from '../../atoms/status-dot'
 import { colorTreatmentData, type ColorTreatmentProps } from '../../shared/color-treatment'
-import type { UiColor } from '../../shared/knobs'
+import {
+	defineKnobs,
+	mergeKnobStyle,
+	toLength,
+	type KnobProps,
+	type UiLength,
+	type UiColor,
+} from '../../shared/knobs'
 
-export function AvatarStack(props: {
-	people: { name: string; color: UiColor }[]
-	max?: number
-	size?: number
-	ring?: UiColor
-} & ColorTreatmentProps) {
+/** Per-instance styling contract (see shared/knobs.ts). The avatars size
+ * from the stack — it supplies the atom's public knob variables for the
+ * subtree — and all derived geometry (overlap, +N chip, badge dot) is
+ * computed in CSS from these. */
+const knobs = defineKnobs('ui-avstack', {
+	size: '<length>',
+	overlap: '<length>',
+	ring: '<color>',
+	ringWidth: '<length>',
+	extraSurface: '<color>',
+	extraInk: '<color>',
+})
+
+export type AvatarStackPerson = {
+	name: string
+	/** Identity ink for the initials face; omitted → the Avatar's default. */
+	color?: UiColor
+	image?: string | null
+	status?: StatusVisual
+}
+
+export function AvatarStack(
+	props: {
+		people: AvatarStackPerson[]
+		max?: number
+		/** Bare number = px (legacy convention); measurements/vars also accepted. */
+		size?: number | UiLength
+	} & Omit<KnobProps<typeof knobs.spec>, 'size'> &
+		ColorTreatmentProps,
+) {
 	const max = () => props.max ?? 5
-	const size = () => props.size ?? 32
-	/* Initials occupy roughly the central two-thirds of the face. Keep the
-	 * overlap inside the outer eighth so the stack remains legible at every
-	 * supported size, with a 2px minimum that still reads as an overlap. */
-	const overlap = () => Math.max(2, Math.round(size() * 0.125))
 	const shown = createMemo(() => props.people.slice(0, max()))
 	const extra = createMemo(() => props.people.length - shown().length)
+	const values = () => ({
+		size: toLength(props.size),
+		overlap: props.overlap,
+		ring: props.ring,
+		ringWidth: props.ringWidth,
+		extraSurface: props.extraSurface,
+		extraInk: props.extraInk,
+	})
 	return (
-		<div {...colorTreatmentData(props)} class="ui-avatar-stack">
+		<div
+			{...colorTreatmentData(props)}
+			{...knobs.attributes(values())}
+			class="ui-avatar-stack"
+			style={mergeKnobStyle(knobs.style(values()), undefined)}
+		>
 			<For each={shown()}>
 				{(p, i) => (
 					<span
 						class="ui-avatar-stack-item"
-						style={{
-							'margin-left': i() === 0 ? '0' : `-${overlap()}px`,
-							'box-shadow': props.colorBase
-								? '0 0 0 2px var(--ui-surface-raised)'
-								: `0 0 0 2px ${props.ring ?? 'var(--color-base-200)'}`,
-							'z-index': String(shown().length - i()),
-						}}
+						/* Earlier avatars overlap later ones — a per-item structural
+						   value, so it stays inline like a mandatory wire. */
+						style={{ 'z-index': String(shown().length - i()) }}
 					>
 						<Avatar
 							name={p.name}
-							faceColor={props.colorBase ? 'var(--ui-ink)' : p.color}
-							size={size()}
-							ring={props.colorBase ? 'var(--ui-surface-occluding)' : (props.ring ?? 'var(--color-base-200)')}
+							image={p.image}
+							status={p.status}
+							/* A treated stack reads as one unit: identity inks yield to
+							   the family treatment (the Avatar's treated default). */
+							ink={props.colorBase ? undefined : p.color}
 							colorBase={props.colorBase}
 							colorLevel={props.colorLevel}
 							variant={props.variant}
@@ -45,19 +83,7 @@ export function AvatarStack(props: {
 				)}
 			</For>
 			<Show when={extra() > 0}>
-				<span
-					class="ui-avatar-stack-extra"
-					style={{
-						'margin-left': `-${overlap()}px`,
-						width: `${size()}px`,
-						height: `${size()}px`,
-						'box-shadow': props.colorBase
-							? '0 0 0 2px var(--ui-surface-raised), inset 0 0 0 1px var(--ui-border)'
-							: `0 0 0 2px ${props.ring ?? 'var(--color-base-200)'}, inset 0 0 0 1px var(--color-border)`,
-					}}
-				>
-					+{extra()}
-				</span>
+				<span class="ui-avatar-stack-extra">+{extra()}</span>
 			</Show>
 		</div>
 	)

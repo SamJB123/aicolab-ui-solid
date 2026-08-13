@@ -1,82 +1,52 @@
-/* ── Date/time pickers (pickers.tsx) ──
-   Same convention as `.ui-anchored`: a top-layer popover (Popover API)
-   anchored to its trigger, flipped within the viewport by position-try.
-   Deliberately standalone rather than composed with `.ui-anchored`: this
-   sheet is unlayered, so any padding declared here would defeat the
-   component's layered `p-3` utility — the panel declares NO padding.
-   The wheels are scroll-snap columns with hidden scrollbars and a fade mask. */
+/* ── Date/time pickers (shared surfaces) ──
+   The pop panel COMPOSES the shared .ui-anchored shell (foundations.css):
+   this sheet only re-defaults the shell's knobs for the picker context and
+   owns the wheel anatomy. The trigger composes Button; the tuning below
+   rides the ui.molecules layer (which outranks ui.atoms) for the classic
+   untreated look — a treated picker uses pure Button treatment instead. */
 @scope (.ui-picker-pop) {
 	:scope {
-	margin: 0;
-	inset: auto;
-	width: 268px;
-	max-width: calc(100vw - 1.5rem);
-	border: 0;
-	border-radius: var(--r-lg);
-	background: var(--color-base-150);
-	color: var(--color-base-content);
-	outline: 1px solid var(--color-border-strong);
-	box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.7);
-	opacity: 0;
-	transform: translateY(-6px) scale(0.98);
-	transition:
-		opacity 0.18s,
-		transform 0.18s,
-		overlay 0.18s allow-discrete,
-		display 0.18s allow-discrete;
-	}
-	:scope:popover-open { opacity: 1; transform: none; }
-	@starting-style {
-		:scope:popover-open {
-			opacity: 0;
-			transform: translateY(-6px) scale(0.98);
-		}
-	}
-	@supports (anchor-name: --x) {
-		:scope {
-			position-area: block-end span-inline-end;
-			margin-top: 8px;
-			position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
-		}
+		--_ui-anchored-width: var(--ui-anchored-width, 268px);
+		--_ui-anchored-pad: var(--ui-anchored-pad, 12px);
 	}
 	.ui-wheel { scrollbar-width: none; scroll-snap-type: y proximity; }
 	.ui-wheel::-webkit-scrollbar { display: none; }
 	.ui-wheel > button { scroll-snap-align: center; }
-	/* fade the top/bottom of the hour/minute wheels into the panel */
+	/* fade the top/bottom of the hour/minute wheels into the panel surface
+	   (the shell's surface adapter inherits, so a surface knob or treated
+	   re-default carries into the fade automatically) */
 	.ui-wheel-mask {
 		background: linear-gradient(
-			var(--color-base-150) 2%, transparent 34%, transparent 66%, var(--color-base-150) 98%
+			var(--_ui-anchored-surface) 2%, transparent 34%, transparent 66%, var(--_ui-anchored-surface) 98%
 		);
 		border-radius: var(--r-md);
 	}
+
+	/* ── Frontier knob boundary (picker context of the shell knobs) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-anchored-width: attr(data-ui-anchored-width type(<length>), var(--ui-anchored-width, 268px));
+			--_ui-anchored-pad: attr(data-ui-anchored-pad type(<length>), var(--ui-anchored-pad, 12px));
+		}
+	}
 }
 
-/* ── Pickers (semantic classes, 2026-08-07) ──
-   .ui-picker-pop now carries its own padding: the old "no padding here"
-   note guarded against fighting a package-side Tailwind utility, which no
-   longer exists. */
-@scope (.ui-picker-trigger) {
-	:scope {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		border: 0;
-		border-radius: var(--r-md);
-		padding: 10px 14px;
-		font: inherit;
-		font-size: var(--t-md);
-		cursor: pointer;
-		background: var(--color-base-300);
-		color: var(--color-base-content);
-		box-shadow: 0 0 0 1px var(--color-border);
-		transition: box-shadow 0.2s;
-	}
-	:scope:hover { box-shadow: 0 0 0 1px var(--color-border-strong); }
-	:scope > .ui-picker-trigger-icon {
-		color: var(--color-base-content-muted);
-	}
-	:scope > .ui-picker-trigger-value {
-		font-family: var(--font-data, ui-monospace, monospace);
-		font-variant-numeric: tabular-nums;
-	}
+/* Trigger: classic neutral look for UNTREATED pickers only (the molecule
+   adds -plain when no family is given); treated triggers are pure Button. */
+.ui-btn.ui-picker-trigger-plain {
+	background: var(--color-base-300);
+	color: var(--color-base-content);
+	box-shadow: 0 0 0 1px var(--color-border);
+}
+.ui-btn.ui-picker-trigger-plain:hover:not(:disabled) {
+	background: var(--color-base-300);
+	color: var(--color-base-content);
+	text-shadow: none;
+	box-shadow: 0 0 0 1px var(--color-border-strong);
+}
+.ui-picker-trigger { font-weight: 400; }
+.ui-picker-trigger .ui-picker-trigger-icon { opacity: 0.72; }
+.ui-picker-trigger .ui-picker-trigger-value {
+	font-family: var(--font-data, ui-monospace, monospace);
+	font-variant-numeric: tabular-nums;
 }

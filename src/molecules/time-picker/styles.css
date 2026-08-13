@@ -1,6 +1,49 @@
+/* ── TimePicker panel anatomy ──
+   AM·PM and presets are composed Buttons (pressed state rides Button's
+   selected roles); only the wheel machinery is styled here. itemHeight is
+   the single source for item boxes, the centre band, and the wheel's
+   centring scroll padding, coupled via calc(). Knobs ride the inheriting
+   variable wire (descendant-consumed). */
+@property --_ui-tp-wheel-height {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 160px;
+}
+@property --_ui-tp-item-height {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 36px;
+}
+@property --_ui-tp-band-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-tp-active-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-tp-band-ring {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+
 @scope (.ui-picker-pop) {
-	:scope { padding: 12px; }
-.ui-tp-readout {
+	:scope {
+		--_ui-tp-wheel-height: var(--ui-tp-wheel-height, 160px);
+		--_ui-tp-item-height: var(--ui-tp-item-height, 36px);
+		--_ui-tp-band-surface: var(--ui-tp-band-surface, var(--color-primary-soft));
+		--_ui-tp-active-ink: var(--ui-tp-active-ink, var(--color-primary));
+		--_ui-tp-band-ring: color-mix(in oklab, var(--color-primary) 28%, transparent);
+	}
+	:scope[data-ui-color-base] {
+		--_ui-tp-band-surface: var(--ui-tp-band-surface, var(--ui-surface-selected));
+		--_ui-tp-active-ink: var(--ui-tp-active-ink, var(--ui-color-foreground));
+		--_ui-tp-band-ring: var(--ui-border-selected);
+	}
+	.ui-tp-readout {
 		margin-bottom: 12px;
 		text-align: center;
 		font-family: var(--font-display, Georgia, serif);
@@ -23,11 +66,11 @@
 		position: absolute;
 		inset-inline: 0;
 		top: 50%;
-		height: 36px;
+		height: var(--_ui-tp-item-height);
 		transform: translateY(-50%);
 		border-radius: var(--r-sm);
-		background: var(--color-primary-soft);
-		box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-primary) 28%, transparent);
+		background: var(--_ui-tp-band-surface);
+		box-shadow: 0 0 0 1px var(--_ui-tp-band-ring);
 	}
 	.ui-tp-colon {
 		z-index: 10;
@@ -39,7 +82,7 @@
 	}
 	.ui-wheel-item {
 		display: flex;
-		height: 36px;
+		height: var(--_ui-tp-item-height);
 		width: 100%;
 		align-items: center;
 		justify-content: center;
@@ -58,38 +101,13 @@
 	.ui-wheel-item[data-active] {
 		transform: scale(1.1);
 		font-weight: 600;
-		color: var(--color-primary);
+		color: var(--_ui-tp-active-ink);
 	}
 	.ui-tp-ampm-col {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		gap: 6px;
-	}
-	.ui-tp-ampm {
-		border: 0;
-		border-radius: var(--r-sm);
-		padding: 8px 12px;
-		font-family: var(--font-data, ui-monospace, monospace);
-		font-size: var(--t-sm);
-		font-weight: 600;
-		letter-spacing: 0.025em;
-		cursor: pointer;
-		background: transparent;
-		color: var(--color-base-content-faint);
-		box-shadow: 0 0 0 1px var(--color-border);
-		transition:
-			background-color 0.2s,
-			color 0.2s;
-	}
-	.ui-tp-ampm:hover:not([data-active]) {
-		background: var(--color-base-100);
-		color: var(--color-base-content-muted);
-	}
-	.ui-tp-ampm[data-active] {
-		background: var(--color-primary-soft);
-		color: var(--color-primary);
-		box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-primary) 38%, transparent);
 	}
 	.ui-tp-presets {
 		margin-top: 12px;
@@ -99,31 +117,19 @@
 		border-top: 1px solid var(--color-border);
 		padding-top: 12px;
 	}
-	.ui-tp-preset {
-		border: 0;
-		border-radius: var(--r-pill);
-		padding: 4px 10px;
+	/* Composed-button tuning: data voice for the time glyphs. */
+	.ui-btn.ui-tp-ampm,
+	.ui-btn.ui-tp-preset {
 		font-family: var(--font-data, ui-monospace, monospace);
-		font-size: var(--t-xs);
-		cursor: pointer;
-		background: transparent;
-		color: var(--color-base-content-muted);
-		box-shadow: 0 0 0 1px var(--color-border);
-		transition:
-			background-color 0.2s,
-			color 0.2s;
 	}
-	.ui-tp-preset:hover {
-		background: var(--color-base-100);
-		color: var(--color-base-content);
-	}
-	/* Wheel sizing (was package-side utilities). */
+	/* Wheel sizing: height, and centring padding derived from the SAME
+	   item-height knob so the snap centre always aligns with the band. */
 	.ui-wheel {
 		position: relative;
-		height: 160px;
+		height: var(--_ui-tp-wheel-height);
 		flex: 1;
 		overflow-y: auto;
-		padding-block: 64px;
+		padding-block: calc((var(--_ui-tp-wheel-height) - var(--_ui-tp-item-height)) / 2);
 	}
 	.ui-wheel-mask {
 		pointer-events: none;
@@ -131,5 +137,4 @@
 		inset: 0;
 		z-index: 20;
 	}
-
 }

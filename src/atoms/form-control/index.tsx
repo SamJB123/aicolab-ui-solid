@@ -24,6 +24,7 @@ const textKnobs = defineKnobs('ui-input', {
 	selectionInk: '<color>',
 	caret: '<color>',
 })
+export { textKnobs as textInputKnobs }
 
 const rangeKnobs = defineKnobs('ui-range', {
 	accent: '<color>',

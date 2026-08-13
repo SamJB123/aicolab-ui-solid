@@ -4,14 +4,45 @@ import { fn } from 'storybook/test'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { addMonths, MonthCalendar, sameDay, todayYMD, type YM, type YMD } from '../../src/calendar'
 import { StatusDot } from '../../src/primitives'
+import { treatmentArgTypes } from '../primitives/color-treatment-story'
 
 const meta = {
 	title: 'Molecules/Pickers/MonthCalendar',
 	component: MonthCalendar,
 	args: { month: { y: 2026, m: 7 }, onMonthChange: fn() },
+	argTypes: {
+		...treatmentArgTypes,
+		cellMinHeight: { control: 'text', table: { category: 'knobs' } },
+		gridGap: { control: 'text', table: { category: 'knobs' } },
+		dayRadius: { control: 'text', table: { category: 'knobs' } },
+		daynumSize: { control: 'text', table: { category: 'knobs' } },
+		selectedSurface: { control: 'text', table: { category: 'knobs' } },
+		selectedBorder: { control: 'text', table: { category: 'knobs' } },
+		selectedInk: { control: 'text', table: { category: 'knobs' } },
+		todaySurface: { control: 'text', table: { category: 'knobs' } },
+		todayInk: { control: 'text', table: { category: 'knobs' } },
+	},
 } satisfies Meta<typeof MonthCalendar>
 
 export default meta
+
+export const Playground: StoryObj<typeof meta> = {
+	render: (args) => {
+		const [month, setMonth] = createSignal<YM>({ y: 2026, m: 7 })
+		const [selected, setSelected] = createSignal<YMD>({ y: 2026, m: 7, d: 12 })
+		return (
+			<div style={{ width: 'min(44rem, 90vw)' }}>
+				<MonthCalendar
+					{...args}
+					month={month()}
+					onMonthChange={setMonth}
+					selected={selected()}
+					onSelectDay={setSelected}
+				/>
+			</div>
+		)
+	},
+}
 type Story = StoryObj<typeof meta>
 
 export const Interactive: Story = {

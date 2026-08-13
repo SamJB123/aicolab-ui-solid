@@ -1,9 +1,37 @@
+/* ── Accordion collection ──
+   Named modes (spacing, density) are implemented twice ON PURPOSE: the
+   attribute selectors are the compatibility path for the container
+   style-query twin — keep the two rule bodies byte-identical. Both paths
+   speak to the items through --ui-accordion-* MODE CARRIERS, which the
+   item's adapter chains read AFTER the public --ui-acc-* knobs (see
+   atoms/accordion-item): an explicit knob — on an item, or inherited from
+   the collection root — always outranks a mode preset. The carriers are
+   deliberately unregistered so their absence (standalone items, default
+   modes) falls through to the item's own defaults.
+   Non-default modes only: browsers with container style queries but without
+   typed attr() hold the registered mode properties at their initial values,
+   so a rule for the DEFAULT mode value would fire there even when the
+   attribute says otherwise. */
+@property --_ui-accordion-item-gap {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0.75rem;
+}
+
 @scope (.ui-accordion) {
 	:scope {
 		container: ui-accordion / inline-size;
 		--ui-accordion-spacing: attr(data-ui-accordion-spacing type(<custom-ident>), joined);
 		--ui-accordion-density: attr(data-ui-accordion-density type(<custom-ident>), comfortable);
+		--_ui-accordion-item-gap: var(--ui-accordion-item-gap, 0.75rem);
 		display: grid;
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-accordion-item-gap: attr(data-ui-accordion-item-gap type(<length>), var(--ui-accordion-item-gap, 0.75rem));
+		}
 	}
 }
 
@@ -12,18 +40,29 @@
    attributes preserve every public option without weakening AccordionItem's
    independently reusable defaults. */
 @scope (.ui-accordion) {
+	/* Joined stacks are flush: rounding each item notches every seam once a
+	   treatment paints the surfaces. This rule has NO style-query twin, and
+	   deliberately so — 'joined' is the mode's DEFAULT value, and in browsers
+	   with style queries but without typed attr() the registered mode
+	   property sits at its initial, so a joined twin would fire even when the
+	   attribute says separated. The attribute selector alone is already
+	   correct everywhere the twin works. */
+	:scope[data-ui-accordion-spacing="joined"] .ui-acc {
+		--ui-accordion-radius: 0px;
+	}
+
 	:scope[data-ui-accordion-spacing="separated"] .ui-acc {
-		border: 1px solid var(--color-border);
-		border-radius: var(--r-md);
-		padding-inline: 1rem;
+		--ui-accordion-radius: var(--r-md);
+		--ui-accordion-pad-inline: 1rem;
+		border: 1px solid var(--_ui-acc-divider);
 	}
 
 	:scope[data-ui-accordion-spacing="separated"] .ui-acc + .ui-acc {
-		margin-top: 0.75rem;
+		margin-top: var(--_ui-accordion-item-gap);
 	}
 
-	:scope[data-ui-accordion-density="compact"] .ui-acc summary {
-		padding-block: 0.7rem;
+	:scope[data-ui-accordion-density="compact"] .ui-acc {
+		--ui-accordion-pad-block: 0.7rem;
 	}
 
 	:scope[data-ui-accordion-density="compact"] .ui-acc .ui-acc-body {
@@ -37,32 +76,31 @@
    custom-property style queries and typed attr() are both Baseline. */
 @container ui-accordion style(--ui-accordion-spacing: separated) {
 	.ui-acc {
-		border: 1px solid var(--color-border);
-		border-radius: var(--r-md);
-		padding-inline: 1rem;
+		--ui-accordion-radius: var(--r-md);
+		--ui-accordion-pad-inline: 1rem;
+		border: 1px solid var(--_ui-acc-divider);
 	}
-}
 
-@container ui-accordion style(--ui-accordion-spacing: separated) {
 	.ui-acc + .ui-acc {
-		margin-top: 0.75rem;
+		margin-top: var(--_ui-accordion-item-gap);
 	}
 }
 
 @container ui-accordion style(--ui-accordion-density: compact) {
-	.ui-acc summary {
-		padding-block: 0.7rem;
+	.ui-acc {
+		--ui-accordion-pad-block: 0.7rem;
 	}
 	.ui-acc .ui-acc-body {
 		padding-bottom: 0.85rem;
 	}
 }
 
-/* Width is environmental rather than a component prop. */
+/* Width is environmental rather than a component prop; it re-defaults the
+   items through the same carriers, so explicit knobs still win. */
 @container ui-accordion (inline-size < 28rem) {
-	.ui-acc summary {
-		gap: 0.75rem;
-		font-size: var(--t-sm);
+	.ui-acc {
+		--ui-accordion-summary-gap: 0.75rem;
+		--ui-accordion-summary-font-size: var(--t-sm);
 	}
 	.ui-acc .ui-acc-body {
 		font-size: var(--t-sm);
