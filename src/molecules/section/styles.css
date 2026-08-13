@@ -63,9 +63,11 @@
 	:scope[data-wide] {
 		--_ui-section-max-width: var(--ui-section-max-width, 72rem);
 	}
+	/* Unpainted-surface rule (see page-hero): text on the PAGE takes the
+	   scheme-aware accent role, not the on-surface pair. */
 	:scope[data-ui-color-base] {
-		--_ui-section-title-ink: var(--ui-section-title-ink, var(--ui-ink));
-		--_ui-section-lede-ink: var(--ui-section-lede-ink, var(--ui-ink-muted));
+		--_ui-section-title-ink: var(--ui-section-title-ink, var(--ui-color-foreground));
+		--_ui-section-lede-ink: var(--ui-section-lede-ink, color-mix(in oklab, var(--ui-color-foreground) 55%, var(--color-base-content-muted)));
 	}
 	@media (min-width: 640px) {
 		:scope { --_ui-section-pad-block: var(--ui-section-pad-block, 80px); }
@@ -116,8 +118,8 @@
 			--_ui-section-max-width: attr(data-ui-section-max-width type(<length>), var(--ui-section-max-width, 72rem));
 		}
 		:scope[data-ui-color-base] {
-			--_ui-section-title-ink: attr(data-ui-section-title-ink type(<color>), var(--ui-section-title-ink, var(--ui-ink)));
-			--_ui-section-lede-ink: attr(data-ui-section-lede-ink type(<color>), var(--ui-section-lede-ink, var(--ui-ink-muted)));
+			--_ui-section-title-ink: attr(data-ui-section-title-ink type(<color>), var(--ui-section-title-ink, var(--ui-color-foreground)));
+			--_ui-section-lede-ink: attr(data-ui-section-lede-ink type(<color>), var(--ui-section-lede-ink, color-mix(in oklab, var(--ui-color-foreground) 55%, var(--color-base-content-muted))));
 		}
 	}
 }

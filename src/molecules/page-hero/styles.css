@@ -51,9 +51,13 @@
 		gap: var(--_ui-hero-gap);
 		padding: 80px 24px 64px;
 	}
+	/* The hero paints NO surface — its text sits on the PAGE — so treated
+	   inks take the scheme-aware accent role (--ui-color-foreground), never
+	   the on-surface pair (--ui-ink of the solid default is the ink for ON
+	   the family colour and goes unconditionally dark/light here). */
 	:scope[data-ui-color-base] {
-		--_ui-hero-title-ink: var(--ui-hero-title-ink, var(--ui-ink));
-		--_ui-hero-lede-ink: var(--ui-hero-lede-ink, var(--ui-ink-muted));
+		--_ui-hero-title-ink: var(--ui-hero-title-ink, var(--ui-color-foreground));
+		--_ui-hero-lede-ink: var(--ui-hero-lede-ink, color-mix(in oklab, var(--ui-color-foreground) 55%, var(--color-base-content-muted)));
 	}
 	:scope[data-align="center"] { align-items: center; text-align: center; }
 	:scope[data-align="start"] { align-items: flex-start; }
@@ -100,8 +104,8 @@
 			--_ui-hero-lede-ink: attr(data-ui-hero-lede-ink type(<color>), var(--ui-hero-lede-ink, var(--color-base-content-muted)));
 		}
 		:scope[data-ui-color-base] {
-			--_ui-hero-title-ink: attr(data-ui-hero-title-ink type(<color>), var(--ui-hero-title-ink, var(--ui-ink)));
-			--_ui-hero-lede-ink: attr(data-ui-hero-lede-ink type(<color>), var(--ui-hero-lede-ink, var(--ui-ink-muted)));
+			--_ui-hero-title-ink: attr(data-ui-hero-title-ink type(<color>), var(--ui-hero-title-ink, var(--ui-color-foreground)));
+			--_ui-hero-lede-ink: attr(data-ui-hero-lede-ink type(<color>), var(--ui-hero-lede-ink, color-mix(in oklab, var(--ui-color-foreground) 55%, var(--color-base-content-muted))));
 		}
 	}
 }
