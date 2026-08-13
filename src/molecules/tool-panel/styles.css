@@ -14,8 +14,12 @@
 	inherits: false;
 	initial-value: 3px;
 }
+/* Width holds the IDEAL width only (a plain length): the container guard
+   stays in the width declaration itself, because a percentage inside a
+   registered custom property has no box to resolve against and collapses
+   the declaration (the ~35px panel incident). */
 @property --_ui-toolpanel-width {
-	syntax: "<length-percentage>";
+	syntax: "<length>";
 	inherits: false;
 	initial-value: 20rem;
 }
@@ -34,13 +38,13 @@
 	:scope {
 		--_ui-toolpanel-accent: var(--ui-toolpanel-accent, var(--color-primary));
 		--_ui-toolpanel-border-width: var(--ui-toolpanel-border-width, 3px);
-		--_ui-toolpanel-width: var(--ui-toolpanel-width, min(20rem, calc(100% - 2rem)));
+		--_ui-toolpanel-width: var(--ui-toolpanel-width, 20rem);
 		--_ui-toolpanel-pad: var(--ui-toolpanel-pad, 0.9rem);
 		--_ui-toolpanel-gap: var(--ui-toolpanel-gap, 0.8rem);
 		--ui-environment: overlay;
 		display: flex;
 		box-sizing: border-box;
-		width: var(--_ui-toolpanel-width);
+		width: min(var(--_ui-toolpanel-width), calc(100% - 2rem));
 		max-height: calc(100% - 2rem);
 		flex-direction: column;
 		gap: var(--_ui-toolpanel-gap);
@@ -139,7 +143,7 @@
 		:scope {
 			--_ui-toolpanel-accent: attr(data-ui-toolpanel-accent type(<color>), var(--ui-toolpanel-accent, var(--color-primary)));
 			--_ui-toolpanel-border-width: attr(data-ui-toolpanel-border-width type(<length>), var(--ui-toolpanel-border-width, 3px));
-			--_ui-toolpanel-width: attr(data-ui-toolpanel-width type(<length-percentage>), var(--ui-toolpanel-width, min(20rem, calc(100% - 2rem))));
+			--_ui-toolpanel-width: attr(data-ui-toolpanel-width type(<length>), var(--ui-toolpanel-width, 20rem));
 			--_ui-toolpanel-pad: attr(data-ui-toolpanel-pad type(<length>), var(--ui-toolpanel-pad, 0.9rem));
 			--_ui-toolpanel-gap: attr(data-ui-toolpanel-gap type(<length>), var(--ui-toolpanel-gap, 0.8rem));
 		}

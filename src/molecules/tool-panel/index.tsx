@@ -15,7 +15,7 @@ import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 const knobs = defineKnobs('ui-toolpanel', {
 	accent: '<color>',
 	borderWidth: '<length>',
-	width: '<length-percentage>',
+	width: '<length>',
 	pad: '<length>',
 	gap: '<length>',
 })

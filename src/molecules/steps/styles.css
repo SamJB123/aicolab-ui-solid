@@ -32,11 +32,17 @@
 	inherits: true;
 	initial-value: currentColor;
 }
+@property --_ui-steps-disc-underlay {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: white;
+}
 
 @scope (.ui-steps) {
 	:scope {
 		--_ui-steps-node-size: var(--ui-step-node-size, 10rem);
 		--_ui-steps-line-ink: var(--ui-step-line-ink, color-mix(in oklab, var(--color-primary) 40%, transparent));
+		--_ui-steps-disc-underlay: var(--ui-step-disc-underlay, var(--color-base-100));
 		position: relative;
 		margin: 0;
 		display: grid;
@@ -104,7 +110,9 @@
 		flex-shrink: 0;
 		overflow: hidden;
 		border-radius: var(--r-pill);
-		background: color-mix(in oklab, var(--_ui-step-accent) 8%, transparent);
+		/* The tint composites over an OPAQUE underlay so the spine line stops
+		   at the disc instead of showing through the 8% wash. */
+		background: color-mix(in oklab, var(--_ui-step-accent) 8%, var(--_ui-steps-disc-underlay));
 		box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--_ui-step-accent) 40%, transparent);
 	}
 	.ui-step-wash {
@@ -229,6 +237,7 @@
 		:scope {
 			--_ui-steps-node-size: attr(data-ui-step-node-size type(<length>), var(--ui-step-node-size, 10rem));
 			--_ui-steps-line-ink: attr(data-ui-step-line-ink type(<color>), var(--ui-step-line-ink, color-mix(in oklab, var(--color-primary) 40%, transparent)));
+			--_ui-steps-disc-underlay: attr(data-ui-step-disc-underlay type(<color>), var(--ui-step-disc-underlay, var(--color-base-100)));
 		}
 		:scope[data-ui-steps-node="sm"] {
 			--_ui-steps-node-size: attr(data-ui-step-node-size type(<length>), var(--ui-step-node-size, 2.75rem));

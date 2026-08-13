@@ -28,7 +28,9 @@ type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {
 	render: (args) => (
-		<div style={{ 'min-height': '24rem', display: 'grid', 'place-items': 'center' }}>
+		<div style={{ width: 'min(34rem, 90vw)', 'min-height': '24rem', display: 'grid', 'place-items': 'center' }}>
+			{/* Definite-width context: the panel's width guard is %-based, and a
+			    bare auto-sized grid track would resolve it cyclically (collapse). */}
 			<ToolPanel {...args} label="Scene tools" title="Scene">
 				<ToolPanelSection title="Camera" meta="rig 2">
 					<ToolPanelActions>

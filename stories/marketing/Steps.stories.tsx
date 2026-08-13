@@ -40,6 +40,7 @@ const meta = {
 		gap: { control: 'text', table: { category: 'knobs' } },
 		lineInk: { control: 'text', table: { category: 'knobs' } },
 		accent: { control: 'text', table: { category: 'knobs' } },
+		discUnderlay: { control: 'text', table: { category: 'knobs' } },
 	},
 } satisfies Meta<typeof Steps>
 

@@ -34,6 +34,10 @@ const knobs = defineKnobs('ui-step', {
 	gap: '<length>',
 	lineInk: '<color>',
 	accent: '<color>',
+	/** Opaque backing under each disc's accent tint, so the spine line stops
+	 *  AT discs instead of showing through them. Defaults to the page base;
+	 *  set it when steps sit on a different surface. */
+	discUnderlay: '<color>',
 })
 
 function StepNode(props: { step: Step; index: number; size: StepNodeSize }) {
