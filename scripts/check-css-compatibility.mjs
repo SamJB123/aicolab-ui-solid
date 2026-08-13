@@ -68,10 +68,11 @@ requireAll(
 	[
 		/@supports \(appearance: base-select\)/,
 		/@supports \(width: attr\(data-ui-compat-probe type\(<length>\), 0px\)\)/,
-		/border-radius: var\(--ui-select-radius, var\(--r-md\)\)/,
-		/border-radius: attr\(data-ui-select-radius type\(<length-percentage>\), var\(--ui-select-radius, var\(--r-md\)\)\)/,
-		/border-color: var\(--ui-select-hover-border, var\(--ui-border-hover\)\)/,
-		/border-color: attr\(data-ui-select-hover-border type\(<color>\), var\(--ui-select-hover-border, var\(--ui-border-hover\)\)\)/,
+		/@property --_ui-select-radius \{\n\tsyntax: "<length-percentage>";/,
+		/--_ui-select-radius: var\(--ui-select-radius, var\(--r-md\)\)/,
+		/--_ui-select-radius: attr\(data-ui-select-radius type\(<length-percentage>\), var\(--ui-select-radius, var\(--r-md\)\)\)/,
+		/--_ui-select-hover-border: var\(--ui-select-hover-border, var\(--ui-border-hover\)\)/,
+		/--_ui-select-hover-border: attr\(data-ui-select-hover-border type\(<color>\), var\(--ui-select-hover-border, var\(--ui-border-hover\)\)\)/,
 	],
 	'select-control knob boundary',
 )

@@ -11,11 +11,23 @@ import type { JSX } from '@solidjs/web'
      probe gate as resolver.css. Delete the custom-property wire together
      with the compatibility reads once typed attr() reaches the supported
      Baseline floor.
-   Knobs are deliberately NOT @property-registered: registration would give
-   each property a permanently-valid initial value, disabling the var()
-   fallback that carries the knob's token-derived default (an @property
-   initial-value cannot reference var()). Unregistered custom properties
-   also inherit, which is what lets knobs reach ::picker and ::backdrop. */
+   CSS-side house pattern (see select-control/styles.css for the exemplar):
+   the PUBLIC knob stays unregistered — its "value" may be absent, which is
+   what lets the fallback carry a token-live default, lets defaults differ
+   per context, and lets containers or app CSS supply values by inheritance.
+   The stylesheet resolves each knob ONCE per default-context into a
+   registered private adapter (`--_<prefix>-<knob>`, @property with the
+   knob's syntax, inherits: false, dummy literal initial that is never
+   visible because the same stylesheet always assigns it). All consuming
+   declarations read the adapter; the frontier block swaps only the adapter
+   assignments. Assign an adapter inside the pseudo-element rule that
+   consumes it (public knobs inherit into pseudo-elements; private adapters
+   deliberately do not). Registering the PUBLIC knob instead is always
+   wrong: @property initial-values must be computationally independent
+   (frozen literals — no var()), which would detach defaults from the token
+   system. Transition consuming properties as usual; transition an adapter
+   itself only when its destination cannot interpolate (gradients, masks)
+   — never both, or the eases compound. */
 
 export type UiLength =
 	| `${number}px`

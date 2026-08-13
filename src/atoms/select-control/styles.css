@@ -1,18 +1,65 @@
 /* Per-instance knobs (radius, minHeight, padBlock, padInline, hoverBorder,
-   pickerRadius) arrive on two wires from the component: custom properties
-   for the Baseline reads below, data-ui-select-* attributes for the typed
-   attr() frontier boundary at the end of this block. Every knob read keeps
-   its token default in the innermost fallback, so an unknobbed instance is
-   identical to the pre-knob design. */
+   pickerRadius) arrive on two wires from the component: public custom
+   properties (--ui-select-*) for the Baseline path, data-ui-select-*
+   attributes for the typed attr() frontier boundary at the end of this
+   block.
+
+   Each knob is resolved ONCE per default-context into a registered private
+   adapter (--_ui-select-*, kizu's "captured custom property" pattern); all
+   consuming declarations read the adapter. Registration gives the adapter a
+   type (enabling variable-level interpolation if a knob ever feeds a
+   non-interpolable destination) while the PUBLIC knob stays unregistered,
+   so defaults remain token-live, may differ per context, and containers or
+   app CSS can still supply values. The dummy initial-value below is never
+   visible: this stylesheet always assigns the adapter wherever it is read.
+   Transition consuming properties as usual; transition an adapter instead
+   only when its destination cannot interpolate — never both. */
+@property --_ui-select-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 12px;
+}
+@property --_ui-select-min-height {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 2.25rem;
+}
+@property --_ui-select-pad-block {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0.42rem;
+}
+@property --_ui-select-pad-inline {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0.75rem;
+}
+@property --_ui-select-hover-border {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-select-picker-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 12px;
+}
+
 @scope (.ui-select-control) {
 	:scope {
+		--_ui-select-radius: var(--ui-select-radius, var(--r-md));
+		--_ui-select-min-height: var(--ui-select-min-height, 2.25rem);
+		--_ui-select-pad-block: var(--ui-select-pad-block, 0.42rem);
+		--_ui-select-pad-inline: var(--ui-select-pad-inline, 0.75rem);
+		--_ui-select-hover-border: var(--ui-select-hover-border, color-mix(in oklab, var(--color-primary) 58%, var(--color-border-strong)));
+
 		box-sizing: border-box;
 		width: fit-content;
 		max-width: 100%;
-		min-height: var(--ui-select-min-height, 2.25rem);
-		padding: var(--ui-select-pad-block, 0.42rem) var(--ui-select-pad-inline, 0.75rem);
+		min-height: var(--_ui-select-min-height);
+		padding: var(--_ui-select-pad-block) var(--_ui-select-pad-inline);
 		border: 1px solid var(--color-border-strong);
-		border-radius: var(--ui-select-radius, var(--r-md));
+		border-radius: var(--_ui-select-radius);
 		corner-shape: squircle;
 		background: var(--color-base-100);
 		color: var(--color-base-content);
@@ -28,7 +75,7 @@
 	}
 
 	:scope:hover:not(:disabled) {
-		border-color: var(--ui-select-hover-border, color-mix(in oklab, var(--color-primary) 58%, var(--color-border-strong)));
+		border-color: var(--_ui-select-hover-border);
 	}
 
 	:scope:focus-visible {
@@ -44,13 +91,14 @@
 	}
 
 	:scope[data-ui-color-base] {
+		--_ui-select-hover-border: var(--ui-select-hover-border, var(--ui-border-hover));
 		border-color: var(--ui-border);
 		background: var(--ui-surface);
 		color: var(--ui-ink);
 	}
 
 	:scope[data-ui-color-base]:hover:not(:disabled) {
-		border-color: var(--ui-select-hover-border, var(--ui-border-hover));
+		border-color: var(--_ui-select-hover-border);
 		background: var(--ui-surface-hover);
 		color: var(--ui-ink-hover);
 	}
@@ -82,9 +130,13 @@
 		:scope { appearance: base-select; }
 
 		:scope::picker(select) {
+			/* Adapter assigned here, where it is consumed: the PUBLIC knob
+			   inherits from the select into its ::picker, so the read works
+			   without making the private adapter inheritable. */
+			--_ui-select-picker-radius: var(--ui-select-picker-radius, var(--r-md));
 			appearance: base-select;
 			border: 1px solid var(--color-border-strong);
-			border-radius: var(--ui-select-picker-radius, var(--r-md));
+			border-radius: var(--_ui-select-picker-radius);
 			corner-shape: squircle;
 			background: var(--color-base-100);
 			color: var(--color-base-content);
@@ -130,31 +182,29 @@
 	}
 
 	/* ── Frontier knob boundary ──────────────────────────────────────────
-	   The same knobs read as typed attributes. Keep the var() compatibility
-	   reads above until typed attr() is Baseline across ui-solid's browser
-	   floor, then delete them together with the component's style-variable
-	   emission. Each attr() fallback chains through the compatibility
-	   variable so the two wires can never disagree. */
+	   The same knobs read as typed attributes. Because every consuming
+	   declaration reads a private adapter, this block swaps only the
+	   adapter ASSIGNMENTS — one line per knob per default-context — and
+	   each attr() fallback chains through the compatibility variable so
+	   the two wires can never disagree. Keep until typed attr() is
+	   Baseline across ui-solid's browser floor, then delete this block
+	   together with the component's style-variable emission. */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
-			min-height: attr(data-ui-select-min-height type(<length>), var(--ui-select-min-height, 2.25rem));
-			padding:
-				attr(data-ui-select-pad-block type(<length>), var(--ui-select-pad-block, 0.42rem))
-				attr(data-ui-select-pad-inline type(<length>), var(--ui-select-pad-inline, 0.75rem));
-			border-radius: attr(data-ui-select-radius type(<length-percentage>), var(--ui-select-radius, var(--r-md)));
+			--_ui-select-radius: attr(data-ui-select-radius type(<length-percentage>), var(--ui-select-radius, var(--r-md)));
+			--_ui-select-min-height: attr(data-ui-select-min-height type(<length>), var(--ui-select-min-height, 2.25rem));
+			--_ui-select-pad-block: attr(data-ui-select-pad-block type(<length>), var(--ui-select-pad-block, 0.42rem));
+			--_ui-select-pad-inline: attr(data-ui-select-pad-inline type(<length>), var(--ui-select-pad-inline, 0.75rem));
+			--_ui-select-hover-border: attr(data-ui-select-hover-border type(<color>), var(--ui-select-hover-border, color-mix(in oklab, var(--color-primary) 58%, var(--color-border-strong))));
 		}
 
-		:scope:hover:not(:disabled) {
-			border-color: attr(data-ui-select-hover-border type(<color>), var(--ui-select-hover-border, color-mix(in oklab, var(--color-primary) 58%, var(--color-border-strong))));
-		}
-
-		:scope[data-ui-color-base]:hover:not(:disabled) {
-			border-color: attr(data-ui-select-hover-border type(<color>), var(--ui-select-hover-border, var(--ui-border-hover)));
+		:scope[data-ui-color-base] {
+			--_ui-select-hover-border: attr(data-ui-select-hover-border type(<color>), var(--ui-select-hover-border, var(--ui-border-hover)));
 		}
 
 		@supports (appearance: base-select) {
 			:scope::picker(select) {
-				border-radius: attr(data-ui-select-picker-radius type(<length-percentage>), var(--ui-select-picker-radius, var(--r-md)));
+				--_ui-select-picker-radius: attr(data-ui-select-picker-radius type(<length-percentage>), var(--ui-select-picker-radius, var(--r-md)));
 			}
 		}
 	}
