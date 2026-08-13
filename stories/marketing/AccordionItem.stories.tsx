@@ -7,10 +7,24 @@ const meta = {
 	title: 'Atoms/AccordionItem',
 	component: AccordionItem,
 	args: { summary: 'What does membership cost?' },
+	argTypes: {
+		iconInk: { control: 'text', table: { category: 'knobs' } },
+		divider: { control: 'text', table: { category: 'knobs' } },
+	},
 } satisfies Meta<typeof AccordionItem>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: {
+		summary: 'What does membership cost?',
+		open: true,
+		children: 'A flat monthly rate, set each season by member vote.',
+		iconInk: 'var(--color-primary)',
+		divider: 'var(--color-border)',
+	},
+}
 
 export const Single: Story = {
 	args: {

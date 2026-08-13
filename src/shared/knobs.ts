@@ -27,7 +27,28 @@ import type { JSX } from '@solidjs/web'
    (frozen literals — no var()), which would detach defaults from the token
    system. Transition consuming properties as usual; transition an adapter
    itself only when its destination cannot interpolate (gradients, masks)
-   — never both, or the eases compound. */
+   — never both, or the eases compound.
+
+   Enumerated modes are NOT value knobs and use none of this machinery:
+   a union-typed prop maps to a data attribute styled with plain attribute
+   selectors (IconButton's data-size is the exemplar). Only a mode set on a
+   collection and consumed by child components adds the style-query twin
+   beside its descendant-attribute baseline (see molecules/accordion).
+
+   MANDATORY values are not knobs either. Knobs exist for OPTIONAL inputs,
+   where absence must resolve to a live token/context default — that
+   requirement is what forces the fallback chains, per-context assignments
+   and adapter indirection. A value the component supplies on every render
+   (a meter's percentage, a bar's height, an identity colour) can never be
+   absent, so it takes the direct form: one always-emitted variable, one
+   read — and it may be @property-registered DIRECTLY (typed, animatable;
+   the literal initial-value is a safety net, not a default, so the
+   registration catch-22 does not apply). Choose inherits deliberately if a
+   pseudo-element or descendant must see it.
+
+   Definition of done for a knobbed component: dual-wire CSS with checker
+   entries, a Playground story wired to every knob, and a browser probe
+   (skill: ui-solid-storybook) proving each wire moves a computed style. */
 
 export type UiLength =
 	| `${number}px`
@@ -77,7 +98,12 @@ export function defineKnobs<Spec extends KnobSpec>(prefix: string, spec: Spec) {
 		names.flatMap((name) => {
 			const value = props[name]
 			if (value === undefined) return []
-			return [{ name, value: String(value) }]
+			const text = String(value)
+			/* Empty string means absent, like undefined — text-based tooling
+			   (Storybook controls) emits '' for cleared inputs, and an empty
+			   emitted value would defeat the stylesheet's fallback default. */
+			if (text === '') return []
+			return [{ name, value: text }]
 		})
 	return {
 		spec,

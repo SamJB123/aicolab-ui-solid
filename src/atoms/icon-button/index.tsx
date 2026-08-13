@@ -1,27 +1,62 @@
 /** @jsxImportSource @solidjs/web */
-import { type ParentProps } from 'solid-js'
+import type { JSX } from '@solidjs/web'
+import { omit } from 'solid-js'
 import type { ClassProp } from '../../shared/color-treatment'
-export function IconButton(
-	props: ParentProps<{
-		onClick?: () => void
-		label: string
-		title?: string
-		size?: 'sm' | 'md' | 'lg'
-		disabled?: boolean
-		class?: ClassProp
-		ref?: (element: HTMLButtonElement) => void
-	}>,
-) {
+import { defineKnobs, mergeKnobStyle, type KnobProps, type UiLength } from '../../shared/knobs'
+
+/** Per-instance styling contract (see shared/knobs.ts). */
+const knobs = defineKnobs('ui-iconbtn', {
+	size: '<length>',
+	radius: '<length-percentage>',
+	hoverSurface: '<color>',
+	hoverInk: '<color>',
+})
+
+type IconButtonProps = Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, 'class'> & {
+	class?: ClassProp
+	/** Accessible name — icon-only buttons have no text content. */
+	label: string
+	/** Named vocabulary ('sm' 30px / 'md' 36px / 'lg' 44px, a data attribute)
+	 *  or an exact measurement, which rides the size knob instead. */
+	size?: 'sm' | 'md' | 'lg' | UiLength
+} & Omit<KnobProps<typeof knobs.spec>, 'size'>
+
+export function IconButton(props: IconButtonProps) {
+	const attributes = omit(
+		props,
+		'class',
+		'style',
+		'children',
+		'type',
+		'label',
+		'size',
+		'radius',
+		'hoverSurface',
+		'hoverInk',
+	)
+	const namedSize = () => {
+		const { size } = props
+		return size === 'sm' || size === 'md' || size === 'lg' ? size : undefined
+	}
+	const measuredSize = () => {
+		const { size } = props
+		return size === 'sm' || size === 'md' || size === 'lg' ? undefined : size
+	}
+	const knobValues = () => ({
+		size: measuredSize(),
+		radius: props.radius,
+		hoverSurface: props.hoverSurface,
+		hoverInk: props.hoverInk,
+	})
 	return (
 		<button
-			type="button"
+			{...attributes}
+			{...knobs.attributes(knobValues())}
+			type={props.type ?? 'button'}
 			aria-label={props.label}
-			title={props.title}
-			disabled={props.disabled}
-			ref={props.ref}
-			onClick={() => props.onClick?.()}
+			data-size={namedSize() ?? (measuredSize() === undefined ? 'md' : undefined)}
 			class={['ui-iconbtn', props.class]}
-			data-size={props.size ?? 'md'}
+			style={mergeKnobStyle(knobs.style(knobValues()), props.style)}
 		>
 			{props.children}
 		</button>

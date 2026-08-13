@@ -1,10 +1,33 @@
+/* ── HoldButton ──
+   Knobs (size, radius, focusRing) on the usual two wires; colour states stay
+   with the treatment roles. */
+@property --_ui-hold-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 4.25rem;
+}
+@property --_ui-hold-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 50%;
+}
+@property --_ui-hold-focus-ring {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+
 @scope (.ui-hold-button) {
 	:scope {
+		--_ui-hold-size: var(--ui-hold-size, 4.25rem);
+		--_ui-hold-radius: var(--ui-hold-radius, 50%);
+		--_ui-hold-focus-ring: var(--ui-hold-focus-ring, var(--ui-focus-ring));
+
 		box-sizing: border-box;
-		min-width: 4.25rem;
-		min-height: 4.25rem;
+		min-width: var(--_ui-hold-size);
+		min-height: var(--_ui-hold-size);
 		border: 2px solid var(--ui-border);
-		border-radius: 50%;
+		border-radius: var(--_ui-hold-radius);
 		background: var(--ui-surface);
 		color: var(--ui-ink);
 		box-shadow: var(--ui-glow);
@@ -23,6 +46,15 @@
 	}
 
 	:scope:active { background: var(--ui-surface-active); transform: scale(0.94); }
-	:scope:focus-visible { outline: 2px solid var(--ui-focus-ring); outline-offset: 3px; }
+	:scope:focus-visible { outline: 2px solid var(--_ui-hold-focus-ring); outline-offset: 3px; }
 	:scope:disabled { cursor: not-allowed; opacity: 0.45; }
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-hold-size: attr(data-ui-hold-size type(<length>), var(--ui-hold-size, 4.25rem));
+			--_ui-hold-radius: attr(data-ui-hold-radius type(<length-percentage>), var(--ui-hold-radius, 50%));
+			--_ui-hold-focus-ring: attr(data-ui-hold-focus-ring type(<color>), var(--ui-hold-focus-ring, var(--ui-focus-ring)));
+		}
+	}
 }

@@ -1,14 +1,53 @@
+/* ── Notice ──
+   Knobs (radius, padBlock, padInline, fontSize) on the usual two wires;
+   surfaces and ink stay with the treatment roles. */
+@property --_ui-notice-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 6px;
+}
+@property --_ui-notice-pad-block {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0.55rem;
+}
+@property --_ui-notice-pad-inline {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0.65rem;
+}
+@property --_ui-notice-font-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 13px;
+}
+
 @scope (.ui-notice) {
 	:scope {
+		--_ui-notice-radius: var(--ui-notice-radius, var(--r-xs));
+		--_ui-notice-pad-block: var(--ui-notice-pad-block, 0.55rem);
+		--_ui-notice-pad-inline: var(--ui-notice-pad-inline, 0.65rem);
+		--_ui-notice-font-size: var(--ui-notice-font-size, var(--t-sm));
+
 		margin: 0;
-		padding: 0.55rem 0.65rem;
-		border-radius: var(--r-xs);
+		padding: var(--_ui-notice-pad-block) var(--_ui-notice-pad-inline);
+		border-radius: var(--_ui-notice-radius);
 		background: var(--ui-surface);
 		color: var(--ui-ink);
 		box-shadow: inset 0 0 0 1px var(--ui-border);
-		font-size: var(--t-sm);
+		font-size: var(--_ui-notice-font-size);
 		font-weight: 500;
 		line-height: 1.4;
 		overflow-wrap: anywhere;
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-notice-radius: attr(data-ui-notice-radius type(<length-percentage>), var(--ui-notice-radius, var(--r-xs)));
+			--_ui-notice-pad-block: attr(data-ui-notice-pad-block type(<length>), var(--ui-notice-pad-block, 0.55rem));
+			--_ui-notice-pad-inline: attr(data-ui-notice-pad-inline type(<length>), var(--ui-notice-pad-inline, 0.65rem));
+			--_ui-notice-font-size: attr(data-ui-notice-font-size type(<length>), var(--ui-notice-font-size, var(--t-sm)));
+		}
 	}
 }

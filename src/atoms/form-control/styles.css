@@ -1,25 +1,119 @@
+/* ── Form controls ──
+   Knobs arrive on two wires from the components: public --ui-input-* /
+   --ui-range-* custom properties (Baseline path) and data-ui-input-* /
+   data-ui-range-* attributes (typed attr() frontier boundaries at the end
+   of each scope block). Each knob resolves once per default-context into a
+   registered private adapter; consuming declarations read the adapter.
+
+   Deviation from the assign-where-consumed rule: ::placeholder and
+   ::selection accept only a restricted property set, so their adapters are
+   registered inherits: true and assigned on the element — the values reach
+   the pseudo/highlight surface by inheritance instead of in-rule
+   assignment. */
+@property --_ui-input-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 6px;
+}
+@property --_ui-input-min-height {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 2.25rem;
+}
+@property --_ui-input-pad-block {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0.45rem;
+}
+@property --_ui-input-pad-inline {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0.55rem;
+}
+@property --_ui-input-hover-border {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-input-focus-ring {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-input-caret {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-input-placeholder-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-input-selection-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-input-selection-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-range-accent {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-range-focus-ring {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+
 @scope (.ui-text-input, .ui-number-input, .ui-text-area) {
 	:scope {
+		--_ui-input-radius: var(--ui-input-radius, var(--r-xs));
+		--_ui-input-min-height: var(--ui-input-min-height, 2.25rem);
+		--_ui-input-pad-block: var(--ui-input-pad-block, 0.45rem);
+		--_ui-input-pad-inline: var(--ui-input-pad-inline, 0.55rem);
+		--_ui-input-hover-border: var(--ui-input-hover-border, var(--color-primary));
+		--_ui-input-focus-ring: var(--ui-input-focus-ring, color-mix(in oklab, var(--color-primary) 54%, transparent));
+		--_ui-input-caret: var(--ui-input-caret, currentColor);
+		--_ui-input-placeholder-ink: var(--ui-input-placeholder-ink, var(--color-base-content-faint));
+		--_ui-input-selection-surface: var(--ui-input-selection-surface, color-mix(in oklab, var(--color-primary) 30%, transparent));
+		--_ui-input-selection-ink: var(--ui-input-selection-ink, currentColor);
+
 		box-sizing: border-box;
-		min-height: 2.25rem;
+		min-height: var(--_ui-input-min-height);
 		border: 1px solid var(--color-border-strong);
-		border-radius: var(--r-xs);
+		border-radius: var(--_ui-input-radius);
 		corner-shape: squircle;
-		padding: 0.45rem 0.55rem;
+		padding: var(--_ui-input-pad-block) var(--_ui-input-pad-inline);
 		background: var(--color-base-100);
 		color: var(--color-base-content);
+		caret-color: var(--_ui-input-caret);
 		font: inherit;
 		field-sizing: content;
 		transition:
 			border-color 160ms ease,
+			border-radius 160ms ease,
+			min-height 160ms ease,
+			padding 160ms ease,
 			box-shadow 220ms linear(0, 0.45, 0.82, 1.08, 1);
 	}
 
-	:scope:hover:not(:disabled) { border-color: var(--color-primary); }
+	:scope::placeholder { color: var(--_ui-input-placeholder-ink); }
+	:scope::selection {
+		background: var(--_ui-input-selection-surface);
+		color: var(--_ui-input-selection-ink);
+	}
+
+	:scope:hover:not(:disabled) { border-color: var(--_ui-input-hover-border); }
 
 	:scope:focus-visible {
 		border-color: var(--color-primary);
-		outline: 2px solid color-mix(in oklab, var(--color-primary) 54%, transparent);
+		outline: 2px solid var(--_ui-input-focus-ring);
 		outline-offset: 1px;
 		box-shadow: 0 0 1rem color-mix(in oklab, var(--color-primary) 26%, transparent);
 	}
@@ -28,6 +122,30 @@
 		cursor: not-allowed;
 		background: var(--color-base-200);
 		color: var(--color-base-content-faint);
+	}
+
+	:scope[data-ui-color-base] {
+		--_ui-input-hover-border: var(--ui-input-hover-border, var(--ui-border-hover));
+		--_ui-input-focus-ring: var(--ui-input-focus-ring, var(--ui-focus-ring));
+		border-color: var(--ui-border);
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+	}
+
+	:scope[data-ui-color-base]:hover:not(:disabled) {
+		border-color: var(--_ui-input-hover-border);
+		background: var(--ui-surface-hover);
+		color: var(--ui-ink-hover);
+	}
+
+	:scope[data-ui-color-base]:focus-visible {
+		border-color: var(--ui-border-active);
+	}
+
+	:scope[data-ui-color-base]:disabled {
+		border-color: var(--ui-border-disabled);
+		background: var(--ui-surface-disabled);
+		color: var(--ui-ink-disabled);
 	}
 
 	/* ToolPanel declares only its semantic environment. The atom owns how its
@@ -43,6 +161,27 @@
 			color: var(--color-overlay-content-muted);
 		}
 	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-input-radius: attr(data-ui-input-radius type(<length-percentage>), var(--ui-input-radius, var(--r-xs)));
+			--_ui-input-min-height: attr(data-ui-input-min-height type(<length>), var(--ui-input-min-height, 2.25rem));
+			--_ui-input-pad-block: attr(data-ui-input-pad-block type(<length>), var(--ui-input-pad-block, 0.45rem));
+			--_ui-input-pad-inline: attr(data-ui-input-pad-inline type(<length>), var(--ui-input-pad-inline, 0.55rem));
+			--_ui-input-hover-border: attr(data-ui-input-hover-border type(<color>), var(--ui-input-hover-border, var(--color-primary)));
+			--_ui-input-focus-ring: attr(data-ui-input-focus-ring type(<color>), var(--ui-input-focus-ring, color-mix(in oklab, var(--color-primary) 54%, transparent)));
+			--_ui-input-caret: attr(data-ui-input-caret type(<color>), var(--ui-input-caret, currentColor));
+			--_ui-input-placeholder-ink: attr(data-ui-input-placeholder-ink type(<color>), var(--ui-input-placeholder-ink, var(--color-base-content-faint)));
+			--_ui-input-selection-surface: attr(data-ui-input-selection-surface type(<color>), var(--ui-input-selection-surface, color-mix(in oklab, var(--color-primary) 30%, transparent)));
+			--_ui-input-selection-ink: attr(data-ui-input-selection-ink type(<color>), var(--ui-input-selection-ink, currentColor));
+		}
+
+		:scope[data-ui-color-base] {
+			--_ui-input-hover-border: attr(data-ui-input-hover-border type(<color>), var(--ui-input-hover-border, var(--ui-border-hover)));
+			--_ui-input-focus-ring: attr(data-ui-input-focus-ring type(<color>), var(--ui-input-focus-ring, var(--ui-focus-ring)));
+		}
+	}
 }
 
 @scope (.ui-text-input, .ui-number-input, .ui-text-area) {
@@ -51,25 +190,53 @@
 
 @scope (.ui-text-area) {
 	:scope {
-		min-height: 5rem;
+		/* Per-context default: a textarea's resting height differs; the knob
+		   still wins when given. */
+		--_ui-input-min-height: var(--ui-input-min-height, 5rem);
 		resize: vertical;
+	}
+
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-input-min-height: attr(data-ui-input-min-height type(<length>), var(--ui-input-min-height, 5rem));
+		}
 	}
 }
 
 @scope (.ui-range-input) {
 	:scope {
+		--_ui-range-accent: var(--ui-range-accent, var(--color-primary));
+		--_ui-range-focus-ring: var(--ui-range-focus-ring, color-mix(in oklab, var(--color-primary) 54%, transparent));
+
 		box-sizing: border-box;
 		width: 100%;
 		margin: 0;
-		accent-color: var(--color-primary);
+		accent-color: var(--_ui-range-accent);
 		cursor: pointer;
 		block-size: 1.25rem;
+	}
+
+	:scope[data-ui-color-base] {
+		--_ui-range-accent: var(--ui-range-accent, var(--ui-color));
+		--_ui-range-focus-ring: var(--ui-range-focus-ring, var(--ui-focus-ring));
 	}
 
 	:scope:disabled { cursor: not-allowed; opacity: 0.45; }
 
 	:scope:focus-visible {
-		outline: 2px solid color-mix(in oklab, var(--color-primary) 54%, transparent);
+		outline: 2px solid var(--_ui-range-focus-ring);
 		outline-offset: 3px;
+	}
+
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-range-accent: attr(data-ui-range-accent type(<color>), var(--ui-range-accent, var(--color-primary)));
+			--_ui-range-focus-ring: attr(data-ui-range-focus-ring type(<color>), var(--ui-range-focus-ring, color-mix(in oklab, var(--color-primary) 54%, transparent)));
+		}
+
+		:scope[data-ui-color-base] {
+			--_ui-range-accent: attr(data-ui-range-accent type(<color>), var(--ui-range-accent, var(--ui-color)));
+			--_ui-range-focus-ring: attr(data-ui-range-focus-ring type(<color>), var(--ui-range-focus-ring, var(--ui-focus-ring)));
+		}
 	}
 }

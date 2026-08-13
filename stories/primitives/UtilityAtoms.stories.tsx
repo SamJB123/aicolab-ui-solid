@@ -9,10 +9,31 @@ import {
 const meta = {
 	title: 'Atoms/Utility atoms',
 	component: Notice,
+	argTypes: {
+		colorBase: {
+			control: 'select',
+			options: ['primary', 'secondary', 'accent', 'neutral', 'info', 'success', 'warning', 'error'],
+		},
+		colorLevel: { control: 'select', options: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] },
+		variant: { control: 'radio', options: ['solid', 'soft', 'outline', 'ghost', 'text'] },
+		radius: { control: 'text', table: { category: 'knobs' } },
+		padBlock: { control: 'text', table: { category: 'knobs' } },
+		padInline: { control: 'text', table: { category: 'knobs' } },
+		fontSize: { control: 'text', table: { category: 'knobs' } },
+	},
 } satisfies Meta<typeof Notice>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const NoticePlayground: Story = {
+	args: {
+		children: 'A new version of this note is available.',
+		colorBase: 'info',
+		variant: 'soft',
+		radius: 'var(--r-xs)',
+	},
+}
 
 export const NoticeTreatments: Story = {
 	render: () => (

@@ -1,14 +1,66 @@
-/* ── Button ── */
+/* ── Button ──
+   Knobs (radius, padBlock, padInline, gap, fontSize, hoverBorder, focusRing)
+   arrive on two wires from the component: public --ui-btn-* custom
+   properties (Baseline path) and data-ui-btn-* attributes (typed attr()
+   frontier boundary at the end of this block). Each knob resolves once per
+   default-context into a registered private adapter; consuming declarations
+   read the adapter. Note padInline's default differs per context (16px
+   normally, 4px for the text variant) — the per-context default lives in
+   the adapter assignments, never in the registrations. */
+@property --_ui-btn-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 999px;
+}
+@property --_ui-btn-pad-block {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 8px;
+}
+@property --_ui-btn-pad-inline {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 16px;
+}
+@property --_ui-btn-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 8px;
+}
+@property --_ui-btn-font-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 13px;
+}
+@property --_ui-btn-hover-border {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-btn-focus-ring {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+
 @scope (.ui-btn) {
 	:scope {
+		--_ui-btn-radius: var(--ui-btn-radius, var(--r-pill));
+		--_ui-btn-pad-block: var(--ui-btn-pad-block, 8px);
+		--_ui-btn-pad-inline: var(--ui-btn-pad-inline, 16px);
+		--_ui-btn-gap: var(--ui-btn-gap, 8px);
+		--_ui-btn-font-size: var(--ui-btn-font-size, var(--t-sm));
+		--_ui-btn-hover-border: var(--ui-btn-hover-border, var(--ui-border-hover));
+		--_ui-btn-focus-ring: var(--ui-btn-focus-ring, var(--ui-focus-ring));
+
 		display: inline-flex;
 		align-items: center;
-		gap: 8px;
+		gap: var(--_ui-btn-gap);
 		border: 0;
-		border-radius: var(--r-pill);
-		padding: 8px 16px;
+		border-radius: var(--_ui-btn-radius);
+		padding: var(--_ui-btn-pad-block) var(--_ui-btn-pad-inline);
 		font: inherit;
-		font-size: var(--t-sm);
+		font-size: var(--_ui-btn-font-size);
 		font-weight: 500;
 		text-decoration: none;
 		cursor: pointer;
@@ -27,7 +79,7 @@
 		color: var(--ui-ink-hover);
 		text-shadow: 0 0 14px var(--ui-ink-glow-hover);
 		box-shadow:
-			inset 0 0 0 1px var(--ui-border-hover),
+			inset 0 0 0 1px var(--_ui-btn-hover-border),
 			0 4px 24px -6px var(--ui-surface-glow-hover);
 	}
 	:scope[data-ui-color-base]:active:not(:disabled) {
@@ -39,7 +91,7 @@
 			0 4px 24px -6px var(--ui-surface-glow-active);
 	}
 	:scope[data-ui-color-base]:focus-visible {
-		outline: 2px solid var(--ui-focus-ring);
+		outline: 2px solid var(--_ui-btn-focus-ring);
 		outline-offset: 2px;
 	}
 	:scope[data-ui-color-base]:is([aria-pressed="true"], [aria-selected="true"]) {
@@ -53,5 +105,29 @@
 		color: var(--ui-ink-disabled);
 		box-shadow: inset 0 0 0 1px var(--ui-border-disabled);
 	}
-	:scope[data-ui-color-variant="text"] { padding-inline: 4px; }
+	:scope[data-ui-color-variant="text"] {
+		--_ui-btn-pad-inline: var(--ui-btn-pad-inline, 4px);
+	}
+
+	/* ── Frontier knob boundary ──────────────────────────────────────────
+	   The same knobs read as typed attributes; only the adapter assignments
+	   swap, and each attr() fallback chains through the compatibility
+	   variable so the two wires can never disagree. Delete together with
+	   the component's style-variable emission once typed attr() is
+	   Baseline across ui-solid's browser floor. */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-btn-radius: attr(data-ui-btn-radius type(<length-percentage>), var(--ui-btn-radius, var(--r-pill)));
+			--_ui-btn-pad-block: attr(data-ui-btn-pad-block type(<length>), var(--ui-btn-pad-block, 8px));
+			--_ui-btn-pad-inline: attr(data-ui-btn-pad-inline type(<length>), var(--ui-btn-pad-inline, 16px));
+			--_ui-btn-gap: attr(data-ui-btn-gap type(<length>), var(--ui-btn-gap, 8px));
+			--_ui-btn-font-size: attr(data-ui-btn-font-size type(<length>), var(--ui-btn-font-size, var(--t-sm)));
+			--_ui-btn-hover-border: attr(data-ui-btn-hover-border type(<color>), var(--ui-btn-hover-border, var(--ui-border-hover)));
+			--_ui-btn-focus-ring: attr(data-ui-btn-focus-ring type(<color>), var(--ui-btn-focus-ring, var(--ui-focus-ring)));
+		}
+
+		:scope[data-ui-color-variant="text"] {
+			--_ui-btn-pad-inline: attr(data-ui-btn-pad-inline type(<length>), var(--ui-btn-pad-inline, 4px));
+		}
+	}
 }

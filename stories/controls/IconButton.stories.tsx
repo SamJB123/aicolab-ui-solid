@@ -6,10 +6,26 @@ const meta = {
 	title: 'Atoms/IconButton',
 	component: IconButton,
 	args: { label: 'Next month' },
+	argTypes: {
+		size: { control: 'text', description: "'sm' | 'md' | 'lg' or a measurement like 27px" },
+		radius: { control: 'text', table: { category: 'knobs' } },
+		hoverSurface: { control: 'text', table: { category: 'knobs' } },
+		hoverInk: { control: 'text', table: { category: 'knobs' } },
+	},
 } satisfies Meta<typeof IconButton>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: {
+		label: 'Playground',
+		children: '✳',
+		size: 'md',
+		radius: 'var(--r-pill)',
+		hoverSurface: 'var(--color-base-150)',
+	},
+}
 
 export const Default: Story = {
 	args: { label: 'Next month', children: '›' },

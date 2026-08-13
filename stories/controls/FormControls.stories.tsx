@@ -5,10 +5,39 @@ import { Field, NumberInput, RangeInput, SelectControl, TextArea, TextInput } fr
 const meta = {
 	title: 'Atoms/Form controls',
 	component: TextInput,
+	argTypes: {
+		colorBase: {
+			control: 'select',
+			options: ['primary', 'secondary', 'accent', 'neutral', 'info', 'success', 'warning', 'error'],
+		},
+		colorLevel: { control: 'select', options: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] },
+		variant: { control: 'radio', options: ['solid', 'soft', 'outline', 'ghost', 'text'] },
+		radius: { control: 'text', table: { category: 'knobs' } },
+		minHeight: { control: 'text', table: { category: 'knobs' } },
+		padBlock: { control: 'text', table: { category: 'knobs' } },
+		padInline: { control: 'text', table: { category: 'knobs' } },
+		hoverBorder: { control: 'text', table: { category: 'knobs' } },
+		focusRing: { control: 'text', table: { category: 'knobs' } },
+		placeholderInk: { control: 'text', table: { category: 'knobs' } },
+		selectionSurface: { control: 'text', table: { category: 'knobs' } },
+		selectionInk: { control: 'text', table: { category: 'knobs' } },
+		caret: { control: 'text', table: { category: 'knobs' } },
+	},
 } satisfies Meta<typeof TextInput>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: {
+		placeholder: 'Type to try the knobs…',
+		radius: 'var(--r-xs)',
+		minHeight: '2.25rem',
+		padBlock: '0.45rem',
+		padInline: '0.55rem',
+		placeholderInk: 'var(--color-base-content-faint)',
+	},
+}
 
 export const AllControls: Story = {
 	render: () => (

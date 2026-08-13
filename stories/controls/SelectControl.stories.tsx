@@ -33,11 +33,36 @@ const meta = {
 		colorBase: { control: 'select', options: ['primary', 'secondary', 'accent', 'neutral', 'info', 'success', 'warning', 'error'] },
 		colorLevel: { control: 'select', options: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] },
 		variant: { control: 'radio', options: ['solid', 'soft', 'outline', 'ghost', 'text'] },
+		radius: { control: 'text', table: { category: 'knobs' } },
+		minHeight: { control: 'text', table: { category: 'knobs' } },
+		padBlock: { control: 'text', table: { category: 'knobs' } },
+		padInline: { control: 'text', table: { category: 'knobs' } },
+		hoverBorder: { control: 'text', table: { category: 'knobs' } },
+		pickerRadius: { control: 'text', table: { category: 'knobs' } },
 	},
 } satisfies Meta<typeof SelectControl>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: {
+		'aria-label': 'Playground select',
+		radius: 'var(--r-md)',
+		minHeight: '2.25rem',
+		padBlock: '0.42rem',
+		padInline: '0.75rem',
+		pickerRadius: 'var(--r-md)',
+		disabled: false,
+	},
+	render: (args) => (
+		<SelectControl {...args}>
+			<option value="viewer">Viewer</option>
+			<option value="editor">Editor</option>
+			<option value="owner">Owner</option>
+		</SelectControl>
+	),
+}
 
 export const Interactive: Story = {
 	render: () => {
@@ -127,6 +152,10 @@ export const KnobContract: Story = {
 	name: 'Knob contract (typed attr() world)',
 	render: () => {
 		const [compact, setCompact] = createSignal(false)
+		// Bound value: this select's knob props change with the density signal,
+		// which re-asserts props onto the element — an unmaintained static
+		// `value` would clobber the user's selection on every toggle.
+		const [metric, setMetric] = createSignal('reactive')
 		return (
 			<div style={{ display: 'grid', gap: '0.75rem', 'justify-items': 'start' }}>
 				<SelectControl aria-label="Pill radius" radius="var(--r-pill)" padInline="1.1rem" value="pill">
@@ -160,7 +189,8 @@ export const KnobContract: Story = {
 					minHeight={compact() ? '1.75rem' : '2.6rem'}
 					radius={compact() ? 'var(--r-sm)' : 'var(--r-pill)'}
 					padInline={compact() ? '0.6rem' : '1.2rem'}
-					value="reactive"
+					value={metric()}
+					onChange={(event) => setMetric(event.currentTarget.value)}
 				>
 					<option value="reactive">Signal-driven metrics</option>
 					<option value="other">Other</option>

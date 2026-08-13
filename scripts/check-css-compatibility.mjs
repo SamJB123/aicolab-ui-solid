@@ -3,10 +3,17 @@ import { readFile } from 'node:fs/promises'
 
 const read = (path) => readFile(new URL(path, import.meta.url), 'utf8')
 
-const [resolver, accordion, selectControl, carousel, workspace, prosekit] = await Promise.all([
+const [resolver, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit] = await Promise.all([
 	read('../src/resolver.css'),
 	read('../src/molecules/accordion/styles.css'),
 	read('../src/atoms/select-control/styles.css'),
+	read('../src/atoms/button/styles.css'),
+	read('../src/atoms/form-control/styles.css'),
+	read('../src/atoms/icon-button/styles.css'),
+	read('../src/atoms/hold-button/styles.css'),
+	read('../src/atoms/mark/styles.css'),
+	read('../src/atoms/notice/styles.css'),
+	read('../src/atoms/accordion-item/styles.css'),
 	read('../src/molecules/carousel/styles.css'),
 	read('../src/organisms/workspace/styles.css'),
 	read('../src/prosekit-solid/styles.css'),
@@ -75,6 +82,73 @@ requireAll(
 		/--_ui-select-hover-border: attr\(data-ui-select-hover-border type\(<color>\), var\(--ui-select-hover-border, var\(--ui-border-hover\)\)\)/,
 	],
 	'select-control knob boundary',
+)
+requireAll(
+	button,
+	[
+		/@supports \(width: attr\(data-ui-compat-probe type\(<length>\), 0px\)\)/,
+		/@property --_ui-btn-radius \{\n\tsyntax: "<length-percentage>";/,
+		/--_ui-btn-radius: var\(--ui-btn-radius, var\(--r-pill\)\)/,
+		/--_ui-btn-radius: attr\(data-ui-btn-radius type\(<length-percentage>\), var\(--ui-btn-radius, var\(--r-pill\)\)\)/,
+		/--_ui-btn-pad-inline: var\(--ui-btn-pad-inline, 4px\)/,
+		/--_ui-btn-pad-inline: attr\(data-ui-btn-pad-inline type\(<length>\), var\(--ui-btn-pad-inline, 4px\)\)/,
+	],
+	'button knob boundary',
+)
+requireAll(
+	formControl,
+	[
+		/@supports \(width: attr\(data-ui-compat-probe type\(<length>\), 0px\)\)/,
+		/--_ui-input-radius: var\(--ui-input-radius, var\(--r-xs\)\)/,
+		/--_ui-input-radius: attr\(data-ui-input-radius type\(<length-percentage>\), var\(--ui-input-radius, var\(--r-xs\)\)\)/,
+		/--_ui-input-placeholder-ink: var\(--ui-input-placeholder-ink, var\(--color-base-content-faint\)\)/,
+		/--_ui-input-placeholder-ink: attr\(data-ui-input-placeholder-ink type\(<color>\), var\(--ui-input-placeholder-ink, var\(--color-base-content-faint\)\)\)/,
+		/--_ui-input-min-height: var\(--ui-input-min-height, 5rem\)/,
+		/--_ui-range-accent: attr\(data-ui-range-accent type\(<color>\), var\(--ui-range-accent, var\(--ui-color\)\)\)/,
+	],
+	'form-control knob boundary',
+)
+requireAll(
+	iconButton,
+	[
+		/@supports \(width: attr\(data-ui-compat-probe type\(<length>\), 0px\)\)/,
+		/--_ui-iconbtn-size: var\(--ui-iconbtn-size, 30px\)/,
+		/--_ui-iconbtn-size: attr\(data-ui-iconbtn-size type\(<length>\), var\(--ui-iconbtn-size, 30px\)\)/,
+	],
+	'icon-button knob boundary',
+)
+requireAll(
+	holdButton,
+	[
+		/--_ui-hold-size: var\(--ui-hold-size, 4\.25rem\)/,
+		/--_ui-hold-size: attr\(data-ui-hold-size type\(<length>\), var\(--ui-hold-size, 4\.25rem\)\)/,
+	],
+	'hold-button knob boundary',
+)
+requireAll(
+	mark,
+	[
+		/--_ui-mark-ink: var\(--ui-mark-ink, var\(--color-primary\)\)/,
+		/--_ui-mark-ink: attr\(data-ui-mark-ink type\(<color>\), var\(--ui-mark-ink, var\(--color-primary\)\)\)/,
+	],
+	'mark knob boundary',
+)
+requireAll(
+	notice,
+	[
+		/--_ui-notice-radius: var\(--ui-notice-radius, var\(--r-xs\)\)/,
+		/--_ui-notice-radius: attr\(data-ui-notice-radius type\(<length-percentage>\), var\(--ui-notice-radius, var\(--r-xs\)\)\)/,
+	],
+	'notice knob boundary',
+)
+requireAll(
+	accordionItem,
+	[
+		/--_ui-acc-divider: var\(--ui-acc-divider, var\(--color-border\)\)/,
+		/--_ui-acc-divider: attr\(data-ui-acc-divider type\(<color>\), var\(--ui-acc-divider, var\(--color-border\)\)\)/,
+		/--_ui-acc-icon-ink: var\(--ui-acc-icon-ink, var\(--color-primary\)\)/,
+	],
+	'accordion-item knob boundary',
 )
 requireAll(
 	carousel,

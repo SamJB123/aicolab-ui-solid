@@ -1,12 +1,41 @@
-/* ── IconButton ── */
+/* ── IconButton ──
+   Knobs (size, radius, hoverSurface, hoverInk) on the usual two wires. The
+   named data-size vocabulary supplies per-context DEFAULTS for the size
+   adapter; an explicit size knob outranks whichever name is set. */
+@property --_ui-iconbtn-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 36px;
+}
+@property --_ui-iconbtn-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 999px;
+}
+@property --_ui-iconbtn-hover-surface {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-iconbtn-hover-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+
 @scope (.ui-iconbtn) {
 	:scope {
+		--_ui-iconbtn-size: var(--ui-iconbtn-size, 36px);
+		--_ui-iconbtn-radius: var(--ui-iconbtn-radius, var(--r-pill));
+		--_ui-iconbtn-hover-surface: var(--ui-iconbtn-hover-surface, var(--color-base-150));
+		--_ui-iconbtn-hover-ink: var(--ui-iconbtn-hover-ink, var(--color-base-content));
+
 		display: grid;
 		place-items: center;
-		width: 36px;
-		height: 36px;
+		width: var(--_ui-iconbtn-size);
+		height: var(--_ui-iconbtn-size);
 		border: 0;
-		border-radius: var(--r-pill);
+		border-radius: var(--_ui-iconbtn-radius);
 		padding: 0;
 		font: inherit;
 		cursor: pointer;
@@ -15,9 +44,24 @@
 		box-shadow: 0 0 0 1px var(--color-border);
 		transition: all 0.2s;
 	}
-	:scope[data-size="sm"] { width: 30px; height: 30px; }
-	:scope[data-size="lg"] { width: 44px; height: 44px; }
-	:scope:hover:not(:disabled) { background: var(--color-base-150); color: var(--color-base-content); }
+	:scope[data-size="sm"] { --_ui-iconbtn-size: var(--ui-iconbtn-size, 30px); }
+	:scope[data-size="lg"] { --_ui-iconbtn-size: var(--ui-iconbtn-size, 44px); }
+	:scope:hover:not(:disabled) {
+		background: var(--_ui-iconbtn-hover-surface);
+		color: var(--_ui-iconbtn-hover-ink);
+	}
 	:scope:active:not(:disabled) { transform: scale(0.9); }
 	:scope:disabled { cursor: not-allowed; opacity: 0.35; }
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-iconbtn-size: attr(data-ui-iconbtn-size type(<length>), var(--ui-iconbtn-size, 36px));
+			--_ui-iconbtn-radius: attr(data-ui-iconbtn-radius type(<length-percentage>), var(--ui-iconbtn-radius, var(--r-pill)));
+			--_ui-iconbtn-hover-surface: attr(data-ui-iconbtn-hover-surface type(<color>), var(--ui-iconbtn-hover-surface, var(--color-base-150)));
+			--_ui-iconbtn-hover-ink: attr(data-ui-iconbtn-hover-ink type(<color>), var(--ui-iconbtn-hover-ink, var(--color-base-content)));
+		}
+		:scope[data-size="sm"] { --_ui-iconbtn-size: attr(data-ui-iconbtn-size type(<length>), var(--ui-iconbtn-size, 30px)); }
+		:scope[data-size="lg"] { --_ui-iconbtn-size: attr(data-ui-iconbtn-size type(<length>), var(--ui-iconbtn-size, 44px)); }
+	}
 }

@@ -65,13 +65,22 @@
 		color: var(--color-base-content);
 		font: inherit;
 		field-sizing: content;
+		/* Lets the width transition below tween intrinsic (fit-content) size
+		   changes when the selected option changes; engines without
+		   interpolate-size keep the instant resize. */
+		interpolate-size: allow-keywords;
 		cursor: pointer;
 		transition:
 			border-color 160ms ease,
 			outline-color 160ms ease,
 			border-radius 160ms ease,
 			min-height 160ms ease,
-			padding 160ms ease;
+			padding 160ms ease,
+			width 160ms ease;
+	}
+
+	:scope:open {
+		border-color: var(--color-primary);
 	}
 
 	:scope:hover:not(:disabled) {
@@ -143,6 +152,33 @@
 			box-shadow:
 				0 0 0 1px var(--color-border),
 				0 0.75rem 2.5rem -0.75rem color-mix(in oklab, var(--color-base-content) 28%, transparent);
+			opacity: 0;
+			transform: translateY(-6px) scale(0.98);
+			transition:
+				opacity 160ms ease,
+				transform 160ms ease,
+				overlay 160ms allow-discrete,
+				display 160ms allow-discrete;
+		}
+
+		:scope:open::picker(select) {
+			opacity: 1;
+			transform: none;
+		}
+
+		@starting-style {
+			:scope:open::picker(select) {
+				opacity: 0;
+				transform: translateY(-6px) scale(0.98);
+			}
+		}
+
+		:scope::picker-icon {
+			transition: transform 200ms ease;
+		}
+
+		:scope:open::picker-icon {
+			transform: rotate(180deg);
 		}
 
 		:scope option { padding: 0.45rem 0.65rem; }

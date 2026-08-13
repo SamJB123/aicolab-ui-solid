@@ -1,72 +1,112 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { type ParentProps } from 'solid-js'
-import type { ClassProp, ColorTreatmentProps } from '../../shared/color-treatment'
+import { omit } from 'solid-js'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 
-function treatmentAttributes(props: ColorTreatmentProps) {
-	return {
-		'data-ui-color-base': props.colorBase ?? 'primary',
-		'data-ui-color-level': props.colorLevel ?? 500,
-		'data-ui-color-variant': props.variant ?? 'solid',
-	} as const
-}
+/** Per-instance styling contract (see shared/knobs.ts). The set mirrors what
+ * app stylesheets historically overrode via compound classes (padding,
+ * font-size) plus the state surfaces inline style can't reach (hoverBorder,
+ * focusRing). */
+const knobs = defineKnobs('ui-btn', {
+	radius: '<length-percentage>',
+	padBlock: '<length>',
+	padInline: '<length>',
+	gap: '<length>',
+	fontSize: '<length>',
+	hoverBorder: '<color>',
+	focusRing: '<color>',
+})
 
-export function Button(
-	props: ParentProps<{
-		type?: 'button' | 'submit' | 'reset'
-		onClick?: JSX.EventHandler<HTMLButtonElement, MouseEvent>
-		onMouseDown?: JSX.EventHandler<HTMLButtonElement, MouseEvent>
-		/** Real native disabled — event suppression, focus exclusion and aria
-		 *  semantics come from the <button> attribute, not a class hack. */
-		disabled?: boolean
-		pressed?: boolean
-		title?: string
-		role?: JSX.HTMLAttributes<HTMLButtonElement>['role']
-		/** Native Popover API target for declarative overlay triggers. */
-		popoverTarget?: string
-		class?: ClassProp
-	} & ColorTreatmentProps>,
-) {
+/* Button renders treated by default (primary/500/solid), unlike components
+ * where the colour treatment is opt-in. */
+const treatment = (props: ColorTreatmentProps) =>
+	colorTreatmentData({
+		colorBase: props.colorBase ?? 'primary',
+		colorLevel: props.colorLevel,
+		variant: props.variant,
+	})
+
+type ButtonProps = Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, 'class'> & {
+	class?: ClassProp
+	/** Toggle-state sugar mapped to aria-pressed. */
+	pressed?: boolean
+	/** camelCase alias for the native popovertarget attribute. */
+	popoverTarget?: string
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec>
+
+export function Button(props: ButtonProps) {
+	const attributes = omit(
+		props,
+		'class',
+		'children',
+		'style',
+		'type',
+		'pressed',
+		'popoverTarget',
+		'colorBase',
+		'colorLevel',
+		'variant',
+		'radius',
+		'padBlock',
+		'padInline',
+		'gap',
+		'fontSize',
+		'hoverBorder',
+		'focusRing',
+	)
 	return (
 		<button
+			{...attributes}
+			{...treatment(props)}
+			{...knobs.attributes(props)}
 			type={props.type ?? 'button'}
-			disabled={props.disabled}
 			aria-pressed={props.pressed === undefined ? undefined : props.pressed ? 'true' : 'false'}
-			title={props.title}
-			role={props.role}
 			popovertarget={props.popoverTarget}
-			onClick={(event) => {
-				if (!props.disabled) props.onClick?.(event)
-			}}
-			onMouseDown={props.onMouseDown}
 			class={['ui-btn', props.class]}
-			data-ui-color-base={props.colorBase ?? 'primary'}
-			data-ui-color-level={props.colorLevel ?? 500}
-			data-ui-color-variant={props.variant ?? 'solid'}
+			style={mergeKnobStyle(knobs.style(props), props.style)}
 		>
 			{props.children}
 		</button>
 	)
 }
 
-/** Native navigation with the same treatment contract as Button. */
-export function ButtonLink(
-	props: ParentProps<{
-		href: string
-		target?: '_blank' | '_self' | '_parent' | '_top'
-		rel?: string
-		title?: string
-		class?: ClassProp
-	} & ColorTreatmentProps>,
-) {
+/** Native navigation with the same treatment and knob contract as Button. */
+type ButtonLinkProps = Omit<JSX.AnchorHTMLAttributes<HTMLAnchorElement>, 'class'> & {
+	href: string
+	class?: ClassProp
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec>
+
+export function ButtonLink(props: ButtonLinkProps) {
+	const attributes = omit(
+		props,
+		'class',
+		'children',
+		'style',
+		'colorBase',
+		'colorLevel',
+		'variant',
+		'radius',
+		'padBlock',
+		'padInline',
+		'gap',
+		'fontSize',
+		'hoverBorder',
+		'focusRing',
+	)
 	return (
 		<a
-			href={props.href}
-			target={props.target}
-			rel={props.rel}
-			title={props.title}
+			{...attributes}
+			{...treatment(props)}
+			{...knobs.attributes(props)}
 			class={['ui-btn', props.class]}
-			{...treatmentAttributes(props)}
+			style={mergeKnobStyle(knobs.style(props), props.style)}
 		>
 			{props.children}
 		</a>

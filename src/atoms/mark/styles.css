@@ -1,28 +1,60 @@
-/* ── Mark — inline emphasis (heir to rough-notation) ── */
+/* ── Mark — inline emphasis (heir to rough-notation) ──
+   Knobs (ink, contentInk, thickness) on the usual two wires; the tone is an
+   enumerated mode carried by data-tone. */
+@property --_ui-mark-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-mark-content-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-mark-thickness {
+	syntax: "<length>";
+	inherits: false;
+	/* Dummy only — the real default (0.12em) is context-dependent, so it
+	   lives in the assignment below; em values are not allowed here. */
+	initial-value: 2px;
+}
+
 @scope (.ui-mark) {
-:scope {
-	background: none;
-	color: inherit;
-	font-style: inherit;
-}
-:scope.ui-mark-underline {
-	background-image: linear-gradient(
-		to right,
-		color-mix(in oklab, var(--color-primary) 75%, transparent),
-		var(--color-primary)
-	);
-	background-repeat: no-repeat;
-	background-position: 0 96%;
-	background-size: 100% 0.12em;
-}
-:scope.ui-mark-highlight {
-	background: var(--color-primary);
-	color: var(--color-primary-content);
-	box-decoration-break: clone;
-	-webkit-box-decoration-break: clone;
-	/* OFF-LADDER ON PURPOSE: an inline highlight must scale with the text it
-	   wraps (any font-size, any nesting), so it stays em-relative. */
-	border-radius: 0.2em;
-	padding-inline: 0.15em;
-}
+	:scope {
+		--_ui-mark-ink: var(--ui-mark-ink, var(--color-primary));
+		--_ui-mark-content-ink: var(--ui-mark-content-ink, var(--color-primary-content));
+		--_ui-mark-thickness: var(--ui-mark-thickness, 0.12em);
+		background: none;
+		color: inherit;
+		font-style: inherit;
+	}
+	:scope[data-tone="underline"] {
+		background-image: linear-gradient(
+			to right,
+			color-mix(in oklab, var(--_ui-mark-ink) 75%, transparent),
+			var(--_ui-mark-ink)
+		);
+		background-repeat: no-repeat;
+		background-position: 0 96%;
+		background-size: 100% var(--_ui-mark-thickness);
+	}
+	:scope[data-tone="highlight"] {
+		background: var(--_ui-mark-ink);
+		color: var(--_ui-mark-content-ink);
+		box-decoration-break: clone;
+		-webkit-box-decoration-break: clone;
+		/* OFF-LADDER ON PURPOSE: an inline highlight must scale with the text
+		   it wraps (any font-size, any nesting), so it stays em-relative. */
+		border-radius: 0.2em;
+		padding-inline: 0.15em;
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-mark-ink: attr(data-ui-mark-ink type(<color>), var(--ui-mark-ink, var(--color-primary)));
+			--_ui-mark-content-ink: attr(data-ui-mark-content-ink type(<color>), var(--ui-mark-content-ink, var(--color-primary-content)));
+			--_ui-mark-thickness: attr(data-ui-mark-thickness type(<length>), var(--ui-mark-thickness, 0.12em));
+		}
+	}
 }
