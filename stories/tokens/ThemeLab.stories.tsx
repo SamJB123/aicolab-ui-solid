@@ -748,7 +748,7 @@ function SystemCatalogue() {
 	const [showcaseBase, setShowcaseBase] = createSignal<ColorBase>('info')
 	const [showcaseLevel, setShowcaseLevel] = createSignal<ColorLevel>(600)
 	const [showcaseVariant, setShowcaseVariant] = createSignal<Variant>('outline')
-	const people = [
+	const people: Parameters<typeof AvatarStack>[0]['people'] = [
 		{ name: 'Ada Lovelace', color: 'currentColor' },
 		{ name: 'Grace Hopper', color: 'currentColor' },
 		{ name: 'Alan Turing', color: 'currentColor' },

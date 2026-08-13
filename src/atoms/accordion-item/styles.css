@@ -38,6 +38,12 @@
 	:scope summary::-webkit-details-marker {
 		display: none;
 	}
+	:scope[data-ui-color-base] {
+		--_ui-acc-divider: var(--ui-acc-divider, var(--ui-border));
+	}
+	:scope[data-ui-color-base] .ui-acc-icon {
+		--_ui-acc-icon-ink: var(--ui-acc-icon-ink, var(--ui-color-foreground));
+	}
 	:scope .ui-acc-icon {
 		--_ui-acc-icon-ink: var(--ui-acc-icon-ink, var(--color-primary));
 		position: relative;
@@ -87,6 +93,9 @@
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
 			--_ui-acc-divider: attr(data-ui-acc-divider type(<color>), var(--ui-acc-divider, var(--color-border)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-acc-divider: attr(data-ui-acc-divider type(<color>), var(--ui-acc-divider, var(--ui-border)));
 		}
 	}
 }

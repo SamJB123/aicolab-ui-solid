@@ -1,6 +1,16 @@
 /** @jsxImportSource @solidjs/web */
+import type { JSX } from '@solidjs/web'
+import { omit } from 'solid-js'
 import { createEffect } from '../../solid-v2'
-import { colorTreatmentData, type ClassProp, type ColorTreatmentProps } from '../../shared/color-treatment'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
+
+/** Per-instance styling contract (see shared/knobs.ts). */
+const knobs = defineKnobs('ui-counter', { ink: '<color>' })
 
 type CounterState = {
 	target: number
@@ -60,15 +70,38 @@ const tweenCounter = (source: () => CounterState) => {
 	}
 }
 
-export function Counter(props: {
+type CounterProps = Omit<JSX.HTMLAttributes<HTMLSpanElement>, 'class'> & {
+	class?: ClassProp
 	value: number
 	format?: (n: number) => string
-	class?: ClassProp
-} & ColorTreatmentProps) {
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec>
+
+export function Counter(props: CounterProps) {
+	const attributes = omit(
+		props,
+		'class',
+		'style',
+		'ref',
+		'value',
+		'format',
+		'colorBase',
+		'colorLevel',
+		'variant',
+		'ink',
+	)
 	const fmt = (n: number) => (props.format ? props.format(n) : Math.round(n).toLocaleString())
 	const bindTween = tweenCounter(() => ({ target: props.value, format: props.format }))
 	return (
-		<span ref={bindTween} {...colorTreatmentData(props)} class={['ui-counter', props.class]} data-v={String(props.value)}>
+		<span
+			{...attributes}
+			{...colorTreatmentData(props)}
+			{...knobs.attributes(props)}
+			ref={bindTween}
+			class={['ui-counter', props.class]}
+			style={mergeKnobStyle(knobs.style(props), props.style)}
+			data-v={String(props.value)}
+		>
 			{fmt(props.value)}
 		</span>
 	)

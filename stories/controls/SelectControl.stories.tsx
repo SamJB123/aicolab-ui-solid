@@ -38,6 +38,8 @@ const meta = {
 		padBlock: { control: 'text', table: { category: 'knobs' } },
 		padInline: { control: 'text', table: { category: 'knobs' } },
 		hoverBorder: { control: 'text', table: { category: 'knobs' } },
+		focusBorder: { control: 'text', table: { category: 'knobs' } },
+		focusRing: { control: 'text', table: { category: 'knobs' } },
 		pickerRadius: { control: 'text', table: { category: 'knobs' } },
 	},
 } satisfies Meta<typeof SelectControl>

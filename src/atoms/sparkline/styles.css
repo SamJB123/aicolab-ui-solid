@@ -1,4 +1,49 @@
-/* ── Sparkline ── */
+/* ── Sparkline ──
+   ink knob on the usual two wires; the SVG children consume the adapters
+   (inherits: true), so paint policy lives here rather than in JSX
+   presentation attributes. In treated contexts the fill uses the exact
+   family colour while line/dot use its scheme-safe foreground — matching
+   the pre-knob behavior. */
+@property --_ui-spark-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-spark-fill {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-sparkline) {
-	:scope { overflow: visible; }
+	:scope {
+		--_ui-spark-ink: var(--ui-spark-ink, var(--color-primary));
+		--_ui-spark-fill: var(--_ui-spark-ink);
+		overflow: visible;
+	}
+	:scope[data-ui-color-base] {
+		--_ui-spark-ink: var(--ui-spark-ink, var(--ui-color-foreground));
+		--_ui-spark-fill: var(--ui-spark-ink, var(--ui-color));
+	}
+	:scope polygon {
+		fill: var(--_ui-spark-fill);
+		opacity: 0.1;
+	}
+	:scope polyline {
+		stroke: var(--_ui-spark-ink);
+	}
+	:scope circle {
+		fill: var(--_ui-spark-ink);
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-spark-ink: attr(data-ui-spark-ink type(<color>), var(--ui-spark-ink, var(--color-primary)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-spark-ink: attr(data-ui-spark-ink type(<color>), var(--ui-spark-ink, var(--ui-color-foreground)));
+			--_ui-spark-fill: attr(data-ui-spark-ink type(<color>), var(--ui-spark-ink, var(--ui-color)));
+		}
+	}
 }

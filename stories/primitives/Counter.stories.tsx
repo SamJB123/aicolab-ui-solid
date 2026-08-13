@@ -1,4 +1,5 @@
 /** @jsxImportSource @solidjs/web */
+import { treatmentArgTypes } from './color-treatment-story'
 import { createSignal } from 'solid-js'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Button, Counter } from '../../src/primitives'
@@ -7,11 +8,21 @@ import { ColorTreatmentStory } from './color-treatment-story'
 const meta = {
 	title: 'Atoms/Counter',
 	component: Counter,
+	argTypes: {
+		...treatmentArgTypes,
+		ink: { control: 'text', table: { category: 'knobs' } },
+	},
 	args: { value: 12480 },
 } satisfies Meta<typeof Counter>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: {
+		value: 1234,
+	},
+}
 
 export const Default: Story = {
 	args: { value: 12480 },

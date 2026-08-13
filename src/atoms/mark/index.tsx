@@ -1,7 +1,11 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
 import { omit } from 'solid-js'
-import type { ClassProp } from '../../shared/color-treatment'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
 import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 
 /** Per-instance styling contract (see shared/knobs.ts). ink drives both
@@ -16,7 +20,8 @@ const knobs = defineKnobs('ui-mark', {
 type MarkProps = Omit<JSX.HTMLAttributes<HTMLElement>, 'class'> & {
 	class?: ClassProp
 	tone?: 'underline' | 'highlight'
-} & KnobProps<typeof knobs.spec>
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec>
 
 export function Mark(props: MarkProps) {
 	const attributes = omit(
@@ -25,6 +30,9 @@ export function Mark(props: MarkProps) {
 		'style',
 		'children',
 		'tone',
+		'colorBase',
+		'colorLevel',
+		'variant',
 		'ink',
 		'contentInk',
 		'thickness',
@@ -32,6 +40,7 @@ export function Mark(props: MarkProps) {
 	return (
 		<mark
 			{...attributes}
+			{...colorTreatmentData(props)}
 			{...knobs.attributes(props)}
 			data-tone={props.tone ?? 'underline'}
 			class={['ui-mark', props.class]}

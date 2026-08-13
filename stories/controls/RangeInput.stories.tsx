@@ -24,6 +24,5 @@ export const Playground: Story = {
 	args: {
 		'aria-label': 'Playground range',
 		value: 60,
-		accent: 'var(--color-primary)',
 	},
 }

@@ -1,4 +1,5 @@
 /** @jsxImportSource @solidjs/web */
+import { treatmentArgTypes } from './color-treatment-story'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { StatusDot } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
@@ -6,11 +7,22 @@ import { ColorTreatmentStory } from './color-treatment-story'
 const meta = {
 	title: 'Atoms/StatusDot',
 	component: StatusDot,
+	argTypes: {
+		...treatmentArgTypes,
+		size: { control: 'text', table: { category: 'knobs' } },
+	},
 	args: { status: { color: 'var(--color-primary)' } },
 } satisfies Meta<typeof StatusDot>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: {
+		status: { color: 'var(--color-success)', live: true },
+		size: 12,
+	},
+}
 
 export const Static: Story = {
 	args: { status: { color: 'var(--color-primary)' } },

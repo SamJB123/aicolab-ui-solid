@@ -1,8 +1,42 @@
 /** @jsxImportSource @solidjs/web */
-import { createMemo } from 'solid-js'
-import { colorTreatmentData, type ColorTreatmentProps } from '../../shared/color-treatment'
+import type { JSX } from '@solidjs/web'
+import { createMemo, omit } from 'solid-js'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps, type UiColor } from '../../shared/knobs'
 
-export function Sparkline(props: { data: number[]; w?: number; h?: number; strokeColor?: string } & ColorTreatmentProps) {
+/** ink drives line, end dot and area fill (the fill via a CSS-side mix).
+ * w/h stay plain numbers: they feed the JS path math and the viewBox, not
+ * CSS. */
+const knobs = defineKnobs('ui-spark', { ink: '<color>' })
+
+type SparklineProps = Omit<JSX.SvgSVGAttributes<SVGSVGElement>, 'class'> & {
+	class?: ClassProp
+	data: number[]
+	w?: number
+	h?: number
+	/** @deprecated Use `ink`. */
+	strokeColor?: UiColor
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec>
+
+export function Sparkline(props: SparklineProps) {
+	const attributes = omit(
+		props,
+		'class',
+		'style',
+		'data',
+		'w',
+		'h',
+		'ink',
+		'strokeColor',
+		'colorBase',
+		'colorLevel',
+		'variant',
+	)
 	const geo = createMemo(() => {
 		const w = props.w ?? 132
 		const h = props.h ?? 36
@@ -16,28 +50,29 @@ export function Sparkline(props: { data: number[]; w?: number; h?: number; strok
 		const area = `0,${h} ${line} ${w},${h}`
 		return { w, h, line, area, last: pts[pts.length - 1] }
 	})
-	const exactColor = () => props.colorBase ? 'var(--ui-color)' : (props.strokeColor ?? 'var(--color-primary)')
-	const foregroundColor = () => props.colorBase ? 'var(--ui-color-foreground)' : exactColor()
+	const values = () => ({ ink: props.ink ?? props.strokeColor })
 	return (
 		<svg
+			{...attributes}
 			{...colorTreatmentData(props)}
+			{...knobs.attributes(values())}
 			viewBox={`0 0 ${geo().w} ${geo().h}`}
 			width={geo().w}
 			height={geo().h}
-			class="ui-sparkline"
+			class={['ui-sparkline', props.class]}
+			style={mergeKnobStyle(knobs.style(values()), props.style)}
 			preserveAspectRatio="none"
 			aria-hidden="true"
 		>
-			<polygon points={geo().area} fill={exactColor()} opacity="0.1" />
+			<polygon points={geo().area} />
 			<polyline
 				points={geo().line}
 				fill="none"
-				stroke={foregroundColor()}
 				stroke-width="1.5"
 				stroke-linejoin="round"
 				stroke-linecap="round"
 			/>
-			<circle cx={geo().last[0]} cy={geo().last[1]} r="2.4" fill={foregroundColor()} />
+			<circle cx={geo().last[0]} cy={geo().last[1]} r="2.4" />
 		</svg>
 	)
 }

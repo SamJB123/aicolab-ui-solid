@@ -1,6 +1,22 @@
-/* ── Waveform ── */
+/* ── Waveform ──
+   ink is a knob (adapter inherits: true — bars consume it). Each bar's
+   level is a MANDATORY wire: one 0..1 number (--ui-wave-v) per bar, from
+   which height and opacity are both derived here — registered directly. */
+@property --ui-wave-v {
+	syntax: "<number>";
+	inherits: false;
+	initial-value: 0;
+}
+@property --_ui-wave-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-waveform) {
 	:scope {
+		--_ui-wave-ink: var(--ui-wave-ink, var(--color-primary));
+
 		display: flex;
 		/* Percentage-height bars need a definite block size: min-height alone does
 		   not establish their percentage basis. Consumers can override this
@@ -10,8 +26,25 @@
 		align-items: center;
 		gap: 3px;
 	}
+	:scope[data-ui-color-base] {
+		--_ui-wave-ink: var(--ui-wave-ink, var(--ui-color-foreground));
+	}
 	:scope > .ui-waveform-bar {
 		flex: 1;
+		height: max(8%, calc(var(--ui-wave-v) * 100%));
 		border-radius: var(--r-pill);
+		background: var(--_ui-wave-ink);
+		opacity: calc(0.32 + var(--ui-wave-v) * 0.6);
+	}
+
+	/* ── Frontier knob boundary (ink only — bar levels are mandatory and
+	   already in their final form) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-wave-ink: attr(data-ui-wave-ink type(<color>), var(--ui-wave-ink, var(--color-primary)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-wave-ink: attr(data-ui-wave-ink type(<color>), var(--ui-wave-ink, var(--ui-color-foreground)));
+		}
 	}
 }

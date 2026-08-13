@@ -1,3 +1,28 @@
+/* Mandatory wires (identity colours computed every render): registered for
+   typed values and smooth interpolation when an identity's colour changes.
+   inherits: true preserves pre-registration semantics — containers may set
+   these for a subtree. */
+@property --ui-presence-color {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --ui-attribution-color {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-presence-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0.5rem;
+}
+@property --_ui-presence-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 999px;
+}
+
 @scope (.ui-presence) {
 	:scope {
 		/* Private component roles derived from the active theme's public anchors. */
@@ -15,19 +40,27 @@
 		--ui-attribution-6: var(--ui-presence-6);
 	}
 
+	/* Geometry knobs with per-kind defaults; the paint stays the identity
+	   wire, deliberately outside the treatment system. */
 	.ui-presence-swatch {
+		--_ui-presence-size: var(--ui-presence-size, 0.5rem);
+		--_ui-presence-radius: var(--ui-presence-radius, var(--r-pill));
 		display: inline-block;
-		inline-size: 0.5rem;
-		block-size: 0.5rem;
-		border-radius: var(--r-pill);
+		inline-size: var(--_ui-presence-size);
+		block-size: var(--_ui-presence-size);
+		border-radius: var(--_ui-presence-radius);
 		background: var(--ui-presence-color);
+		transition: background-color 220ms ease;
 	}
 	.ui-attribution-swatch {
+		--_ui-presence-size: var(--ui-presence-size, 0.75rem);
+		--_ui-presence-radius: var(--ui-presence-radius, 0.25rem);
 		display: inline-block;
-		inline-size: 0.75rem;
-		block-size: 0.75rem;
-		border-radius: 0.25rem;
+		inline-size: var(--_ui-presence-size);
+		block-size: var(--_ui-presence-size);
+		border-radius: var(--_ui-presence-radius);
 		background: var(--ui-presence-color);
+		transition: background-color 220ms ease;
 	}
 
 	.ui-attribution-mark[data-attributed] {
@@ -37,5 +70,17 @@
 	.ui-attribution-mark[data-deleted] {
 		color: contrast-color(var(--ui-attribution-color));
 		text-decoration-line: line-through;
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		.ui-presence-swatch {
+			--_ui-presence-size: attr(data-ui-presence-size type(<length>), var(--ui-presence-size, 0.5rem));
+			--_ui-presence-radius: attr(data-ui-presence-radius type(<length-percentage>), var(--ui-presence-radius, var(--r-pill)));
+		}
+		.ui-attribution-swatch {
+			--_ui-presence-size: attr(data-ui-presence-size type(<length>), var(--ui-presence-size, 0.75rem));
+			--_ui-presence-radius: attr(data-ui-presence-radius type(<length-percentage>), var(--ui-presence-radius, 0.25rem));
+		}
 	}
 }

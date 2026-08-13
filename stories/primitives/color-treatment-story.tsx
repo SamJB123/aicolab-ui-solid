@@ -18,6 +18,14 @@ export const COLOR_LEVELS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 95
 
 export const VARIANTS = ['solid', 'soft', 'outline', 'ghost', 'text'] as const satisfies readonly Variant[]
 
+/** Spread into a story meta's argTypes so the three treatment axes are
+ * configurable from the Controls panel — required for every atom. */
+export const treatmentArgTypes = {
+	colorBase: { control: 'select', options: [...COLOR_ROLES] },
+	colorLevel: { control: 'select', options: [...COLOR_LEVELS] },
+	variant: { control: 'radio', options: [...VARIANTS] },
+} as const
+
 export type ColorTreatmentContext = {
 	colorBase: ColorBase
 	colorLevel: ColorLevel

@@ -17,6 +17,8 @@ const knobs = defineKnobs('ui-select', {
 	padBlock: '<length>',
 	padInline: '<length>',
 	hoverBorder: '<color>',
+	focusBorder: '<color>',
+	focusRing: '<color>',
 	pickerRadius: '<length-percentage>',
 })
 
@@ -42,6 +44,8 @@ export function SelectControl(props: SelectProps) {
 		'padBlock',
 		'padInline',
 		'hoverBorder',
+		'focusBorder',
+		'focusRing',
 		'pickerRadius',
 	)
 	return (

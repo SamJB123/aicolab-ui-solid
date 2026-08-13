@@ -1,19 +1,72 @@
-/* ── Field ── */
+/* ── Field ──
+   gap is consumed on the root (full dual wire); the label knobs are
+   consumed on a child, so their adapters are assigned where consumed and
+   ride the inheriting variable wire only. */
+@property --_ui-field-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 6px;
+}
+@property --_ui-field-label-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-field-label-font-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 11px;
+}
+
 @scope (.ui-field) {
-	:scope { display: flex; flex-direction: column; gap: 6px; }
+	:scope {
+		--_ui-field-gap: var(--ui-field-gap, 6px);
+		display: flex;
+		flex-direction: column;
+		gap: var(--_ui-field-gap);
+	}
 	:scope > .ui-field-label {
+		--_ui-field-label-ink: var(--ui-field-label-ink, var(--color-base-content-faint));
+		--_ui-field-label-font-size: var(--ui-field-label-font-size, var(--t-2xs));
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-		font-size: var(--t-2xs);
+		font-size: var(--_ui-field-label-font-size);
 		text-transform: uppercase;
 		letter-spacing: 0.2em;
-		color: var(--color-base-content-faint);
+		color: var(--_ui-field-label-ink);
+	}
+	:scope[data-ui-color-base] > .ui-field-label {
+		--_ui-field-label-ink: var(--ui-field-label-ink, var(--ui-color-foreground));
+	}
+	/* A treated Field themes the control it wraps by supplying the control
+	   atoms' PUBLIC knob variables for its subtree — the designed
+	   container-theming path. An explicit knob on the control itself still
+	   wins (inline beats inherited). */
+	:scope[data-ui-color-base] {
+		--ui-input-hover-border: var(--ui-border-hover);
+		--ui-input-focus-border: var(--ui-border-active);
+		--ui-input-focus-ring: var(--ui-focus-ring);
+		--ui-select-hover-border: var(--ui-border-hover);
+		--ui-select-focus-border: var(--ui-border-active);
+		--ui-select-focus-ring: var(--ui-focus-ring);
+		--ui-range-accent: var(--ui-color);
+		--ui-range-focus-ring: var(--ui-focus-ring);
 	}
 	@container ui-treatment-context style(--ui-environment: overlay) {
-		:scope > .ui-field-label { color: var(--color-overlay-content-muted); }
+		:scope > .ui-field-label {
+			--_ui-field-label-ink: var(--ui-field-label-ink, var(--color-overlay-content-muted));
+		}
 	}
 	/* Opt-in content-hugging controls (field-sizing, Chromium/FF-beta). */
 	:scope.ui-autosize :is(input, textarea, select) {
 		field-sizing: content;
 		min-width: 4ch;
+	}
+
+	/* ── Frontier knob boundary (gap only — label knobs are consumed
+	   off-root, see header note) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-field-gap: attr(data-ui-field-gap type(<length>), var(--ui-field-gap, 6px));
+		}
 	}
 }

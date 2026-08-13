@@ -1,32 +1,65 @@
-/* ── Panel ── */
+/* ── Panel ──
+   Knobs (radius, surface, topSeam, glowInk) on the usual two wires; radius
+   and surface are consumed on the root (full dual wire), topSeam/glowInk on
+   a pseudo-element/child, so their adapters are assigned where consumed and
+   ride the inheriting variable wire only (attr() reads the matched element,
+   and the attribute lives on the root). `pad` is NOT read here: it rides
+   the pre-existing registered, inherited --ui-panel-pad density token,
+   emitted inline by the component so ancestor density still cascades. */
+@property --_ui-panel-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 16px;
+}
+@property --_ui-panel-surface {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --_ui-panel-top-seam {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-panel-glow-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+
 @scope (.ui-panel) {
 	:scope {
+		--_ui-panel-radius: var(--ui-panel-radius, var(--r-lg));
+		--_ui-panel-surface: var(--ui-panel-surface, var(--color-base-100));
+
 		position: relative;
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
-		border-radius: var(--r-lg);
-		background: var(--color-base-100);
+		border-radius: var(--_ui-panel-radius);
+		background: var(--_ui-panel-surface);
 		padding: var(--ui-panel-pad);
 		box-shadow: 0 0 0 1px var(--color-border);
 	}
 	:scope[data-ui-color-base] {
-		background: var(--ui-surface);
+		--_ui-panel-surface: var(--ui-panel-surface, var(--ui-surface));
 		color: var(--ui-ink);
 		box-shadow: inset 0 0 0 1px var(--ui-border);
 	}
 	:scope::before {
+		--_ui-panel-top-seam: var(--ui-panel-top-seam, var(--color-border-strong));
 		content: "";
 		pointer-events: none;
 		position: absolute;
 		inset: 0 0 auto 0;
 		height: 1px;
-		background: linear-gradient(to right, transparent, var(--color-border-strong), transparent);
+		background: linear-gradient(to right, transparent, var(--_ui-panel-top-seam), transparent);
 	}
 	:scope[data-ui-color-base]::before {
-		background: linear-gradient(to right, transparent, var(--ui-border), transparent);
+		--_ui-panel-top-seam: var(--ui-panel-top-seam, var(--ui-border));
 	}
 	:scope > .ui-panel-glow {
+		--_ui-panel-glow-ink: var(--ui-panel-glow-ink, var(--color-primary));
 		pointer-events: none;
 		position: absolute;
 		right: -64px;
@@ -34,12 +67,12 @@
 		width: 176px;
 		height: 176px;
 		border-radius: var(--r-pill);
-		background: var(--color-primary);
+		background: var(--_ui-panel-glow-ink);
 		opacity: 0.07;
 		filter: blur(48px);
 	}
 	:scope[data-ui-color-base] > .ui-panel-glow {
-		background: var(--ui-surface-glow);
+		--_ui-panel-glow-ink: var(--ui-panel-glow-ink, var(--ui-surface-glow));
 		opacity: 1;
 	}
 	:scope > header {
@@ -88,6 +121,18 @@
 	}
 	:scope[data-ui-color-base] > header .ui-panel-kicker {
 		color: var(--ui-ink-faint);
+	}
+
+	/* ── Frontier knob boundary (radius/surface only — topSeam/glowInk are
+	   consumed off-root, see header note; pad rides the density token) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-panel-radius: attr(data-ui-panel-radius type(<length-percentage>), var(--ui-panel-radius, var(--r-lg)));
+			--_ui-panel-surface: attr(data-ui-panel-surface type(<color>), var(--ui-panel-surface, var(--color-base-100)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-panel-surface: attr(data-ui-panel-surface type(<color>), var(--ui-panel-surface, var(--ui-surface)));
+		}
 	}
 }
 /* Cascading density knob. The panel reads two REGISTERED tokens

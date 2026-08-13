@@ -87,6 +87,11 @@ export type KnobProps<Spec extends KnobSpec> = {
 	[Name in keyof Spec]?: KnobValueTypes[Spec[Name]]
 }
 
+/** Hybrid numeric props: a bare number means CSS pixels (Avatar size={36}),
+ * while measurement strings pass through untouched. */
+export const toLength = (value: number | UiLength | undefined): UiLength | undefined =>
+	typeof value === 'number' ? `${value}px` : value
+
 const kebab = (name: string) => name.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)
 
 export function defineKnobs<Spec extends KnobSpec>(prefix: string, spec: Spec) {

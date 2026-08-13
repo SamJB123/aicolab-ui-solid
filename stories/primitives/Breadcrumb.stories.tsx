@@ -1,4 +1,5 @@
 /** @jsxImportSource @solidjs/web */
+import { treatmentArgTypes } from './color-treatment-story'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Breadcrumb } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
@@ -6,6 +7,15 @@ import { ColorTreatmentStory } from './color-treatment-story'
 const meta = {
 	title: 'Atoms/Breadcrumb',
 	component: Breadcrumb,
+	argTypes: {
+		...treatmentArgTypes,
+		separator: { control: 'text' },
+		fontSize: { control: 'text', table: { category: 'knobs' } },
+		gap: { control: 'text', table: { category: 'knobs' } },
+		separatorInk: { control: 'text', table: { category: 'knobs' } },
+		linkInk: { control: 'text', table: { category: 'knobs' } },
+		focusRing: { control: 'text', table: { category: 'knobs' } },
+	},
 	args: {
 		items: [
 			{ label: 'Home World', onSelect: () => {} },
@@ -17,6 +27,17 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: {
+		items: [
+			{ label: 'Commons', href: '#' },
+			{ label: 'Insights', href: '#' },
+			{ label: 'Season four' },
+		],
+		separator: '›',
+	},
+}
 
 export const Default: Story = {}
 

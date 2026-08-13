@@ -1,8 +1,19 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { Show } from 'solid-js'
+import { omit, Show } from 'solid-js'
 import { StatusDot, type StatusVisual } from '../status-dot'
-import { colorTreatmentData, type ColorTreatmentProps } from '../../shared/color-treatment'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import {
+	defineKnobs,
+	mergeKnobStyle,
+	toLength,
+	type UiColor,
+	type UiLength,
+} from '../../shared/knobs'
 
 const initials = (name: string) =>
 	name
@@ -12,31 +23,63 @@ const initials = (name: string) =>
 		.join('')
 		.toUpperCase()
 
-export function Avatar(props: {
+/** Per-instance styling contract (see shared/knobs.ts). All derived values
+ * (face type size, backing mixes, badge dot size) are computed in CSS from
+ * these three, so the component emits no computed inline styling. */
+const knobs = defineKnobs('ui-avatar', {
+	size: '<length>',
+	ink: '<color>',
+	ring: '<color>',
+})
+
+type AvatarProps = Omit<JSX.HTMLAttributes<HTMLSpanElement>, 'class'> & {
+	class?: ClassProp
 	name: string
-	faceColor?: string
 	image?: string | null
 	referrerPolicy?: JSX.ImgHTMLAttributes<HTMLImageElement>['referrerpolicy']
-	size?: number
 	status?: StatusVisual
-	ring?: string
-} & ColorTreatmentProps) {
-	const size = () => props.size ?? 36
-	const color = () => props.colorBase ? 'var(--ui-ink)' : (props.faceColor ?? 'var(--color-primary)')
-	const surface = () => props.colorBase ? 'var(--ui-surface-occluding)' : (props.ring ?? 'var(--color-base-100)')
+	/** Bare number = px (legacy convention); measurements/vars also accepted. */
+	size?: number | UiLength
+	/** Face ink (initials / accents). */
+	ink?: UiColor
+	/** Backing ring/surface behind the face and badge. */
+	ring?: UiColor
+	/** @deprecated Use `ink`. */
+	faceColor?: UiColor
+} & ColorTreatmentProps
+
+export function Avatar(props: AvatarProps) {
+	const attributes = omit(
+		props,
+		'class',
+		'style',
+		'name',
+		'image',
+		'referrerPolicy',
+		'status',
+		'size',
+		'ink',
+		'ring',
+		'faceColor',
+		'colorBase',
+		'colorLevel',
+		'variant',
+	)
+	const values = () => ({
+		size: toLength(props.size),
+		ink: props.ink ?? props.faceColor,
+		ring: props.ring,
+	})
+	const sizeCss = () => toLength(props.size) ?? '36px'
 	return (
-		<span {...colorTreatmentData(props)} class="ui-avatar" style={{ width: `${size()}px`, height: `${size()}px` }}>
-			<span
-				class="ui-avatar-face"
-				style={{
-					'font-size': `${Math.round(size() * 0.34)}px`,
-					color: color(),
-					background: props.colorBase ? surface() : `color-mix(in oklab, ${color()} 20%, ${surface()})`,
-					'box-shadow': props.colorBase
-						? 'inset 0 0 0 1px var(--ui-border)'
-						: `inset 0 0 0 1px color-mix(in oklab, ${color()} 55%, transparent)`,
-				}}
-			>
+		<span
+			{...attributes}
+			{...colorTreatmentData(props)}
+			{...knobs.attributes(values())}
+			class={['ui-avatar', props.class]}
+			style={mergeKnobStyle(knobs.style(values()), props.style)}
+		>
+			<span class="ui-avatar-face">
 				<Show when={props.image} fallback={initials(props.name)}>
 					{(source) => (
 						<img
@@ -50,8 +93,8 @@ export function Avatar(props: {
 			</span>
 			<Show when={props.status}>
 				{(s) => (
-					<span class="ui-avatar-badge" style={{ background: props.colorBase ? 'var(--ui-surface-raised)' : (props.ring ?? 'var(--color-base-100)') }}>
-						<StatusDot status={s()} size={Math.max(7, Math.round(size() * 0.2))} />
+					<span class="ui-avatar-badge">
+						<StatusDot status={s()} size={`max(7px, calc(${sizeCss()} * 0.2))`} />
 					</span>
 				)}
 			</Show>

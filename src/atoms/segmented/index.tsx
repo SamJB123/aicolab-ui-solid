@@ -1,7 +1,38 @@
 /** @jsxImportSource @solidjs/web */
-import { For } from 'solid-js'
-import { colorTreatmentData, type ClassProp, type ColorTreatmentProps } from '../../shared/color-treatment'
+import type { JSX } from '@solidjs/web'
+import { For, omit } from 'solid-js'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
+
 export type SegOption<T extends string> = { id: T; label: string }
+
+/** Per-instance styling contract (see shared/knobs.ts). Tab-consumed knobs
+ * ride inheriting adapters assigned on the root. */
+const knobs = defineKnobs('ui-seg', {
+	radius: '<length-percentage>',
+	trackPad: '<length>',
+	tabPadBlock: '<length>',
+	tabPadInline: '<length>',
+	gap: '<length>',
+	fontSize: '<length>',
+	trackSurface: '<color>',
+	activeSurface: '<color>',
+	activeInk: '<color>',
+	inactiveInk: '<color>',
+})
+
+type SegmentedProps<T extends string> = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'class'> & {
+	class?: ClassProp
+	label?: string
+	options: SegOption<T>[]
+	value: T
+	onChange: (v: T) => void
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec>
 
 // The tabs are content-sized and the strip scrolls when there are too many for
 // the viewport (so labels never truncate or shrink the columns). The active
@@ -9,15 +40,39 @@ export type SegOption<T extends string> = { id: T; label: string }
 // tab is active, so it always matches that tab's real box regardless of widths or
 // scroll. Where anchor positioning is unsupported, the active tab carries the
 // pill look itself (see styles.css `.seg*`).
-export function Segmented<T extends string>(props: {
-	label?: string
-	options: SegOption<T>[]
-	value: T
-	onChange: (v: T) => void
-	class?: ClassProp
-} & ColorTreatmentProps) {
+export function Segmented<T extends string>(props: SegmentedProps<T>) {
+	const attributes = omit(
+		props,
+		'class',
+		'style',
+		'label',
+		'options',
+		'value',
+		'onChange',
+		'colorBase',
+		'colorLevel',
+		'variant',
+		'radius',
+		'trackPad',
+		'tabPadBlock',
+		'tabPadInline',
+		'gap',
+		'fontSize',
+		'trackSurface',
+		'activeSurface',
+		'activeInk',
+		'inactiveInk',
+	)
 	return (
-		<div {...colorTreatmentData(props)} class={['seg', props.class]} role="tablist" aria-label={props.label}>
+		<div
+			{...attributes}
+			{...colorTreatmentData(props)}
+			{...knobs.attributes(props)}
+			class={['seg', props.class]}
+			style={mergeKnobStyle(knobs.style(props), props.style)}
+			role="tablist"
+			aria-label={props.label}
+		>
 			<For each={props.options}>
 				{(o) => (
 					<button

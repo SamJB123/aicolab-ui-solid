@@ -1,4 +1,5 @@
 /** @jsxImportSource @solidjs/web */
+import { treatmentArgTypes } from '../primitives/color-treatment-story'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Mark } from '../../src/marketing'
 
@@ -6,6 +7,7 @@ const meta = {
 	title: 'Atoms/Mark',
 	component: Mark,
 	argTypes: {
+		...treatmentArgTypes,
 		tone: { control: 'radio', options: ['underline', 'highlight'] },
 		ink: { control: 'text', table: { category: 'knobs' } },
 		contentInk: { control: 'text', table: { category: 'knobs' } },
@@ -17,7 +19,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {
-	args: { tone: 'highlight', children: 'reimagined', ink: 'var(--color-primary)' },
+	args: { tone: 'highlight', children: 'reimagined' },
 	render: (args) => (
 		<p style={{ 'font-size': '24px', 'max-width': '32ch' }}>
 			The program, <Mark {...args} /> for season four.

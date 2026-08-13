@@ -1,4 +1,5 @@
 /** @jsxImportSource @solidjs/web */
+import { treatmentArgTypes } from '../primitives/color-treatment-story'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { AccordionItem } from '../../src/marketing'
 import { Chip } from '../../src/primitives'
@@ -8,6 +9,7 @@ const meta = {
 	component: AccordionItem,
 	args: { summary: 'What does membership cost?' },
 	argTypes: {
+		...treatmentArgTypes,
 		iconInk: { control: 'text', table: { category: 'knobs' } },
 		divider: { control: 'text', table: { category: 'knobs' } },
 	},
@@ -21,8 +23,6 @@ export const Playground: Story = {
 		summary: 'What does membership cost?',
 		open: true,
 		children: 'A flat monthly rate, set each season by member vote.',
-		iconInk: 'var(--color-primary)',
-		divider: 'var(--color-border)',
 	},
 }
 

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readdirSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 
 const read = (path) => readFile(new URL(path, import.meta.url), 'utf8')
@@ -157,5 +158,57 @@ requireAll(
 )
 requireAll(workspace, [/@supports \(container-type: scroll-state\)/], 'workspace scroll-state boundary')
 requireAll(prosekit, [/@supports \(container-type: scroll-state\)/], 'ProseKit scroll-state boundary')
+
+/* ── Generic knob-wire pairing check (all atoms, ALL knobs) ──────────────
+   Parses every atom stylesheet and enforces, for every knob:
+   1. each frontier attr() assignment reads the attribute pairing its public
+      variable (data-ui-x ⇄ --ui-x);
+   2. each frontier assignment's fallback is byte-identical to a compat
+      assignment of the same adapter — the two wires cannot disagree;
+   3. every @property-registered private adapter is assigned somewhere, and
+      every assigned adapter is registered.
+   Knobs consumed on descendants/child-state contexts legitimately have no
+   attr() swap (attr() reads only the matched element) — they simply
+   contribute no frontier lines. */
+const atomsDir = new URL('../src/atoms/', import.meta.url)
+for (const entry of readdirSync(atomsDir, { withFileTypes: true })) {
+	if (!entry.isDirectory()) continue
+	let source
+	try {
+		source = await read(`../src/atoms/${entry.name}/styles.css`)
+	} catch {
+		continue
+	}
+	const registered = new Set([...source.matchAll(/@property (--_[\w-]+)/g)].map((m) => m[1]))
+	const compat = new Set()
+	const assigned = new Set()
+	for (const line of source.split('\n')) {
+		const assignment = line.match(/^\s*(--_[\w-]+):\s*(.+);$/)
+		if (!assignment) continue
+		const [, adapter, value] = assignment
+		assigned.add(adapter)
+		const viaVar = value.match(/^var\((--ui-[\w-]+),\s*(.+)\)$/)
+		if (viaVar) compat.add(`${adapter}|${viaVar[1]}|${viaVar[2]}`)
+		const viaAttr = value.match(/^attr\((data-[\w-]+)\s+type\(<[\w-]+>\),\s*var\((--ui-[\w-]+),\s*(.+)\)\)$/)
+		if (viaAttr) {
+			const [, attribute, publicVar, fallback] = viaAttr
+			assert.equal(
+				attribute,
+				`data-${publicVar.slice(2)}`,
+				`${entry.name}: frontier attribute ${attribute} does not pair with ${publicVar}`,
+			)
+			assert.ok(
+				compat.has(`${adapter}|${publicVar}|${fallback}`),
+				`${entry.name}: frontier swap for ${adapter} has no byte-identical compat assignment (fallback: ${fallback})`,
+			)
+		}
+	}
+	for (const adapter of registered) {
+		assert.ok(assigned.has(adapter), `${entry.name}: registered adapter ${adapter} is never assigned`)
+	}
+	for (const adapter of assigned) {
+		assert.ok(registered.has(adapter), `${entry.name}: assigned adapter ${adapter} is not @property-registered`)
+	}
+}
 
 console.log('CSS compatibility contracts valid: Baseline fallbacks and frontier gates are present')

@@ -1,13 +1,54 @@
-/* ── Breadcrumb — wayfinding trail; chevrons are pure CSS so the DOM stays
-      a clean nav>ol>li list ── */
+/* ── Breadcrumb — wayfinding trail; separators are pure CSS so the DOM stays
+      a clean nav>ol>li list ──
+   Knobs on the usual two wires. Child-consumed adapters are inherits: true
+   and assigned on the root; the separator character is an always-emitted
+   STRING custom property (mandatory wire) because the consuming ::before
+   sits on each <li> and can only receive the value by inheritance.
+   Hover/current inks are child-state contexts and keep their role-based
+   values. */
+@property --_ui-breadcrumb-font-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 12px;
+}
+@property --_ui-breadcrumb-gap {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 2px;
+}
+@property --_ui-breadcrumb-separator-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-breadcrumb-link-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-breadcrumb-focus-ring {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-breadcrumb) {
 	:scope {
+		--_ui-breadcrumb-font-size: var(--ui-breadcrumb-font-size, var(--t-xs));
+		--_ui-breadcrumb-gap: var(--ui-breadcrumb-gap, 2px);
+		--_ui-breadcrumb-separator-ink: var(--ui-breadcrumb-separator-ink, var(--color-base-content-faint));
+		--_ui-breadcrumb-link-ink: var(--ui-breadcrumb-link-ink, var(--color-base-content-muted));
+		--_ui-breadcrumb-focus-ring: var(--ui-breadcrumb-focus-ring, color-mix(in oklab, var(--color-primary) 55%, transparent));
+
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-		font-size: var(--t-xs);
+		font-size: var(--_ui-breadcrumb-font-size);
 		text-transform: uppercase;
 		letter-spacing: 0.14em;
 	}
 	:scope[data-ui-color-base] {
+		--_ui-breadcrumb-separator-ink: var(--ui-breadcrumb-separator-ink, var(--ui-ink-faint));
+		--_ui-breadcrumb-link-ink: var(--ui-breadcrumb-link-ink, var(--ui-ink-muted));
+		--_ui-breadcrumb-focus-ring: var(--ui-breadcrumb-focus-ring, var(--ui-focus-ring));
 		border-radius: var(--r-sm);
 		padding: 6px 9px;
 		background: var(--ui-surface);
@@ -18,7 +59,7 @@
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
-		gap: 2px;
+		gap: var(--_ui-breadcrumb-gap);
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -28,15 +69,15 @@
 		align-items: center;
 	}
 	/* Chevron separator between steps — faint, non-selectable, spaced by
-	   its own padding so wrapped rows keep their rhythm. */
+	   its own padding so wrapped rows keep their rhythm. The character is a
+	   string custom property (mandatory wire, always emitted on the nav):
+	   it must reach this descendant by inheritance, which attributes can't
+	   do. */
 	.ui-breadcrumb-step + .ui-breadcrumb-step::before {
-		content: "›";
+		content: var(--ui-breadcrumb-separator, "›");
 		padding-inline: 7px;
-		color: var(--color-base-content-faint);
+		color: var(--_ui-breadcrumb-separator-ink);
 		user-select: none;
-	}
-	:scope[data-ui-color-base] .ui-breadcrumb-step + .ui-breadcrumb-step::before {
-		color: var(--ui-ink-faint);
 	}
 	.ui-breadcrumb-link {
 		border: 0;
@@ -48,19 +89,13 @@
 		letter-spacing: inherit;
 		text-transform: inherit;
 		text-decoration: none;
-		color: var(--color-base-content-muted);
+		color: var(--_ui-breadcrumb-link-ink);
 		cursor: pointer;
 		transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
 	}
 	.ui-breadcrumb-link:focus-visible {
-		outline: 2px solid color-mix(in oklab, var(--color-primary) 55%, transparent);
+		outline: 2px solid var(--_ui-breadcrumb-focus-ring);
 		outline-offset: 1px;
-	}
-	:scope[data-ui-color-base] .ui-breadcrumb-link {
-		color: var(--ui-ink-muted);
-	}
-	:scope[data-ui-color-base] .ui-breadcrumb-link:focus-visible {
-		outline-color: var(--ui-focus-ring);
 	}
 	.ui-breadcrumb-here {
 		padding: 2px 4px;
@@ -79,5 +114,21 @@
 	@media (hover: hover) {
 		.ui-breadcrumb-link:hover { color: var(--color-base-content); }
 		:scope[data-ui-color-base] .ui-breadcrumb-link:hover { color: var(--ui-ink-hover); }
+	}
+
+	/* ── Frontier knob boundary (root contexts) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-breadcrumb-font-size: attr(data-ui-breadcrumb-font-size type(<length>), var(--ui-breadcrumb-font-size, var(--t-xs)));
+			--_ui-breadcrumb-gap: attr(data-ui-breadcrumb-gap type(<length>), var(--ui-breadcrumb-gap, 2px));
+			--_ui-breadcrumb-separator-ink: attr(data-ui-breadcrumb-separator-ink type(<color>), var(--ui-breadcrumb-separator-ink, var(--color-base-content-faint)));
+			--_ui-breadcrumb-link-ink: attr(data-ui-breadcrumb-link-ink type(<color>), var(--ui-breadcrumb-link-ink, var(--color-base-content-muted)));
+			--_ui-breadcrumb-focus-ring: attr(data-ui-breadcrumb-focus-ring type(<color>), var(--ui-breadcrumb-focus-ring, color-mix(in oklab, var(--color-primary) 55%, transparent)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-breadcrumb-separator-ink: attr(data-ui-breadcrumb-separator-ink type(<color>), var(--ui-breadcrumb-separator-ink, var(--ui-ink-faint)));
+			--_ui-breadcrumb-link-ink: attr(data-ui-breadcrumb-link-ink type(<color>), var(--ui-breadcrumb-link-ink, var(--ui-ink-muted)));
+			--_ui-breadcrumb-focus-ring: attr(data-ui-breadcrumb-focus-ring type(<color>), var(--ui-breadcrumb-focus-ring, var(--ui-focus-ring)));
+		}
 	}
 }

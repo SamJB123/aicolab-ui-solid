@@ -2,12 +2,13 @@
 import { createMemo, For, Show } from 'solid-js'
 import { Avatar } from '../../atoms/avatar'
 import { colorTreatmentData, type ColorTreatmentProps } from '../../shared/color-treatment'
+import type { UiColor } from '../../shared/knobs'
 
 export function AvatarStack(props: {
-	people: { name: string; color: string }[]
+	people: { name: string; color: UiColor }[]
 	max?: number
 	size?: number
-	ring?: string
+	ring?: UiColor
 } & ColorTreatmentProps) {
 	const max = () => props.max ?? 5
 	const size = () => props.size ?? 32

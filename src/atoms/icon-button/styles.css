@@ -46,6 +46,12 @@
 	}
 	:scope[data-size="sm"] { --_ui-iconbtn-size: var(--ui-iconbtn-size, 30px); }
 	:scope[data-size="lg"] { --_ui-iconbtn-size: var(--ui-iconbtn-size, 44px); }
+	:scope[data-ui-color-base] {
+		--_ui-iconbtn-hover-surface: var(--ui-iconbtn-hover-surface, var(--ui-surface-hover));
+		--_ui-iconbtn-hover-ink: var(--ui-iconbtn-hover-ink, var(--ui-ink-hover));
+		color: var(--ui-color-foreground);
+		box-shadow: 0 0 0 1px var(--ui-border);
+	}
 	:scope:hover:not(:disabled) {
 		background: var(--_ui-iconbtn-hover-surface);
 		color: var(--_ui-iconbtn-hover-ink);
@@ -63,5 +69,9 @@
 		}
 		:scope[data-size="sm"] { --_ui-iconbtn-size: attr(data-ui-iconbtn-size type(<length>), var(--ui-iconbtn-size, 30px)); }
 		:scope[data-size="lg"] { --_ui-iconbtn-size: attr(data-ui-iconbtn-size type(<length>), var(--ui-iconbtn-size, 44px)); }
+		:scope[data-ui-color-base] {
+			--_ui-iconbtn-hover-surface: attr(data-ui-iconbtn-hover-surface type(<color>), var(--ui-iconbtn-hover-surface, var(--ui-surface-hover)));
+			--_ui-iconbtn-hover-ink: attr(data-ui-iconbtn-hover-ink type(<color>), var(--ui-iconbtn-hover-ink, var(--ui-ink-hover)));
+		}
 	}
 }

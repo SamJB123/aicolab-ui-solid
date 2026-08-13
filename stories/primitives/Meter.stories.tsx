@@ -1,4 +1,5 @@
 /** @jsxImportSource @solidjs/web */
+import { treatmentArgTypes } from './color-treatment-story'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Eyebrow, Meter } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
@@ -6,11 +7,22 @@ import { ColorTreatmentStory } from './color-treatment-story'
 const meta = {
 	title: 'Atoms/Meter',
 	component: Meter,
+	argTypes: {
+		...treatmentArgTypes,
+		ink: { control: 'text', table: { category: 'knobs' } },
+	},
 	args: { value: 62, max: 100 },
 } satisfies Meta<typeof Meter>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: {
+		value: 66,
+		max: 100,
+	},
+}
 
 export const Default: Story = {
 	args: { value: 62, max: 100 },

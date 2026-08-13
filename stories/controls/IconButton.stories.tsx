@@ -1,4 +1,5 @@
 /** @jsxImportSource @solidjs/web */
+import { treatmentArgTypes } from '../primitives/color-treatment-story'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { IconButton } from '../../src/controls'
 
@@ -7,6 +8,7 @@ const meta = {
 	component: IconButton,
 	args: { label: 'Next month' },
 	argTypes: {
+		...treatmentArgTypes,
 		size: { control: 'text', description: "'sm' | 'md' | 'lg' or a measurement like 27px" },
 		radius: { control: 'text', table: { category: 'knobs' } },
 		hoverSurface: { control: 'text', table: { category: 'knobs' } },
@@ -23,7 +25,6 @@ export const Playground: Story = {
 		children: '✳',
 		size: 'md',
 		radius: 'var(--r-pill)',
-		hoverSurface: 'var(--color-base-150)',
 	},
 }
 

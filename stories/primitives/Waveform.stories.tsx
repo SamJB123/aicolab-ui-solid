@@ -1,4 +1,5 @@
 /** @jsxImportSource @solidjs/web */
+import { treatmentArgTypes } from './color-treatment-story'
 import { createSignal, onSettled } from 'solid-js'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Waveform } from '../../src/primitives'
@@ -27,11 +28,21 @@ function AnimatedAxesWaveforms() {
 const meta = {
 	title: 'Atoms/Waveform',
 	component: Waveform,
+	argTypes: {
+		...treatmentArgTypes,
+		ink: { control: 'text', table: { category: 'knobs' } },
+	},
 	args: { bars: BARS },
 } satisfies Meta<typeof Waveform>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: {
+		bars: [0.2, 0.5, 0.8, 0.4, 0.9, 0.6, 0.3, 0.7, 0.5, 0.8],
+	},
+}
 
 export const Default: Story = {
 	args: { bars: BARS },

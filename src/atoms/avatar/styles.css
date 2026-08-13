@@ -1,10 +1,42 @@
-/* ── Avatar ── */
+/* ── Avatar ──
+   Knobs (size, ink, ring) on the usual two wires. Adapters are
+   inherits: true because the face and badge CHILDREN consume them; the
+   frontier attr() reads therefore live on :scope only and flow down.
+   Everything the component used to compute inline (face type size, backing
+   mixes, badge surface) is derived here in CSS instead. */
+@property --_ui-avatar-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 36px;
+}
+@property --_ui-avatar-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-avatar-ring {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+
 @scope (.ui-avatar) {
 	:scope {
+		--_ui-avatar-size: var(--ui-avatar-size, 36px);
+		--_ui-avatar-ink: var(--ui-avatar-ink, var(--color-primary));
+		--_ui-avatar-ring: var(--ui-avatar-ring, var(--color-base-100));
+
 		position: relative;
 		display: inline-block;
 		flex-shrink: 0;
+		width: var(--_ui-avatar-size);
+		height: var(--_ui-avatar-size);
 	}
+	:scope[data-ui-color-base] {
+		--_ui-avatar-ink: var(--ui-avatar-ink, var(--ui-ink));
+		--_ui-avatar-ring: var(--ui-avatar-ring, var(--ui-surface-occluding));
+	}
+
 	:scope > .ui-avatar-face {
 		display: grid;
 		place-items: center;
@@ -12,10 +44,19 @@
 		height: 100%;
 		border-radius: var(--r-pill);
 		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: calc(var(--_ui-avatar-size) * 0.34);
 		font-weight: 500;
 		text-transform: uppercase;
 		letter-spacing: 0.02em;
+		color: var(--_ui-avatar-ink);
+		background: color-mix(in oklab, var(--_ui-avatar-ink) 20%, var(--_ui-avatar-ring));
+		box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--_ui-avatar-ink) 55%, transparent);
 	}
+	:scope[data-ui-color-base] > .ui-avatar-face {
+		background: var(--_ui-avatar-ring);
+		box-shadow: inset 0 0 0 1px var(--ui-border);
+	}
+
 	.ui-avatar-image {
 		display: block;
 		width: 100%;
@@ -23,6 +64,7 @@
 		border-radius: inherit;
 		object-fit: cover;
 	}
+
 	:scope > .ui-avatar-badge {
 		position: absolute;
 		bottom: -2px;
@@ -31,5 +73,22 @@
 		place-items: center;
 		border-radius: var(--r-pill);
 		padding: 2px;
+		background: var(--_ui-avatar-ring);
+	}
+	:scope[data-ui-color-base] > .ui-avatar-badge {
+		background: var(--ui-surface-raised);
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-avatar-size: attr(data-ui-avatar-size type(<length>), var(--ui-avatar-size, 36px));
+			--_ui-avatar-ink: attr(data-ui-avatar-ink type(<color>), var(--ui-avatar-ink, var(--color-primary)));
+			--_ui-avatar-ring: attr(data-ui-avatar-ring type(<color>), var(--ui-avatar-ring, var(--color-base-100)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-avatar-ink: attr(data-ui-avatar-ink type(<color>), var(--ui-avatar-ink, var(--ui-ink)));
+			--_ui-avatar-ring: attr(data-ui-avatar-ring type(<color>), var(--ui-avatar-ring, var(--ui-surface-occluding)));
+		}
 	}
 }

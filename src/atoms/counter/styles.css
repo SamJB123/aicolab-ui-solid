@@ -1,7 +1,31 @@
 /* ── Counter ── */
+@property --_ui-counter-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+
 @scope (.ui-counter) {
-	:scope { font-variant-numeric: tabular-nums; }
+	:scope {
+		/* currentColor default = inherit the surrounding text colour, exactly
+		   as the unknobbed counter always has. */
+		--_ui-counter-ink: var(--ui-counter-ink, currentColor);
+		color: var(--_ui-counter-ink);
+		font-variant-numeric: tabular-nums;
+	}
 	/* Counter is a glyph-only primitive: it paints no surface for content ink
 	   to contrast against, so its resolved family colour is a mark. */
-	:scope[data-ui-color-base] { color: var(--ui-color-foreground); }
+	:scope[data-ui-color-base] {
+		--_ui-counter-ink: var(--ui-counter-ink, var(--ui-color-foreground));
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-counter-ink: attr(data-ui-counter-ink type(<color>), var(--ui-counter-ink, currentColor));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-counter-ink: attr(data-ui-counter-ink type(<color>), var(--ui-counter-ink, var(--ui-color-foreground)));
+		}
+	}
 }

@@ -1,4 +1,5 @@
 /** @jsxImportSource @solidjs/web */
+import { treatmentArgTypes } from './color-treatment-story'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import {
 	AvatarStack,
@@ -16,11 +17,30 @@ import { ColorTreatmentStory } from './color-treatment-story'
 const meta = {
 	title: 'Atoms/Panel',
 	component: Panel,
+	argTypes: {
+		...treatmentArgTypes,
+		radius: { control: 'text', table: { category: 'knobs' } },
+		pad: { control: 'text', table: { category: 'knobs' } },
+		surface: { control: 'text', table: { category: 'knobs' } },
+		topSeam: { control: 'text', table: { category: 'knobs' } },
+		glowInk: { control: 'text', table: { category: 'knobs' } },
+	},
 	args: { title: 'Sessions this week' },
 } satisfies Meta<typeof Panel>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: {
+		title: 'Playground panel',
+		kicker: 'knobs',
+		children: 'Adjust radius, pad, seam and glow from Controls.',
+		glow: true,
+		radius: 'var(--r-lg)',
+		pad: '24px',
+	},
+}
 
 export const Default: Story = {
 	args: {

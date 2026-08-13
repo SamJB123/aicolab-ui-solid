@@ -17,6 +17,7 @@ const meta = {
 		padBlock: { control: 'text', table: { category: 'knobs' } },
 		padInline: { control: 'text', table: { category: 'knobs' } },
 		hoverBorder: { control: 'text', table: { category: 'knobs' } },
+		focusBorder: { control: 'text', table: { category: 'knobs' } },
 		focusRing: { control: 'text', table: { category: 'knobs' } },
 		placeholderInk: { control: 'text', table: { category: 'knobs' } },
 		selectionSurface: { control: 'text', table: { category: 'knobs' } },
@@ -35,7 +36,6 @@ export const Playground: Story = {
 		minHeight: '2.25rem',
 		padBlock: '0.45rem',
 		padInline: '0.55rem',
-		placeholderInk: 'var(--color-base-content-faint)',
 	},
 }
 

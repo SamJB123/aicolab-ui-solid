@@ -1,8 +1,21 @@
-/* ── Meter — typed-attr() exemplar ──
-   The fill width is data-driven: the component sets data-pct and, where
-   typed attr() is supported (detected in JS via CSS.supports), omits its
-   inline-style fallback so this rule owns the width — the browser animates
-   the change through the transition below. */
+/* ── Meter ──
+   The fill percentage is a MANDATORY wire (see shared/knobs.ts): the
+   component emits --ui-meter-pct on every render, so it is registered
+   directly — typed and animatable — and read with no fallback machinery.
+   The stylesheet owns width unconditionally; the inline part is only its
+   input, so no ownership handoff or JS feature probe is needed.
+   ink is an optional knob whose wires land on the fill element itself. */
+@property --ui-meter-pct {
+	syntax: "<percentage>";
+	inherits: false;
+	initial-value: 0%;
+}
+@property --_ui-meter-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+
 @scope (.ui-meter) {
 	:scope {
 		height: 4px;
@@ -15,12 +28,25 @@
 		background: var(--ui-track);
 	}
 	:scope > .ui-meter-fill {
+		--_ui-meter-ink: var(--ui-meter-ink, var(--color-base-content));
 		height: 100%;
+		width: var(--ui-meter-pct);
 		border-radius: var(--r-pill);
-		background: var(--color-base-content);
+		background: var(--_ui-meter-ink);
 		transition: width 0.5s;
 	}
-	@supports (width: attr(data-pct type(<percentage>), 0%)) {
-		:scope > .ui-meter-fill { width: attr(data-pct type(<percentage>), 0%); }
+	:scope[data-ui-color-base] > .ui-meter-fill {
+		--_ui-meter-ink: var(--ui-meter-ink, var(--ui-color-foreground));
+	}
+
+	/* ── Frontier knob boundary (ink only — the pct wire is mandatory and
+	   already in its final form) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope > .ui-meter-fill {
+			--_ui-meter-ink: attr(data-ui-meter-ink type(<color>), var(--ui-meter-ink, var(--color-base-content)));
+		}
+		:scope[data-ui-color-base] > .ui-meter-fill {
+			--_ui-meter-ink: attr(data-ui-meter-ink type(<color>), var(--ui-meter-ink, var(--ui-color-foreground)));
+		}
 	}
 }

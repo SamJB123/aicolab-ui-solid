@@ -62,13 +62,25 @@
 		margin-inline-start: -1px;
 		pointer-events: none;
 	}
+	/* Hover hitbox for auto-mode labels: a slim interactive strip over the
+	   caret line (the caret itself stays pointer-events: none so editing is
+	   undisturbed). Hovering it re-expands the hidden label. */
+	.aic-prosekit-remote-caret[data-labels="auto"]::after {
+		content: "";
+		position: absolute;
+		inset-block: -0.3em;
+		inset-inline: -4px;
+		pointer-events: auto;
+	}
 
 	.aic-prosekit-remote-caret-label {
 		position: absolute;
 		inset-block-start: -1.4em;
 		inset-inline-start: -2px;
+		max-inline-size: 24ch;
 		padding-inline: 4px;
 		border-radius: 3px;
+		overflow: clip;
 		color: contrast-color(var(--ui-presence-color));
 		background: var(--ui-presence-color);
 		font-size: 10px;
@@ -77,6 +89,47 @@
 		white-space: nowrap;
 		user-select: none;
 		pointer-events: none;
+		transition:
+			opacity 200ms ease,
+			translate 200ms ease,
+			visibility 200ms allow-discrete;
+	}
+	/* Fixed-position anchored labels escape the editor shell's overflow
+	   clip (names stay legible over the surrounding page at the edges);
+	   the anchor-name/position-anchor pair is supplied inline per caret.
+	   Engines without anchor positioning keep the absolute fallback above
+	   and clip at the shell edges. */
+	@supports (anchor-name: --a) {
+		.aic-prosekit-remote-caret-label {
+			position: fixed;
+			inset: auto;
+			bottom: anchor(top);
+			left: anchor(left);
+			margin-bottom: 2px;
+			z-index: 6;
+			position-try-fallbacks: flip-inline;
+		}
+	}
+
+	/* Auto mode: the label is INVISIBLE unless its USER is active or the
+	   caret is hovered. Activity is an explicit data-active attribute
+	   driven by the plugin (a user's own typing or jumps) — purely
+	   positional shifts from local edits never re-expand someone else's
+	   label. Both directions animate via the base transitions. */
+	.aic-prosekit-remote-caret[data-labels="auto"]:not([data-active]):not(:hover)
+		.aic-prosekit-remote-caret-label {
+		opacity: 0;
+		translate: 0 0.25em;
+		visibility: hidden;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.aic-prosekit-remote-caret[data-labels="auto"]:not([data-active]):not(:hover)
+			.aic-prosekit-remote-caret-label {
+			/* Motion-free = labels simply stay visible. */
+			opacity: 1;
+			translate: none;
+			visibility: visible;
+		}
 	}
 
 	.aic-prosekit-remote-selection {

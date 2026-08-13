@@ -1,18 +1,59 @@
-/* ── StatusDot ── */
+/* ── StatusDot ──
+   size is a knob. The status colour is a MANDATORY wire (--ui-dot-color,
+   emitted every render), registered directly; the paint adapter picks it
+   in plain contexts and the treatment family colour when treated. Adapters
+   are inherits: true because the ping/core CHILDREN consume them. */
+@property --ui-dot-color {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-dot-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 8px;
+}
+@property --_ui-dot-paint {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+
 @scope (.ui-dot) {
 	:scope {
+		--_ui-dot-size: var(--ui-dot-size, 8px);
+		--_ui-dot-paint: var(--ui-dot-color);
+
 		position: relative;
 		display: inline-grid;
 		place-items: center;
+		width: var(--_ui-dot-size);
+		height: var(--_ui-dot-size);
+	}
+	:scope[data-ui-color-base] {
+		--_ui-dot-paint: var(--ui-color);
 	}
 	:scope > .ui-dot-ping {
 		position: absolute;
 		inset: 0;
 		border-radius: var(--r-pill);
+		background: var(--_ui-dot-paint);
 		animation: ui-ping 1.8s ease-out infinite;
 	}
 	:scope > .ui-dot-core {
 		position: relative;
+		width: var(--_ui-dot-size);
+		height: var(--_ui-dot-size);
 		border-radius: var(--r-pill);
+		background: var(--_ui-dot-paint);
+		transition: background-color 220ms ease;
+	}
+
+	/* ── Frontier knob boundary (size only — the colour is mandatory and
+	   already in its final form) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-dot-size: attr(data-ui-dot-size type(<length>), var(--ui-dot-size, 8px));
+		}
 	}
 }

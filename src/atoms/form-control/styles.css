@@ -35,6 +35,11 @@
 	inherits: false;
 	initial-value: currentColor;
 }
+@property --_ui-input-focus-border {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
 @property --_ui-input-focus-ring {
 	syntax: "<color>";
 	inherits: false;
@@ -78,6 +83,7 @@
 		--_ui-input-pad-block: var(--ui-input-pad-block, 0.45rem);
 		--_ui-input-pad-inline: var(--ui-input-pad-inline, 0.55rem);
 		--_ui-input-hover-border: var(--ui-input-hover-border, var(--color-primary));
+		--_ui-input-focus-border: var(--ui-input-focus-border, var(--color-primary));
 		--_ui-input-focus-ring: var(--ui-input-focus-ring, color-mix(in oklab, var(--color-primary) 54%, transparent));
 		--_ui-input-caret: var(--ui-input-caret, currentColor);
 		--_ui-input-placeholder-ink: var(--ui-input-placeholder-ink, var(--color-base-content-faint));
@@ -112,10 +118,10 @@
 	:scope:hover:not(:disabled) { border-color: var(--_ui-input-hover-border); }
 
 	:scope:focus-visible {
-		border-color: var(--color-primary);
+		border-color: var(--_ui-input-focus-border);
 		outline: 2px solid var(--_ui-input-focus-ring);
 		outline-offset: 1px;
-		box-shadow: 0 0 1rem color-mix(in oklab, var(--color-primary) 26%, transparent);
+		box-shadow: 0 0 1rem color-mix(in oklab, var(--_ui-input-focus-border) 26%, transparent);
 	}
 
 	:scope:disabled {
@@ -126,6 +132,7 @@
 
 	:scope[data-ui-color-base] {
 		--_ui-input-hover-border: var(--ui-input-hover-border, var(--ui-border-hover));
+		--_ui-input-focus-border: var(--ui-input-focus-border, var(--ui-border-active));
 		--_ui-input-focus-ring: var(--ui-input-focus-ring, var(--ui-focus-ring));
 		border-color: var(--ui-border);
 		background: var(--ui-surface);
@@ -136,10 +143,6 @@
 		border-color: var(--_ui-input-hover-border);
 		background: var(--ui-surface-hover);
 		color: var(--ui-ink-hover);
-	}
-
-	:scope[data-ui-color-base]:focus-visible {
-		border-color: var(--ui-border-active);
 	}
 
 	:scope[data-ui-color-base]:disabled {
@@ -170,6 +173,7 @@
 			--_ui-input-pad-block: attr(data-ui-input-pad-block type(<length>), var(--ui-input-pad-block, 0.45rem));
 			--_ui-input-pad-inline: attr(data-ui-input-pad-inline type(<length>), var(--ui-input-pad-inline, 0.55rem));
 			--_ui-input-hover-border: attr(data-ui-input-hover-border type(<color>), var(--ui-input-hover-border, var(--color-primary)));
+			--_ui-input-focus-border: attr(data-ui-input-focus-border type(<color>), var(--ui-input-focus-border, var(--color-primary)));
 			--_ui-input-focus-ring: attr(data-ui-input-focus-ring type(<color>), var(--ui-input-focus-ring, color-mix(in oklab, var(--color-primary) 54%, transparent)));
 			--_ui-input-caret: attr(data-ui-input-caret type(<color>), var(--ui-input-caret, currentColor));
 			--_ui-input-placeholder-ink: attr(data-ui-input-placeholder-ink type(<color>), var(--ui-input-placeholder-ink, var(--color-base-content-faint)));
@@ -179,6 +183,7 @@
 
 		:scope[data-ui-color-base] {
 			--_ui-input-hover-border: attr(data-ui-input-hover-border type(<color>), var(--ui-input-hover-border, var(--ui-border-hover)));
+			--_ui-input-focus-border: attr(data-ui-input-focus-border type(<color>), var(--ui-input-focus-border, var(--ui-border-active)));
 			--_ui-input-focus-ring: attr(data-ui-input-focus-ring type(<color>), var(--ui-input-focus-ring, var(--ui-focus-ring)));
 		}
 	}

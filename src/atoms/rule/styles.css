@@ -1,12 +1,51 @@
-/* ── Rule ── */
+/* ── Rule ──
+   Adapters inherit: the lines are child elements. */
+@property --_ui-rule-gap {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 12px;
+}
+@property --_ui-rule-line-thickness {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 1px;
+}
+@property --_ui-rule-line-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
 @scope (.ui-rule) {
-	:scope { display: flex; align-items: center; gap: 12px; }
-	:scope[data-ui-color-base] { color: var(--ui-color-foreground); }
-	:scope > .ui-rule-line {
-		height: 1px;
-		flex: 1;
-		background: var(--color-border);
+	:scope {
+		--_ui-rule-gap: var(--ui-rule-gap, 12px);
+		--_ui-rule-line-thickness: var(--ui-rule-line-thickness, 1px);
+		--_ui-rule-line-ink: var(--ui-rule-line-ink, var(--color-border));
+
+		display: flex;
+		align-items: center;
+		gap: var(--_ui-rule-gap);
 	}
-	:scope[data-ui-color-base] > .ui-rule-line { background: var(--ui-color-foreground); }
+	:scope[data-ui-color-base] {
+		--_ui-rule-line-ink: var(--ui-rule-line-ink, var(--ui-color-foreground));
+		color: var(--ui-color-foreground);
+	}
+	:scope > .ui-rule-line {
+		height: var(--_ui-rule-line-thickness);
+		flex: 1;
+		background: var(--_ui-rule-line-ink);
+	}
 	:scope[data-ui-color-base] .ui-eyebrow { color: inherit; }
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-rule-gap: attr(data-ui-rule-gap type(<length>), var(--ui-rule-gap, 12px));
+			--_ui-rule-line-thickness: attr(data-ui-rule-line-thickness type(<length>), var(--ui-rule-line-thickness, 1px));
+			--_ui-rule-line-ink: attr(data-ui-rule-line-ink type(<color>), var(--ui-rule-line-ink, var(--color-border)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-rule-line-ink: attr(data-ui-rule-line-ink type(<color>), var(--ui-rule-line-ink, var(--ui-color-foreground)));
+		}
+	}
 }

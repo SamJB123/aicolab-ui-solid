@@ -1,7 +1,11 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
 import { omit } from 'solid-js'
-import type { ClassProp } from '../../shared/color-treatment'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
 import { defineKnobs, mergeKnobStyle, type KnobProps, type UiLength } from '../../shared/knobs'
 
 /** Per-instance styling contract (see shared/knobs.ts). */
@@ -19,7 +23,8 @@ type IconButtonProps = Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, 'class'
 	/** Named vocabulary ('sm' 30px / 'md' 36px / 'lg' 44px, a data attribute)
 	 *  or an exact measurement, which rides the size knob instead. */
 	size?: 'sm' | 'md' | 'lg' | UiLength
-} & Omit<KnobProps<typeof knobs.spec>, 'size'>
+} & ColorTreatmentProps &
+	Omit<KnobProps<typeof knobs.spec>, 'size'>
 
 export function IconButton(props: IconButtonProps) {
 	const attributes = omit(
@@ -30,6 +35,9 @@ export function IconButton(props: IconButtonProps) {
 		'type',
 		'label',
 		'size',
+		'colorBase',
+		'colorLevel',
+		'variant',
 		'radius',
 		'hoverSurface',
 		'hoverInk',
@@ -51,6 +59,7 @@ export function IconButton(props: IconButtonProps) {
 	return (
 		<button
 			{...attributes}
+			{...colorTreatmentData(props)}
 			{...knobs.attributes(knobValues())}
 			type={props.type ?? 'button'}
 			aria-label={props.label}

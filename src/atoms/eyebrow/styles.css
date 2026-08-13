@@ -1,11 +1,47 @@
 /* ── Eyebrow ── */
+@property --_ui-eyebrow-font-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 11px;
+}
+@property --_ui-eyebrow-letter-spacing {
+	syntax: "<length>";
+	inherits: false;
+	/* Dummy — the real default (0.32em) is context-dependent and lives in
+	   the assignment below. */
+	initial-value: 4px;
+}
+@property --_ui-eyebrow-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+
 @scope (.ui-eyebrow) {
 	:scope {
+		--_ui-eyebrow-font-size: var(--ui-eyebrow-font-size, var(--t-2xs));
+		--_ui-eyebrow-letter-spacing: var(--ui-eyebrow-letter-spacing, 0.32em);
+		--_ui-eyebrow-ink: var(--ui-eyebrow-ink, var(--color-base-content-faint));
+
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-		font-size: var(--t-2xs);
+		font-size: var(--_ui-eyebrow-font-size);
 		text-transform: uppercase;
-		letter-spacing: 0.32em;
-		color: var(--color-base-content-faint);
+		letter-spacing: var(--_ui-eyebrow-letter-spacing);
+		color: var(--_ui-eyebrow-ink);
 	}
-	:scope[data-ui-color-base] { color: var(--ui-color-foreground); }
+	:scope[data-ui-color-base] {
+		--_ui-eyebrow-ink: var(--ui-eyebrow-ink, var(--ui-color-foreground));
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-eyebrow-font-size: attr(data-ui-eyebrow-font-size type(<length>), var(--ui-eyebrow-font-size, var(--t-2xs)));
+			--_ui-eyebrow-letter-spacing: attr(data-ui-eyebrow-letter-spacing type(<length>), var(--ui-eyebrow-letter-spacing, 0.32em));
+			--_ui-eyebrow-ink: attr(data-ui-eyebrow-ink type(<color>), var(--ui-eyebrow-ink, var(--color-base-content-faint)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-eyebrow-ink: attr(data-ui-eyebrow-ink type(<color>), var(--ui-eyebrow-ink, var(--ui-color-foreground)));
+		}
+	}
 }

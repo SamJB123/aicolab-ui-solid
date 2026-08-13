@@ -1,4 +1,5 @@
 /** @jsxImportSource @solidjs/web */
+import { treatmentArgTypes } from './color-treatment-story'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { Avatar } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
@@ -6,11 +7,24 @@ import { ColorTreatmentStory } from './color-treatment-story'
 const meta = {
 	title: 'Atoms/Avatar',
 	component: Avatar,
+	argTypes: {
+		...treatmentArgTypes,
+		size: { control: 'text', table: { category: 'knobs' } },
+		ink: { control: 'text', table: { category: 'knobs' } },
+		ring: { control: 'text', table: { category: 'knobs' } },
+	},
 	args: { name: 'Ada Lovelace', faceColor: 'var(--color-primary)' },
 } satisfies Meta<typeof Avatar>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: {
+		name: 'Ada Lovelace',
+		size: 48,
+	},
+}
 
 export const Default: Story = {
 	args: { name: 'Ada Lovelace', faceColor: 'var(--color-primary)' },

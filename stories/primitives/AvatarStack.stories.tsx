@@ -1,9 +1,10 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import { AvatarStack } from '../../src/primitives'
-import { ColorTreatmentStory } from './color-treatment-story'
+import type { UiColor } from '../../src'
+import { ColorTreatmentStory, treatmentArgTypes } from './color-treatment-story'
 
-const PEOPLE = [
+const PEOPLE: { name: string; color: UiColor }[] = [
 	{ name: 'Ada Lovelace', color: '#a06f1c' },
 	{ name: 'Grace Hopper', color: '#5aa179' },
 	{ name: 'Joan Clarke', color: '#b46a55' },
@@ -16,6 +17,7 @@ const PEOPLE = [
 const meta = {
 	title: 'Molecules/AvatarStack',
 	component: AvatarStack,
+	argTypes: { ...treatmentArgTypes },
 } satisfies Meta<typeof AvatarStack>
 
 export default meta

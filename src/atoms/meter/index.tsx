@@ -1,31 +1,55 @@
 /** @jsxImportSource @solidjs/web */
-import { createSignal, onSettled } from 'solid-js'
-import { colorTreatmentData, type ColorTreatmentProps } from '../../shared/color-treatment'
+import type { JSX } from '@solidjs/web'
+import { omit } from 'solid-js'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
+import { defineKnobs, mergeKnobStyle, type KnobProps, type UiColor } from '../../shared/knobs'
 
-// The fill publishes its percentage as `data-pct`. Where typed attr() is
-// supported, the CSS rule `width: attr(data-pct type(<percentage>), 0%)`
-// owns the width and the inline fallback is dropped AFTER settle (SSR and
-// hydration always carry the inline width, so markup stays stable); the
-// 0.5s width transition makes the ownership handoff invisible.
+/** ink's wires land on the fill element itself (where it is consumed), so
+ * both wires apply. The percentage is a MANDATORY wire (see shared/knobs.ts):
+ * always emitted, registered directly in the stylesheet, no fallback
+ * machinery — and no JS feature probing, since the stylesheet owns width
+ * unconditionally and the inline part is only its input. */
+const knobs = defineKnobs('ui-meter', { ink: '<color>' })
 
-const supportsTypedAttr = (): boolean =>
-	typeof CSS !== 'undefined' && CSS.supports('width', 'attr(data-pct type(<percentage>), 0%)')
+type MeterProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'class'> & {
+	class?: ClassProp
+	value: number
+	max: number
+	/** @deprecated Use `ink`. */
+	fillColor?: UiColor
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec>
 
-export function Meter(props: { value: number; max: number; fillColor?: string } & ColorTreatmentProps) {
+export function Meter(props: MeterProps) {
+	const attributes = omit(
+		props,
+		'class',
+		'style',
+		'value',
+		'max',
+		'ink',
+		'fillColor',
+		'colorBase',
+		'colorLevel',
+		'variant',
+	)
 	const pct = () => Math.min(100, Math.round((props.value / props.max) * 100))
-	const [cssOwnsWidth, setCssOwnsWidth] = createSignal(false)
-	onSettled(() => {
-		if (supportsTypedAttr()) setCssOwnsWidth(true)
-	})
+	const inkValue = () => ({ ink: props.ink ?? props.fillColor })
 	return (
-		<div {...colorTreatmentData(props)} class="ui-meter">
+		<div
+			{...attributes}
+			{...colorTreatmentData(props)}
+			class={['ui-meter', props.class]}
+			style={props.style}
+		>
 			<div
 				class="ui-meter-fill"
-				data-pct={`${pct()}%`}
-				style={{
-					width: cssOwnsWidth() ? undefined : `${pct()}%`,
-					background: props.colorBase ? 'var(--ui-color-foreground)' : (props.fillColor ?? 'var(--color-base-content)'),
-				}}
+				{...knobs.attributes(inkValue())}
+				style={mergeKnobStyle(knobs.style(inkValue()), { '--ui-meter-pct': `${pct()}%` })}
 			/>
 		</div>
 	)

@@ -35,6 +35,16 @@ const meta = {
 		colorBase: { control: 'select', options: ['primary', 'secondary', 'accent', 'neutral', 'info', 'success', 'warning', 'error'] },
 		colorLevel: { control: 'select', options: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] },
 		variant: { control: 'radio', options: ['solid', 'soft', 'outline', 'ghost', 'text'] },
+		radius: { control: 'text', table: { category: 'knobs' } },
+		trackPad: { control: 'text', table: { category: 'knobs' } },
+		tabPadBlock: { control: 'text', table: { category: 'knobs' } },
+		tabPadInline: { control: 'text', table: { category: 'knobs' } },
+		gap: { control: 'text', table: { category: 'knobs' } },
+		fontSize: { control: 'text', table: { category: 'knobs' } },
+		trackSurface: { control: 'text', table: { category: 'knobs' } },
+		activeSurface: { control: 'text', table: { category: 'knobs' } },
+		activeInk: { control: 'text', table: { category: 'knobs' } },
+		inactiveInk: { control: 'text', table: { category: 'knobs' } },
 	},
 	args: {
 		options: [
@@ -49,6 +59,21 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+export const Playground: Story = {
+	args: {
+		label: 'Playground tabs',
+		options: [
+			{ id: 'day', label: 'Day' },
+			{ id: 'week', label: 'Week' },
+			{ id: 'month', label: 'Month' },
+		],
+		value: 'week',
+		radius: 'var(--r-pill)',
+		trackPad: '4px',
+		fontSize: 'var(--t-sm)',
+	},
+}
 
 export const Interactive: Story = {
 	render: () => {

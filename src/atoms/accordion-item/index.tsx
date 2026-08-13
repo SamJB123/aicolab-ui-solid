@@ -1,7 +1,11 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
 import { omit } from 'solid-js'
-import type { ClassProp } from '../../shared/color-treatment'
+import {
+	colorTreatmentData,
+	type ClassProp,
+	type ColorTreatmentProps,
+} from '../../shared/color-treatment'
 import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 import { useAccordionItemContext } from './context'
 
@@ -20,7 +24,8 @@ type AccordionItemProps = Omit<JSX.DetailsHtmlAttributes<HTMLDetailsElement>, 'c
 	summary: string | (() => JSX.Element)
 	/** Exclusive-open group; defaults to the surrounding Accordion's. */
 	group?: string
-} & KnobProps<typeof knobs.spec>
+} & ColorTreatmentProps &
+	KnobProps<typeof knobs.spec>
 
 export function AccordionItem(props: AccordionItemProps) {
 	const accordion = useAccordionItemContext()
@@ -33,12 +38,16 @@ export function AccordionItem(props: AccordionItemProps) {
 		'summary',
 		'group',
 		'name',
+		'colorBase',
+		'colorLevel',
+		'variant',
 		'iconInk',
 		'divider',
 	)
 	return (
 		<details
 			{...attributes}
+			{...colorTreatmentData(props)}
 			{...knobs.attributes(props)}
 			name={group()}
 			class={['ui-acc', props.class]}

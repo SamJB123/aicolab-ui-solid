@@ -1,22 +1,92 @@
-/* ── Chip — tone via data attribute (cascading, semantic) ── */
+/* ── Chip — tone via treatment mapping; knobs on the usual two wires ── */
+@property --_ui-chip-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 999px;
+}
+@property --_ui-chip-pad-block {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 4px;
+}
+@property --_ui-chip-pad-inline {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 10px;
+}
+@property --_ui-chip-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 6px;
+}
+@property --_ui-chip-font-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 11px;
+}
+@property --_ui-chip-letter-spacing {
+	syntax: "<length>";
+	inherits: false;
+	/* Dummy — the real default (0.16em) is context-dependent and lives in
+	   the assignment below. */
+	initial-value: 2px;
+}
+@property --_ui-chip-surface {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --_ui-chip-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+
 @scope (.ui-chip) {
 	:scope {
+		--_ui-chip-radius: var(--ui-chip-radius, var(--r-pill));
+		--_ui-chip-pad-block: var(--ui-chip-pad-block, 4px);
+		--_ui-chip-pad-inline: var(--ui-chip-pad-inline, 10px);
+		--_ui-chip-gap: var(--ui-chip-gap, 6px);
+		--_ui-chip-font-size: var(--ui-chip-font-size, var(--t-2xs));
+		--_ui-chip-letter-spacing: var(--ui-chip-letter-spacing, 0.16em);
+		--_ui-chip-surface: var(--ui-chip-surface, var(--color-base-150));
+		--_ui-chip-ink: var(--ui-chip-ink, var(--color-base-content-muted));
+
 		display: inline-flex;
 		align-items: center;
-		gap: 6px;
-		border-radius: var(--r-pill);
-		padding: 4px 10px;
+		gap: var(--_ui-chip-gap);
+		border-radius: var(--_ui-chip-radius);
+		padding: var(--_ui-chip-pad-block) var(--_ui-chip-pad-inline);
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
-		font-size: var(--t-2xs);
+		font-size: var(--_ui-chip-font-size);
 		text-transform: uppercase;
-		letter-spacing: 0.16em;
-		background: var(--color-base-150);
-		color: var(--color-base-content-muted);
+		letter-spacing: var(--_ui-chip-letter-spacing);
+		background: var(--_ui-chip-surface);
+		color: var(--_ui-chip-ink);
 		box-shadow: 0 0 0 1px var(--color-border);
 	}
 	:scope[data-ui-color-base] {
-		background: var(--ui-surface);
-		color: var(--ui-ink);
+		--_ui-chip-surface: var(--ui-chip-surface, var(--ui-surface));
+		--_ui-chip-ink: var(--ui-chip-ink, var(--ui-ink));
 		box-shadow: 0 0 0 1px var(--ui-border);
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-chip-radius: attr(data-ui-chip-radius type(<length-percentage>), var(--ui-chip-radius, var(--r-pill)));
+			--_ui-chip-pad-block: attr(data-ui-chip-pad-block type(<length>), var(--ui-chip-pad-block, 4px));
+			--_ui-chip-pad-inline: attr(data-ui-chip-pad-inline type(<length>), var(--ui-chip-pad-inline, 10px));
+			--_ui-chip-gap: attr(data-ui-chip-gap type(<length>), var(--ui-chip-gap, 6px));
+			--_ui-chip-font-size: attr(data-ui-chip-font-size type(<length>), var(--ui-chip-font-size, var(--t-2xs)));
+			--_ui-chip-letter-spacing: attr(data-ui-chip-letter-spacing type(<length>), var(--ui-chip-letter-spacing, 0.16em));
+			--_ui-chip-surface: attr(data-ui-chip-surface type(<color>), var(--ui-chip-surface, var(--color-base-150)));
+			--_ui-chip-ink: attr(data-ui-chip-ink type(<color>), var(--ui-chip-ink, var(--color-base-content-muted)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-chip-surface: attr(data-ui-chip-surface type(<color>), var(--ui-chip-surface, var(--ui-surface)));
+			--_ui-chip-ink: attr(data-ui-chip-ink type(<color>), var(--ui-chip-ink, var(--ui-ink)));
+		}
 	}
 }

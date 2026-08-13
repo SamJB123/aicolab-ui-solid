@@ -28,6 +28,10 @@
 		color: inherit;
 		font-style: inherit;
 	}
+	:scope[data-ui-color-base] {
+		--_ui-mark-ink: var(--ui-mark-ink, var(--ui-color));
+		--_ui-mark-content-ink: var(--ui-mark-content-ink, var(--ui-content));
+	}
 	:scope[data-tone="underline"] {
 		background-image: linear-gradient(
 			to right,
@@ -55,6 +59,10 @@
 			--_ui-mark-ink: attr(data-ui-mark-ink type(<color>), var(--ui-mark-ink, var(--color-primary)));
 			--_ui-mark-content-ink: attr(data-ui-mark-content-ink type(<color>), var(--ui-mark-content-ink, var(--color-primary-content)));
 			--_ui-mark-thickness: attr(data-ui-mark-thickness type(<length>), var(--ui-mark-thickness, 0.12em));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-mark-ink: attr(data-ui-mark-ink type(<color>), var(--ui-mark-ink, var(--ui-color)));
+			--_ui-mark-content-ink: attr(data-ui-mark-content-ink type(<color>), var(--ui-mark-content-ink, var(--ui-content)));
 		}
 	}
 }

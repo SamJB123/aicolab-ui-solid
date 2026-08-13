@@ -1,19 +1,65 @@
+/* ── StageHint ──
+   Knobs on the usual two wires; all consumed on the root. */
+@property --_ui-hint-max-width {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 576px;
+}
+@property --_ui-hint-pad-block {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0.55rem;
+}
+@property --_ui-hint-pad-inline {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0.9rem;
+}
+@property --_ui-hint-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 999px;
+}
+@property --_ui-hint-offset {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 1rem;
+}
+@property --_ui-hint-surface {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --_ui-hint-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+
 @scope (.ui-stage-hint) {
 	:scope {
+		--_ui-hint-max-width: var(--ui-hint-max-width, 36rem);
+		--_ui-hint-pad-block: var(--ui-hint-pad-block, 0.55rem);
+		--_ui-hint-pad-inline: var(--ui-hint-pad-inline, 0.9rem);
+		--_ui-hint-radius: var(--ui-hint-radius, 999px);
+		--_ui-hint-offset: var(--ui-hint-offset, 1rem);
+		--_ui-hint-surface: var(--ui-hint-surface, var(--color-overlay-surface));
+		--_ui-hint-ink: var(--ui-hint-ink, var(--color-overlay-content));
+
 		position: absolute;
 		/* SceneStage isolates its own stacking context. Keep passive guidance on
 		   its lowest overlay tier so system feedback and interactive stage UI can
 		   remain above it. */
 		z-index: 1;
-		inset: auto auto 1rem 50%;
+		inset: auto auto var(--_ui-hint-offset) 50%;
 		box-sizing: border-box;
-		max-width: min(36rem, calc(100% - 2rem));
-		padding: 0.55rem 0.9rem;
+		max-width: min(var(--_ui-hint-max-width), calc(100% - 2rem));
+		padding: var(--_ui-hint-pad-block) var(--_ui-hint-pad-inline);
 		border: 1px solid var(--color-overlay-border);
-		border-radius: 999px;
+		border-radius: var(--_ui-hint-radius);
 		corner-shape: squircle;
-		background: var(--color-overlay-surface);
-		color: var(--color-overlay-content);
+		background: var(--_ui-hint-surface);
+		color: var(--_ui-hint-ink);
 		box-shadow:
 			0 0.55rem 1.5rem color-mix(in oklab, var(--color-base-1000) 24%, transparent),
 			inset 0 1px 0 color-mix(in oklab, var(--color-overlay-content) 12%, transparent);
@@ -30,9 +76,32 @@
 			translate 360ms linear(0, 0.25, 0.72, 1.06, 1);
 	}
 
+	:scope[data-ui-color-base] {
+		--_ui-hint-surface: var(--ui-hint-surface, var(--ui-surface));
+		--_ui-hint-ink: var(--ui-hint-ink, var(--ui-ink));
+		border-color: var(--ui-border);
+	}
+
 	:scope[data-dismissed="true"] { opacity: 0; translate: -50% 0.65rem; }
 
 	@starting-style {
 		:scope { opacity: 0; translate: -50% 0.65rem; }
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-hint-max-width: attr(data-ui-hint-max-width type(<length>), var(--ui-hint-max-width, 36rem));
+			--_ui-hint-pad-block: attr(data-ui-hint-pad-block type(<length>), var(--ui-hint-pad-block, 0.55rem));
+			--_ui-hint-pad-inline: attr(data-ui-hint-pad-inline type(<length>), var(--ui-hint-pad-inline, 0.9rem));
+			--_ui-hint-radius: attr(data-ui-hint-radius type(<length-percentage>), var(--ui-hint-radius, 999px));
+			--_ui-hint-offset: attr(data-ui-hint-offset type(<length>), var(--ui-hint-offset, 1rem));
+			--_ui-hint-surface: attr(data-ui-hint-surface type(<color>), var(--ui-hint-surface, var(--color-overlay-surface)));
+			--_ui-hint-ink: attr(data-ui-hint-ink type(<color>), var(--ui-hint-ink, var(--color-overlay-content)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-hint-surface: attr(data-ui-hint-surface type(<color>), var(--ui-hint-surface, var(--ui-surface)));
+			--_ui-hint-ink: attr(data-ui-hint-ink type(<color>), var(--ui-hint-ink, var(--ui-ink)));
+		}
 	}
 }
