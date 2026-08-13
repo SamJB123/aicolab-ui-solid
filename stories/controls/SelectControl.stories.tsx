@@ -1,7 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import { createSignal } from 'solid-js'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
-import { Field, SelectControl } from '../../src'
+import { Button, Field, SelectControl } from '../../src'
 import { ColorTreatmentStory } from '../primitives/color-treatment-story'
 
 function TreatmentSelect(props: {
@@ -120,6 +120,53 @@ export const ColorTreatment: Story = {
 				<option value="editor">Editor</option>
 			</>
 		),
+	},
+}
+
+export const KnobContract: Story = {
+	name: 'Knob contract (typed attr() world)',
+	render: () => {
+		const [compact, setCompact] = createSignal(false)
+		return (
+			<div style={{ display: 'grid', gap: '0.75rem', 'justify-items': 'start' }}>
+				<SelectControl aria-label="Pill radius" radius="var(--r-pill)" padInline="1.1rem" value="pill">
+					<option value="pill">Pill radius</option>
+					<option value="other">Other</option>
+				</SelectControl>
+				<SelectControl
+					aria-label="Compact metrics"
+					minHeight="1.75rem"
+					padBlock="0.15rem"
+					radius="var(--r-xs)"
+					value="compact"
+				>
+					<option value="compact">Compact metrics</option>
+					<option value="other">Other</option>
+				</SelectControl>
+				<SelectControl
+					aria-label="Accent hover, round picker"
+					hoverBorder="var(--color-accent)"
+					pickerRadius="var(--r-xl)"
+					value="hover"
+				>
+					<option value="hover">Accent hover, round picker</option>
+					<option value="other">Other</option>
+				</SelectControl>
+				<Button variant="outline" pressed={compact()} onClick={() => setCompact(!compact())}>
+					Toggle density
+				</Button>
+				<SelectControl
+					aria-label="Signal-driven metrics"
+					minHeight={compact() ? '1.75rem' : '2.6rem'}
+					radius={compact() ? 'var(--r-sm)' : 'var(--r-pill)'}
+					padInline={compact() ? '0.6rem' : '1.2rem'}
+					value="reactive"
+				>
+					<option value="reactive">Signal-driven metrics</option>
+					<option value="other">Other</option>
+				</SelectControl>
+			</div>
+		)
 	},
 }
 

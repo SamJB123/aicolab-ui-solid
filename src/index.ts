@@ -96,6 +96,16 @@ export {
 	type Variant,
 } from './shared/color-treatment'
 export {
+	defineKnobs,
+	mergeKnobStyle,
+	type KnobProps,
+	type KnobSpec,
+	type KnobSyntax,
+	type UiColor,
+	type UiLength,
+	type UiLengthPercentage,
+} from './shared/knobs'
+export {
 	ApplicationHeader,
 	ThemeToggle,
 	type ThemeMode,

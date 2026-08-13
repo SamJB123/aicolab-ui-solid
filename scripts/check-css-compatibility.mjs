@@ -3,10 +3,10 @@ import { readFile } from 'node:fs/promises'
 
 const read = (path) => readFile(new URL(path, import.meta.url), 'utf8')
 
-const [resolver, accordion, formControl, carousel, workspace, prosekit] = await Promise.all([
+const [resolver, accordion, selectControl, carousel, workspace, prosekit] = await Promise.all([
 	read('../src/resolver.css'),
 	read('../src/molecules/accordion/styles.css'),
-	read('../src/atoms/form-control/styles.css'),
+	read('../src/atoms/select-control/styles.css'),
 	read('../src/molecules/carousel/styles.css'),
 	read('../src/organisms/workspace/styles.css'),
 	read('../src/prosekit-solid/styles.css'),
@@ -63,7 +63,18 @@ requireAll(
 	],
 	'accordion style-query fallback',
 )
-requireAll(formControl, [/@supports \(appearance: base-select\)/], 'customizable select boundary')
+requireAll(
+	selectControl,
+	[
+		/@supports \(appearance: base-select\)/,
+		/@supports \(width: attr\(data-ui-compat-probe type\(<length>\), 0px\)\)/,
+		/border-radius: var\(--ui-select-radius, var\(--r-md\)\)/,
+		/border-radius: attr\(data-ui-select-radius type\(<length-percentage>\), var\(--ui-select-radius, var\(--r-md\)\)\)/,
+		/border-color: var\(--ui-select-hover-border, var\(--ui-border-hover\)\)/,
+		/border-color: attr\(data-ui-select-hover-border type\(<color>\), var\(--ui-select-hover-border, var\(--ui-border-hover\)\)\)/,
+	],
+	'select-control knob boundary',
+)
 requireAll(
 	carousel,
 	[/@supports \(scroll-marker-group: after\).*selector\(::scroll-marker\).*selector\(::scroll-button\(left\)\)/],

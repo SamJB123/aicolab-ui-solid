@@ -1,12 +1,18 @@
+/* Per-instance knobs (radius, minHeight, padBlock, padInline, hoverBorder,
+   pickerRadius) arrive on two wires from the component: custom properties
+   for the Baseline reads below, data-ui-select-* attributes for the typed
+   attr() frontier boundary at the end of this block. Every knob read keeps
+   its token default in the innermost fallback, so an unknobbed instance is
+   identical to the pre-knob design. */
 @scope (.ui-select-control) {
 	:scope {
 		box-sizing: border-box;
 		width: fit-content;
 		max-width: 100%;
-		min-height: 2.25rem;
-		padding: 0.42rem 0.75rem;
+		min-height: var(--ui-select-min-height, 2.25rem);
+		padding: var(--ui-select-pad-block, 0.42rem) var(--ui-select-pad-inline, 0.75rem);
 		border: 1px solid var(--color-border-strong);
-		border-radius: var(--r-md);
+		border-radius: var(--ui-select-radius, var(--r-md));
 		corner-shape: squircle;
 		background: var(--color-base-100);
 		color: var(--color-base-content);
@@ -15,11 +21,14 @@
 		cursor: pointer;
 		transition:
 			border-color 160ms ease,
-			outline-color 160ms ease;
+			outline-color 160ms ease,
+			border-radius 160ms ease,
+			min-height 160ms ease,
+			padding 160ms ease;
 	}
 
 	:scope:hover:not(:disabled) {
-		border-color: color-mix(in oklab, var(--color-primary) 58%, var(--color-border-strong));
+		border-color: var(--ui-select-hover-border, color-mix(in oklab, var(--color-primary) 58%, var(--color-border-strong)));
 	}
 
 	:scope:focus-visible {
@@ -41,7 +50,7 @@
 	}
 
 	:scope[data-ui-color-base]:hover:not(:disabled) {
-		border-color: var(--ui-border-hover);
+		border-color: var(--ui-select-hover-border, var(--ui-border-hover));
 		background: var(--ui-surface-hover);
 		color: var(--ui-ink-hover);
 	}
@@ -75,7 +84,7 @@
 		:scope::picker(select) {
 			appearance: base-select;
 			border: 1px solid var(--color-border-strong);
-			border-radius: var(--r-md);
+			border-radius: var(--ui-select-picker-radius, var(--r-md));
 			corner-shape: squircle;
 			background: var(--color-base-100);
 			color: var(--color-base-content);
@@ -116,6 +125,36 @@
 				background: var(--color-overlay-surface);
 				color: var(--color-overlay-content);
 				box-shadow: 0 0.75rem 2.5rem -0.75rem var(--color-overlay-surface);
+			}
+		}
+	}
+
+	/* ── Frontier knob boundary ──────────────────────────────────────────
+	   The same knobs read as typed attributes. Keep the var() compatibility
+	   reads above until typed attr() is Baseline across ui-solid's browser
+	   floor, then delete them together with the component's style-variable
+	   emission. Each attr() fallback chains through the compatibility
+	   variable so the two wires can never disagree. */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			min-height: attr(data-ui-select-min-height type(<length>), var(--ui-select-min-height, 2.25rem));
+			padding:
+				attr(data-ui-select-pad-block type(<length>), var(--ui-select-pad-block, 0.42rem))
+				attr(data-ui-select-pad-inline type(<length>), var(--ui-select-pad-inline, 0.75rem));
+			border-radius: attr(data-ui-select-radius type(<length-percentage>), var(--ui-select-radius, var(--r-md)));
+		}
+
+		:scope:hover:not(:disabled) {
+			border-color: attr(data-ui-select-hover-border type(<color>), var(--ui-select-hover-border, color-mix(in oklab, var(--color-primary) 58%, var(--color-border-strong))));
+		}
+
+		:scope[data-ui-color-base]:hover:not(:disabled) {
+			border-color: attr(data-ui-select-hover-border type(<color>), var(--ui-select-hover-border, var(--ui-border-hover)));
+		}
+
+		@supports (appearance: base-select) {
+			:scope::picker(select) {
+				border-radius: attr(data-ui-select-picker-radius type(<length-percentage>), var(--ui-select-picker-radius, var(--r-md)));
 			}
 		}
 	}
