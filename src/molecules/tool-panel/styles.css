@@ -44,7 +44,15 @@
 		--ui-environment: overlay;
 		display: flex;
 		box-sizing: border-box;
-		width: min(var(--_ui-toolpanel-width), calc(100% - 2rem));
+		/* Width and cap declared SEPARATELY, not `width: min(…, 100% - 2rem)`:
+		 * a floating panel often lands in a shrink-to-fit wrapper (absolutely
+		 * positioned, no explicit width), where a percentage inside `width`
+		 * resolves cyclically and collapses the panel to its minimum content
+		 * width (~35px). A definite `width` keeps the authored size as the
+		 * intrinsic contribution; the percentage cap still applies wherever
+		 * the container is definite — identical results there. */
+		width: var(--_ui-toolpanel-width);
+		max-width: calc(100% - 2rem);
 		max-height: calc(100% - 2rem);
 		flex-direction: column;
 		gap: var(--_ui-toolpanel-gap);
