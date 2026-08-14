@@ -1,11 +1,12 @@
-// Storybook for @aicolab/ui-solid — Solid 2 (beta) via storybook-solidjs-vite.
+// Storybook for @aicolab/ui-solid — Solid 2 (rc) via storybook-solidjs-vite.
 //
 // The framework preset (storybook-solidjs-vite@10.6) detects the installed
-// solid-js major (2.0.0-beta.20 here) and mounts stories through its
+// solid-js major (2.0.0-rc.0 here) and mounts stories through its
 // `solid-next` renderer (`render` from @solidjs/web, reactive globals/args
 // stores). It also applies vite-plugin-solid automatically when the config
-// has none — the workspace pins vite-plugin-solid@3.0.0-next.5, the Solid 2
-// line, whose babel-preset-solid compiles JSX against `@solidjs/web`.
+// has none — the workspace pins vite-plugin-solid@3.0.0-next.27, the old
+// name's final release and a re-export shim over @solidjs/vite-plugin, whose
+// babel-preset-solid (2.0.0-rc.0) compiles JSX against `@solidjs/web`.
 //
 // addon-docs + component docgen power autodocs and the MCP component
 // manifest; addon-mcp serves it at /mcp in dev.
