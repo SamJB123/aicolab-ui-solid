@@ -25,7 +25,7 @@ const knobs = defineKnobs('ui-seg', {
 	inactiveInk: '<color>',
 })
 
-type SegmentedProps<T extends string> = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'class'> & {
+type SegmentedProps<T extends string> = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'class' | 'onChange'> & {
 	class?: ClassProp
 	label?: string
 	options: SegOption<T>[]
