@@ -97,6 +97,9 @@ export function RichListItem(
 		description?: JSX.Element
 		trailing?: JSX.Element
 		onSelect?: () => void
+		/** Pointer enters/leaves the row — for hosts that mirror row hover
+		 * into another surface (a canvas highlight, a map pin, …). */
+		onHoverChange?: (hovering: boolean) => void
 		href?: string
 		/** Persistent selection, distinct from the transient hover affordance. */
 		selected?: boolean
@@ -145,6 +148,8 @@ export function RichListItem(
 		...colorTreatmentData(treatment()),
 		...knobs.attributes(props),
 		style: mergeKnobStyle(knobs.style(props), undefined),
+		onPointerEnter: () => props.onHoverChange?.(true),
+		onPointerLeave: () => props.onHoverChange?.(false),
 	})
 
 	return (
