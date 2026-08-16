@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { createEffect, createSignal, createUniqueId, Show } from 'solid-js'
+import { createEffect, createSignal, createUniqueId, onCleanup, Show } from 'solid-js'
 import { IconButton } from '../../atoms/icon-button'
 import { RichList, RichListItem } from '../../molecules/rich-list'
 import {
@@ -222,13 +222,44 @@ export function ResponsiveInspector(props: {
 	/** A stable selection identity. Truthy values bind and raise the inspector. */
 	activeKey?: string | null
 	hidden?: boolean
+	/** Reports how many pixels of the stage this inspector currently COVERS
+	 * from the bottom: the sheet's target height on narrow viewports (live
+	 * during grip drags), 0 in side-panel mode where the panel shrinks the
+	 * stage instead of overlaying it. Lets the stage keep its subject inside
+	 * the uncovered strip (settled 2026-08-16). */
+	onOcclusionChange?: (px: number) => void
 	class?: ClassProp
 	children?: JSX.Element
 }) {
 	const [detent, setDetent] = createSignal<InspectorDetent>('peek', { ownedWrite: true })
 	const [dragHeight, setDragHeight] = createSignal<number | null>(null)
+	// Bumped on viewport resizes so the reported occlusion re-derives (the
+	// half/full detents are viewport-proportional, and the side-panel media
+	// boundary can flip).
+	const [viewportEpoch, setViewportEpoch] = createSignal(0)
 	let root: HTMLElement | undefined
 	let dragMoved = false
+
+	const onViewportResize = (): void => {
+		setViewportEpoch((epoch) => epoch + 1)
+	}
+	window.addEventListener('resize', onViewportResize)
+	onCleanup(() => window.removeEventListener('resize', onViewportResize))
+
+	createEffect(
+		() => ({
+			detent: detent(),
+			dragHeight: dragHeight(),
+			hidden: props.hidden,
+			report: props.onOcclusionChange,
+			epoch: viewportEpoch(),
+		}),
+		({ detent, dragHeight, hidden, report }) => {
+			if (!report) return
+			const sheet = window.matchMedia('(max-width: 900px)').matches
+			report(sheet && !hidden ? Math.round(dragHeight ?? detentHeights()[detent]) : 0)
+		},
+	)
 
 	createEffect(
 		() => props.activeKey,
