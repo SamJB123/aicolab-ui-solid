@@ -54,17 +54,19 @@ function adjacentDetent(from: InspectorDetent, direction: 1 | -1): InspectorDete
 	return DETENTS[Math.max(0, Math.min(DETENTS.length - 1, index))] ?? from
 }
 
-export function WorkspaceShell(props: {
-	navigation?: JSX.Element
-	stage?: JSX.Element
-	inspector?: JSX.Element
-	mobileNavigation?: JSX.Element
-	hasRaisedSheet?: boolean
-	captureTarget?: string
-	class?: ClassProp
-	children?: JSX.Element
-} & ColorTreatmentProps &
-	KnobProps<typeof knobs.spec>) {
+export function WorkspaceShell(
+	props: {
+		navigation?: JSX.Element
+		stage?: JSX.Element
+		inspector?: JSX.Element
+		mobileNavigation?: JSX.Element
+		hasRaisedSheet?: boolean
+		captureTarget?: string
+		class?: ClassProp
+		children?: JSX.Element
+	} & ColorTreatmentProps &
+		KnobProps<typeof knobs.spec>,
+) {
 	return (
 		<div
 			class={['ui-workspace', props.class]}
@@ -103,12 +105,14 @@ export function WorkspaceNavigation(props: {
 	)
 }
 
-export function WorkspaceNavigationGroup(props: {
-	id: string
-	label: string
-	class?: ClassProp
-	children?: JSX.Element
-} & ColorTreatmentProps) {
+export function WorkspaceNavigationGroup(
+	props: {
+		id: string
+		label: string
+		class?: ClassProp
+		children?: JSX.Element
+	} & ColorTreatmentProps,
+) {
 	return (
 		<section class={['ui-workspace-navigation-group', props.class]}>
 			<h2 class="ui-workspace-navigation-group-label ui-eyebrow" id={props.id}>
@@ -128,11 +132,13 @@ export function WorkspaceNavigationGroup(props: {
 	)
 }
 
-export function WorkspaceNavigationList(props: {
-	label: string
-	class?: ClassProp
-	children?: JSX.Element
-} & ColorTreatmentProps) {
+export function WorkspaceNavigationList(
+	props: {
+		label: string
+		class?: ClassProp
+		children?: JSX.Element
+	} & ColorTreatmentProps,
+) {
 	return (
 		<RichList
 			navigation
@@ -167,7 +173,11 @@ export function WorkspaceNavigationItem(props: {
 	)
 }
 
-export function WorkspaceStage(props: { label: string; class?: ClassProp; children?: JSX.Element }) {
+export function WorkspaceStage(props: {
+	label: string
+	class?: ClassProp
+	children?: JSX.Element
+}) {
 	return (
 		<section class={['ui-workspace-stage', props.class]} aria-label={props.label}>
 			{props.children}
@@ -223,9 +233,14 @@ export function ResponsiveInspector(props: {
 	createEffect(
 		() => props.activeKey,
 		(activeKey) => {
-			if (activeKey) {
-				if (detent() === 'peek') setDetent('half')
-			} else setDetent('peek')
+			// A NEW binding raises the sheet so the reading is visible; a
+			// CLEARED binding keeps the current detent — the resting surface
+			// is real content (the galaxy's drill) and a reader's up-control
+			// must not slam the drawer shut (fixed 2026-08-16). The functional
+			// setter reads the current detent WITHOUT a reactive read: this
+			// effect must key on the binding only — tracking the detent would
+			// bounce a manually-lowered sheet back up while bound.
+			if (activeKey) setDetent((current) => (current === 'peek' ? 'half' : current))
 		},
 	)
 

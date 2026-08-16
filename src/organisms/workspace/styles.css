@@ -338,10 +338,15 @@
 			touch-action: none;
 		}
 
+		/* Extended touch target — generous upward/sideways, but the DOWNWARD
+		   overhang must stay smaller than the content's top padding below:
+		   the grip paints above the content (position: relative), so any
+		   deeper reach silently swallows taps on the content's first
+		   interactive row (the galaxy reader's ‹ Back, fixed 2026-08-16). */
 		.ui-responsive-inspector-grip::before {
 			content: "";
 			position: absolute;
-			inset: -0.75rem 0 -1.5rem;
+			inset: -0.75rem 0 -0.25rem;
 		}
 
 		.ui-responsive-inspector-grip:active { cursor: grabbing; }
@@ -373,7 +378,8 @@
 			display: none;
 		}
 
-		.ui-responsive-inspector-content { padding-top: 0.35rem; }
+		/* Must exceed the grip's 0.25rem downward hit-zone overhang (above). */
+		.ui-responsive-inspector-content { padding-top: 0.6rem; }
 
 		.ui-raised-sheet {
 			inset: calc(3.4rem + env(safe-area-inset-top, 0px)) 0.6rem calc(var(--ui-bottom-navigation-height) + 0.6rem);
