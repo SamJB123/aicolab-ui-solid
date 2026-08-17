@@ -29,6 +29,14 @@
 		/* A menu reads denser than the anchored default: the `pad` knob rides
 		   the shared .ui-anchored adapter on this same element. */
 		--ui-anchored-pad: var(--ui-menu-pad, 6px);
+	}
+
+	/* Layout display ONLY while open. An unconditional author `display` beats
+	   the UA's `[popover]:not(:popover-open) { display: none }`, leaving every
+	   CLOSED menu as an invisible fixed-position panel that eats clicks — the
+	   2026-08-18 Board incident (clicks "pinning" cards through transparent
+	   menu items). Never set display on a popover shell without this gate. */
+	:scope:popover-open {
 		display: grid;
 		gap: 2px;
 	}
