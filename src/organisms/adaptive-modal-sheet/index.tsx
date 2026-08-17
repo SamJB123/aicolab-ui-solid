@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { createEffect, Show } from 'solid-js'
+import { children, createEffect, Show } from 'solid-js'
 import { IconButton } from '../../atoms/icon-button'
 import {
 	colorTreatmentData,
@@ -46,6 +46,8 @@ export function AdaptiveModalSheet(
 		KnobProps<typeof knobs.spec>,
 ) {
 	let dialog: HTMLDialogElement | undefined
+	const eyebrow = children(() => props.eyebrow)
+	const actions = children(() => props.actions)
 
 	createEffect(
 		() => props.open,
@@ -78,13 +80,15 @@ export function AdaptiveModalSheet(
 		>
 			<header class="ui-adaptive-modal-sheet-header">
 				<div class="ui-adaptive-modal-sheet-heading">
-					<Show when={props.eyebrow}>
-						{(eyebrow) => <span class="ui-adaptive-modal-sheet-eyebrow">{eyebrow()}</span>}
+					{/* Single-eval slot resolution (children()) — element-JSX props are
+					    getters; double evaluation breaks hydration claiming. */}
+					<Show when={eyebrow()}>
+						<span class="ui-adaptive-modal-sheet-eyebrow">{eyebrow()}</span>
 					</Show>
 					<strong class="ui-adaptive-modal-sheet-title">{props.title}</strong>
 				</div>
-				<Show when={props.actions}>
-					{(actions) => <div class="ui-adaptive-modal-sheet-actions">{actions()}</div>}
+				<Show when={actions()}>
+					<div class="ui-adaptive-modal-sheet-actions">{actions()}</div>
 				</Show>
 				<IconButton
 					class="ui-adaptive-modal-sheet-close"

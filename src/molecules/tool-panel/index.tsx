@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { Show } from 'solid-js'
+import { children, Show } from 'solid-js'
 import {
 	colorTreatmentData,
 	type ClassProp,
@@ -53,12 +53,20 @@ export function ToolPanelSection(props: {
 	class?: ClassProp
 	children?: JSX.Element
 }) {
+	// Single-eval slot resolution (children()) — element-JSX props are getters;
+	// double evaluation breaks hydration claiming.
+	const title = children(() => props.title)
+	const meta = children(() => props.meta)
 	return (
 		<section class={['ui-tool-panel-section', props.class]}>
-			<Show when={props.title || props.meta}>
+			<Show when={title() || meta()}>
 				<header class="ui-tool-panel-section-header">
-					<Show when={props.title}>{(title) => <strong>{title()}</strong>}</Show>
-					<Show when={props.meta}>{(meta) => <span>{meta()}</span>}</Show>
+					<Show when={title()}>
+						<strong>{title()}</strong>
+					</Show>
+					<Show when={meta()}>
+						<span>{meta()}</span>
+					</Show>
 				</header>
 			</Show>
 			{props.children}

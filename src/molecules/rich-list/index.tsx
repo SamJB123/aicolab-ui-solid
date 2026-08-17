@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { createContext, Show, useContext, type Accessor } from 'solid-js'
+import { children, createContext, Show, useContext, type Accessor } from 'solid-js'
 import {
 	colorTreatmentData,
 	type ClassProp,
@@ -74,14 +74,18 @@ export function RichListMetadata(props: {
 	actions?: JSX.Element
 	class?: ClassProp
 }) {
+	// Single-eval slot resolution (children()) — element-JSX props are getters;
+	// double evaluation breaks hydration claiming.
+	const secondary = children(() => props.secondary)
+	const actions = children(() => props.actions)
 	return (
 		<span class={['ui-rich-list-metadata', props.class]}>
 			<span class="ui-rich-list-metadata-primary">{props.primary}</span>
-			<Show when={props.secondary}>
-				{(secondary) => <span class="ui-rich-list-metadata-secondary">{secondary()}</span>}
+			<Show when={secondary()}>
+				<span class="ui-rich-list-metadata-secondary">{secondary()}</span>
 			</Show>
-			<Show when={props.actions}>
-				{(actions) => <span class="ui-rich-list-metadata-actions">{actions()}</span>}
+			<Show when={actions()}>
+				<span class="ui-rich-list-metadata-actions">{actions()}</span>
 			</Show>
 		</span>
 	)
@@ -120,29 +124,37 @@ export function RichListItem(
 		variant: props.selected ? (props.variant ?? list.treatment().variant ?? 'solid') : 'soft',
 	})
 
+	// Single-eval slot resolution (children()) — element-JSX props are getters;
+	// double evaluation breaks hydration claiming.
+	const leading = children(() => props.leading)
+	const description = children(() => props.description)
+	const trailing = children(() => props.trailing)
 	const content = () => (
 		<>
-			<Show when={props.leading}>
-				{(leading) => (
-					<span class="ui-rich-list-leading" data-width={props.leadingWidth ?? 'auto'}>
-						{leading()}
-					</span>
-				)}
+			<Show when={leading()}>
+				<span class="ui-rich-list-leading" data-width={props.leadingWidth ?? 'auto'}>
+					{leading()}
+				</span>
 			</Show>
 			<span class="ui-rich-list-main">
 				<span class="ui-rich-list-title">{props.title}</span>
-				<Show when={props.description}>
-					{(description) => <span class="ui-rich-list-description">{description()}</span>}
+				<Show when={description()}>
+					<span class="ui-rich-list-description">{description()}</span>
 				</Show>
 			</span>
-			<Show when={props.trailing}>
-				{(trailing) => <span class="ui-rich-list-trailing">{trailing()}</span>}
+			<Show when={trailing()}>
+				<span class="ui-rich-list-trailing">{trailing()}</span>
 			</Show>
 		</>
 	)
 
+	/* `class` is deliberately NOT in this spread: a spread-only element whose
+	   children are a call hole fails hydration claiming inside a Show fallback
+	   (solid-js 2.0.0-rc.0 id-misalignment — minimal repro in
+	   rich-list/probe.tsx M15; any static attribute before the spread flips
+	   the compiler to the aligned template path). Each branch renders class
+	   first, then spreads the rest. */
 	const attributes = () => ({
-		class: ['ui-rich-list-item', props.class],
 		'data-selected': props.selected ? '' : undefined,
 		'data-muted': props.muted ? '' : undefined,
 		...colorTreatmentData(treatment()),
@@ -151,6 +163,7 @@ export function RichListItem(
 		onPointerEnter: () => props.onHoverChange?.(true),
 		onPointerLeave: () => props.onHoverChange?.(false),
 	})
+	const itemClass = () => ['ui-rich-list-item', props.class]
 
 	return (
 		<li class="ui-rich-list-entry">
@@ -159,11 +172,16 @@ export function RichListItem(
 				fallback={
 					<Show
 						when={props.onSelect}
-						fallback={<div {...attributes()}>{content()}</div>}
+						fallback={
+							<div class={itemClass()} {...attributes()}>
+								{content()}
+							</div>
+						}
 					>
 						{(onSelect) => (
 							<button
 								type="button"
+								class={itemClass()}
 								{...attributes()}
 								aria-label={props.label}
 								aria-pressed={props.selected === undefined ? undefined : props.selected ? 'true' : 'false'}
@@ -176,7 +194,12 @@ export function RichListItem(
 				}
 			>
 				{(href) => (
-					<a {...attributes()} href={href()} aria-current={props.selected ? 'page' : undefined}>
+					<a
+						class={itemClass()}
+						{...attributes()}
+						href={href()}
+						aria-current={props.selected ? 'page' : undefined}
+					>
 						{content()}
 					</a>
 				)}

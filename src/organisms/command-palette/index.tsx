@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { createMemo, createSignal, For, Show } from 'solid-js'
+import { children, createMemo, createSignal, For, Show } from 'solid-js'
 import { VisuallyHidden } from '../../atoms/visually-hidden'
 import {
 	colorTreatmentData,
@@ -56,6 +56,9 @@ export function CommandPaletteTrigger(props: {
 	class?: ClassProp
 } & ColorTreatmentProps &
 	KnobProps<typeof triggerKnobs.spec>) {
+	// Single-eval slot resolution (children()) — element-JSX props are getters;
+	// double evaluation breaks hydration claiming.
+	const shortcut = children(() => props.shortcut)
 	return (
 		<button
 			type="button"
@@ -66,12 +69,10 @@ export function CommandPaletteTrigger(props: {
 			{...triggerKnobs.attributes(props)}
 			style={mergeKnobStyle(triggerKnobs.style(props), undefined)}
 		>
-			<Show when={props.shortcut}>
-				{(shortcut) => (
-					<span class="ui-command-palette-trigger-shortcut" aria-hidden="true">
-						{shortcut()}
-					</span>
-				)}
+			<Show when={shortcut()}>
+				<span class="ui-command-palette-trigger-shortcut" aria-hidden="true">
+					{shortcut()}
+				</span>
 			</Show>
 			<span class="ui-command-palette-trigger-label">{props.children}</span>
 		</button>

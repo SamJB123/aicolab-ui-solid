@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { createEffect, createSignal, createUniqueId, onCleanup, Show } from 'solid-js'
+import { children, createEffect, createSignal, createUniqueId, onCleanup, Show } from 'solid-js'
 import { IconButton } from '../../atoms/icon-button'
 import { RichList, RichListItem } from '../../molecules/rich-list'
 import {
@@ -67,6 +67,16 @@ export function WorkspaceShell(
 	} & ColorTreatmentProps &
 		KnobProps<typeof knobs.spec>,
 ) {
+	// Each region resolves through a children() memo: two or more ADJACENT
+	// component-valued prop holes misalign hydration ids in solid 2.0.0-rc.0
+	// (minimal repro M20 vs M21 in the hives hydration probe — raw holes leave
+	// the whole region unclaimed; a children() memo per slot reserves its id
+	// at registration on both sides and aligns).
+	const navigation = children(() => props.navigation)
+	const stage = children(() => props.stage)
+	const inspector = children(() => props.inspector)
+	const extra = children(() => props.children)
+	const mobileNavigation = children(() => props.mobileNavigation)
 	return (
 		<div
 			class={['ui-workspace', props.class]}
@@ -76,11 +86,11 @@ export function WorkspaceShell(
 			{...knobs.attributes(props)}
 			style={mergeKnobStyle(knobs.style(props), undefined)}
 		>
-			{props.navigation}
-			{props.stage}
-			{props.inspector}
-			{props.children}
-			{props.mobileNavigation}
+			{navigation()}
+			{stage()}
+			{inspector()}
+			{extra()}
+			{mobileNavigation()}
 		</div>
 	)
 }
@@ -92,14 +102,21 @@ export function WorkspaceNavigation(props: {
 	class?: ClassProp
 	children?: JSX.Element
 }) {
+	// Element-JSX props compile to getters that create a NEW element per
+	// access; gating one behind <Show when={…}> and rendering it again would
+	// evaluate it twice, and the second instance cannot claim the first's
+	// server-rendered DOM (hydration mismatch). `children()` resolves each
+	// slot exactly ONCE — same fix across every slot-consuming component.
+	const brand = children(() => props.brand)
+	const footer = children(() => props.footer)
 	return (
 		<nav class={['ui-workspace-navigation', props.class]} aria-label={props.label}>
-			<Show when={props.brand}>
-				{(brand) => <div class="ui-workspace-navigation-brand">{brand()}</div>}
+			<Show when={brand()}>
+				<div class="ui-workspace-navigation-brand">{brand()}</div>
 			</Show>
 			{props.children}
-			<Show when={props.footer}>
-				{(footer) => <div class="ui-workspace-navigation-footer">{footer()}</div>}
+			<Show when={footer()}>
+				<div class="ui-workspace-navigation-footer">{footer()}</div>
 			</Show>
 		</nav>
 	)
@@ -361,12 +378,14 @@ export function InspectorHeader(props: {
 	title: JSX.Element
 	children?: JSX.Element
 }) {
+	// Single-eval slot resolution — see WorkspaceNavigation.
+	const description = children(() => props.children)
 	return (
 		<header class="ui-inspector-header">
 			{props.eyebrow}
 			<h2 class="ui-inspector-title">{props.title}</h2>
-			<Show when={props.children}>
-				{(content) => <div class="ui-inspector-description">{content()}</div>}
+			<Show when={description()}>
+				<div class="ui-inspector-description">{description()}</div>
 			</Show>
 		</header>
 	)
@@ -378,11 +397,13 @@ export function WorkspaceStageTooltip(props: {
 	detail?: JSX.Element
 	class?: ClassProp
 }) {
+	// Single-eval slot resolution — see WorkspaceNavigation.
+	const detail = children(() => props.detail)
 	return (
 		<div class={['ui-workspace-stage-tooltip', props.class]} aria-hidden="true">
 			<span class="ui-workspace-stage-tooltip-label">{props.label}</span>
-			<Show when={props.detail}>
-				{(detail) => <span class="ui-workspace-stage-tooltip-detail">{detail()}</span>}
+			<Show when={detail()}>
+				<span class="ui-workspace-stage-tooltip-detail">{detail()}</span>
 			</Show>
 		</div>
 	)

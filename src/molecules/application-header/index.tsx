@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { Show } from 'solid-js'
+import { children, Show } from 'solid-js'
 import {
 	colorTreatmentData,
 	type ClassProp,
@@ -32,6 +32,7 @@ export function ApplicationHeader(
 	} & ColorTreatmentProps &
 		KnobProps<typeof knobs.spec>,
 ) {
+	const eyebrow = children(() => props.eyebrow)
 	return (
 		<header
 			class={['ui-application-header', props.class]}
@@ -40,8 +41,10 @@ export function ApplicationHeader(
 			style={mergeKnobStyle(knobs.style(props), undefined)}
 		>
 			<div class="ui-application-header-heading">
-				<Show when={props.eyebrow}>
-					{(eyebrow) => <div class="ui-application-header-eyebrow">{eyebrow()}</div>}
+				{/* Single-eval slot resolution (children()) — element-JSX props are
+				    getters; double evaluation breaks hydration claiming. */}
+				<Show when={eyebrow()}>
+					<div class="ui-application-header-eyebrow">{eyebrow()}</div>
 				</Show>
 				<h1 class="ui-application-header-title">{props.title}</h1>
 			</div>

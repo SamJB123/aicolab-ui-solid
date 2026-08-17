@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { For, Show } from 'solid-js'
+import { children, For, Show } from 'solid-js'
 import {
 	colorTreatmentData,
 	type ClassProp,
@@ -61,6 +61,9 @@ export function BottomNavigation<Id extends string>(
 	} & ColorTreatmentProps &
 		KnobProps<typeof knobs.spec>,
 ) {
+	// Single-eval slot resolution (children()) — element-JSX props are getters;
+	// double evaluation breaks hydration claiming.
+	const trailing = children(() => props.trailing)
 	const split = (): number => Math.ceil(props.items.length / 2)
 	const renderItems = (items: readonly BottomNavigationItem<Id>[]) => (
 		<For each={items}>
@@ -91,10 +94,8 @@ export function BottomNavigation<Id extends string>(
 			<span class="ui-bottom-navigation-centre-slot" aria-hidden="true" />
 			<div class="ui-bottom-navigation-centre">{props.centre}</div>
 			{renderItems(props.items.slice(split()))}
-			<Show when={props.trailing}>
-				{(trailing) => (
-					<div class={['ui-bottom-navigation-accessory', props.accessoryClass]}>{trailing()}</div>
-				)}
+			<Show when={trailing()}>
+				<div class={['ui-bottom-navigation-accessory', props.accessoryClass]}>{trailing()}</div>
 			</Show>
 		</nav>
 	)
