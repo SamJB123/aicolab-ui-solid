@@ -1,8 +1,5 @@
 @import url("./organisms/depth-card/styles.css");
 @import url("./organisms/adaptive-modal-sheet/styles.css");
-@import url("./organisms/content-card/styles.css");
-@import url("./organisms/portal-folder-card/styles.css");
-@import url("./organisms/shelf-board/styles.css");
 @import url("./organisms/bottom-navigation/styles.css");
 @import url("./organisms/command-palette/styles.css");
 @import url("./organisms/docs-shell/styles.css");
