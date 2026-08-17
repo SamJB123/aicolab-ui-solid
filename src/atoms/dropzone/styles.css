@@ -1,0 +1,143 @@
+/* Per-instance knobs (radius, pad, minHeight, border, activeBorder,
+   activeSurface) on the dual wire; adapter pattern per shared/knobs.ts
+   (select-control is the exemplar). Drag-over state arrives as the
+   data-drag-over attribute from the component. */
+@property --_ui-dropzone-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 16px;
+}
+@property --_ui-dropzone-pad {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 24px;
+}
+@property --_ui-dropzone-min-height {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 96px;
+}
+@property --_ui-dropzone-border {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-dropzone-active-border {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-dropzone-active-surface {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+
+@scope (.ui-dropzone) {
+	:scope {
+		--_ui-dropzone-radius: var(--ui-dropzone-radius, var(--r-lg));
+		--_ui-dropzone-pad: var(--ui-dropzone-pad, 1.5rem);
+		--_ui-dropzone-min-height: var(--ui-dropzone-min-height, 6rem);
+		--_ui-dropzone-border: var(--ui-dropzone-border, var(--color-border-strong));
+		--_ui-dropzone-active-border: var(--ui-dropzone-active-border, var(--color-primary));
+		--_ui-dropzone-active-surface: var(--ui-dropzone-active-surface, var(--color-primary-soft));
+		box-sizing: border-box;
+		display: grid;
+		place-items: center;
+		min-height: var(--_ui-dropzone-min-height);
+		padding: var(--_ui-dropzone-pad);
+		border: 1.5px dashed var(--_ui-dropzone-border);
+		border-radius: var(--_ui-dropzone-radius);
+		corner-shape: squircle;
+		background: var(--color-base-100);
+		color: var(--color-base-content-muted);
+		text-align: center;
+		cursor: pointer;
+		transition:
+			border-color 160ms ease,
+			background-color 160ms ease,
+			color 160ms ease;
+	}
+
+	:scope[data-ui-color-base] {
+		--_ui-dropzone-border: var(--ui-dropzone-border, var(--ui-border));
+		--_ui-dropzone-active-border: var(--ui-dropzone-active-border, var(--ui-border-active));
+		--_ui-dropzone-active-surface: var(--ui-dropzone-active-surface, var(--ui-surface-selected));
+		background: var(--ui-surface);
+		color: var(--ui-ink-muted);
+	}
+
+	/* Keyboard path: focusing the (visually hidden) input lights the surface. */
+	:scope:focus-within {
+		outline: 2px solid var(--color-ring);
+		outline-offset: 2px;
+	}
+
+	:scope:hover:not([data-disabled]) {
+		border-color: color-mix(in oklab, var(--_ui-dropzone-active-border) 55%, var(--_ui-dropzone-border));
+		color: var(--color-base-content);
+	}
+	:scope[data-ui-color-base]:hover:not([data-disabled]) {
+		color: var(--ui-ink);
+	}
+
+	:scope[data-drag-over] {
+		border-style: solid;
+		border-color: var(--_ui-dropzone-active-border);
+		background: var(--_ui-dropzone-active-surface);
+		color: var(--color-base-content);
+	}
+	:scope[data-ui-color-base][data-drag-over] {
+		color: var(--ui-ink-selected);
+	}
+
+	:scope[data-disabled] {
+		cursor: not-allowed;
+		border-color: var(--color-border);
+		background: var(--color-base-200);
+		color: var(--color-base-content-faint);
+	}
+
+	.ui-dropzone-input {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+	}
+
+	.ui-dropzone-content {
+		display: grid;
+		gap: 0.35rem;
+		justify-items: center;
+		font-size: var(--t-sm, 0.9rem);
+		/* Dropped-on children must not steal the dragleave. */
+		pointer-events: none;
+	}
+
+	@container ui-treatment-context style(--ui-environment: overlay) {
+		:scope {
+			border-color: var(--color-overlay-border);
+			background: var(--color-overlay-soft);
+			color: var(--color-overlay-content-muted);
+		}
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-dropzone-radius: attr(data-ui-dropzone-radius type(<length-percentage>), var(--ui-dropzone-radius, var(--r-lg)));
+			--_ui-dropzone-pad: attr(data-ui-dropzone-pad type(<length>), var(--ui-dropzone-pad, 1.5rem));
+			--_ui-dropzone-min-height: attr(data-ui-dropzone-min-height type(<length>), var(--ui-dropzone-min-height, 6rem));
+			--_ui-dropzone-border: attr(data-ui-dropzone-border type(<color>), var(--ui-dropzone-border, var(--color-border-strong)));
+			--_ui-dropzone-active-border: attr(data-ui-dropzone-active-border type(<color>), var(--ui-dropzone-active-border, var(--color-primary)));
+			--_ui-dropzone-active-surface: attr(data-ui-dropzone-active-surface type(<color>), var(--ui-dropzone-active-surface, var(--color-primary-soft)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-dropzone-border: attr(data-ui-dropzone-border type(<color>), var(--ui-dropzone-border, var(--ui-border)));
+			--_ui-dropzone-active-border: attr(data-ui-dropzone-active-border type(<color>), var(--ui-dropzone-active-border, var(--ui-border-active)));
+			--_ui-dropzone-active-surface: attr(data-ui-dropzone-active-surface type(<color>), var(--ui-dropzone-active-surface, var(--ui-surface-selected)));
+		}
+	}
+}

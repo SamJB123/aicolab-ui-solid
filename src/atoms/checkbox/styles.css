@@ -1,0 +1,175 @@
+/* Per-instance knobs (size, radius, accent, checkInk, focusRing) on the
+   dual wire; adapter pattern per shared/knobs.ts (select-control is the
+   exemplar). The input itself is visually collapsed onto the painted box so
+   its focus ring and hit target stay native. */
+@property --_ui-checkbox-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 18px;
+}
+@property --_ui-checkbox-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 5px;
+}
+@property --_ui-checkbox-accent {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-checkbox-check-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-checkbox-focus-ring {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+
+@scope (.ui-checkbox) {
+	:scope {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.55em;
+		position: relative;
+		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	/* Both knob wires land ON THE CONSUMING ELEMENTS (the Meter fill-element
+	   pattern): `size` on the input, the full set on the box; the ::after
+	   glyph resolves attr() against its originating box. */
+
+	/* The REAL control, collapsed onto the box (not display:none — keyboard
+	   focus, forms and AT all stay native). */
+	.ui-checkbox-input {
+		--_ui-checkbox-size: var(--ui-checkbox-size, 18px);
+		position: absolute;
+		inset-inline-start: 0;
+		width: var(--_ui-checkbox-size);
+		height: var(--_ui-checkbox-size);
+		margin: 0;
+		opacity: 0;
+		cursor: inherit;
+	}
+
+	.ui-checkbox-box {
+		--_ui-checkbox-size: var(--ui-checkbox-size, 18px);
+		--_ui-checkbox-radius: var(--ui-checkbox-radius, var(--r-xs));
+		--_ui-checkbox-accent: var(--ui-checkbox-accent, var(--color-primary));
+		--_ui-checkbox-focus-ring: var(--ui-checkbox-focus-ring, var(--color-ring));
+		box-sizing: border-box;
+		flex: none;
+		width: var(--_ui-checkbox-size);
+		height: var(--_ui-checkbox-size);
+		border: 1.5px solid var(--color-border-strong);
+		border-radius: var(--_ui-checkbox-radius);
+		corner-shape: squircle;
+		background: var(--color-base-100);
+		display: grid;
+		place-items: center;
+		transition:
+			background-color 140ms ease,
+			border-color 140ms ease;
+	}
+
+	:scope[data-ui-color-base] .ui-checkbox-box {
+		--_ui-checkbox-accent: var(--ui-checkbox-accent, var(--ui-color));
+		--_ui-checkbox-focus-ring: var(--ui-checkbox-focus-ring, var(--ui-focus-ring));
+	}
+
+	/* Check glyph: a clipped square that scales in. The adapter is assigned
+	   here, where it is consumed — the public knob inherits into the
+	   pseudo-element. */
+	.ui-checkbox-box::after {
+		--_ui-checkbox-check-ink: var(--ui-checkbox-check-ink, var(--color-primary-content));
+		content: "";
+		width: 72%;
+		height: 72%;
+		clip-path: polygon(13% 52%, 6% 65%, 40% 91%, 93% 22%, 82% 12%, 38% 70%);
+		background: var(--_ui-checkbox-check-ink);
+		transform: scale(0);
+		transition: transform 140ms ease;
+	}
+
+	:scope[data-ui-color-base] .ui-checkbox-box::after {
+		--_ui-checkbox-check-ink: var(--ui-checkbox-check-ink, var(--ui-content));
+	}
+
+	.ui-checkbox-input:checked + .ui-checkbox-box {
+		border-color: var(--_ui-checkbox-accent);
+		background: var(--_ui-checkbox-accent);
+	}
+
+	.ui-checkbox-input:checked + .ui-checkbox-box::after {
+		transform: scale(1);
+	}
+
+	/* Mixed state: a bar, not a check. */
+	.ui-checkbox-input:indeterminate + .ui-checkbox-box {
+		border-color: var(--_ui-checkbox-accent);
+		background: var(--_ui-checkbox-accent);
+	}
+	.ui-checkbox-input:indeterminate + .ui-checkbox-box::after {
+		clip-path: inset(42% 15% 42% 15%);
+		transform: scale(1);
+	}
+
+	.ui-checkbox-input:focus-visible + .ui-checkbox-box {
+		outline: 2px solid var(--_ui-checkbox-focus-ring);
+		outline-offset: 2px;
+	}
+
+	:scope:hover .ui-checkbox-input:not(:disabled):not(:checked) + .ui-checkbox-box {
+		border-color: color-mix(in oklab, var(--_ui-checkbox-accent) 58%, var(--color-border-strong));
+	}
+
+	.ui-checkbox-input:disabled + .ui-checkbox-box {
+		border-color: var(--color-border);
+		background: var(--color-base-200);
+	}
+	.ui-checkbox-input:disabled ~ .ui-checkbox-label {
+		color: var(--color-base-content-faint);
+	}
+	:scope:has(.ui-checkbox-input:disabled) {
+		cursor: not-allowed;
+	}
+
+	.ui-checkbox-label {
+		font-size: var(--t-sm, 0.9rem);
+		line-height: 1.35;
+	}
+
+	@container ui-treatment-context style(--ui-environment: overlay) {
+		.ui-checkbox-box {
+			border-color: var(--color-overlay-border);
+			background: transparent;
+		}
+		.ui-checkbox-label { color: var(--color-overlay-content); }
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		.ui-checkbox-input {
+			--_ui-checkbox-size: attr(data-ui-checkbox-size type(<length>), var(--ui-checkbox-size, 18px));
+		}
+		.ui-checkbox-box {
+			--_ui-checkbox-size: attr(data-ui-checkbox-size type(<length>), var(--ui-checkbox-size, 18px));
+			--_ui-checkbox-radius: attr(data-ui-checkbox-radius type(<length-percentage>), var(--ui-checkbox-radius, var(--r-xs)));
+			--_ui-checkbox-accent: attr(data-ui-checkbox-accent type(<color>), var(--ui-checkbox-accent, var(--color-primary)));
+			--_ui-checkbox-focus-ring: attr(data-ui-checkbox-focus-ring type(<color>), var(--ui-checkbox-focus-ring, var(--color-ring)));
+		}
+		:scope[data-ui-color-base] .ui-checkbox-box {
+			--_ui-checkbox-accent: attr(data-ui-checkbox-accent type(<color>), var(--ui-checkbox-accent, var(--ui-color)));
+			--_ui-checkbox-focus-ring: attr(data-ui-checkbox-focus-ring type(<color>), var(--ui-checkbox-focus-ring, var(--ui-focus-ring)));
+		}
+		.ui-checkbox-box::after {
+			--_ui-checkbox-check-ink: attr(data-ui-checkbox-check-ink type(<color>), var(--ui-checkbox-check-ink, var(--color-primary-content)));
+		}
+		:scope[data-ui-color-base] .ui-checkbox-box::after {
+			--_ui-checkbox-check-ink: attr(data-ui-checkbox-check-ink type(<color>), var(--ui-checkbox-check-ink, var(--ui-content)));
+		}
+	}
+}

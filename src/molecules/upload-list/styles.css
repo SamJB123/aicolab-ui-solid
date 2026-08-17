@@ -1,0 +1,116 @@
+/* Per-instance knobs (gap, radius, pad) on the dual wire; adapter pattern
+   per shared/knobs.ts (select-control is the exemplar). Row status arrives
+   as data-status from the component. */
+@property --_ui-uploads-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 8px;
+}
+@property --_ui-uploads-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 12px;
+}
+@property --_ui-uploads-pad {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 10px;
+}
+
+@scope (.ui-uploads) {
+	:scope {
+		--_ui-uploads-gap: var(--ui-uploads-gap, 0.5rem);
+		display: grid;
+		gap: var(--_ui-uploads-gap);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	/* Row knob wires land ON each row (the Meter fill-element pattern). */
+	.ui-uploads-row {
+		--_ui-uploads-radius: var(--ui-uploads-radius, var(--r-md));
+		--_ui-uploads-pad: var(--ui-uploads-pad, 0.625rem);
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: var(--_ui-uploads-pad);
+		border: 1px solid var(--color-border);
+		border-radius: var(--_ui-uploads-radius);
+		corner-shape: squircle;
+		background: var(--color-base-100);
+	}
+
+	:scope[data-ui-color-base] .ui-uploads-row {
+		border-color: var(--ui-border);
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+	}
+
+	.ui-uploads-row[data-status="error"] {
+		border-color: color-mix(in oklab, var(--color-error) 55%, var(--color-border));
+		background: color-mix(in oklab, var(--color-error) 7%, var(--color-base-100));
+	}
+
+	.ui-uploads-main {
+		display: grid;
+		gap: 0.3rem;
+		flex: 1;
+		min-width: 0;
+	}
+
+	.ui-uploads-name {
+		font-size: var(--t-sm, 0.9rem);
+		font-weight: 550;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.ui-uploads-meter {
+		width: 100%;
+	}
+
+	.ui-uploads-detail {
+		font-size: var(--t-xs, 0.78rem);
+		color: var(--color-base-content-muted);
+	}
+
+	.ui-uploads-error {
+		font-size: var(--t-xs, 0.78rem);
+		color: var(--color-error);
+	}
+
+	.ui-uploads-state {
+		flex: none;
+		font-size: var(--t-xs, 0.78rem);
+		font-family: var(--font-data);
+		font-variant-numeric: tabular-nums;
+		color: var(--color-base-content-muted);
+	}
+	.ui-uploads-row[data-status="done"] .ui-uploads-state { color: var(--color-success); }
+	.ui-uploads-row[data-status="error"] .ui-uploads-state { color: var(--color-error); }
+
+	.ui-uploads-action { flex: none; }
+
+	@container ui-treatment-context style(--ui-environment: overlay) {
+		.ui-uploads-row {
+			border-color: var(--color-overlay-border);
+			background: var(--color-overlay-soft);
+			color: var(--color-overlay-content);
+		}
+		.ui-uploads-detail,
+		.ui-uploads-state { color: var(--color-overlay-content-muted); }
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-uploads-gap: attr(data-ui-uploads-gap type(<length>), var(--ui-uploads-gap, 0.5rem));
+		}
+		.ui-uploads-row {
+			--_ui-uploads-radius: attr(data-ui-uploads-radius type(<length-percentage>), var(--ui-uploads-radius, var(--r-md)));
+			--_ui-uploads-pad: attr(data-ui-uploads-pad type(<length>), var(--ui-uploads-pad, 0.625rem));
+		}
+	}
+}

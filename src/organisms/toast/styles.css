@@ -1,0 +1,136 @@
+/* Per-instance knobs (inset, gap, width, radius, pad) on the dual wire;
+   adapter pattern per shared/knobs.ts (select-control is the exemplar).
+   Toast surfaces are three-axis treated per entry (soft variant), so the
+   role pair paints them — this sheet owns layout, entry motion, and the
+   close affordance. Host-consumed wires land on the host, toast-consumed
+   wires on each toast (the Meter fill-element pattern), so both wires
+   apply everywhere. */
+@property --_ui-toast-inset {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 16px;
+}
+@property --_ui-toast-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 8px;
+}
+@property --_ui-toast-width {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 340px;
+}
+@property --_ui-toast-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 12px;
+}
+@property --_ui-toast-pad {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 12px;
+}
+
+@scope (.ui-toast-host) {
+	:scope {
+		--_ui-toast-inset: var(--ui-toast-inset, 1rem);
+		--_ui-toast-gap: var(--ui-toast-gap, 0.5rem);
+		--_ui-toast-width: var(--ui-toast-width, 340px);
+		position: fixed;
+		inset-block-end: var(--_ui-toast-inset);
+		inset-inline-end: var(--_ui-toast-inset);
+		z-index: 60;
+		display: grid;
+		gap: var(--_ui-toast-gap);
+		width: min(var(--_ui-toast-width), calc(100vw - 2rem));
+		pointer-events: none;
+	}
+
+	.ui-toast {
+		--_ui-toast-radius: var(--ui-toast-radius, var(--r-md));
+		--_ui-toast-pad: var(--ui-toast-pad, 0.75rem);
+		display: flex;
+		align-items: flex-start;
+		gap: 0.6rem;
+		padding: var(--_ui-toast-pad);
+		border: 1px solid var(--ui-border);
+		border-radius: var(--_ui-toast-radius);
+		corner-shape: squircle;
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: 0 12px 32px -12px color-mix(in oklab, var(--color-base-content) 35%, transparent);
+		pointer-events: auto;
+		transition:
+			opacity 200ms ease,
+			transform 200ms ease;
+	}
+
+	@starting-style {
+		.ui-toast {
+			opacity: 0;
+			transform: translateY(8px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ui-toast { transition: none; }
+	}
+
+	.ui-toast-body {
+		display: grid;
+		gap: 0.2rem;
+		flex: 1;
+		min-width: 0;
+	}
+
+	.ui-toast-message {
+		font-size: var(--t-sm, 0.9rem);
+		font-weight: 550;
+		overflow-wrap: anywhere;
+	}
+
+	.ui-toast-detail {
+		font-size: var(--t-xs, 0.78rem);
+		color: var(--ui-ink-muted);
+		overflow-wrap: anywhere;
+	}
+
+	.ui-toast-close {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 24px;
+		height: 24px;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		border-radius: var(--r-sm);
+		background: transparent;
+		color: var(--ui-ink-muted);
+		font: inherit;
+		font-size: var(--t-xs, 0.78rem);
+		cursor: pointer;
+		transition: background-color 120ms ease;
+	}
+	.ui-toast-close:hover {
+		background: color-mix(in oklab, var(--ui-ink) 12%, transparent);
+		color: var(--ui-ink);
+	}
+	.ui-toast-close:focus-visible {
+		outline: 2px solid var(--ui-focus-ring);
+		outline-offset: 1px;
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-toast-inset: attr(data-ui-toast-inset type(<length>), var(--ui-toast-inset, 1rem));
+			--_ui-toast-gap: attr(data-ui-toast-gap type(<length>), var(--ui-toast-gap, 0.5rem));
+			--_ui-toast-width: attr(data-ui-toast-width type(<length>), var(--ui-toast-width, 340px));
+		}
+		.ui-toast {
+			--_ui-toast-radius: attr(data-ui-toast-radius type(<length-percentage>), var(--ui-toast-radius, var(--r-md)));
+			--_ui-toast-pad: attr(data-ui-toast-pad type(<length>), var(--ui-toast-pad, 0.75rem));
+		}
+	}
+}

@@ -1,0 +1,108 @@
+/* The panel shell (width, pad, radius, surface, entry animation, anchor
+   positioning + flip fallbacks) is the shared `.ui-anchored` contract in
+   foundations.css — this sheet styles only what a MENU adds: the item rows.
+
+   Item knobs are dual-wired ON EACH ITEM (`--ui-menuitem-*` /
+   data-ui-menuitem-*); their defaults chain through the MENU-level carriers
+   (`--ui-menu-item-*`, emitted by the Menu component's knob wire and
+   inheriting down) — the accordion-item "mode carrier sits between the
+   public knob and the context default" pattern. Adapter pattern per
+   shared/knobs.ts (select-control is the exemplar). */
+@property --_ui-menuitem-pad {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 8px;
+}
+@property --_ui-menuitem-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 10px;
+}
+@property --_ui-menuitem-hover-surface {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+
+@scope (.ui-menu) {
+	:scope {
+		/* A menu reads denser than the anchored default: the `pad` knob rides
+		   the shared .ui-anchored adapter on this same element. */
+		--ui-anchored-pad: var(--ui-menu-pad, 6px);
+		display: grid;
+		gap: 2px;
+	}
+
+	.ui-menu-item {
+		--_ui-menuitem-pad: var(--ui-menuitem-pad, var(--ui-menu-item-pad, 0.5rem));
+		--_ui-menuitem-radius: var(--ui-menuitem-radius, var(--ui-menu-item-radius, var(--r-sm)));
+		--_ui-menuitem-hover-surface: var(--ui-menuitem-hover-surface, var(--ui-menu-item-hover-surface, color-mix(in oklab, var(--color-base-content) 9%, transparent)));
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+		width: 100%;
+		padding: var(--_ui-menuitem-pad) calc(var(--_ui-menuitem-pad) * 1.4);
+		border: 0;
+		border-radius: var(--_ui-menuitem-radius);
+		corner-shape: squircle;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		font-size: var(--t-sm, 0.9rem);
+		text-align: start;
+		cursor: pointer;
+		transition: background-color 120ms ease;
+	}
+
+	.ui-menu-item:hover,
+	.ui-menu-item:focus-visible {
+		background: var(--_ui-menuitem-hover-surface);
+	}
+
+	.ui-menu-item:focus-visible {
+		outline: 2px solid var(--color-ring);
+		outline-offset: -2px;
+	}
+
+	.ui-menu-item:disabled {
+		cursor: not-allowed;
+		color: var(--color-base-content-faint);
+		background: transparent;
+	}
+
+	.ui-menu-item[data-danger] {
+		color: var(--color-error);
+	}
+	.ui-menu-item[data-danger]:hover,
+	.ui-menu-item[data-danger]:focus-visible {
+		background: color-mix(in oklab, var(--color-error) 12%, transparent);
+	}
+
+	.ui-menu-item-glyph {
+		flex: none;
+		line-height: 1;
+	}
+
+	.ui-menu-item-label {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.ui-menu-separator {
+		margin: 4px 6px;
+		border: 0;
+		border-block-start: 1px solid var(--color-border);
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		.ui-menu-item {
+			--_ui-menuitem-pad: attr(data-ui-menuitem-pad type(<length>), var(--ui-menuitem-pad, var(--ui-menu-item-pad, 0.5rem)));
+			--_ui-menuitem-radius: attr(data-ui-menuitem-radius type(<length-percentage>), var(--ui-menuitem-radius, var(--ui-menu-item-radius, var(--r-sm))));
+			--_ui-menuitem-hover-surface: attr(data-ui-menuitem-hover-surface type(<color>), var(--ui-menuitem-hover-surface, var(--ui-menu-item-hover-surface, color-mix(in oklab, var(--color-base-content) 9%, transparent))));
+		}
+	}
+}

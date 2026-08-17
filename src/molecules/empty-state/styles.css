@@ -1,0 +1,97 @@
+/* Per-instance knobs (pad, gap, glyphSize, glyphInk) on the dual wire;
+   adapter pattern per shared/knobs.ts (select-control is the exemplar). */
+@property --_ui-empty-pad {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 40px;
+}
+@property --_ui-empty-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 8px;
+}
+@property --_ui-empty-glyph-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 32px;
+}
+@property --_ui-empty-glyph-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+
+@scope (.ui-empty-state) {
+	:scope {
+		--_ui-empty-pad: var(--ui-empty-pad, 2.5rem);
+		--_ui-empty-gap: var(--ui-empty-gap, 0.5rem);
+		box-sizing: border-box;
+		display: grid;
+		gap: var(--_ui-empty-gap);
+		justify-items: center;
+		padding: var(--_ui-empty-pad);
+		border-radius: var(--r-md);
+		text-align: center;
+		color: var(--color-base-content-muted);
+	}
+
+	:scope[data-ui-color-base] {
+		background: var(--ui-surface);
+		color: var(--ui-ink-muted);
+	}
+
+	/* Glyph knob wires land ON the glyph span (the Meter fill-element
+	   pattern), so both wires apply. */
+	.ui-empty-state-glyph {
+		--_ui-empty-glyph-size: var(--ui-empty-glyph-size, 2rem);
+		--_ui-empty-glyph-ink: var(--ui-empty-glyph-ink, var(--color-base-content-faint));
+		font-size: var(--_ui-empty-glyph-size);
+		line-height: 1;
+		color: var(--_ui-empty-glyph-ink);
+	}
+
+	:scope[data-ui-color-base] .ui-empty-state-glyph {
+		--_ui-empty-glyph-ink: var(--ui-empty-glyph-ink, var(--ui-ink-faint));
+	}
+
+	.ui-empty-state-title {
+		margin: 0;
+		font-size: var(--t-md, 1rem);
+		font-weight: 600;
+		color: var(--color-base-content);
+	}
+	:scope[data-ui-color-base] .ui-empty-state-title {
+		color: var(--ui-ink);
+	}
+
+	.ui-empty-state-hint {
+		margin: 0;
+		max-width: 44ch;
+		font-size: var(--t-sm, 0.9rem);
+		line-height: 1.45;
+	}
+
+	.ui-empty-state-action {
+		margin-top: calc(var(--_ui-empty-gap) * 1.5);
+	}
+
+	@container ui-treatment-context style(--ui-environment: overlay) {
+		:scope { color: var(--color-overlay-content-muted); }
+		.ui-empty-state-title { color: var(--color-overlay-content); }
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-empty-pad: attr(data-ui-empty-pad type(<length>), var(--ui-empty-pad, 2.5rem));
+			--_ui-empty-gap: attr(data-ui-empty-gap type(<length>), var(--ui-empty-gap, 0.5rem));
+		}
+		.ui-empty-state-glyph {
+			--_ui-empty-glyph-size: attr(data-ui-empty-glyph-size type(<length>), var(--ui-empty-glyph-size, 2rem));
+			--_ui-empty-glyph-ink: attr(data-ui-empty-glyph-ink type(<color>), var(--ui-empty-glyph-ink, var(--color-base-content-faint)));
+		}
+		:scope[data-ui-color-base] .ui-empty-state-glyph {
+			--_ui-empty-glyph-ink: attr(data-ui-empty-glyph-ink type(<color>), var(--ui-empty-glyph-ink, var(--ui-ink-faint)));
+		}
+	}
+}

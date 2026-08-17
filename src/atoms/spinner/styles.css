@@ -1,0 +1,109 @@
+/* Per-instance knobs (size, thickness, ink, track) arrive on two wires from
+   the component: public custom properties (--ui-spinner-*) for the Baseline
+   path, data-ui-spinner-* attributes for the typed attr() frontier boundary
+   at the end of this block. Adapter pattern per shared/knobs.ts;
+   select-control/styles.css is the exemplar. */
+@property --_ui-spinner-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 20px;
+}
+@property --_ui-spinner-thickness {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 2px;
+}
+@property --_ui-spinner-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-spinner-track {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+
+@keyframes ui-spinner-rotate {
+	to { transform: rotate(1turn); }
+}
+@keyframes ui-spinner-pulse {
+	50% { opacity: 0.35; }
+}
+
+@scope (.ui-spinner) {
+	:scope {
+		display: inline-flex;
+		vertical-align: middle;
+	}
+
+	/* Both knob wires land ON THE RING — the element that consumes them
+	   (the Meter fill-element pattern) — so adapters resolve here and the
+	   frontier attr() swap below applies. */
+	.ui-spinner-ring {
+		--_ui-spinner-size: var(--ui-spinner-size, 20px);
+		--_ui-spinner-thickness: var(--ui-spinner-thickness, 2px);
+		--_ui-spinner-ink: var(--ui-spinner-ink, var(--color-primary));
+		--_ui-spinner-track: var(--ui-spinner-track, color-mix(in oklab, var(--color-primary) 22%, transparent));
+		box-sizing: border-box;
+		width: var(--_ui-spinner-size);
+		height: var(--_ui-spinner-size);
+		border: var(--_ui-spinner-thickness) solid var(--_ui-spinner-track);
+		border-block-start-color: var(--_ui-spinner-ink);
+		border-radius: 50%;
+		animation: ui-spinner-rotate 800ms linear infinite;
+	}
+
+	/* Treated instances spin in the family's strong colour. */
+	:scope[data-ui-color-base] .ui-spinner-ring {
+		--_ui-spinner-ink: var(--ui-spinner-ink, var(--ui-color));
+		--_ui-spinner-track: var(--ui-spinner-track, var(--ui-track));
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ui-spinner-ring {
+			border-color: var(--_ui-spinner-ink);
+			animation: ui-spinner-pulse 1.6s ease-in-out infinite;
+		}
+	}
+
+	/* Inline sr-only (the atom stays self-contained). */
+	.ui-spinner-label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	@container ui-treatment-context style(--ui-environment: overlay) {
+		.ui-spinner-ring {
+			--_ui-spinner-ink: var(--ui-spinner-ink, var(--color-overlay-content));
+			--_ui-spinner-track: var(--ui-spinner-track, color-mix(in oklab, var(--color-overlay-content) 24%, transparent));
+		}
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		.ui-spinner-ring {
+			--_ui-spinner-size: attr(data-ui-spinner-size type(<length>), var(--ui-spinner-size, 20px));
+			--_ui-spinner-thickness: attr(data-ui-spinner-thickness type(<length>), var(--ui-spinner-thickness, 2px));
+			--_ui-spinner-ink: attr(data-ui-spinner-ink type(<color>), var(--ui-spinner-ink, var(--color-primary)));
+			--_ui-spinner-track: attr(data-ui-spinner-track type(<color>), var(--ui-spinner-track, color-mix(in oklab, var(--color-primary) 22%, transparent)));
+		}
+		:scope[data-ui-color-base] .ui-spinner-ring {
+			--_ui-spinner-ink: attr(data-ui-spinner-ink type(<color>), var(--ui-spinner-ink, var(--ui-color)));
+			--_ui-spinner-track: attr(data-ui-spinner-track type(<color>), var(--ui-spinner-track, var(--ui-track)));
+		}
+		@container ui-treatment-context style(--ui-environment: overlay) {
+			.ui-spinner-ring {
+				--_ui-spinner-ink: attr(data-ui-spinner-ink type(<color>), var(--ui-spinner-ink, var(--color-overlay-content)));
+				--_ui-spinner-track: attr(data-ui-spinner-track type(<color>), var(--ui-spinner-track, color-mix(in oklab, var(--color-overlay-content) 24%, transparent)));
+			}
+		}
+	}
+}

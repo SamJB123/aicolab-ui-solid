@@ -1,0 +1,161 @@
+/* Per-instance knobs (width, height, accent, thumb, focusRing) on the dual
+   wire; adapter pattern per shared/knobs.ts (select-control is the exemplar).
+   The input is collapsed onto the track; the thumb slides by logical inset. */
+@property --_ui-switch-width {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 36px;
+}
+@property --_ui-switch-height {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 20px;
+}
+@property --_ui-switch-accent {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+@property --_ui-switch-thumb {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: white;
+}
+@property --_ui-switch-focus-ring {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
+}
+
+@scope (.ui-switch) {
+	:scope {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.55em;
+		position: relative;
+		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	/* Both knob wires land ON THE CONSUMING ELEMENTS (the Meter fill-element
+	   pattern): geometry on input + track, thumb colour + travel height on
+	   the thumb. */
+
+	.ui-switch-input {
+		--_ui-switch-width: var(--ui-switch-width, 36px);
+		--_ui-switch-height: var(--ui-switch-height, 20px);
+		position: absolute;
+		inset-inline-start: 0;
+		width: var(--_ui-switch-width);
+		height: var(--_ui-switch-height);
+		margin: 0;
+		opacity: 0;
+		cursor: inherit;
+	}
+
+	.ui-switch-track {
+		--_ui-switch-width: var(--ui-switch-width, 36px);
+		--_ui-switch-height: var(--ui-switch-height, 20px);
+		--_ui-switch-accent: var(--ui-switch-accent, var(--color-primary));
+		--_ui-switch-focus-ring: var(--ui-switch-focus-ring, var(--color-ring));
+		box-sizing: border-box;
+		flex: none;
+		width: var(--_ui-switch-width);
+		height: var(--_ui-switch-height);
+		padding: 2px;
+		border: 1px solid var(--color-border-strong);
+		border-radius: var(--r-pill);
+		background: var(--color-base-200);
+		transition:
+			background-color 160ms ease,
+			border-color 160ms ease;
+	}
+
+	:scope[data-ui-color-base] .ui-switch-track {
+		--_ui-switch-accent: var(--ui-switch-accent, var(--ui-color));
+		--_ui-switch-focus-ring: var(--ui-switch-focus-ring, var(--ui-focus-ring));
+	}
+
+	.ui-switch-thumb {
+		--_ui-switch-height: var(--ui-switch-height, 20px);
+		--_ui-switch-thumb: var(--ui-switch-thumb, var(--color-base-100));
+		box-sizing: border-box;
+		display: block;
+		height: 100%;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		background: var(--_ui-switch-thumb);
+		box-shadow: 0 1px 2px color-mix(in oklab, var(--color-base-content) 30%, transparent);
+		/* Slide by margin so RTL flips for free. */
+		margin-inline-start: 0;
+		transition: margin-inline-start 160ms ease;
+	}
+
+	.ui-switch-input:checked + .ui-switch-track {
+		border-color: var(--_ui-switch-accent);
+		background: var(--_ui-switch-accent);
+	}
+
+	.ui-switch-input:checked + .ui-switch-track .ui-switch-thumb {
+		margin-inline-start: calc(100% - (var(--_ui-switch-height) - 6px));
+	}
+
+	.ui-switch-input:focus-visible + .ui-switch-track {
+		outline: 2px solid var(--_ui-switch-focus-ring);
+		outline-offset: 2px;
+	}
+
+	.ui-switch-input:disabled + .ui-switch-track {
+		border-color: var(--color-border);
+		background: var(--color-base-200);
+		opacity: 0.6;
+	}
+	.ui-switch-input:disabled ~ .ui-switch-label {
+		color: var(--color-base-content-faint);
+	}
+	:scope:has(.ui-switch-input:disabled) {
+		cursor: not-allowed;
+	}
+
+	.ui-switch-label {
+		font-size: var(--t-sm, 0.9rem);
+		line-height: 1.35;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ui-switch-track,
+		.ui-switch-thumb {
+			transition: none;
+		}
+	}
+
+	@container ui-treatment-context style(--ui-environment: overlay) {
+		.ui-switch-track {
+			border-color: var(--color-overlay-border);
+			background: var(--color-overlay-soft);
+		}
+		.ui-switch-label { color: var(--color-overlay-content); }
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		.ui-switch-input {
+			--_ui-switch-width: attr(data-ui-switch-width type(<length>), var(--ui-switch-width, 36px));
+			--_ui-switch-height: attr(data-ui-switch-height type(<length>), var(--ui-switch-height, 20px));
+		}
+		.ui-switch-track {
+			--_ui-switch-width: attr(data-ui-switch-width type(<length>), var(--ui-switch-width, 36px));
+			--_ui-switch-height: attr(data-ui-switch-height type(<length>), var(--ui-switch-height, 20px));
+			--_ui-switch-accent: attr(data-ui-switch-accent type(<color>), var(--ui-switch-accent, var(--color-primary)));
+			--_ui-switch-focus-ring: attr(data-ui-switch-focus-ring type(<color>), var(--ui-switch-focus-ring, var(--color-ring)));
+		}
+		:scope[data-ui-color-base] .ui-switch-track {
+			--_ui-switch-accent: attr(data-ui-switch-accent type(<color>), var(--ui-switch-accent, var(--ui-color)));
+			--_ui-switch-focus-ring: attr(data-ui-switch-focus-ring type(<color>), var(--ui-switch-focus-ring, var(--ui-focus-ring)));
+		}
+		.ui-switch-thumb {
+			--_ui-switch-height: attr(data-ui-switch-height type(<length>), var(--ui-switch-height, 20px));
+			--_ui-switch-thumb: attr(data-ui-switch-thumb type(<color>), var(--ui-switch-thumb, var(--color-base-100)));
+		}
+	}
+}
