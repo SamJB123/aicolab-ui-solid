@@ -35,9 +35,22 @@
 	inherits: true;
 	initial-value: 0.78rem;
 }
-/* Derived identity colour (always assigned on :scope — the mandatory-value
-   form): treatment role when present, per-context accent otherwise. */
+/* Derived identity colours (always assigned on :scope — the mandatory-value
+   form): treatment roles when present, base tokens otherwise. Muted/faint
+   MUST derive from the resolver's per-variant ink (--ui-ink-muted/-faint),
+   never from base tokens, or secondary text detaches from the surface the
+   treatment painted. */
 @property --_ui-cc-color {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-cc-ink-muted {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-cc-ink-faint {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: transparent;
@@ -62,6 +75,8 @@
 		   transparent initials, so var() fallbacks can never carry defaults),
 		   restrained per-context accent otherwise. */
 		--_ui-cc-color: var(--color-accent);
+		--_ui-cc-ink-muted: var(--color-base-content-muted);
+		--_ui-cc-ink-faint: var(--color-base-content-faint);
 		background: color-mix(in oklab, var(--_ui-cc-color) 5%, var(--color-base-100));
 		color: var(--color-base-content);
 		border: 1px solid color-mix(in oklab, var(--_ui-cc-color) 16%, var(--color-border));
@@ -75,8 +90,12 @@
 
 	:scope[data-ui-color-base] {
 		--_ui-cc-color: var(--ui-color);
+		--_ui-cc-ink-muted: var(--ui-ink-muted);
+		--_ui-cc-ink-faint: var(--ui-ink-faint);
 		background: var(--ui-surface);
-		color: var(--ui-content);
+		/* --ui-ink is the resolver's PER-VARIANT foreground (solid → the
+		   *-content pair; soft/outline/ghost/text → the family ink). */
+		color: var(--ui-ink);
 	}
 
 	/* Cards arriving live rise into place. */
@@ -169,7 +188,7 @@
 		margin: 0;
 		font-size: var(--_ui-cc-preview-size);
 		line-height: 1.45;
-		color: var(--ui-content, var(--color-base-content-muted));
+		color: var(--_ui-cc-ink-muted);
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 4;
@@ -187,7 +206,7 @@
 		align-items: center;
 		gap: 0.4rem;
 		font-size: var(--t-xs, 0.72rem);
-		color: var(--color-base-content-faint);
+		color: var(--_ui-cc-ink-faint);
 	}
 
 	.ui-content-card-presence {

@@ -26,9 +26,19 @@
 	inherits: true;
 	initial-value: 0.95rem;
 }
-/* Derived identity colour (always assigned on :scope — the mandatory-value
-   form, registered directly): treatment role when present, accent otherwise. */
+/* Derived identity colours (always assigned on :scope — the mandatory-value
+   form, registered directly): treatment roles when present, base otherwise. */
 @property --_ui-pfc-color {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-pfc-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-pfc-ink-muted {
 	syntax: "<color>";
 	inherits: true;
 	initial-value: transparent;
@@ -44,7 +54,12 @@
 		   fallback can never engage, so treatment is applied via the attribute
 		   override below instead. */
 		--_ui-pfc-color: var(--color-accent);
+		--_ui-pfc-ink: var(--color-base-content);
+		--_ui-pfc-ink-muted: var(--color-base-content-muted);
 		position: relative;
+		/* The stacked-cell pseudos sit at z-index -1; isolate so they stay
+		   inside this card instead of escaping behind ancestor surfaces. */
+		isolation: isolate;
 		display: block;
 		width: 100%;
 		min-height: var(--_ui-pfc-min-height);
@@ -53,24 +68,28 @@
 		background: transparent;
 		text-align: start;
 		cursor: pointer;
-		color: var(--color-base-content);
+		color: var(--_ui-pfc-ink);
 		font: inherit;
 	}
 
 	:scope[data-ui-color-base] {
 		--_ui-pfc-color: var(--ui-color);
-		color: var(--ui-content);
+		--_ui-pfc-ink: var(--ui-ink);
+		--_ui-pfc-ink-muted: var(--ui-ink-muted);
 	}
 
-	/* Stacked cells behind the face — the depth that says "more inside". */
+	/* Stacked cells BEHIND the face (z-index -1 under the isolated card —
+	   positioned pseudos otherwise paint over child content in tree order,
+	   which veiled the whole card). */
 	:scope::before,
 	:scope::after {
 		content: "";
 		position: absolute;
 		inset: 0;
+		z-index: -1;
 		border-radius: var(--_ui-pfc-radius);
-		border: 1px solid color-mix(in oklab, var(--_ui-pfc-color) 22%, var(--color-border));
-		background: color-mix(in oklab, var(--_ui-pfc-color) 7%, var(--color-base-100));
+		border: 1px solid color-mix(in oklab, var(--_ui-pfc-color) 30%, var(--color-border));
+		background: color-mix(in oklab, var(--_ui-pfc-color) 9%, var(--color-base-100));
 		transition: translate 180ms var(--ease-out, ease-out);
 	}
 
@@ -160,12 +179,12 @@
 		font-weight: 650;
 		line-height: 1.2;
 		overflow-wrap: anywhere;
-		color: var(--color-base-content);
+		color: var(--_ui-pfc-ink);
 	}
 
 	.ui-portal-folder-meta {
 		font-size: var(--t-xs, 0.72rem);
-		color: var(--color-base-content-muted);
+		color: var(--_ui-pfc-ink-muted);
 	}
 
 	.ui-portal-folder-ribbon {
