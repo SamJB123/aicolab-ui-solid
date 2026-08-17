@@ -37,10 +37,11 @@ type UploadListProps = Omit<JSX.HTMLAttributes<HTMLUListElement>, 'class'> & {
 	/** Accessible name for the list. */
 	label: string
 	items: UploadListItem[]
-	/** Cancel an in-flight upload (row shows ✕ while uploading). */
-	onCancel?: (key: string) => void
+	/** Cancel an in-flight upload (row shows ✕ while uploading). Named to
+	 *  avoid the NATIVE `onCancel` event handler the ul attributes carry. */
+	onCancelItem?: (key: string) => void
 	/** Dismiss a finished/failed row. */
-	onDismiss?: (key: string) => void
+	onDismissItem?: (key: string) => void
 } & ColorTreatmentProps &
 	KnobProps<typeof knobs.spec>
 
@@ -56,8 +57,8 @@ export function UploadList(props: UploadListProps) {
 		'style',
 		'label',
 		'items',
-		'onCancel',
-		'onDismiss',
+		'onCancelItem',
+		'onDismissItem',
 		'colorBase',
 		'colorLevel',
 		'variant',
@@ -107,7 +108,7 @@ export function UploadList(props: UploadListProps) {
 						<span class="ui-uploads-state" aria-hidden="true">
 							{item.status === 'done' ? '✓' : item.status === 'error' ? '!' : `${Math.round(item.progress * 100)}%`}
 						</span>
-						<Show when={item.status === 'uploading' ? props.onCancel : props.onDismiss}>
+						<Show when={item.status === 'uploading' ? props.onCancelItem : props.onDismissItem}>
 							{(act) => (
 								<IconButton
 									class="ui-uploads-action"

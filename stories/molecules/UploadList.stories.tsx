@@ -41,8 +41,8 @@ export const Playground: Story = {
 	args: {
 		label: 'Uploads',
 		items: ITEMS,
-		onCancel: (key) => console.log('[upload-list story] cancel', key),
-		onDismiss: (key) => console.log('[upload-list story] dismiss', key),
+		onCancelItem: (key) => console.log('[upload-list story] cancel', key),
+		onDismissItem: (key) => console.log('[upload-list story] dismiss', key),
 	},
 	render: (args) => <div style={{ width: '420px' }}><UploadList {...args} /></div>,
 }
@@ -65,7 +65,7 @@ export const Live: Story = {
 							detail: `${Math.round(progress() * 840)} MB of 840 MB`,
 						},
 					]}
-					onCancel={() => setProgress(0)}
+					onCancelItem={() => setProgress(0)}
 				/>
 			</div>
 		)
