@@ -76,8 +76,10 @@ export {
 	CommandPalette,
 	type CommandPaletteItem,
 	CommandPaletteTrigger,
+	ContentCard,
 	type InspectorDetent,
 	InspectorHeader,
+	PortalFolderCard,
 	RadialMenu,
 	type RadialMenuItem,
 	RaisedSheet,
@@ -86,6 +88,7 @@ export {
 	type SceneStageAdapter,
 	type SceneStageController,
 	type SceneStageMountContext,
+	ShelfBoard,
 	dismissToast,
 	toast,
 	ToastHost,
@@ -160,5 +163,6 @@ export {
 	type UiLength,
 	type UiLengthPercentage,
 } from './shared/knobs'
+export { compareBoardItems, positionBetween } from './shared/ordering'
 
 export { withScopedViewTransition, withViewTransition } from './vt'
