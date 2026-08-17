@@ -1,3 +1,5 @@
+@import url("./organisms/activity-feed/styles.css");
+@import url("./organisms/artifact-card/styles.css");
 @import url("./organisms/depth-card/styles.css");
 @import url("./organisms/adaptive-modal-sheet/styles.css");
 @import url("./organisms/bottom-navigation/styles.css");

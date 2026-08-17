@@ -1,0 +1,35 @@
+/* ── crimson-legal — the "Crimson Dragonfly" theme ──────────────────────────
+   Token values from the "AI & the Legal Profession" project design system
+   (Harvard CLP × Dragonfly Thinking, legal-design-system.css v3.4.0-disciple):
+   Harvard Crimson #A51C30 as the lead accent over slate neutrals, with the
+   crimson LIFTED in dark (#E55C73) so crimson ink clears AA on dark slate.
+
+   Anchors only — the ui-solid ladder derives every surface, border and
+   content role per scheme. Both schemes are authored here via light-dark();
+   force one with data-theme / .theme-dark / .theme-light as usual. Authored
+   on `.ui-theme` as well as :root so a nested theme boundary (e.g. a
+   forced-dark subtree around visual media) re-resolves the anchors under its
+   own color-scheme instead of inheriting the root scheme's computed colors.
+
+   Faces: IBM Plex Sans (body/UI) + Crimson Pro (display serif). This file
+   sets the tokens only — the consumer loads the font files (both are on
+   Google Fonts; the reference project self-hosts the same faces). --font-data
+   is deliberately not set: the ui-solid default (Azeret Mono) remains the
+   data voice — a sanctioned departure, the reference system has no mono. */
+
+:root,
+.ui-theme {
+	--color-base-100: light-dark(#ffffff, #18202c);
+	--color-base-content: light-dark(#1e293b, #cbd5e1);
+	--color-primary: light-dark(#a51c30, #e55c73);
+
+	/* The reference system's functional data states (never decorative). */
+	--color-success: light-dark(#0a6b42, #5aa987);
+	--color-warning: light-dark(#b45309, #d99a4e);
+	--color-error: light-dark(#9f1239, #f07a8e);
+
+	--font-display: "Crimson Pro", "Iowan Old Style", Georgia, "Times New Roman", serif;
+	--font-sans:
+		"IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+		Arial, sans-serif;
+}
