@@ -1,6 +1,4 @@
-export * from './activity-feed'
 export * from './adaptive-modal-sheet'
-export * from './artifact-card'
 export * from './command-palette'
 export * from './docs-shell'
 export * from './facets'
