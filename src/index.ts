@@ -69,7 +69,10 @@ export {
 } from './molecules'
 export { RichList, RichListItem, RichListMetadata } from './molecules/rich-list'
 export {
+	ActivityFeed,
+	type ActivityFeedItem,
 	AdaptiveModalSheet,
+	ArtifactCard,
 	BottomNavigation,
 	BottomNavigationCentreContent,
 	type BottomNavigationItem,

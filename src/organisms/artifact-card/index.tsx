@@ -35,7 +35,9 @@ type ArtifactCardProps = Omit<JSX.HTMLAttributes<HTMLElement>, 'class' | 'title'
 	live?: boolean
 	/** Navigation target: renders the hit surface as a real link. */
 	href?: string
-	/** Activation without navigation (ignored when `href` is set). */
+	/** Activation. With `href` too, a plain left-click is intercepted and
+	 *  handed here (the SPA-link pattern — modified clicks and middle-clicks
+	 *  keep native link behavior); alone, the hit surface is a button. */
 	onSelect?: () => void
 	/** Accessible name for the hit surface when `title` is not plain text. */
 	label?: string
@@ -104,7 +106,27 @@ export function ArtifactCard(props: ArtifactCardProps) {
 					</Show>
 				}
 			>
-				<a class="ui-artifact-card-hit" href={props.href} aria-label={props.label} />
+				<a
+					class="ui-artifact-card-hit"
+					href={props.href}
+					aria-label={props.label}
+					onClick={(event) => {
+						const onSelect = props.onSelect
+						if (!onSelect) return
+						if (
+							event.defaultPrevented ||
+							event.button !== 0 ||
+							event.metaKey ||
+							event.ctrlKey ||
+							event.shiftKey ||
+							event.altKey
+						) {
+							return
+						}
+						event.preventDefault()
+						onSelect()
+					}}
+				/>
 			</Show>
 			<div class="ui-artifact-card-head">
 				<Show when={props.eyebrow}>
