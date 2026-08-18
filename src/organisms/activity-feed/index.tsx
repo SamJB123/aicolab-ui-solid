@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { For, omit, Show } from 'solid-js'
+import { createMemo, For, omit, Show } from 'solid-js'
 import {
 	type ClassProp,
 	type ColorTreatmentProps,
@@ -61,11 +61,12 @@ export function ActivityFeed(props: ActivityFeedProps) {
 		glyphSize: props.glyphSize,
 		maxHeight: props.maxHeight,
 	})
+	// Hoisted reads (Solid 2 STRICT): Show's lazy children/fallback thunks are
+	// not tracking scopes — the item-count and empty-slot reads live in memos.
+	const hasItems = createMemo(() => props.items.length > 0)
+	const emptySlot = createMemo(() => props.empty ?? null)
 	return (
-		<Show
-			when={props.items.length > 0}
-			fallback={<Show when={props.empty}>{(empty) => empty()()}</Show>}
-		>
+		<Show when={hasItems()} fallback={<>{emptySlot()?.()}</>}>
 			<ul
 				{...attributes}
 				{...colorTreatmentData(props)}
