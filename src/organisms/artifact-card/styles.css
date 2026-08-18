@@ -166,6 +166,16 @@
 		gap: 0.25rem;
 	}
 
+	@media (prefers-reduced-motion: reduce) {
+		:scope {
+			transition: none;
+		}
+		:scope:has(.ui-artifact-card-hit:hover),
+		:scope:has(.ui-artifact-card-hit:focus-visible) {
+			translate: none;
+		}
+	}
+
 	@container ui-treatment-context style(--ui-environment: overlay) {
 		:scope {
 			background: var(--color-overlay-100);
