@@ -125,6 +125,17 @@
 		display 0.2s allow-discrete;
 	}
 	:scope:popover-open { opacity: 1; transform: none; }
+	/* A CLOSED popover must not be hit-testable. Any composer that sets an
+	   unconditional `display` on the panel (.ui-menu's grid) overrides the
+	   UA's closed-state display:none, leaving an invisible opacity-0 panel
+	   trapping clicks over nearby content (shelf cards phantom-pinned docs /
+	   downloaded files, 2026-08-20). Reassert it here — allow-discrete in the
+	   transition above still holds the exit animation — and drop
+	   pointer-events immediately so the closing panel can't swallow clicks. */
+	:scope:not(:popover-open) {
+		display: none;
+		pointer-events: none;
+	}
 	@starting-style {
 		:scope:popover-open {
 			opacity: 0;
