@@ -29,8 +29,16 @@
 		/* A menu reads denser than the anchored default: the `pad` knob rides
 		   the shared .ui-anchored adapter on this same element. */
 		--ui-anchored-pad: var(--ui-menu-pad, 6px);
-		display: grid;
 		gap: 2px;
+	}
+
+	/* `display` ONLY while open: an unconditional display here overrides the
+	   UA's closed-popover display:none, leaving an invisible panel parked
+	   over nearby content (the shelf-card phantom pin/download clicks,
+	   2026-08-20). The .ui-anchored base transitions display allow-discrete,
+	   so the exit animation still plays. */
+	:scope:popover-open {
+		display: grid;
 	}
 
 	.ui-menu-item {
