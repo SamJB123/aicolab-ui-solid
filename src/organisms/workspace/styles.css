@@ -49,7 +49,12 @@
 		--_ui-workspace-nav-surface: var(--ui-workspace-nav-surface, var(--color-base-100));
 		--_ui-workspace-inspector-surface: var(--ui-workspace-inspector-surface, var(--color-base-300));
 		--_ui-workspace-accent: var(--ui-workspace-accent, var(--color-primary));
-		--ui-bottom-navigation-height: calc(3.8rem + env(safe-area-inset-bottom, 0px));
+		/* Published to descendants: the space the fixed mobile bottom bar
+		   occupies RIGHT NOW — 0 wherever the bar doesn't render, the real
+		   height inside the mobile media query below. Document-flow stage
+		   content pads its bottom with this so nothing hides under the bar
+		   (the stage itself stays full-bleed for canvas hosts). */
+		--ui-bottom-navigation-height: 0px;
 		display: flex;
 		height: 100%;
 		background: var(--_ui-workspace-surface);
@@ -274,6 +279,10 @@
 	@media (max-width: 900px) {
 		:scope {
 			flex-direction: column;
+			/* Mirrors BottomNavigation's own height (its --ui-bnav-height knob
+			   + safe area); the bar is a sibling slot, so its value can't be
+			   read from here. */
+			--ui-bottom-navigation-height: calc(var(--ui-bnav-height, 3.8rem) + env(safe-area-inset-bottom, 0px));
 			--ui-workspace-stage-floor: calc(var(--ui-bottom-navigation-height) + 58px);
 		}
 
