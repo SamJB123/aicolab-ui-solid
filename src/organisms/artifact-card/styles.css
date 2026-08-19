@@ -21,12 +21,21 @@
 	inherits: false;
 	initial-value: 64px;
 }
+/* Inherits — the ribbon (a child) paints with it, workspace-accent style. */
+@property --_ui-artifact-accent {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
 
 @scope (.ui-artifact-card) {
 	:scope {
 		--_ui-artifact-pad: var(--ui-artifact-pad, 1rem);
 		--_ui-artifact-gap: var(--ui-artifact-gap, 0.5rem);
 		--_ui-artifact-radius: var(--ui-artifact-radius, 0.75rem);
+		/* Emphasis accent (hover border/glow, ribbon, live beacon):
+		   secondary by default; the treatment axes retarget it below. */
+		--_ui-artifact-accent: var(--ui-artifact-accent, var(--color-secondary));
 		box-sizing: border-box;
 		position: relative;
 		display: flex;
@@ -49,30 +58,31 @@
 		}
 	}
 	:scope[data-ui-color-base] {
+		--_ui-artifact-accent: var(--ui-artifact-accent, var(--ui-color));
 		background: var(--ui-surface);
 		border-color: var(--ui-border);
 		color: var(--ui-ink);
 	}
 	:scope:has(.ui-artifact-card-hit:hover),
 	:scope:has(.ui-artifact-card-hit:focus-visible) {
-		border-color: var(--color-accent);
-		box-shadow: 0 0.35rem 1.2rem -0.7rem color-mix(in oklab, var(--color-accent) 60%, transparent);
+		border-color: var(--_ui-artifact-accent);
+		box-shadow: 0 0.35rem 1.2rem -0.7rem color-mix(in oklab, var(--_ui-artifact-accent) 60%, transparent);
 		translate: 0 -1px;
 	}
 
 	/* The live beacon: someone is on this artifact right now. */
 	:scope[data-live] {
-		border-color: color-mix(in oklab, var(--color-accent) 55%, var(--color-border));
-		box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-accent) 35%, transparent);
+		border-color: color-mix(in oklab, var(--_ui-artifact-accent) 55%, var(--color-border));
+		box-shadow: 0 0 0 1px color-mix(in oklab, var(--_ui-artifact-accent) 35%, transparent);
 	}
 
-	/* Pinned ribbon — a folded corner in the accent. */
+	/* Pinned ribbon — a folded corner in the card accent. */
 	.ui-artifact-card-ribbon {
 		position: absolute;
 		inset: 0 0 auto auto;
 		width: 1.35rem;
 		height: 1.35rem;
-		background: var(--color-accent);
+		background: var(--_ui-artifact-accent);
 		clip-path: polygon(100% 0, 0 0, 100% 100%);
 		border-start-end-radius: var(--_ui-artifact-radius);
 	}
@@ -199,6 +209,16 @@
 			--_ui-artifact-radius: attr(
 				data-ui-artifact-radius type(<length>),
 				var(--ui-artifact-radius, 0.75rem)
+			);
+			--_ui-artifact-accent: attr(
+				data-ui-artifact-accent type(<color>),
+				var(--ui-artifact-accent, var(--color-secondary))
+			);
+		}
+		:scope[data-ui-color-base] {
+			--_ui-artifact-accent: attr(
+				data-ui-artifact-accent type(<color>),
+				var(--ui-artifact-accent, var(--ui-color))
 			);
 		}
 		.ui-artifact-card-preview {

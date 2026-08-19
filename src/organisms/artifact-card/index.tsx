@@ -8,12 +8,15 @@ import {
 } from '../../shared/color-treatment'
 import { defineKnobs, type KnobProps, mergeKnobStyle } from '../../shared/knobs'
 
-/** Per-instance styling contract (see shared/knobs.ts). */
+/** Per-instance styling contract (see shared/knobs.ts). The `accent` knob
+ *  paints the card's emphasis treatments (hover border/glow, pinned ribbon,
+ *  live beacon) — secondary by default, the family colour when treated. */
 const knobs = defineKnobs('ui-artifact', {
 	pad: '<length>',
 	gap: '<length>',
 	radius: '<length>',
 	previewSize: '<length>',
+	accent: '<color>',
 })
 
 type ArtifactCardProps = Omit<JSX.HTMLAttributes<HTMLElement>, 'class' | 'title'> & {
@@ -75,8 +78,14 @@ export function ArtifactCard(props: ArtifactCardProps) {
 		'gap',
 		'radius',
 		'previewSize',
+		'accent',
 	)
-	const rootValues = () => ({ pad: props.pad, gap: props.gap, radius: props.radius })
+	const rootValues = () => ({
+		pad: props.pad,
+		gap: props.gap,
+		radius: props.radius,
+		accent: props.accent,
+	})
 	const previewValues = () => ({ previewSize: props.previewSize })
 	return (
 		<article
