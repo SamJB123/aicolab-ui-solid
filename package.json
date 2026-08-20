@@ -38,6 +38,7 @@
 		"@prosekit/pm": "0.1.19-beta.4",
 		"@y/prosemirror": "2.0.0-6",
 		"@y/y": "catalog:",
+		"qrcode-generator": "2.0.4",
 		"three": "catalog:"
 	},
 	"devDependencies": {

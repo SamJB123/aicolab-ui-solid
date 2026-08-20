@@ -16,6 +16,7 @@
 @import url("./atoms/notice/styles.css");
 @import url("./atoms/panel/styles.css");
 @import url("./atoms/presence/styles.css");
+@import url("./atoms/qr-code/styles.css");
 @import url("./atoms/rule/styles.css");
 @import url("./atoms/select-control/styles.css");
 @import url("./atoms/segmented/styles.css");

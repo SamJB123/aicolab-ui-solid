@@ -1,0 +1,84 @@
+/* QrCode — client-rendered QR SVG with an optional centre brand mark.
+   Knobs (size, ink, surface) on the usual two wires; when colour-treated,
+   the modules take the family ink over the family surface. */
+@property --_ui-qr-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 12rem;
+}
+@property --_ui-qr-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: black;
+}
+@property --_ui-qr-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: white;
+}
+
+@scope (.ui-qr) {
+	:scope {
+		--_ui-qr-size: var(--ui-qr-size, 12rem);
+		--_ui-qr-ink: var(--ui-qr-ink, black);
+		--_ui-qr-surface: var(--ui-qr-surface, white);
+		position: relative;
+		display: inline-grid;
+		place-items: center;
+		width: var(--_ui-qr-size);
+	}
+	:scope[data-ui-color-base] {
+		--_ui-qr-ink: var(--ui-qr-ink, var(--ui-ink));
+		--_ui-qr-surface: var(--ui-qr-surface, var(--ui-surface));
+	}
+
+	.ui-qr-svg {
+		display: block;
+		width: 100%;
+		line-height: 0;
+	}
+
+	.ui-qr-svg svg {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	/* Display re-inking of the builder's literal fills. */
+	.ui-qr-bg,
+	.ui-qr-knockout {
+		fill: var(--_ui-qr-surface);
+	}
+
+	.ui-qr-modules {
+		fill: var(--_ui-qr-ink);
+	}
+
+	/* Brand mark slot — centred over the knockout, 80% of its patch
+	   (--ui-qr-mark-frac is knockout × 0.8, set inline by the component). */
+	.ui-qr-mark {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		pointer-events: none;
+	}
+
+	.ui-qr-mark > * {
+		width: calc(100% * var(--ui-qr-mark-frac, 0));
+		height: calc(100% * var(--ui-qr-mark-frac, 0));
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-qr-size: attr(data-ui-qr-size type(<length>), var(--ui-qr-size, 12rem));
+			--_ui-qr-ink: attr(data-ui-qr-ink type(<color>), var(--ui-qr-ink, black));
+			--_ui-qr-surface: attr(data-ui-qr-surface type(<color>), var(--ui-qr-surface, white));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-qr-ink: attr(data-ui-qr-ink type(<color>), var(--ui-qr-ink, var(--ui-ink)));
+			--_ui-qr-surface: attr(data-ui-qr-surface type(<color>), var(--ui-qr-surface, var(--ui-surface)));
+		}
+	}
+}
