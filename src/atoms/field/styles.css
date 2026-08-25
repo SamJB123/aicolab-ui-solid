@@ -37,6 +37,17 @@
 	:scope[data-ui-color-base] > .ui-field-label {
 		--_ui-field-label-ink: var(--ui-field-label-ink, var(--ui-color-foreground));
 	}
+	/* A hinted label advertises its tooltip: help cursor + a ⓘ marker that
+	   sheds the label's uppercase tracking. */
+	:scope > .ui-field-label[title] {
+		cursor: help;
+	}
+	:scope > .ui-field-label > .ui-field-hint-mark {
+		margin-inline-start: 0.45em;
+		letter-spacing: 0;
+		text-transform: none;
+		opacity: 0.6;
+	}
 	/* A treated Field themes the control it wraps by supplying the control
 	   atoms' PUBLIC knob variables for its subtree — the designed
 	   container-theming path. An explicit knob on the control itself still

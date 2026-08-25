@@ -2,11 +2,11 @@
 import type { JSX } from '@solidjs/web'
 import { omit } from 'solid-js'
 import {
-	colorTreatmentData,
 	type ClassProp,
 	type ColorTreatmentProps,
-} from '../../shared/color-treatment'
-import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
+	colorTreatmentData,
+} from '../../shared/color-treatment.ts'
+import { defineKnobs, type KnobProps, mergeKnobStyle } from '../../shared/knobs.ts'
 
 /** Per-instance styling contract (see shared/knobs.ts). The label is a
  * child element, so its knobs ride the inheriting variable wire. */
@@ -19,6 +19,9 @@ const knobs = defineKnobs('ui-field', {
 type FieldProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'class'> & {
 	class?: ClassProp
 	label: string
+	/** Plain-english explainer, surfaced as a hover tooltip on the label
+	 *  (native `title`) with a ⓘ marker signalling that help exists. */
+	hint?: string
 } & ColorTreatmentProps &
 	KnobProps<typeof knobs.spec>
 
@@ -29,6 +32,7 @@ export function Field(props: FieldProps) {
 		'style',
 		'children',
 		'label',
+		'hint',
 		'colorBase',
 		'colorLevel',
 		'variant',
@@ -45,7 +49,14 @@ export function Field(props: FieldProps) {
 			class={['ui-field', props.class]}
 			style={mergeKnobStyle(knobs.style(props), props.style)}
 		>
-			<span class="ui-field-label">{props.label}</span>
+			<span class="ui-field-label" title={props.hint}>
+				{props.label}
+				{props.hint ? (
+					<span class="ui-field-hint-mark" aria-hidden="true">
+						ⓘ
+					</span>
+				) : undefined}
+			</span>
 			{child()}
 		</div>
 	)
