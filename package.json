@@ -1,6 +1,8 @@
 {
 	"name": "@aicolab/ui-solid",
-	"version": "2.0.0",
+	"description": "Solid v2 component system in plain modern CSS: a three-axis colour treatment and typed per-instance styling knobs",
+	"license": "UNLICENSED",
+	"version": "2.0.1",
 	"type": "module",
 	"repository": {
 		"type": "git",
