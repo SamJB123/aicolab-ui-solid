@@ -42,8 +42,8 @@ export const MobileNavigation: Story = {
 			<div style={{ position: 'relative', height: '18rem', background: 'var(--color-base-300)' }}>
 				<BottomNavigation
 					items={[
-						{ id: 'home', label: 'Home', icon: '⌂' }, { id: 'map', label: 'Map', icon: '◇' },
-						{ id: 'people', label: 'People', icon: '◎' }, { id: 'notes', label: 'Notes', icon: '≡' },
+						{ id: 'home', label: 'Home', icon: () => '⌂' }, { id: 'map', label: 'Map', icon: () => '◇' },
+						{ id: 'people', label: 'People', icon: () => '◎' }, { id: 'notes', label: 'Notes', icon: () => '≡' },
 					]}
 					activeId={active()}
 					onSelect={setActive}

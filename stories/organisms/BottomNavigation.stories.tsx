@@ -5,10 +5,10 @@ import { BottomNavigation, BottomNavigationCentreContent } from '../../src'
 import { treatmentArgTypes } from '../primitives/color-treatment-story'
 
 const ITEMS = [
-	{ id: 'home', label: 'Home', icon: '⌂' },
-	{ id: 'search', label: 'Search', icon: '⌕' },
-	{ id: 'events', label: 'Events', icon: '▤' },
-	{ id: 'you', label: 'You', icon: '◉' },
+	{ id: 'home', label: 'Home', icon: () => '⌂' },
+	{ id: 'search', label: 'Search', icon: () => '⌕' },
+	{ id: 'events', label: 'Events', icon: () => '▤' },
+	{ id: 'you', label: 'You', icon: () => '◉' },
 ] as const
 
 const meta = {

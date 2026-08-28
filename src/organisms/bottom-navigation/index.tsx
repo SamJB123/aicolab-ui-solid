@@ -2,16 +2,19 @@
 import type { JSX } from '@solidjs/web'
 import { children, For, Show } from 'solid-js'
 import {
-	colorTreatmentData,
 	type ClassProp,
 	type ColorTreatmentProps,
+	colorTreatmentData,
 } from '../../shared/color-treatment'
-import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
+import { defineKnobs, type KnobProps, mergeKnobStyle } from '../../shared/knobs'
 
 export interface BottomNavigationItem<Id extends string = string> {
 	id: Id
 	label: string
-	icon: JSX.Element
+	/** Lazy, like every ui-solid slot: `items` is a prop getter, so an eager
+	 *  element here would be re-created on every read — outside its render
+	 *  position, which breaks hydration claiming. */
+	icon: () => JSX.Element
 }
 
 /** Per-instance styling contract (see shared/knobs.ts). The bar itself is
@@ -75,7 +78,7 @@ export function BottomNavigation<Id extends string>(
 					data-active={props.activeId === item.id ? '' : undefined}
 					onClick={() => props.onSelect(item.id)}
 				>
-					<span class="ui-bottom-navigation-item-icon">{item.icon}</span>
+					<span class="ui-bottom-navigation-item-icon">{item.icon()}</span>
 					<span class="ui-bottom-navigation-item-label">{item.label}</span>
 				</button>
 			)}
