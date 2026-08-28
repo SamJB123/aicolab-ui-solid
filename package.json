@@ -1,8 +1,19 @@
 {
 	"name": "@aicolab/ui-solid",
-	"version": "0.0.0",
-	"private": true,
+	"version": "0.1.0",
 	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/SamJB123/aicolab-ui-solid.git"
+	},
+	"homepage": "https://github.com/SamJB123/aicolab-ui-solid#readme",
+	"bugs": {
+		"url": "https://github.com/SamJB123/aicolab-ui-solid/issues"
+	},
+	"publishConfig": {
+		"access": "restricted",
+		"registry": "https://registry.npmjs.org"
+	},
 	"exports": {
 		".": "./src/index.ts",
 		"./styles.css": "./src/styles.css",
