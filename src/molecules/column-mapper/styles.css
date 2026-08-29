@@ -1,0 +1,157 @@
+/* Per-instance knobs (gap, radius, pad) on the dual wire; adapter pattern
+   per shared/knobs.ts. */
+@property --_ui-mapper-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 8px;
+}
+@property --_ui-mapper-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 12px;
+}
+@property --_ui-mapper-pad {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 10px;
+}
+
+@scope (.ui-mapper) {
+	:scope {
+		--_ui-mapper-gap: var(--ui-mapper-gap, 0.5rem);
+		display: grid;
+		gap: var(--_ui-mapper-gap);
+	}
+
+	.ui-mapper-row {
+		--_ui-mapper-radius: var(--ui-mapper-radius, var(--r-md));
+		--_ui-mapper-pad: var(--ui-mapper-pad, 0.625rem);
+		display: grid;
+		grid-template-columns: minmax(12rem, 1.4fr) repeat(auto-fit, minmax(9rem, 1fr));
+		gap: 0.75rem;
+		align-items: start;
+		padding: var(--_ui-mapper-pad);
+		border: 1px solid var(--color-border);
+		border-radius: var(--_ui-mapper-radius);
+		corner-shape: squircle;
+		background: var(--color-base-100);
+	}
+
+	:scope[data-ui-color-base] .ui-mapper-row {
+		border-color: var(--ui-border);
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+	}
+
+	.ui-mapper-row[data-role="ignore"] {
+		opacity: 0.6;
+	}
+
+	.ui-mapper-source {
+		display: grid;
+		gap: 0.3rem;
+		min-width: 0;
+	}
+
+	.ui-mapper-column {
+		font-size: var(--t-sm, 0.9rem);
+		font-weight: 600;
+		overflow-wrap: anywhere;
+	}
+
+	.ui-mapper-samples {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem;
+	}
+
+	.ui-mapper-sample {
+		max-width: 12rem;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.ui-mapper-field {
+		display: grid;
+		gap: 0.25rem;
+	}
+
+	.ui-mapper-field-label {
+		font-size: var(--t-xs, 0.78rem);
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		color: var(--color-base-content-muted);
+	}
+
+	.ui-mapper-select,
+	.ui-mapper-input {
+		width: 100%;
+		box-sizing: border-box;
+		padding: 0.4rem 0.5rem;
+		font: inherit;
+		font-size: var(--t-sm, 0.9rem);
+		color: inherit;
+		background: var(--color-base-100);
+		border: 1px solid var(--color-border);
+		border-radius: var(--r-sm, 6px);
+	}
+
+	.ui-mapper-select:focus-visible,
+	.ui-mapper-input:focus-visible,
+	.ui-mapper-toggle:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 1px;
+	}
+
+	.ui-mapper-granularity {
+		display: inline-flex;
+		border: 1px solid var(--color-border);
+		border-radius: var(--r-sm, 6px);
+		overflow: hidden;
+	}
+
+	.ui-mapper-toggle {
+		appearance: none;
+		border: 0;
+		padding: 0.35rem 0.6rem;
+		font: inherit;
+		font-size: var(--t-xs, 0.78rem);
+		color: var(--color-base-content-muted);
+		background: none;
+		cursor: pointer;
+	}
+
+	.ui-mapper-toggle[aria-checked="true"] {
+		color: var(--color-primary-content, var(--color-base-100));
+		background: var(--color-primary);
+	}
+
+	.ui-mapper-status {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: var(--t-xs, 0.78rem);
+		color: var(--color-base-content-muted);
+	}
+
+	.ui-mapper-confidence {
+		width: 0.6rem;
+		height: 0.6rem;
+		border-radius: 50%;
+		background: var(--color-base-300);
+	}
+
+	.ui-mapper-confidence[data-level="high"] {
+		background: var(--color-success);
+	}
+
+	.ui-mapper-confidence[data-level="mid"] {
+		background: var(--color-warning);
+	}
+
+	.ui-mapper-warn {
+		color: var(--color-warning);
+	}
+}

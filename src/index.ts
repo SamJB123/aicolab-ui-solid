@@ -47,9 +47,20 @@ export {
 	type Step,
 	Steps,
 } from './marketing'
+export { type DropEntry } from './atoms/dropzone'
 export {
 	ApplicationHeader,
+	ColumnMapper,
+	type ColumnMapperColumn,
+	type ColumnMapperPatch,
+	type ColumnMapperRole,
 	Combobox,
+	DataGrid,
+	type DataGridCell,
+	type DataGridCellKind,
+	type DataGridChild,
+	type DataGridColumn,
+	type DataGridRow,
 	EmptyState,
 	Menu,
 	MenuItem,

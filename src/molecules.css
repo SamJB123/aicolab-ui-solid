@@ -3,7 +3,9 @@
 @import url("./molecules/application-header/styles.css");
 @import url("./molecules/avatar-stack/styles.css");
 @import url("./molecules/carousel/styles.css");
+@import url("./molecules/column-mapper/styles.css");
 @import url("./molecules/combobox/styles.css");
+@import url("./molecules/data-grid/styles.css");
 @import url("./molecules/date-picker/styles.css");
 @import url("./molecules/empty-state/styles.css");
 @import url("./molecules/feature-grid/styles.css");
