@@ -1,0 +1,109 @@
+/* Per-instance knobs (gap, indent, radius) on the dual wire; adapter pattern
+   per shared/knobs.ts. Depth arrives as data-depth on each list. */
+@property --_ui-tree-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 4px;
+}
+@property --_ui-tree-indent {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 20px;
+}
+@property --_ui-tree-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 8px;
+}
+
+@scope (.ui-tree) {
+	:scope {
+		--_ui-tree-gap: var(--ui-tree-gap, 0.25rem);
+		--_ui-tree-indent: var(--ui-tree-indent, 1.25rem);
+		--_ui-tree-radius: var(--ui-tree-radius, var(--r-sm, 8px));
+		display: grid;
+		gap: var(--_ui-tree-gap);
+	}
+
+	.ui-tree-list {
+		display: grid;
+		gap: var(--_ui-tree-gap);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.ui-tree-list[data-depth]:not([data-depth="0"]) {
+		margin-inline-start: var(--_ui-tree-indent);
+		padding-inline-start: 0.6rem;
+		border-inline-start: 2px solid var(--color-border);
+	}
+
+	.ui-tree-node {
+		display: grid;
+		gap: var(--_ui-tree-gap);
+	}
+
+	.ui-tree-row {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.ui-tree-level {
+		flex: 0 0 auto;
+		min-width: 3.5rem;
+		font-size: var(--t-xs, 0.78rem);
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		color: var(--color-base-content-muted);
+	}
+
+	.ui-tree-input {
+		flex: 1;
+		min-width: 8rem;
+		padding: 0.35rem 0.5rem;
+		font: inherit;
+		font-size: var(--t-sm, 0.9rem);
+		color: inherit;
+		background: var(--color-base-100);
+		border: 1px solid var(--color-border);
+		border-radius: var(--_ui-tree-radius);
+	}
+
+	.ui-tree-input:focus-visible,
+	.ui-tree-add:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 1px;
+	}
+
+	.ui-tree-actions {
+		display: inline-flex;
+		gap: 0.1rem;
+		opacity: 0.55;
+		transition: opacity 120ms ease;
+	}
+
+	.ui-tree-row:hover .ui-tree-actions,
+	.ui-tree-row:focus-within .ui-tree-actions {
+		opacity: 1;
+	}
+
+	.ui-tree-add {
+		justify-self: start;
+		appearance: none;
+		padding: 0.35rem 0.7rem;
+		font: inherit;
+		font-size: var(--t-sm, 0.9rem);
+		color: var(--color-primary);
+		background: none;
+		border: 1px dashed var(--color-border);
+		border-radius: var(--_ui-tree-radius);
+		cursor: pointer;
+	}
+
+	.ui-tree-add:disabled {
+		opacity: 0.5;
+		cursor: default;
+	}
+}

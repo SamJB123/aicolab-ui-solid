@@ -1,0 +1,106 @@
+/* Per-instance knobs (gap, radius, pad) on the dual wire; adapter pattern
+   per shared/knobs.ts. */
+@property --_ui-list-editor-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 6px;
+}
+@property --_ui-list-editor-radius {
+	syntax: "<length-percentage>";
+	inherits: false;
+	initial-value: 10px;
+}
+@property --_ui-list-editor-pad {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 8px;
+}
+
+@scope (.ui-list-editor) {
+	:scope {
+		--_ui-list-editor-gap: var(--ui-list-editor-gap, 0.4rem);
+		display: grid;
+		gap: var(--_ui-list-editor-gap);
+	}
+
+	.ui-list-editor-list {
+		display: grid;
+		gap: var(--_ui-list-editor-gap);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		counter-reset: item;
+	}
+
+	.ui-list-editor-row {
+		--_ui-list-editor-radius: var(--ui-list-editor-radius, var(--r-md));
+		--_ui-list-editor-pad: var(--ui-list-editor-pad, 0.5rem);
+		display: flex;
+		align-items: flex-start;
+		gap: 0.5rem;
+		padding: var(--_ui-list-editor-pad);
+		border: 1px solid var(--color-border);
+		border-radius: var(--_ui-list-editor-radius);
+		corner-shape: squircle;
+		background: var(--color-base-100);
+		counter-increment: item;
+	}
+
+	.ui-list-editor-row::before {
+		content: counter(item);
+		flex: 0 0 1.4rem;
+		padding-top: 0.45rem;
+		font-size: var(--t-xs, 0.78rem);
+		font-variant-numeric: tabular-nums;
+		text-align: right;
+		color: var(--color-base-content-muted);
+	}
+
+	:scope[data-ui-color-base] .ui-list-editor-row {
+		border-color: var(--ui-border);
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+	}
+
+	.ui-list-editor-fields {
+		display: grid;
+		flex: 1;
+		gap: 0.4rem;
+		min-width: 0;
+	}
+
+	.ui-list-editor-actions {
+		display: inline-flex;
+		flex: 0 0 auto;
+		gap: 0.1rem;
+	}
+
+	.ui-list-editor-empty {
+		margin: 0;
+		font-size: var(--t-sm, 0.9rem);
+		color: var(--color-base-content-muted);
+	}
+
+	.ui-list-editor-add {
+		justify-self: start;
+		appearance: none;
+		padding: 0.35rem 0.7rem;
+		font: inherit;
+		font-size: var(--t-sm, 0.9rem);
+		color: var(--color-primary);
+		background: none;
+		border: 1px dashed var(--color-border);
+		border-radius: var(--r-sm, 8px);
+		cursor: pointer;
+	}
+
+	.ui-list-editor-add:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 1px;
+	}
+
+	.ui-list-editor-add:disabled {
+		opacity: 0.5;
+		cursor: default;
+	}
+}
