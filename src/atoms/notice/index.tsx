@@ -38,10 +38,13 @@ export function Notice(props: NoticeProps) {
 		'padInline',
 		'fontSize',
 	)
+	// A notice always carries a treatment: --ui-ink/--ui-surface are only
+	// resolved under [data-ui-color-base], so an untreated notice would render
+	// with transparent text.
 	return (
 		<div
 			{...attributes}
-			{...colorTreatmentData(props)}
+			{...colorTreatmentData({ colorBase: props.colorBase ?? 'neutral', colorLevel: props.colorLevel, variant: props.variant ?? 'soft' })}
 			{...knobs.attributes(props)}
 			role={props.role ?? 'status'}
 			data-selected={props.selected ? '' : undefined}
