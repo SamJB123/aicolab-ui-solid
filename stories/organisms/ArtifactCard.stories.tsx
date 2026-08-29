@@ -62,7 +62,7 @@ export const Playground: Story = {
 }
 
 export const Grid: Story = {
-	args: { label: 'Open' },
+	args: { label: 'Open', title: 'Artifacts' },
 	render: () => (
 		<div
 			style={{

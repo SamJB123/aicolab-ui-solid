@@ -31,11 +31,13 @@ export const Playground: Story = {
 }
 
 export const Bare: Story = {
+	args: { title: 'Nothing here' },
 	render: () => <EmptyState title="Nothing here" />,
 }
 
 export const ThreeAxes: Story = {
 	name: 'Color base × level × variant',
+	args: { title: 'Empty' },
 	render: () => (
 		<ColorTreatmentStory
 			render={({ colorBase, colorLevel, variant }) => (

@@ -42,12 +42,47 @@
 	.ui-tree-node {
 		display: grid;
 		gap: var(--_ui-tree-gap);
+		view-transition-name: match-element;
+		view-transition-class: ui-tree-node;
 	}
 
 	.ui-tree-row {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+		border-radius: var(--_ui-tree-radius);
+		transition: opacity 160ms ease, background-color 160ms ease, box-shadow 160ms ease, scale 160ms ease;
+	}
+
+	.ui-tree-node[data-dragging] > .ui-tree-row {
+		opacity: 0.42;
+		scale: 0.985;
+	}
+
+	.ui-tree-node[data-drop-position="inside"] > .ui-tree-row,
+	.ui-tree-add[data-drop-target] {
+		background: color-mix(in oklab, var(--color-primary) 12%, transparent);
+		box-shadow: 0 0 0 2px var(--color-primary);
+	}
+
+	.ui-tree-node[data-drop-position="before"] > .ui-tree-row {
+		box-shadow: 0 -2px 0 var(--color-primary);
+	}
+
+	.ui-tree-node[data-drop-position="after"] > .ui-tree-row {
+		box-shadow: 0 2px 0 var(--color-primary);
+	}
+
+	.ui-tree-drag-handle {
+		flex: 0 0 auto;
+		padding: 0.25rem 0.1rem;
+		color: var(--color-base-content-muted);
+		cursor: grab;
+		user-select: none;
+	}
+
+	.ui-tree-drag-handle:active {
+		cursor: grabbing;
 	}
 
 	.ui-tree-level {
@@ -100,10 +135,31 @@
 		border: 1px dashed var(--color-border);
 		border-radius: var(--_ui-tree-radius);
 		cursor: pointer;
+		transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 	}
 
 	.ui-tree-add:disabled {
 		opacity: 0.5;
 		cursor: default;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes ui-tree-enter {
+		from {
+			opacity: 0;
+			translate: 0 -0.35rem;
+		}
+	}
+
+	@scope (.ui-tree) {
+		.ui-tree-node {
+			animation: ui-tree-enter 220ms ease-out both;
+		}
+	}
+
+	::view-transition-group(.ui-tree-node) {
+		animation-duration: 240ms;
+		animation-timing-function: linear(0, 0.55 35%, 1.08 75%, 1);
 	}
 }

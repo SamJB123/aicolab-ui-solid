@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { For, omit, Show } from 'solid-js'
+import { createUniqueId, For, omit, Show } from 'solid-js'
 import { Chip } from '../../atoms/chip'
 import {
 	colorTreatmentData,
@@ -84,7 +84,7 @@ export function ColumnMapper(props: ColumnMapperProps) {
 	)
 	const attributeRole = () => props.attributeRole ?? 'facet'
 	const labels = () => props.granularityLabels ?? { entity: 'Per entity', document: 'Per document' }
-	const listId = `ui-mapper-targets-${Math.random().toString(36).slice(2, 8)}`
+	const listId = `ui-mapper-targets-${createUniqueId()}`
 	return (
 		<div
 			{...attributes}

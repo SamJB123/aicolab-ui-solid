@@ -12,6 +12,7 @@ const meta = {
 		...treatmentArgTypes,
 		accept: { control: 'text' },
 		multiple: { control: 'boolean' },
+		directory: { control: 'boolean' },
 		disabled: { control: 'boolean' },
 		radius: { control: 'text', table: { category: 'knobs' } },
 		pad: { control: 'text', table: { category: 'knobs' } },
@@ -35,6 +36,7 @@ export const Playground: Story = {
 }
 
 export const WithFileLog: Story = {
+	args: { onFiles: () => {} },
 	render: () => {
 		const [names, setNames] = createSignal<string[]>([])
 		return (
@@ -51,8 +53,27 @@ export const WithFileLog: Story = {
 	},
 }
 
+export const FolderWithRelativePaths: Story = {
+	args: { onFiles: () => {} },
+	render: () => {
+		const [paths, setPaths] = createSignal<string[]>([])
+		return (
+			<div style={{ width: '420px', display: 'grid', gap: '10px' }}>
+				<Dropzone directory onFiles={() => {}} onEntries={(entries) => setPaths(entries.map((entry) => entry.relativePath))}>
+					<strong>Choose or drop a folder</strong>
+					<span>Relative paths are preserved</span>
+				</Dropzone>
+				<ul>
+					<For each={paths()}>{(path) => <li>{path}</li>}</For>
+				</ul>
+			</div>
+		)
+	},
+}
+
 export const ThreeAxes: Story = {
 	name: 'Color base × level × variant',
+	args: { onFiles: () => {} },
 	render: () => (
 		<ColorTreatmentStory
 			render={({ colorBase, colorLevel, variant }) => (

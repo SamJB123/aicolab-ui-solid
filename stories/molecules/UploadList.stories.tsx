@@ -48,6 +48,7 @@ export const Playground: Story = {
 }
 
 export const Live: Story = {
+	args: { label: 'Uploads', items: ITEMS },
 	render: () => {
 		const [progress, setProgress] = createSignal(0)
 		const timer = setInterval(() => setProgress((value) => (value >= 1 ? 0 : value + 0.02)), 120)

@@ -54,7 +54,7 @@ const knobs = defineKnobs('ui-grid', {
 	pad: '<length>',
 })
 
-type DataGridProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'class'> & {
+type DataGridProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'class' | 'onSelect'> & {
 	class?: ClassProp
 	label: string
 	columns: DataGridColumn[]

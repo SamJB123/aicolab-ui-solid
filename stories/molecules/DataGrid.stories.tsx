@@ -57,6 +57,18 @@ const ROWS: DataGridRow[] = [
 	},
 ]
 
+const moveChild = (rows: DataGridRow[], childId: string, toRowId: string): DataGridRow[] => {
+	const child = rows.flatMap((row) => row.children ?? []).find((candidate) => candidate.id === childId)
+	if (!child) return rows
+	return rows.map((row) => {
+		if (row.id === toRowId) return { ...row, children: [...(row.children ?? []), child] }
+		if (row.children?.some((candidate) => candidate.id === childId)) {
+			return { ...row, children: row.children.filter((candidate) => candidate.id !== childId) }
+		}
+		return row
+	})
+}
+
 export const Playground: Story = {
 	args: { label: 'Entities', titleLabel: 'Entity', columns: COLUMNS, rows: ROWS },
 	render: (args) => <DataGrid {...args} />,
@@ -75,10 +87,11 @@ export const Editable: Story = {
 				rows={rows()}
 				selected={selected()}
 				onSelect={setSelected}
+				onOpenRow={(rowId) => console.log('[data-grid story] open', rowId)}
 				onEditCell={(rowId, key, values) => setRows((all) => all.map((r) => (r.id === rowId ? { ...r, cells: { ...r.cells, [key]: { values, provenance: 'human' } } } : r)))}
 				onRenameRow={(rowId, title) => setRows((all) => all.map((r) => (r.id === rowId ? { ...r, title } : r)))}
 				onToggleMuted={(rowId, muted) => setRows((all) => all.map((r) => (r.id === rowId ? { ...r, muted } : r)))}
-				onMoveChild={(childId, toRowId) => console.log('[data-grid story] move', childId, toRowId)}
+				onMoveChild={(childId, toRowId) => setRows((all) => moveChild(all, childId, toRowId))}
 			/>
 		)
 	},

@@ -49,6 +49,7 @@ export const Playground: Story = {
 }
 
 export const CustomTrigger: Story = {
+	args: { label: 'Workspace actions' },
 	render: () => (
 		<Menu
 			label="Workspace actions"

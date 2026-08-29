@@ -172,7 +172,8 @@
 	}
 
 	.ui-grid-move {
-		min-width: 0;
+		width: auto;
+		min-width: 7rem;
 		border-color: var(--color-border);
 		font-size: var(--t-xs, 0.78rem);
 	}

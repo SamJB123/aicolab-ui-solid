@@ -109,7 +109,7 @@ export function Dropzone(props: DropzoneProps) {
 		const chosen = props.multiple === false ? files.slice(0, 1) : files
 		props.onFiles(chosen)
 		props.onEntries?.(
-			entries ??
+			entries?.slice(0, chosen.length) ??
 				chosen.map((file) => ({
 					file,
 					relativePath: (file as File & { webkitRelativePath?: string }).webkitRelativePath || '',

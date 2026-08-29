@@ -87,10 +87,10 @@ export function ListEditor<T>(props: ListEditorProps<T>) {
 				<p class="ui-list-editor-empty">{props.emptyMessage}</p>
 			</Show>
 			<ol class="ui-list-editor-list">
-				<For each={props.items}>
+				<For each={props.items} keyed={(item) => props.getKey(item, props.items.indexOf(item))}>
 					{(item, index) => (
 						<li class="ui-list-editor-row">
-							<div class="ui-list-editor-fields">{props.renderItem(item, (next) => replace(index(), next), index())}</div>
+							<div class="ui-list-editor-fields">{props.renderItem(item(), (next) => replace(index(), next), index())}</div>
 							<span class="ui-list-editor-actions">
 								<Show when={props.reorder !== false}>
 									<IconButton size="sm" variant="ghost" label="Move up" disabled={props.disabled || index() === 0} onClick={() => move(index(), -1)}>
