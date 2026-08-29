@@ -66,7 +66,11 @@ export function ListEditor<T>(props: ListEditorProps<T>) {
 		const target = index + delta
 		if (target < 0 || target >= props.items.length) return
 		const next = [...props.items]
-		;[next[index], next[target]] = [next[target], next[index]]
+		const a = next[index]
+		const b = next[target]
+		if (a === undefined || b === undefined) return
+		next[index] = b
+		next[target] = a
 		props.onChange(next)
 	}
 	return (

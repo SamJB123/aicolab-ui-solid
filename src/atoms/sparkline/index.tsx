@@ -72,7 +72,7 @@ export function Sparkline(props: SparklineProps) {
 				stroke-linejoin="round"
 				stroke-linecap="round"
 			/>
-			<circle cx={geo().last[0]} cy={geo().last[1]} r="2.4" />
+			<circle cx={geo().last?.[0]} cy={geo().last?.[1]} r="2.4" />
 		</svg>
 	)
 }

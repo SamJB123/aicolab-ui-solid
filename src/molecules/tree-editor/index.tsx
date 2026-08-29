@@ -54,11 +54,16 @@ function updateAt(nodes: TreeEditorNode[], path: number[], fn: (node: TreeEditor
 
 function moveAt(nodes: TreeEditorNode[], path: number[], delta: number): TreeEditorNode[] {
 	const [head, ...rest] = path
+	if (head === undefined) return nodes
 	if (rest.length === 0) {
 		const target = head + delta
 		if (target < 0 || target >= nodes.length) return nodes
 		const next = [...nodes]
-		;[next[head], next[target]] = [next[target], next[head]]
+		const a = next[head]
+		const b = next[target]
+		if (a === undefined || b === undefined) return nodes
+		next[head] = b
+		next[target] = a
 		return next
 	}
 	return nodes.map((node, index) => (index === head ? { ...node, children: moveAt(node.children ?? [], rest, delta) } : node))

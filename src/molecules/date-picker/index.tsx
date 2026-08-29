@@ -66,6 +66,12 @@ export function DatePicker(
 		})
 	}
 
+	const monthAbbrev = () => {
+		const name = MONTHS[props.value.m]
+		if (name === undefined) throw new RangeError(`DatePicker: month index out of range: ${props.value.m}`)
+		return name.slice(0, 3)
+	}
+
 	return (
 		<div class={['ui-picker', props.class]}>
 			<PickerTrigger
@@ -78,7 +84,7 @@ export function DatePicker(
 				value={
 					<>
 						{WEEKDAYS[weekdayOf(props.value.y, props.value.m, props.value.d)]} {props.value.d}{' '}
-						{MONTHS[props.value.m].slice(0, 3)}
+						{monthAbbrev()}
 					</>
 				}
 			/>
