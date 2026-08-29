@@ -66,6 +66,8 @@ type DataGridProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'class'> & {
 	onSelect?: (ids: string[]) => void
 	onEditCell?: (rowId: string, key: string, values: string[]) => void
 	onRenameRow?: (rowId: string, title: string) => void
+	/** The row title is a link-like button that opens the record (single click); renaming stays on double-click. */
+	onOpenRow?: (rowId: string) => void
 	onToggleMuted?: (rowId: string, muted: boolean) => void
 	/** A child may be moved to another row (renders a target picker). */
 	onMoveChild?: (childId: string, toRowId: string) => void
@@ -99,6 +101,7 @@ export function DataGrid(props: DataGridProps) {
 		'onSelect',
 		'onEditCell',
 		'onRenameRow',
+		'onOpenRow',
 		'onToggleMuted',
 		'onMoveChild',
 		'rowActions',
@@ -193,14 +196,32 @@ export function DataGrid(props: DataGridProps) {
 											<Show
 												when={renaming() === row.id}
 												fallback={
-													<span
-														class="ui-grid-title-text"
-														data-editable={props.onRenameRow ? '' : undefined}
-														title={props.onRenameRow ? 'Double-click to rename' : undefined}
-														onDblClick={() => props.onRenameRow && setRenaming(row.id)}
+													<Show
+														when={props.onOpenRow}
+														fallback={
+															<span
+																class="ui-grid-title-text"
+																data-editable={props.onRenameRow ? '' : undefined}
+																title={props.onRenameRow ? 'Double-click to rename' : undefined}
+																onDblClick={() => props.onRenameRow && setRenaming(row.id)}
+															>
+																{row.title}
+															</span>
+														}
 													>
-														{row.title}
-													</span>
+														{(open) => (
+															<button
+																type="button"
+																class="ui-grid-title-text ui-grid-open"
+																data-editable={props.onRenameRow ? '' : undefined}
+																title={props.onRenameRow ? 'Click to open, double-click to rename' : 'Open'}
+																onClick={() => open()(row.id)}
+																onDblClick={() => props.onRenameRow && setRenaming(row.id)}
+															>
+																{row.title}
+															</button>
+														)}
+													</Show>
 												}
 											>
 												<input
