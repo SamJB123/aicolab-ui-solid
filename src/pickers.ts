@@ -1,3 +1,3 @@
 /** Compatibility façade for modular picker implementations. */
-export * from './molecules/date-picker'
-export * from './molecules/time-picker'
+export { DatePicker } from './molecules/date-picker'
+export { TimePicker } from './molecules/time-picker'

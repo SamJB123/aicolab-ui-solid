@@ -1,1 +1,1 @@
-export * from './organisms/facets'
+export { type FacetItem, Facets, type FacetTabStyle } from './organisms/facets'

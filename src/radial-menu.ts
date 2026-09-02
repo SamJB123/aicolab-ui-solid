@@ -1,1 +1,1 @@
-export * from './organisms/radial-menu'
+export { RadialMenu, type RadialMenuItem } from './organisms/radial-menu'
