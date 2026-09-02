@@ -66,6 +66,8 @@ type DataGridProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, 'class' | 'onSelec
 	onSelect?: (ids: string[]) => void
 	onEditCell?: (rowId: string, key: string, values: string[]) => void
 	onRenameRow?: (rowId: string, title: string) => void
+	/** Every keystroke of a rename in progress (hosts that share drafts live); `onRenameRow` still fires on commit. */
+	onRenameInput?: (rowId: string, title: string) => void
 	/** The row title is a link-like button that opens the record (single click); renaming stays on double-click. */
 	onOpenRow?: (rowId: string) => void
 	onToggleMuted?: (rowId: string, muted: boolean) => void
@@ -101,6 +103,7 @@ export function DataGrid(props: DataGridProps) {
 		'onSelect',
 		'onEditCell',
 		'onRenameRow',
+		'onRenameInput',
 		'onOpenRow',
 		'onToggleMuted',
 		'onMoveChild',
@@ -229,6 +232,7 @@ export function DataGrid(props: DataGridProps) {
 													value={row.title}
 													aria-label={`Rename ${row.title}`}
 													ref={(el) => queueMicrotask(() => el.focus())}
+													onInput={(event) => props.onRenameInput?.(row.id, event.currentTarget.value)}
 													onKeyDown={(event) => {
 														if (event.key === 'Enter') {
 															props.onRenameRow?.(row.id, event.currentTarget.value)
