@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { children, createEffect, createSignal, createUniqueId, onCleanup, Show } from 'solid-js'
+import { children, createEffect, createSignal, createUniqueId, onSettled, Show } from 'solid-js'
 import { IconButton } from '../../atoms/icon-button'
 import { RichList, RichListItem } from '../../molecules/rich-list'
 import {
@@ -260,8 +260,13 @@ export function ResponsiveInspector(props: {
 	const onViewportResize = (): void => {
 		setViewportEpoch((epoch) => epoch + 1)
 	}
-	window.addEventListener('resize', onViewportResize)
-	onCleanup(() => window.removeEventListener('resize', onViewportResize))
+	// Component-level setup/teardown: subscribed after the first settle, so
+	// the server never touches `window` and the inspector renders on both
+	// sides from the same deterministic state (detent 'peek').
+	onSettled(() => {
+		window.addEventListener('resize', onViewportResize)
+		return () => window.removeEventListener('resize', onViewportResize)
+	})
 
 	createEffect(
 		() => ({
