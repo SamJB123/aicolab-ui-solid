@@ -37,13 +37,38 @@ function workspaceClass(name: string, value?: ClassProp): ClassProp {
 	return { [name]: true, ...value }
 }
 
-function detentHeights(): Record<InspectorDetent, number> {
-	const viewportHeight = window.innerHeight
-	return { peek: 58, half: viewportHeight * 0.42, full: viewportHeight * 0.88 }
+/** A CSS length from a computed custom property, in px (rem and px only — what the shell's knobs use). */
+function lengthPx(value: string, rootFontSize: number): number {
+	const trimmed = value.trim()
+	const number = Number.parseFloat(trimmed)
+	if (Number.isNaN(number)) return 0
+	return trimmed.endsWith('rem') ? number * rootFontSize : number
 }
 
-function nearestDetent(height: number): InspectorDetent {
-	const heights = detentHeights()
+/**
+ * The stops in px. The full stop mirrors the stylesheet's
+ * --ui-inspector-full-height: the sheet stands on the bottom bar (its computed
+ * `bottom`) and must leave the app bar plus the top safe area clear, so it is
+ * the viewport minus both — not a viewport fraction, which on phones put the
+ * grip under the header (fixed 2026-09-04). Before the sheet is measurable
+ * (server, first paint) the fraction stands in.
+ */
+function detentHeights(sheet?: HTMLElement): Record<InspectorDetent, number> {
+	const viewportHeight = window.innerHeight
+	let full = viewportHeight * 0.88
+	if (sheet) {
+		const style = getComputedStyle(sheet)
+		const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
+		const bottom = Number.parseFloat(style.bottom) || 0
+		const header = lengthPx(style.getPropertyValue('--ui-workspace-header-height'), rootFontSize)
+		const safeTop = lengthPx(style.getPropertyValue('--ui-workspace-safe-area-top'), rootFontSize)
+		if (header > 0) full = Math.min(full, viewportHeight - bottom - header - safeTop - 0.5 * rootFontSize)
+	}
+	return { peek: 58, half: viewportHeight * 0.42, full }
+}
+
+function nearestDetent(height: number, sheet?: HTMLElement): InspectorDetent {
+	const heights = detentHeights(sheet)
 	return DETENTS.reduce((best, detent) =>
 		Math.abs(heights[detent] - height) < Math.abs(heights[best] - height) ? detent : best,
 	)
@@ -279,7 +304,7 @@ export function ResponsiveInspector(props: {
 		({ detent, dragHeight, hidden, report }) => {
 			if (!report) return
 			const sheet = window.matchMedia('(max-width: 900px)').matches
-			report(sheet && !hidden ? Math.round(dragHeight ?? detentHeights()[detent]) : 0)
+			report(sheet && !hidden ? Math.round(dragHeight ?? detentHeights(root)[detent]) : 0)
 		},
 	)
 
@@ -302,7 +327,8 @@ export function ResponsiveInspector(props: {
 		const startY = event.clientY
 		const startHeight = root.getBoundingClientRect().height
 		const startDetent = detent()
-		const maxHeight = window.innerHeight * 0.92
+		// no dragging past the top stop: the header must stay reachable
+		const maxHeight = detentHeights(root).full
 		dragMoved = false
 		let latest = startHeight
 		let velocity = 0
@@ -330,7 +356,7 @@ export function ResponsiveInspector(props: {
 			setDragHeight(null)
 			if (!dragMoved) return
 			const thrown = performance.now() - lastAt < STALE_VELOCITY_MS ? velocity : 0
-			let next = nearestDetent(latest + thrown * THROW_PROJECTION_MS)
+			let next = nearestDetent(latest + thrown * THROW_PROJECTION_MS, root)
 			if (Math.abs(thrown) > FLICK_VELOCITY && next === startDetent) {
 				next = adjacentDetent(startDetent, thrown > 0 ? 1 : -1)
 			}

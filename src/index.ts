@@ -93,6 +93,7 @@ export {
 	CommandPalette,
 	type CommandPaletteItem,
 	CommandPaletteTrigger,
+	openCommandPalette,
 	type InspectorDetent,
 	InspectorHeader,
 	RadialMenu,

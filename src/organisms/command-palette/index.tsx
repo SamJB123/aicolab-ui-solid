@@ -46,8 +46,18 @@ interface CommandPaletteGroup<T extends CommandPaletteItem> {
 const optionId = (paletteId: string, itemId: string): string =>
 	`${paletteId}-option-${itemId.replace(/[^\w-]/g, '-')}`
 
-/** A visually consistent trigger for opening a CommandPalette with the
- * native Popover API. Positioning remains the containing workspace's job. */
+/** Open a CommandPalette by id as a MODAL dialog: everything behind it is
+ * inert (no clicks, no wheel reaching a canvas underneath), Escape and a
+ * click on the backdrop close it. The palette moved from a light-dismiss
+ * popover to `<dialog>.showModal()` on 2026-09-03 for exactly that: over a
+ * live stage, a popover left the scene interactive and zooming under it. */
+export function openCommandPalette(id: string): void {
+	const dialog = document.getElementById(id)
+	if (dialog instanceof HTMLDialogElement && !dialog.open) dialog.showModal()
+}
+
+/** A visually consistent trigger for opening a CommandPalette. Positioning
+ * remains the containing workspace's job. */
 export function CommandPaletteTrigger(props: {
 	target: string
 	label: string
@@ -63,7 +73,9 @@ export function CommandPaletteTrigger(props: {
 		<button
 			type="button"
 			class={['ui-command-palette-trigger', props.class]}
-			popovertarget={props.target}
+			onClick={() => openCommandPalette(props.target)}
+			aria-haspopup="dialog"
+			aria-controls={props.target}
 			aria-label={props.label}
 			{...colorTreatmentData(props)}
 			{...triggerKnobs.attributes(props)}
@@ -95,10 +107,12 @@ function scoreItem(item: CommandPaletteItem, query: string, recent: boolean): nu
 }
 
 /**
- * A native-popover command palette implementing the WAI-ARIA
+ * A modal-dialog command palette implementing the WAI-ARIA
  * aria-activedescendant combobox pattern. The palette owns search,
  * keyboard navigation, focus, grouping and presentation; consumers own
- * the domain items and what selecting one means.
+ * the domain items and what selecting one means. Open it with
+ * `openCommandPalette(id)` or a `CommandPaletteTrigger`; while open the
+ * page behind is inert.
  */
 export function CommandPalette<T extends CommandPaletteItem>(props: {
 	id: string
@@ -114,13 +128,13 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 	/** Resolve live domain status without rebuilding the item collection. */
 	getKind?: (item: T) => string | undefined
 	class?: ClassProp
-	ref?: (root: HTMLDivElement, input: HTMLInputElement) => void
+	ref?: (root: HTMLDialogElement, input: HTMLInputElement) => void
 	onOpen?: () => void
 } & ColorTreatmentProps &
 	KnobProps<typeof knobs.spec>) {
 	const [query, setQuery] = createSignal('')
 	const [active, setActive] = createSignal(0)
-	let rootEl: HTMLDivElement | undefined
+	let rootEl: HTMLDialogElement | undefined
 	let inputEl: HTMLInputElement | undefined
 	let listEl: HTMLDivElement | undefined
 
@@ -157,7 +171,7 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 	})
 
 	const select = (item: T): void => {
-		rootEl?.hidePopover()
+		rootEl?.close()
 		props.onSelect(item)
 	}
 
@@ -202,9 +216,8 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 	}
 
 	return (
-		<div
+		<dialog
 			id={props.id}
-			popover="auto"
 			class={['ui-command-palette', props.class]}
 			{...colorTreatmentData(props)}
 			{...knobs.attributes(props)}
@@ -213,10 +226,20 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 				rootEl = element
 				exposeRefs()
 			}}
-			onToggle={(event) => {
-				if (event.newState !== 'open') return
+			// A click that lands on the dialog element itself is a click on
+			// its backdrop (the content fills the box): light dismiss.
+			onClick={(event) => {
+				if (event.target === rootEl) rootEl?.close()
+			}}
+			// Reset on close so the next open starts clean whichever way it
+			// was opened; `toggle` (where the browser fires it for dialogs)
+			// additionally focuses and announces the open.
+			onClose={() => {
 				setQuery('')
 				setActive(0)
+			}}
+			onToggle={(event) => {
+				if (event.newState !== 'open') return
 				inputEl?.focus()
 				props.onOpen?.()
 			}}
@@ -226,6 +249,7 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 					inputEl = element
 					exposeRefs()
 				}}
+				autofocus
 				value={query()}
 				onInput={(event) => {
 					setQuery(event.currentTarget.value)
@@ -292,6 +316,6 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 					{`${flat().length} ${flat().length === 1 ? 'result' : 'results'}`}
 				</span>
 			</VisuallyHidden>
-		</div>
+		</dialog>
 	)
 }

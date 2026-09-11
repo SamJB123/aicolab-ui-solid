@@ -283,6 +283,15 @@
 			   + safe area); the bar is a sibling slot, so its value can't be
 			   read from here. */
 			--ui-bottom-navigation-height: calc(var(--ui-bnav-height, 3.8rem) + env(safe-area-inset-bottom, 0px));
+			/* The app bar above the shell (the raised sheet's top inset uses the
+			   same figure). The inspector's top stop must clear it: the sheet
+			   sits on the bottom bar, so a viewport-fraction height pushed the
+			   grip under the header on phones (fixed 2026-09-04). ResponsiveInspector
+			   reads these two values to mirror the stop in its drag maths. */
+			--ui-workspace-header-height: 3.4rem;
+			--ui-workspace-safe-area-top: env(safe-area-inset-top, 0px);
+			--ui-workspace-header-clearance: calc(var(--ui-workspace-header-height) + var(--ui-workspace-safe-area-top) + 0.5rem);
+			--ui-inspector-full-height: calc(100dvh - var(--ui-bottom-navigation-height) - var(--ui-workspace-header-clearance));
 			--ui-workspace-stage-floor: calc(var(--ui-bottom-navigation-height) + 58px);
 		}
 
@@ -291,7 +300,7 @@
 		}
 
 		:scope:has(.ui-responsive-inspector[data-detent="full"]) {
-			--ui-workspace-stage-floor: calc(var(--ui-bottom-navigation-height) + 88dvh);
+			--ui-workspace-stage-floor: calc(var(--ui-bottom-navigation-height) + var(--ui-inspector-full-height));
 		}
 
 		.ui-workspace-navigation {
@@ -314,7 +323,7 @@
 
 		.ui-responsive-inspector[data-detent="peek"] { --ui-inspector-detent-height: 58px; }
 		.ui-responsive-inspector[data-detent="half"] { --ui-inspector-detent-height: 42dvh; }
-		.ui-responsive-inspector[data-detent="full"] { --ui-inspector-detent-height: 88dvh; }
+		.ui-responsive-inspector[data-detent="full"] { --ui-inspector-detent-height: var(--ui-inspector-full-height); }
 		.ui-responsive-inspector[style*="height"] { transition: none; }
 
 		.ui-responsive-inspector[data-bound] {
@@ -391,7 +400,7 @@
 		.ui-responsive-inspector-content { padding-top: 0.6rem; }
 
 		.ui-raised-sheet {
-			inset: calc(3.4rem + env(safe-area-inset-top, 0px)) 0.6rem calc(var(--ui-bottom-navigation-height) + 0.6rem);
+			inset: calc(var(--ui-workspace-header-height) + env(safe-area-inset-top, 0px)) 0.6rem calc(var(--ui-bottom-navigation-height) + 0.6rem);
 		}
 
 		.ui-raised-sheet-body { padding: 1rem 1rem 2rem; }
