@@ -130,6 +130,10 @@
 			letter-spacing: 0.1em;
 			text-transform: uppercase;
 			white-space: nowrap;
+			/* A label never spills into its neighbour: the item is min-width 0, so the label clips within it. */
+			max-inline-size: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
 		.ui-bottom-navigation-centre-slot { flex: 1 1 0; }

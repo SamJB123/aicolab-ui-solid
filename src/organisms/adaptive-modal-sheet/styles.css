@@ -77,7 +77,13 @@
 		--_ui-sheet-accent: var(--ui-sheet-accent, var(--ui-color));
 	}
 
+	/* Closed, the dialog leaves the render tree once its exit transition
+	   ends (`display` transitions discretely, declared above): an invisible
+	   fixed surface must never sit over the page catching pointer events
+	   (fixed 2026-09-12 — it blocked clicks across the right of every page). */
 	:scope:not([open]) {
+		display: none;
+		pointer-events: none;
 		opacity: 0;
 		transform: translate3d(7rem, 0, 0) rotateY(-2deg) scale(0.985);
 		clip-path: inset(0 0 0 18% round 2rem 0 0 2rem);

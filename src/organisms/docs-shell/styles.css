@@ -3,7 +3,14 @@
    retarget the shell's accents: the reading-progress bar rides the family,
    and the article's prose accents follow through the inheriting
    --ui-prose-accent PUBLIC variable (prose is a class, not a component —
-   the variable wire is its whole contract). */
+   the variable wire is its whole contract).
+
+   Layout is a dataflow (2026-09-12): the shell is an inline-size container;
+   ONE size query per rail threshold sets `--docs-rails` on the frame, and
+   every dependent rule reads that value through a style query. Thresholds
+   therefore appear exactly once. `stickyTop` is the host's sticky chrome
+   height (an app mast) — the rails and the compass offset by it, and the
+   host states it once. */
 @property --_ui-docs-max-width {
 	syntax: "<length>";
 	inherits: false;
@@ -28,6 +35,11 @@
 	syntax: "<length>";
 	inherits: true;
 	initial-value: 3px;
+}
+@property --_ui-docs-sticky-top {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
 }
 @property --_ui-prose-accent {
 	syntax: "<color>";
@@ -99,14 +111,14 @@
 	font-size: var(--t-3xl);
 	line-height: 1.2;
 	margin: 2.75rem 0 0.9rem;
-	scroll-margin-top: 6rem;
+	scroll-margin-top: calc(var(--_ui-docs-sticky-top) + 3rem);
 }
 :scope h3 {
 	font-family: var(--font-display);
 	font-weight: 500;
 	font-size: var(--t-xl);
 	margin: 2rem 0 0.6rem;
-	scroll-margin-top: 6rem;
+	scroll-margin-top: calc(var(--_ui-docs-sticky-top) + 3rem);
 }
 :scope p {
 	margin: 0 0 1.1rem;
@@ -154,28 +166,135 @@
 		--_ui-docs-gap: var(--ui-docs-gap, 40px);
 		--_ui-docs-progress-ink: var(--ui-docs-progress-ink, var(--color-primary));
 		--_ui-docs-progress-height: var(--ui-docs-progress-height, 3px);
+		--_ui-docs-sticky-top: var(--ui-docs-sticky-top, 0px);
+		/* The shell's own inset; the compass bleeds through it by the same tokens. */
+		--_ui-docs-pad-block: 48px;
+		--_ui-docs-pad-inline: 24px;
+		/* Rail thresholds — each stated ONCE, in the size queries below. */
+		container-type: inline-size;
+		container-name: docs;
 		margin-inline: auto;
-		display: grid;
 		width: 100%;
 		max-width: var(--_ui-docs-max-width);
-		gap: var(--_ui-docs-gap);
-		padding: 48px 24px;
+		padding: var(--_ui-docs-pad-block) var(--_ui-docs-pad-inline);
 	}
 	:scope[data-ui-color-base] {
 		--_ui-docs-progress-ink: var(--ui-docs-progress-ink, var(--ui-color));
 		--ui-prose-accent: var(--ui-color);
 	}
-	@media (min-width: 1024px) {
-		:scope { grid-template-columns: var(--_ui-docs-side-width) minmax(0, 1fr); }
+
+	/* One decision, published as a value the rest of the shell reads. */
+	.docs-frame { --docs-rails: none; }
+	@container docs (width >= 64rem) {
+		.docs-frame { --docs-rails: nav; }
+	}
+	@container docs (width >= 80rem) {
+		.docs-frame { --docs-rails: both; }
+	}
+
+	.docs-grid {
+		display: grid;
+		gap: var(--_ui-docs-gap);
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.docs-nav,
+	.docs-toc { display: none; }
+	@container style(--docs-rails: nav) {
+		.docs-grid { grid-template-columns: var(--_ui-docs-side-width) minmax(0, 1fr); }
 		.docs-nav { display: block; }
 	}
-	@media (min-width: 1280px) {
-		:scope { grid-template-columns: var(--_ui-docs-side-width) minmax(0, 1fr) var(--_ui-docs-side-width); }
+	@container style(--docs-rails: both) {
+		.docs-grid { grid-template-columns: var(--_ui-docs-side-width) minmax(0, 1fr) var(--_ui-docs-side-width); }
+		.docs-nav,
 		.docs-toc { display: block; }
 	}
-	.docs-side { position: sticky; top: 96px; display: grid; gap: 4px; }
+	/* A rail pins below the host's sticky chrome and scrolls within what is
+	   left of the viewport; the same offset token sizes both. */
+	.docs-side {
+		--_ui-docs-side-offset: 2.5rem;
+		position: sticky;
+		top: calc(var(--_ui-docs-sticky-top) + var(--_ui-docs-side-offset));
+		max-block-size: calc(100dvh - var(--_ui-docs-sticky-top) - 2 * var(--_ui-docs-side-offset));
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		scrollbar-width: thin;
+		display: grid;
+		align-content: start;
+		gap: 4px;
+	}
 	.docs-side > .ui-eyebrow { margin-bottom: 8px; }
 	.docs-article { min-width: 0; }
+
+	/* ── Compass: wayfinding when no rail renders ── */
+	.docs-compass { display: none; }
+	@container style(--docs-rails: none) {
+		.docs-compass {
+			display: block;
+			position: sticky;
+			top: var(--_ui-docs-sticky-top);
+			z-index: 40;
+			margin: calc(-1 * var(--_ui-docs-pad-block)) calc(-1 * var(--_ui-docs-pad-inline)) 0;
+			padding: 0.4rem 0.75rem;
+			background: color-mix(in oklab, var(--color-base-100) 88%, transparent);
+			backdrop-filter: blur(10px);
+			border-bottom: 1px solid var(--color-border);
+			container-type: scroll-state;
+		}
+	}
+	/* The browser says whether it is pinned; no scroll listener. */
+	@container scroll-state(stuck: top) {
+		.docs-compass-btn { box-shadow: 0 6px 18px -10px rgb(0 0 0 / 0.5); }
+	}
+	.docs-compass-btn {
+		appearance: none;
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		width: 100%;
+		min-height: 2.4rem;
+		padding: 0.25rem 0.35rem;
+		border: 0;
+		border-radius: var(--r-md, 8px);
+		background: transparent;
+		color: var(--color-base-content);
+		font: inherit;
+		font-size: var(--t-sm);
+		text-align: left;
+		cursor: pointer;
+		transition: box-shadow 200ms ease;
+	}
+	.docs-compass-btn:focus-visible { outline: 2px solid var(--_ui-docs-progress-ink); outline-offset: 2px; }
+	.docs-compass-chapter { flex: none; font-weight: 600; color: var(--_ui-docs-progress-ink); white-space: nowrap; }
+	.docs-compass-sep { flex: none; color: var(--color-base-content-muted); }
+	.docs-compass-section { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-base-content-muted); }
+	.docs-compass-glyph { flex: none; margin-left: auto; color: var(--color-base-content-muted); }
+	.docs-compass-pop {
+		position: fixed;
+		inset: auto 0 0 0;
+		width: 100%;
+		max-height: 80dvh;
+		margin: 0;
+		padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+		border: 0;
+		border-top: 1px solid var(--color-border);
+		border-radius: var(--r-lg, 14px) var(--r-lg, 14px) 0 0;
+		background: var(--color-base-100);
+		color: var(--color-base-content);
+		box-shadow: 0 -18px 40px rgb(0 0 0 / 0.25);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		display: none;
+		gap: 0.5rem;
+		grid-template-columns: 1fr;
+	}
+	.docs-compass-pop:popover-open { display: grid; }
+	.docs-compass-pop::backdrop { background: color-mix(in oklab, var(--color-overlay-surface, #000) 40%, transparent); }
+	.docs-compass-pop > .ui-eyebrow { margin: 0.5rem 0 0.25rem; }
+	@media (prefers-reduced-motion: no-preference) {
+		.docs-compass-pop { transition: display 200ms allow-discrete, overlay 200ms allow-discrete, translate 200ms ease; translate: 0 8px; }
+		.docs-compass-pop:popover-open { translate: 0 0; }
+		@starting-style { .docs-compass-pop:popover-open { translate: 0 8px; } }
+	}
 
 	/* ── Frontier knob boundary (see select-control for the pattern) ── */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
@@ -185,6 +304,7 @@
 			--_ui-docs-gap: attr(data-ui-docs-gap type(<length>), var(--ui-docs-gap, 40px));
 			--_ui-docs-progress-ink: attr(data-ui-docs-progress-ink type(<color>), var(--ui-docs-progress-ink, var(--color-primary)));
 			--_ui-docs-progress-height: attr(data-ui-docs-progress-height type(<length>), var(--ui-docs-progress-height, 3px));
+			--_ui-docs-sticky-top: attr(data-ui-docs-sticky-top type(<length>), var(--ui-docs-sticky-top, 0px));
 		}
 		:scope[data-ui-color-base] {
 			--_ui-docs-progress-ink: attr(data-ui-docs-progress-ink type(<color>), var(--ui-docs-progress-ink, var(--ui-color)));

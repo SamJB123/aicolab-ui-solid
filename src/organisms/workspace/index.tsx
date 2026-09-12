@@ -270,6 +270,11 @@ export function ResponsiveInspector(props: {
 	 * stage instead of overlaying it. Lets the stage keep its subject inside
 	 * the uncovered strip (settled 2026-08-16). */
 	onOcclusionChange?: (px: number) => void
+	/** A host "show me the reading" gesture (a bottom-bar item, say): every
+	 * change of this value lifts a peeking sheet to half, and leaves a sheet
+	 * the reader has already raised where it is. Ignored in side-panel mode,
+	 * where the panel is always visible. */
+	raise?: number
 	class?: ClassProp
 	children?: JSX.Element
 }) {
@@ -319,6 +324,12 @@ export function ResponsiveInspector(props: {
 			// effect must key on the binding only — tracking the detent would
 			// bounce a manually-lowered sheet back up while bound.
 			if (activeKey) setDetent((current) => (current === 'peek' ? 'half' : current))
+		},
+	)
+	createEffect(
+		() => props.raise,
+		(raise) => {
+			if (raise) setDetent((current) => (current === 'peek' ? 'half' : current))
 		},
 	)
 
