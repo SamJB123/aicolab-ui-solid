@@ -1,0 +1,37 @@
+/* ── night-ochre — the consultation reader's theme ─────────────────────────
+   Authored for First Resort (the APH preventing-conflict inquiry explorer,
+   2026-09-14) and meant to be shared by any Insight Bridge corpus that reads
+   public submissions to a consultation: night blue as the ground, the same
+   sky the galaxy view lives in, with a signal ochre as the lead accent — the
+   colour a warning is painted, and the colour the heat ramp climbs to, so
+   "attention" and identity coincide. Light is chart paper with the ochre
+   deepened for AA.
+
+   Anchors only — the ui-solid ladder derives every surface, border and
+   content role per scheme. Both schemes are authored here via light-dark();
+   force one with data-theme / .theme-dark / .theme-light as usual. Authored
+   on `.ui-theme` as well as :root so a nested theme boundary (e.g. a
+   forced-dark subtree around visual media) re-resolves the anchors under its
+   own color-scheme instead of inheriting the root scheme's computed colors.
+
+   Faces: IBM Plex Sans (body/UI) + Source Serif 4 (display serif). This file
+   sets the tokens only — the consumer loads the font files (both are on
+   Google Fonts). --font-data is deliberately not set: the ui-solid default
+   (Azeret Mono) remains the data voice. */
+
+:root,
+.ui-theme {
+	--color-base-100: light-dark(#fbf9f3, #101828);
+	--color-base-content: light-dark(#1b2431, #dde4ee);
+	--color-primary: light-dark(#9a6410, #e6b04a);
+
+	/* Functional data states (never decorative). */
+	--color-success: light-dark(#1f7a66, #5fb8ac);
+	--color-warning: light-dark(#b45309, #d99a4e);
+	--color-error: light-dark(#a3372a, #e0634a);
+
+	--font-display: "Source Serif 4", "Iowan Old Style", Georgia, "Times New Roman", serif;
+	--font-sans:
+		"IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+		Arial, sans-serif;
+}

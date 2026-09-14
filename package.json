@@ -21,6 +21,7 @@
 		"./styles.css": "./src/styles.css",
 		"./reset.css": "./src/reset.css",
 		"./themes/crimson-legal.css": "./src/themes/crimson-legal.css",
+		"./themes/night-ochre.css": "./src/themes/night-ochre.css",
 		"./xp": "./src/xp/index.ts",
 		"./xp/styles.css": "./src/xp/styles.css",
 		"./depth-card": "./src/depth-card/index.ts",
