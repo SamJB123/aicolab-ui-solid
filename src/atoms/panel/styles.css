@@ -117,7 +117,9 @@
 		font-size: var(--t-2xs);
 		text-transform: uppercase;
 		letter-spacing: 0.2em;
-		color: var(--color-base-content-faint);
+		/* Muted, not faint: at 10px the faint tone measured 4.2:1 on the house
+		   light background, under the 4.5:1 AA floor. */
+		color: var(--color-base-content-muted);
 	}
 	:scope[data-ui-color-base] > header .ui-panel-kicker {
 		color: var(--ui-ink-faint);

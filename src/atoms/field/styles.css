@@ -25,8 +25,11 @@
 		flex-direction: column;
 		gap: var(--_ui-field-gap);
 	}
+	/* Label ink defaults to the MUTED tone, not faint: at the label's 11px
+	   size, faint (58% alpha) sits under the 4.5:1 AA floor on the house
+	   backgrounds; muted (76%) clears it. */
 	:scope > .ui-field-label {
-		--_ui-field-label-ink: var(--ui-field-label-ink, var(--color-base-content-faint));
+		--_ui-field-label-ink: var(--ui-field-label-ink, var(--color-base-content-muted));
 		--_ui-field-label-font-size: var(--ui-field-label-font-size, var(--t-2xs));
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
 		font-size: var(--_ui-field-label-font-size);
