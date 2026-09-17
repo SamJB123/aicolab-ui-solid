@@ -14,6 +14,17 @@ const applyTheme = (mode: ThemeMode): void => {
 	document.documentElement.style.colorScheme = mode === 'auto' ? '' : mode
 }
 
+/**
+ * Inline boot script for a document <head>: re-applies the persisted theme
+ * BEFORE first paint. The toggle itself restores the choice only after
+ * hydration (it must render Auto on the server), so without this a person
+ * who chose Dark on a light-scheme OS sees a light flash on every load.
+ * Render it as `<script innerHTML={themeBootScript()} />` above the
+ * stylesheet, or paste the string into a static HTML shell.
+ */
+export const themeBootScript = (storageKey: string = THEME_KEY): string =>
+	`(function(){try{var m=localStorage.getItem(${JSON.stringify(storageKey)});if(m==="light"||m==="dark"){document.documentElement.style.colorScheme=m}}catch(e){}})()`
+
 /** Shared Auto → Light → Dark control for ui-solid's light-dark() theme.
  *  The server renders Auto; persisted client preference is restored after
  *  settlement so the control remains hydration-safe in document shells. */

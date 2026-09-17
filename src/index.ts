@@ -69,6 +69,7 @@ export {
 	type MenuTriggerWiring,
 	type ThemeMode,
 	ThemeToggle,
+	themeBootScript,
 	ToggleGroup,
 	type ToggleOption,
 	ToolPanel,
