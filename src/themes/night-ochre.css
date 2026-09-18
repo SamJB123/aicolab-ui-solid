@@ -19,7 +19,15 @@
    Google Fonts). --font-data is deliberately not set: the ui-solid default
    (Azeret Mono) remains the data voice. */
 
-:root,
+/* AUTHORED ON `.ui-theme` ONLY (2026-09-18) — never on `:root`.
+   A theme that anchors `:root` cannot be confined to part of a document, and
+   one document now needs exactly that: the Insight Bridge pipeline zone serves
+   an operator console and a public reading site from the same root, and only
+   the site is night-ochre. Anchoring a class instead makes every theme scopable
+   by construction — custom properties inherit into the subtree that carries the
+   class and nowhere else, which is the half of scoping `@scope` deliberately
+   does not do (it contains selector matching, not value inheritance).
+   A consumer that wants the theme everywhere puts the class on its <html>. */
 .ui-theme {
 	--color-base-100: light-dark(#fbf9f3, #101828);
 	--color-base-content: light-dark(#1b2431, #dde4ee);

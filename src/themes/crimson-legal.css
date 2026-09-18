@@ -17,7 +17,9 @@
    is deliberately not set: the ui-solid default (Azeret Mono) remains the
    data voice — a sanctioned departure, the reference system has no mono. */
 
-:root,
+/* AUTHORED ON `.ui-theme` ONLY (2026-09-18) — never on `:root`; see the note in
+   night-ochre.css. A consumer that wants the theme everywhere puts the class on
+   its <html>; one that wants it on part of a document puts it on that subtree. */
 .ui-theme {
 	--color-base-100: light-dark(#ffffff, #18202c);
 	--color-base-content: light-dark(#1e293b, #cbd5e1);
