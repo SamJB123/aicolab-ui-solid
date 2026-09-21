@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 // A realistic full-page composition — every marketing primitive on one
-// canvas, the way workers/landing consumes them. Useful with the Theme
+// canvas, the way platform/landing consumes them. Useful with the Theme
 // toolbar's Split mode for whole-page light/dark tuning.
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
 import {
