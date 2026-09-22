@@ -40,6 +40,17 @@ function createNodeViewElement(
 	return spec
 }
 
+export interface SolidNodeViewOptions<Attrs extends object> {
+	/** The node type this view renders; its spec is defined elsewhere. */
+	name: string
+	readAttrs(node: ProseMirrorNode): Attrs
+	/** Whether the node has content ProseMirror renders into `contentRef`'s element. */
+	hasContent: boolean
+	component: Component<SolidNodeViewProps<Attrs>>
+	as?: NodeViewDOMSpec
+	contentAs?: NodeViewDOMSpec
+}
+
 /** Define a ProseKit schema block and owned Solid 2 node view together. */
 export function defineSolidBlock<Attrs extends object>(
 	options: SolidBlockOptions<Attrs>,
@@ -56,8 +67,26 @@ export function defineSolidBlock<Attrs extends object>(
 			options.toDOM ??
 			(() => ['div', { 'data-solid-block': options.name }, ...(hasContent ? [0] : [])]),
 	})
+	return union(
+		spec,
+		defineSolidNodeView({
+			name: options.name,
+			readAttrs: options.readAttrs,
+			hasContent,
+			component: options.component,
+			as: options.as,
+			contentAs: options.contentAs,
+		}),
+	)
+}
 
-	const nodeView = defineNodeView({
+/** A Solid 2 node view for a node whose spec is defined elsewhere (a schema shared with
+ *  a server that never renders): the view half of `defineSolidBlock` on its own. */
+export function defineSolidNodeView<Attrs extends object>(
+	options: SolidNodeViewOptions<Attrs>,
+): Extension {
+	const hasContent = options.hasContent
+	return defineNodeView({
 		name: options.name,
 		constructor(initialNode, view, getPos): NodeView {
 			const dom = createNodeViewElement(
@@ -116,14 +145,13 @@ export function defineSolidBlock<Attrs extends object>(
 					return (
 						target instanceof HTMLElement &&
 						(target.isContentEditable ||
-							target.closest('button, input, select, textarea, [data-prosekit-stop-events]') !==
-								null)
+							target.closest(
+								'button, input, select, textarea, a[href], [popover], [data-prosekit-stop-events]',
+							) !== null)
 					)
 				},
 				destroy: dispose,
 			}
 		},
 	})
-
-	return union(spec, nodeView)
 }

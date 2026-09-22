@@ -4,6 +4,7 @@
 export { Accordion, type AccordionDensity, type AccordionSpacing } from './accordion'
 export { ApplicationHeader } from './application-header'
 export { AvatarStack, type AvatarStackPerson } from './avatar-stack'
+export { Callout } from './callout'
 export { Carousel } from './carousel'
 export { ColumnMapper, type ColumnMapperColumn, type ColumnMapperPatch, type ColumnMapperRole } from './column-mapper'
 export { Combobox } from './combobox'

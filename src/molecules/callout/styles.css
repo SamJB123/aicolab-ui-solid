@@ -1,0 +1,112 @@
+/* ── Callout — a banded box ──
+   Knobs (radius, pad, bandPad, iconSize) on the usual two wires; surfaces and
+   ink stay with the treatment roles. The root carries the body's treatment
+   (outline by default: an occluding surface inside a family border); the band
+   carries its own SOLID treatment of the same family, so the two paint from
+   the resolver independently and a band-less callout is a plain treated
+   surface. Adapters are assigned on :scope and inherit into the band and
+   body, which only read them. */
+@property --_ui-callout-radius {
+	syntax: "<length-percentage>";
+	inherits: true;
+	initial-value: 6px;
+}
+@property --_ui-callout-pad {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0.8rem;
+}
+@property --_ui-callout-band-pad {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0.45rem;
+}
+@property --_ui-callout-icon-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 1.1rem;
+}
+
+@scope (.ui-callout) {
+	:scope {
+		--_ui-callout-radius: var(--ui-callout-radius, var(--r-sm));
+		--_ui-callout-pad: var(--ui-callout-pad, 0.8rem);
+		--_ui-callout-band-pad: var(--ui-callout-band-pad, 0.45rem);
+		--_ui-callout-icon-size: var(--ui-callout-icon-size, 1.1rem);
+
+		display: grid;
+		margin: 0;
+		border: 1px solid var(--ui-border);
+		border-radius: var(--_ui-callout-radius);
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		overflow: clip;
+	}
+
+	/* The outline body reads on the page surface, not the family tint. */
+	:scope[data-ui-color-variant="outline"] {
+		background: var(--ui-surface-occluding);
+		color: var(--color-base-content);
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-callout-radius: attr(data-ui-callout-radius type(<length-percentage>), var(--ui-callout-radius, var(--r-sm)));
+			--_ui-callout-pad: attr(data-ui-callout-pad type(<length>), var(--ui-callout-pad, 0.8rem));
+			--_ui-callout-band-pad: attr(data-ui-callout-band-pad type(<length>), var(--ui-callout-band-pad, 0.45rem));
+			--_ui-callout-icon-size: attr(data-ui-callout-icon-size type(<length>), var(--ui-callout-icon-size, 1.1rem));
+		}
+	}
+
+	.ui-callout-band {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		align-items: center;
+		gap: 0.6em;
+		padding: var(--_ui-callout-band-pad) calc(var(--_ui-callout-pad) * 0.9);
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		font-weight: 600;
+	}
+
+	.ui-callout-band:not(:has(> .ui-callout-icon)) {
+		grid-template-columns: 1fr;
+	}
+
+	.ui-callout-icon {
+		display: inline-grid;
+		place-items: center;
+		width: var(--_ui-callout-icon-size);
+		height: var(--_ui-callout-icon-size);
+		font-size: var(--_ui-callout-icon-size);
+		line-height: 1;
+	}
+
+	.ui-callout-icon > img,
+	.ui-callout-icon > svg {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+
+	.ui-callout-heading {
+		min-width: 0;
+	}
+
+	.ui-callout-heading > :is(p, h1, h2, h3, h4, h5, h6) {
+		margin: 0;
+	}
+
+	.ui-callout-body {
+		padding: var(--_ui-callout-pad);
+	}
+
+	.ui-callout-body > :first-child {
+		margin-top: 0;
+	}
+
+	.ui-callout-body > :last-child {
+		margin-bottom: 0;
+	}
+}

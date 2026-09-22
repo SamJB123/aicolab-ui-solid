@@ -6,6 +6,7 @@
 @import url("./organisms/command-palette/styles.css");
 @import url("./organisms/docs-shell/styles.css");
 @import url("./organisms/facets/styles.css");
+@import url("./organisms/flow-map/styles.css");
 @import url("./organisms/radial-menu/styles.css");
 @import url("./organisms/scene-stage/styles.css");
 @import url("./organisms/toast/styles.css");

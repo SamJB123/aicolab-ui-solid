@@ -7,6 +7,14 @@ export { ArtifactCard } from './artifact-card'
 export { CommandPalette, type CommandPaletteItem, CommandPaletteTrigger, openCommandPalette } from './command-palette'
 export { type DocsNavItem, DocsShell } from './docs-shell'
 export { type FacetItem, Facets, type FacetTabStyle } from './facets'
+export {
+	FlowMap,
+	type FlowMapEdge,
+	type FlowMapFooter,
+	type FlowMapFooterItem,
+	type FlowMapNode,
+	type FlowMapRail,
+} from './flow-map'
 export { RadialMenu, type RadialMenuItem } from './radial-menu'
 export { SceneStage, type SceneStageAdapter, type SceneStageController, type SceneStageMountContext } from './scene-stage'
 export { dismissToast, toast, ToastHost, type ToastOptions } from './toast'

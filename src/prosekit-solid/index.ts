@@ -11,8 +11,10 @@ export {
 } from './editor-state'
 export {
 	defineSolidBlock,
+	defineSolidNodeView,
 	type NodeViewDOMSpec,
 	type SolidBlockOptions,
+	type SolidNodeViewOptions,
 	type SolidNodeViewProps,
 } from './node-view'
 export {

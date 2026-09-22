@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises'
 
 const read = (path) => readFile(new URL(path, import.meta.url), 'utf8')
 
-const [resolver, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit] = await Promise.all([
+const [resolver, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit, callout, flowMap] = await Promise.all([
 	read('../src/resolver.css'),
 	read('../src/molecules/accordion/styles.css'),
 	read('../src/atoms/select-control/styles.css'),
@@ -18,6 +18,8 @@ const [resolver, accordion, selectControl, button, formControl, iconButton, hold
 	read('../src/molecules/carousel/styles.css'),
 	read('../src/organisms/workspace/styles.css'),
 	read('../src/prosekit-solid/styles.css'),
+	read('../src/molecules/callout/styles.css'),
+	read('../src/organisms/flow-map/styles.css'),
 ])
 
 const requireAll = (source, expressions, contract) => {
@@ -143,6 +145,26 @@ requireAll(
 		/--_ui-notice-radius: attr\(data-ui-notice-radius type\(<length-percentage>\), var\(--ui-notice-radius, var\(--r-xs\)\)\)/,
 	],
 	'notice knob boundary',
+)
+requireAll(
+	callout,
+	[
+		/--_ui-callout-radius: var\(--ui-callout-radius, var\(--r-sm\)\)/,
+		/--_ui-callout-radius: attr\(data-ui-callout-radius type\(<length-percentage>\), var\(--ui-callout-radius, var\(--r-sm\)\)\)/,
+		/--_ui-callout-pad: attr\(data-ui-callout-pad type\(<length>\), var\(--ui-callout-pad, 0\.8rem\)\)/,
+	],
+	'callout knob boundary',
+)
+requireAll(
+	flowMap,
+	[
+		/--_ui-fm-node-radius: var\(--ui-fm-node-radius, var\(--r-md\)\)/,
+		/--_ui-fm-node-radius: attr\(data-ui-fm-node-radius type\(<length-percentage>\), var\(--ui-fm-node-radius, var\(--r-md\)\)\)/,
+		/--_ui-fm-connector-width: attr\(data-ui-fm-connector-width type\(<length>\), var\(--ui-fm-connector-width, 2px\)\)/,
+		/@container ui-flow-map \(inline-size < 40rem\)/,
+		/@supports \(anchor-name: --a\)/,
+	],
+	'flow map knob boundary',
 )
 requireAll(
 	accordionItem,

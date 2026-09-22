@@ -1,0 +1,514 @@
+/* ── FlowMap — boxes on a grid, connectors between them, a spanning rail, a footer
+   band with cards, a moving ring, previews ──
+   Knobs (nodeRadius, gap, discSize, connectorInk, connectorWidth) on the usual two
+   wires; adapters assigned on :scope and inherited by everything beneath (the field,
+   nodes, edges and cards all read them). Surfaces and inks come from the treatment
+   roles: the root's family paints the step nodes (solid), a note node paints the same
+   family's outline roles, the rail, chips and cards carry their own treatments.
+
+   Mechanics the browser owns:
+   - placement: nodes carry --ui-fm-col/row/cols/rows (mandatory wires, emitted every
+     render) and the grid reads them; the narrow layout (a CONTAINER query, so the map
+     answers the space it is given) ignores them and flows the nodes in order;
+   - connectors: each edge is an absolutely positioned element whose insets come from
+     the two nodes' anchor names (--ui-fm-from / --ui-fm-to, mandatory wires) through
+     anchor(); they reflow with the grid. Without anchor positioning they are hidden
+     and the narrow layout's sequence arrows stand in;
+   - the ring: anchored to the current node (position-anchor set by the component),
+     glides through a view transition when the current node changes;
+   - reveal: a scroll timeline (view()) staggered by sibling-index(); none under
+     reduced motion or where scroll timelines are missing. */
+@property --_ui-fm-node-radius {
+	syntax: "<length-percentage>";
+	inherits: true;
+	initial-value: 14px;
+}
+@property --_ui-fm-gap {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 20px;
+}
+@property --_ui-fm-disc-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 36px;
+}
+@property --_ui-fm-connector-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-fm-connector-width {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 2px;
+}
+
+@scope (.ui-flow-map) {
+	:scope {
+		--_ui-fm-node-radius: var(--ui-fm-node-radius, var(--r-md));
+		--_ui-fm-gap: var(--ui-fm-gap, 1.25rem);
+		--_ui-fm-disc-size: var(--ui-fm-disc-size, 2.25rem);
+		--_ui-fm-connector-ink: var(--ui-fm-connector-ink, var(--ui-color));
+		--_ui-fm-connector-width: var(--ui-fm-connector-width, 2px);
+
+		container-type: inline-size;
+		container-name: ui-flow-map;
+		display: grid;
+		gap: 0.75rem;
+		font-size: var(--t-md);
+		color: var(--color-base-content);
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-fm-node-radius: attr(data-ui-fm-node-radius type(<length-percentage>), var(--ui-fm-node-radius, var(--r-md)));
+			--_ui-fm-gap: attr(data-ui-fm-gap type(<length>), var(--ui-fm-gap, 1.25rem));
+			--_ui-fm-disc-size: attr(data-ui-fm-disc-size type(<length>), var(--ui-fm-disc-size, 2.25rem));
+			--_ui-fm-connector-ink: attr(data-ui-fm-connector-ink type(<color>), var(--ui-fm-connector-ink, var(--ui-color)));
+			--_ui-fm-connector-width: attr(data-ui-fm-connector-width type(<length>), var(--ui-fm-connector-width, 2px));
+		}
+	}
+
+	/* ── The field: the grid the nodes and rail sit on ── */
+	.ui-flow-map-field {
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(var(--ui-fm-columns, 2), minmax(0, 1fr)) auto;
+		grid-template-rows: repeat(var(--ui-fm-row-count, 1), auto);
+		gap: var(--_ui-fm-gap);
+		padding: var(--_ui-fm-gap);
+		border-radius: calc(var(--_ui-fm-node-radius) * 1.8);
+		corner-shape: squircle;
+		background: color-mix(in oklab, var(--color-base-content) 4%, transparent);
+		box-shadow: inset 0 0 0 1px var(--color-border);
+	}
+
+	/* ── Nodes ── */
+	.ui-flow-map-node {
+		position: relative;
+		grid-column: var(--ui-fm-col) / span var(--ui-fm-cols, 1);
+		grid-row: var(--ui-fm-row) / span var(--ui-fm-rows, 1);
+		display: grid;
+		border-radius: var(--_ui-fm-node-radius);
+		corner-shape: squircle;
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: inset 0 0 0 1px var(--ui-border);
+		transition:
+			translate 160ms,
+			box-shadow 160ms;
+	}
+	.ui-flow-map-node[data-kind="note"] {
+		background: var(--ui-surface-occluding);
+		color: var(--ui-family-ink);
+		box-shadow: inset 0 0 0 1px var(--ui-color);
+	}
+	.ui-flow-map-node:has(> .ui-flow-map-node-body:is(a, button):hover) {
+		translate: 0 -1px;
+		box-shadow:
+			inset 0 0 0 1px var(--ui-border),
+			0 10px 24px -14px color-mix(in oklab, var(--ui-color) 60%, transparent);
+	}
+	.ui-flow-map-node-body {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		align-items: center;
+		gap: 0.7em;
+		min-height: calc(var(--_ui-fm-disc-size) + 1.4em);
+		padding: 0.7em 0.9em;
+		border-radius: inherit;
+		corner-shape: inherit;
+		font: inherit;
+		font-weight: 600;
+		line-height: 1.3;
+		text-align: left;
+		color: inherit;
+		text-decoration: none;
+		background: none;
+		border: 0;
+		cursor: default;
+	}
+	.ui-flow-map-node-body:is(a, button) {
+		cursor: pointer;
+	}
+	.ui-flow-map-node-body:focus-visible {
+		outline: 2px solid var(--color-focus-ring, var(--ui-color));
+		outline-offset: 3px;
+	}
+	.ui-flow-map-node-body:not(:has(> .ui-flow-map-disc)) {
+		grid-template-columns: 1fr;
+		justify-items: center;
+		text-align: center;
+	}
+	.ui-flow-map-disc {
+		display: grid;
+		place-items: center;
+		width: var(--_ui-fm-disc-size);
+		height: var(--_ui-fm-disc-size);
+		border-radius: var(--r-pill);
+		background: var(--ui-content);
+		color: var(--ui-color);
+		font-family: var(--font-data, ui-monospace, monospace);
+		font-size: calc(var(--_ui-fm-disc-size) * 0.5);
+		font-weight: 700;
+	}
+	.ui-flow-map-node[data-kind="note"] .ui-flow-map-disc {
+		background: var(--ui-color);
+		color: var(--ui-content);
+	}
+	.ui-flow-map-label {
+		min-width: 0;
+		text-wrap: balance;
+	}
+
+	/* The attention chip: one level, an optional count, in the node's corner. */
+	.ui-flow-map-chip {
+		position: absolute;
+		top: -0.55em;
+		right: -0.45em;
+		display: grid;
+		place-items: center;
+		min-width: 1.6em;
+		height: 1.6em;
+		padding: 0 0.45em;
+		border-radius: var(--r-pill);
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		font-size: 0.72em;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		box-shadow: 0 0 0 2px var(--color-base-100);
+	}
+	.ui-flow-map-chip-dot {
+		width: 0.5em;
+		height: 0.5em;
+		border-radius: var(--r-pill);
+		background: currentColor;
+	}
+
+	/* ── The rail: a band spanning every row beside the nodes ── */
+	.ui-flow-map-rail {
+		grid-column: -2 / -1;
+		grid-row: 1 / -1;
+		display: grid;
+		place-items: center;
+		padding: 0.9em 0.55em;
+		border-radius: var(--_ui-fm-node-radius);
+		corner-shape: squircle;
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		font: inherit;
+		font-size: 0.85em;
+		font-weight: 700;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		text-decoration: none;
+		border: 0;
+		cursor: default;
+	}
+	.ui-flow-map-rail:is(a, button) {
+		cursor: pointer;
+	}
+	.ui-flow-map-rail-label {
+		writing-mode: vertical-rl;
+		text-orientation: mixed;
+		rotate: 180deg;
+	}
+
+	/* ── Connectors ── */
+	.ui-flow-map-edge {
+		position: absolute;
+		display: none;
+		pointer-events: none;
+		color: var(--_ui-fm-connector-ink);
+	}
+	.ui-flow-map-edge::before,
+	.ui-flow-map-edge::after {
+		content: "";
+		position: absolute;
+		width: calc(var(--_ui-fm-connector-width) * 5);
+		height: calc(var(--_ui-fm-connector-width) * 4);
+		background: currentColor;
+	}
+	@supports (anchor-name: --a) {
+		.ui-flow-map-edge {
+			display: block;
+		}
+		/* Down: a bar from the bottom of `from` to the top of `to`, on `from`'s centre. */
+		.ui-flow-map-edge[data-route="down"] {
+			top: anchor(var(--ui-fm-from) bottom);
+			bottom: anchor(var(--ui-fm-to) top);
+			left: calc(anchor(var(--ui-fm-from) center) - var(--_ui-fm-connector-width) / 2);
+			width: var(--_ui-fm-connector-width);
+			background: currentColor;
+		}
+		.ui-flow-map-edge[data-route="down"]::before {
+			display: none;
+		}
+		.ui-flow-map-edge[data-route="down"]::after {
+			left: 50%;
+			bottom: 0;
+			translate: -50% 0;
+			clip-path: polygon(50% 100%, 0 0, 100% 0);
+		}
+		.ui-flow-map-edge[data-route="down"][data-heads="line"]::after {
+			display: none;
+		}
+		/* Side: a bar from the right of `from` to the left of `to`, on `from`'s centre line. */
+		.ui-flow-map-edge[data-route="side"] {
+			left: anchor(var(--ui-fm-from) right);
+			right: anchor(var(--ui-fm-to) left);
+			top: calc(anchor(var(--ui-fm-from) center) - var(--_ui-fm-connector-width) / 2);
+			height: var(--_ui-fm-connector-width);
+			background: currentColor;
+		}
+		.ui-flow-map-edge[data-route="side"]::after {
+			right: 0;
+			top: 50%;
+			translate: 0 -50%;
+			width: calc(var(--_ui-fm-connector-width) * 4);
+			height: calc(var(--_ui-fm-connector-width) * 5);
+			clip-path: polygon(100% 50%, 0 0, 0 100%);
+		}
+		.ui-flow-map-edge[data-route="side"]::before {
+			left: 0;
+			top: 50%;
+			translate: 0 -50%;
+			width: calc(var(--_ui-fm-connector-width) * 4);
+			height: calc(var(--_ui-fm-connector-width) * 5);
+			clip-path: polygon(0 50%, 100% 0, 100% 100%);
+			display: none;
+		}
+		.ui-flow-map-edge[data-route="side"][data-heads="both"]::before {
+			display: block;
+		}
+		.ui-flow-map-edge[data-route="side"][data-heads="line"]::after {
+			display: none;
+		}
+		/* Elbow: out of `from`'s right side at its centre line, across to `to`'s centre,
+		   then down into `to`'s top. A box with its top and right borders drawn. */
+		.ui-flow-map-edge[data-route="elbow"] {
+			left: anchor(var(--ui-fm-from) right);
+			right: calc(anchor(var(--ui-fm-to) center) - var(--_ui-fm-connector-width) / 2);
+			top: calc(anchor(var(--ui-fm-from) center) - var(--_ui-fm-connector-width) / 2);
+			bottom: anchor(var(--ui-fm-to) top);
+			border-top: var(--_ui-fm-connector-width) solid currentColor;
+			border-right: var(--_ui-fm-connector-width) solid currentColor;
+			border-top-right-radius: calc(var(--_ui-fm-node-radius) * 0.8);
+		}
+		.ui-flow-map-edge[data-route="elbow"]::before {
+			display: none;
+		}
+		/* The head is positioned in the padding box, which the right border sits outside:
+		   a head 5 widths wide is centred on that border at -3 widths, and rests on the
+		   box's bottom edge, where the vertical stroke ends. */
+		.ui-flow-map-edge[data-route="elbow"]::after {
+			right: calc(-3 * var(--_ui-fm-connector-width));
+			bottom: 0;
+			clip-path: polygon(50% 100%, 0 0, 100% 0);
+		}
+		.ui-flow-map-edge[data-route="elbow"][data-heads="line"]::after {
+			display: none;
+		}
+	}
+
+	/* ── The ring on the current node ── */
+	.ui-flow-map-ring {
+		position: absolute;
+		display: none;
+		pointer-events: none;
+	}
+	@supports (anchor-name: --a) {
+		.ui-flow-map-ring {
+			display: block;
+			top: calc(anchor(top) - 6px);
+			left: calc(anchor(left) - 6px);
+			right: calc(anchor(right) - 6px);
+			bottom: calc(anchor(bottom) - 6px);
+			border: 2px solid var(--ui-color);
+			border-radius: calc(var(--_ui-fm-node-radius) + 6px);
+			corner-shape: squircle;
+			view-transition-name: match-element;
+		}
+	}
+	.ui-flow-map-node[data-current] {
+		box-shadow:
+			inset 0 0 0 1px var(--ui-border),
+			0 0 0 4px color-mix(in oklab, var(--ui-color) 14%, transparent);
+	}
+
+	/* ── Previews: the shared anchored shell, sized for a card ── */
+	.ui-flow-map-preview {
+		--ui-anchored-width: 21rem;
+		font-size: var(--t-sm);
+	}
+
+	/* ── Footer: the band and its cards ── */
+	.ui-flow-map-footer {
+		display: grid;
+		gap: 0.6rem;
+	}
+	.ui-flow-map-footer-band {
+		padding: 0.55em 1em;
+		border-radius: var(--r-sm);
+		corner-shape: squircle;
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		font-weight: 700;
+		text-align: center;
+		text-wrap: balance;
+	}
+	.ui-flow-map-cards {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+		gap: 0.6rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.ui-flow-map-card {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		align-items: center;
+		gap: 0.55em;
+		width: 100%;
+		min-height: 3.2rem;
+		padding: 0.5em 0.7em;
+		border-radius: var(--r-sm);
+		corner-shape: squircle;
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		font: inherit;
+		font-size: 0.85em;
+		font-weight: 600;
+		line-height: 1.25;
+		text-align: left;
+		text-decoration: none;
+		border: 0;
+		box-shadow: inset 0 0 0 1px var(--ui-border);
+		transition:
+			translate 160ms,
+			box-shadow 160ms;
+	}
+	.ui-flow-map-card:is(a, button) {
+		cursor: pointer;
+	}
+	.ui-flow-map-card:is(a, button):hover {
+		translate: 0 -1px;
+		box-shadow:
+			inset 0 0 0 1px var(--ui-border),
+			0 8px 20px -14px color-mix(in oklab, var(--ui-color) 60%, transparent);
+	}
+	.ui-flow-map-card:not(:has(> .ui-flow-map-card-icon)) {
+		grid-template-columns: 1fr;
+	}
+	.ui-flow-map-card-icon {
+		display: grid;
+		place-items: center;
+		width: 2em;
+		height: 2em;
+	}
+	.ui-flow-map-card-icon > img,
+	.ui-flow-map-card-icon > svg {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+	.ui-flow-map-caption {
+		margin: 0;
+		font-size: var(--t-sm);
+		font-style: italic;
+		text-align: center;
+		color: var(--color-base-content-muted);
+	}
+
+	/* ── Reveal: a scroll timeline, staggered by sibling-index(). Screen only: a printed
+	   or rendered page has no scroll position, so nothing may rest faded. ── */
+	@supports (animation-timeline: view()) {
+		@media screen and (prefers-reduced-motion: no-preference) {
+			.ui-flow-map-node,
+			.ui-flow-map-rail,
+			.ui-flow-map-card {
+				animation: ui-flow-map-reveal linear both;
+				animation-timeline: view();
+				animation-range: entry 5% entry 45%;
+			}
+			.ui-flow-map-node,
+			.ui-flow-map-card {
+				animation-range-start: entry calc(5% + sibling-index() * 3%);
+			}
+			.ui-flow-map-edge {
+				animation: ui-flow-map-draw linear both;
+				animation-timeline: view();
+				animation-range: entry 35% entry 75%;
+			}
+		}
+	}
+
+	/* ── Narrow: one column, the rail a band above, sequence arrows between nodes ── */
+	@container ui-flow-map (inline-size < 40rem) {
+		.ui-flow-map-field {
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-rows: none;
+		}
+		.ui-flow-map-node {
+			grid-column: 1;
+			grid-row: auto;
+		}
+		.ui-flow-map-rail {
+			grid-column: 1;
+			grid-row: auto;
+			padding: 0.55em 0.9em;
+		}
+		.ui-flow-map-rail-label {
+			writing-mode: horizontal-tb;
+			rotate: none;
+		}
+		.ui-flow-map-edge,
+		.ui-flow-map-ring {
+			display: none;
+		}
+		.ui-flow-map-node ~ .ui-flow-map-node::before {
+			content: "";
+			position: absolute;
+			left: 50%;
+			bottom: 100%;
+			width: calc(var(--_ui-fm-connector-width) * 4);
+			height: var(--_ui-fm-gap);
+			translate: -50% 0;
+			background: linear-gradient(
+					to right,
+					transparent calc(50% - var(--_ui-fm-connector-width) / 2),
+					var(--_ui-fm-connector-ink) calc(50% - var(--_ui-fm-connector-width) / 2),
+					var(--_ui-fm-connector-ink) calc(50% + var(--_ui-fm-connector-width) / 2),
+					transparent calc(50% + var(--_ui-fm-connector-width) / 2)
+				)
+				top / 100% calc(100% - var(--_ui-fm-connector-width) * 3) no-repeat;
+		}
+		.ui-flow-map-node ~ .ui-flow-map-node::after {
+			content: "";
+			position: absolute;
+			left: 50%;
+			bottom: 100%;
+			width: calc(var(--_ui-fm-connector-width) * 5);
+			height: calc(var(--_ui-fm-connector-width) * 4);
+			translate: -50% 0;
+			background: var(--_ui-fm-connector-ink);
+			clip-path: polygon(50% 100%, 0 0, 100% 0);
+		}
+	}
+}
+
+@keyframes ui-flow-map-reveal {
+	from {
+		opacity: 0;
+		translate: 0 10px;
+	}
+}
+@keyframes ui-flow-map-draw {
+	from {
+		opacity: 0;
+	}
+}

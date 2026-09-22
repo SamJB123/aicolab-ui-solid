@@ -344,7 +344,9 @@
 .aic-prosekit-editor.ProseMirror p {
 	margin: 0.28em 0;
 }
-.aic-prosekit-editor.ProseMirror a {
+/* Prose links. A link inside a Solid node view belongs to that component's anatomy
+   (a card, a map node) and keeps the component's inks. */
+.aic-prosekit-editor.ProseMirror a:not([data-solid-block] *) {
 	color: var(--aic-prosekit-accent);
 	text-decoration-thickness: 0.08em;
 	text-underline-offset: 0.16em;

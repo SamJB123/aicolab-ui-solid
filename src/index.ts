@@ -50,6 +50,7 @@ export {
 export { type DropEntry } from './atoms/dropzone'
 export {
 	ApplicationHeader,
+	Callout,
 	ColumnMapper,
 	type ColumnMapperColumn,
 	type ColumnMapperPatch,
@@ -95,6 +96,12 @@ export {
 	type CommandPaletteItem,
 	CommandPaletteTrigger,
 	openCommandPalette,
+	FlowMap,
+	type FlowMapEdge,
+	type FlowMapFooter,
+	type FlowMapFooterItem,
+	type FlowMapNode,
+	type FlowMapRail,
 	type InspectorDetent,
 	InspectorHeader,
 	RadialMenu,
