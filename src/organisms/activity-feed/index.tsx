@@ -21,10 +21,16 @@ const knobs = defineKnobs('ui-feed', {
 export interface ActivityFeedItem {
 	key: string
 	glyph?: JSX.Element
-	line: JSX.Element
+	/** The line, or a lazy slot for it. A slot is invoked in the feed's own scope, under
+	 *  its <For>: an element the caller pre-created in a `.map()` desyncs hydration keys
+	 *  there (the same rule as Steps' icon), so a line with markup should be a slot. */
+	line: JSX.Element | (() => JSX.Element)
 	time?: JSX.Element
 	ink?: string
 }
+
+const slot = (value: JSX.Element | (() => JSX.Element)): JSX.Element =>
+	typeof value === 'function' ? value() : value
 
 type ActivityFeedProps = Omit<JSX.HTMLAttributes<HTMLUListElement>, 'class' | 'children'> & {
 	class?: ClassProp
@@ -86,7 +92,7 @@ export function ActivityFeed(props: ActivityFeedProps) {
 								{item.glyph}
 							</span>
 							<div class="ui-activity-feed-body">
-								<p class="ui-activity-feed-line">{item.line}</p>
+								<p class="ui-activity-feed-line">{slot(item.line)}</p>
 								<Show when={item.time}>
 									<span class="ui-activity-feed-time">{item.time}</span>
 								</Show>
