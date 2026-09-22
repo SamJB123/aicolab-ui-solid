@@ -125,8 +125,13 @@ export function RichListItem(
 	})
 
 	// Single-eval slot resolution (children()) — element-JSX props are getters;
-	// double evaluation breaks hydration claiming.
+	// double evaluation breaks hydration claiming. Every slot is resolved here, in
+	// document order: a slot read lazily inside the JSX (as `title` once was) is created
+	// after the eagerly resolved ones on the client but in document order on the
+	// server, and its hydration key lands on the wrong element (the review page's
+	// resource rows: "expected <a> but found <span class=ui-rich-list-description>").
 	const leading = children(() => props.leading)
+	const title = children(() => props.title)
 	const description = children(() => props.description)
 	const trailing = children(() => props.trailing)
 	const content = () => (
@@ -137,7 +142,7 @@ export function RichListItem(
 				</span>
 			</Show>
 			<span class="ui-rich-list-main">
-				<span class="ui-rich-list-title">{props.title}</span>
+				<span class="ui-rich-list-title">{title()}</span>
 				<Show when={description()}>
 					<span class="ui-rich-list-description">{description()}</span>
 				</Show>

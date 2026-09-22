@@ -13,7 +13,10 @@ export interface SolidNodeViewProps<Attrs extends object = Record<string, unknow
 	view: EditorView
 	getPos(): number | undefined
 	setAttrs(patch: Partial<Attrs>): void
-	contentRef(element: HTMLElement): void
+	/** ProseMirror's element for the node's children (undefined for a node without
+	 *  content). The component places it where the children belong — as a JSX child —
+	 *  so nothing stands between the block's own element and the content. */
+	content: HTMLElement | undefined
 }
 
 export interface SolidBlockOptions<Attrs extends object> {
@@ -44,7 +47,7 @@ export interface SolidNodeViewOptions<Attrs extends object> {
 	/** The node type this view renders; its spec is defined elsewhere. */
 	name: string
 	readAttrs(node: ProseMirrorNode): Attrs
-	/** Whether the node has content ProseMirror renders into `contentRef`'s element. */
+	/** Whether the node has content ProseMirror renders into the `content` element. */
 	hasContent: boolean
 	component: Component<SolidNodeViewProps<Attrs>>
 	as?: NodeViewDOMSpec
@@ -123,9 +126,7 @@ export function defineSolidNodeView<Attrs extends object>(
 								view.state.tr.setNodeMarkup(pos, undefined, { ...current.attrs, ...patch }),
 							)
 						},
-						contentRef(element: HTMLElement) {
-							if (contentDOM && contentDOM.parentNode !== element) element.appendChild(contentDOM)
-						},
+						content: contentDOM,
 					}),
 				dom,
 			)
