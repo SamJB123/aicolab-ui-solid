@@ -16,6 +16,7 @@ export {
 	type SolidNodeViewProps,
 } from './node-view'
 export {
+	encodeSelectionCursor,
 	type RemoteCursorEntry,
 	remoteCursorsKey,
 	remoteCursorsPlugin,
