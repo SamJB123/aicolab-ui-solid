@@ -4,7 +4,13 @@
 export { ActivityFeed, type ActivityFeedItem } from './activity-feed'
 export { AdaptiveModalSheet } from './adaptive-modal-sheet'
 export { ArtifactCard } from './artifact-card'
-export { CommandPalette, type CommandPaletteItem, CommandPaletteTrigger, openCommandPalette } from './command-palette'
+export {
+	CommandPalette,
+	type CommandPaletteGroup,
+	type CommandPaletteItem,
+	CommandPaletteTrigger,
+	openCommandPalette,
+} from './command-palette'
 export { type DocsNavItem, DocsShell } from './docs-shell'
 export { type FacetItem, Facets, type FacetTabStyle } from './facets'
 export {

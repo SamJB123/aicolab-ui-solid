@@ -14,6 +14,27 @@ const applyTheme = (mode: ThemeMode): void => {
 	document.documentElement.style.colorScheme = mode === 'auto' ? '' : mode
 }
 
+/** The persisted choice, for a host that offers the modes its own way (a menu) instead of
+ *  the cycling toggle. Client-only; 'auto' when nothing is stored or storage is refused. */
+export function storedThemeMode(storageKey: string = THEME_KEY): ThemeMode {
+	try {
+		const stored = localStorage.getItem(storageKey)
+		return stored === 'light' || stored === 'dark' ? stored : 'auto'
+	} catch {
+		return 'auto'
+	}
+}
+
+/** Apply and persist a mode, exactly as the toggle does. Client-only. */
+export function setThemeMode(mode: ThemeMode, storageKey: string = THEME_KEY): void {
+	applyTheme(mode)
+	try {
+		localStorage.setItem(storageKey, mode)
+	} catch {
+		/* Persistence is best-effort; the current document still updates. */
+	}
+}
+
 /**
  * Inline boot script for a document <head>: re-applies the persisted theme
  * BEFORE first paint. The toggle itself restores the choice only after

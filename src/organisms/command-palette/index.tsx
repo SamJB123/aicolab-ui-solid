@@ -38,9 +38,9 @@ export interface CommandPaletteItem {
 	keywords?: readonly string[]
 }
 
-interface CommandPaletteGroup<T extends CommandPaletteItem> {
+export interface CommandPaletteGroup<T extends CommandPaletteItem> {
 	label?: string
-	items: T[]
+	items: readonly T[]
 }
 
 const optionId = (paletteId: string, itemId: string): string =>
@@ -127,6 +127,12 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 	allItemsLabel?: string
 	/** Resolve live domain status without rebuilding the item collection. */
 	getKind?: (item: T) => string | undefined
+	/** Told of every change to the query, for consumers that search elsewhere (a
+	 *  server-side full-text index) and answer through `extraGroups`. */
+	onQuery?: (query: string) => void
+	/** Groups the consumer has already matched against the query, listed after the
+	 *  palette's own ranked items and never re-ranked: their order is the consumer's. */
+	extraGroups?: readonly CommandPaletteGroup<T>[]
 	class?: ClassProp
 	ref?: (root: HTMLDialogElement, input: HTMLInputElement) => void
 	onOpen?: () => void
@@ -138,7 +144,7 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 	let inputEl: HTMLInputElement | undefined
 	let listEl: HTMLDivElement | undefined
 
-	const groups = createMemo((): CommandPaletteGroup<T>[] => {
+	const ranked = createMemo((): CommandPaletteGroup<T>[] => {
 		const normalizedQuery = query().trim().toLowerCase()
 		const recentIds = props.recentIds ?? []
 		if (!normalizedQuery) {
@@ -161,6 +167,11 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 			.map((entry) => entry.item)
 		return [{ items }]
 	})
+
+	const groups = createMemo((): CommandPaletteGroup<T>[] => [
+		...ranked(),
+		...(props.extraGroups ?? []).filter((group) => group.items.length > 0),
+	])
 
 	const flat = createMemo(() => groups().flatMap((group) => group.items))
 
@@ -237,6 +248,7 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 			onClose={() => {
 				setQuery('')
 				setActive(0)
+				props.onQuery?.('')
 			}}
 			onToggle={(event) => {
 				if (event.newState !== 'open') return
@@ -254,6 +266,7 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 				onInput={(event) => {
 					setQuery(event.currentTarget.value)
 					setActive(0)
+					props.onQuery?.(event.currentTarget.value)
 				}}
 				onKeyDown={onKeyDown}
 				placeholder={props.placeholder ?? 'Search…'}

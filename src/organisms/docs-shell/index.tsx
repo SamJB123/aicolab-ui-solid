@@ -50,7 +50,14 @@ export type DocsNavItem = {
  * can jump without scrolling back to the top.
  */
 export function DocsShell(
-	props: ParentProps<{ nav?: DocsNavItem[]; navLabel?: string }> &
+	props: ParentProps<{
+		nav?: DocsNavItem[]
+		navLabel?: string
+		/** The article reads as ui-solid prose (the default). A host whose content brings
+		 *  its own typography — a published document with its own sheet — sets false, and
+		 *  the shell contributes only the frame: rails, compass, progress. */
+		prose?: boolean
+	}> &
 		ColorTreatmentProps &
 		KnobProps<typeof knobs.spec>,
 ) {
@@ -164,7 +171,7 @@ export function DocsShell(
 							<NavList />
 						</div>
 					</nav>
-					<article ref={article} class="ui-prose docs-article">
+					<article ref={article} class={['docs-article', { 'ui-prose': props.prose !== false }]}>
 						{props.children}
 					</article>
 					<nav class="docs-toc" aria-label="On this page">
