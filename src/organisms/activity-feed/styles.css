@@ -38,6 +38,10 @@
 		overscroll-behavior: contain;
 		scrollbar-gutter: stable;
 	}
+	:scope:focus-visible {
+		outline: 2px solid var(--ui-focus-ring, var(--color-primary));
+		outline-offset: 2px;
+	}
 
 	.ui-activity-feed-item {
 		display: flex;

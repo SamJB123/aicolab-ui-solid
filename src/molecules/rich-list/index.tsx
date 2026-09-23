@@ -37,6 +37,10 @@ export function RichList(
 		label?: string
 		navigation?: boolean
 		class?: ClassProp
+		/** The root element: a `ul` (the default), or a `div` with the list role for a host
+		 *  that must put layout-only elements between the list and its rows (an editor's
+		 *  node views); a `ul` may hold nothing but its items. */
+		as?: 'ul' | 'div'
 		children?: JSX.Element
 	} & ColorTreatmentProps &
 		KnobProps<typeof knobs.spec>,
@@ -47,22 +51,24 @@ export function RichList(
 		colorLevel: props.colorLevel,
 		variant: props.variant,
 	})
+	/* List-level roles feed the navigation mode's shared sliding surface (::before reads
+	   --ui-color on the root). Row knob defaults ride the inheriting public variables — no
+	   data attributes here, since attr() reads the matched element and these are consumed
+	   on the rows. */
+	const root = () => ({
+		class: ['ui-rich-list', props.class],
+		'aria-label': props.label,
+		'data-navigation': props.navigation ? '' : undefined,
+		...colorTreatmentData(treatment()),
+		style: knobs.style(props),
+	})
 	return (
 		<RichListContext value={{ treatment }}>
-			<ul
-				class={['ui-rich-list', props.class]}
-				aria-label={props.label}
-				data-navigation={props.navigation ? '' : undefined}
-				/* List-level roles feed the navigation mode's shared sliding
-				   surface (::before reads --ui-color on this element). Row knob
-				   defaults ride the inheriting public variables — no data
-				   attributes here, since attr() reads the matched element and
-				   these are consumed on the rows. */
-				{...colorTreatmentData(treatment())}
-				style={knobs.style(props)}
-			>
-				{props.children}
-			</ul>
+			<Show when={props.as === 'div'} fallback={<ul {...root()}>{props.children}</ul>}>
+				<div role="list" {...root()}>
+					{props.children}
+				</div>
+			</Show>
 		</RichListContext>
 	)
 }

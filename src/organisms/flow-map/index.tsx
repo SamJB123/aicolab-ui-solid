@@ -193,7 +193,9 @@ export function FlowMap(props: FlowMapProps) {
 	/** Hover/focus interest with a short delay, for browsers without interest invokers. */
 	const interest = (popoverId: string) => {
 		let timer: ReturnType<typeof setTimeout> | null = null
-		const pop = () => root?.querySelector<HTMLElement>(`#${popoverId}`) ?? null
+		// By id, not a `#id` selector: a unique id may open with a digit, which no selector
+		// can name unescaped.
+		const pop = () => (root ? document.getElementById(popoverId) : null)
 		const show = () => {
 			if (hasInterestInvokers()) return
 			if (timer) clearTimeout(timer)

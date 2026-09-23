@@ -80,6 +80,8 @@ export function ActivityFeed(props: ActivityFeedProps) {
 				class={['ui-activity-feed', props.class]}
 				style={mergeKnobStyle(knobs.style(rootValues()), props.style)}
 				aria-label={props.label}
+				/* It scrolls inside itself: a keyboard reaches it and scrolls it with the arrows. */
+				tabindex="0"
 			>
 				<For each={props.items}>
 					{(item) => (
