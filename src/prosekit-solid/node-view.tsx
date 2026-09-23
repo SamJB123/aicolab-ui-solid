@@ -2,7 +2,7 @@ import { defineNodeSpec, defineNodeView, union, type Extension } from '@prosekit
 import type { Node as ProseMirrorNode, NodeSpec } from '@prosekit/pm/model'
 import type { EditorView, NodeView } from '@prosekit/pm/view'
 import { render } from '@solidjs/web'
-import { createComponent, createSignal, type Component } from 'solid-js'
+import { createComponent, createSignal, runWithOwner, type Component } from 'solid-js'
 
 export type NodeViewDOMSpec = string | HTMLElement | ((node: ProseMirrorNode) => HTMLElement)
 
@@ -91,68 +91,78 @@ export function defineSolidNodeView<Attrs extends object>(
 	const hasContent = options.hasContent
 	return defineNodeView({
 		name: options.name,
-		constructor(initialNode, view, getPos): NodeView {
-			const dom = createNodeViewElement(
-				options.as,
-				initialNode,
-				initialNode.isInline ? 'span' : 'div',
-			)
-			dom.dataset.solidBlock = options.name
-			const contentDOM = hasContent
-				? createNodeViewElement(options.contentAs, initialNode, 'div')
-				: undefined
-			const [node, setNode] = createSignal(initialNode, { equals: false })
-			const [selected, setSelected] = createSignal(false)
-
-			const dispose = render(
-				() =>
-					createComponent(options.component, {
-						get node() {
-							return node()
-						},
-						get attrs() {
-							return options.readAttrs(node())
-						},
-						get selected() {
-							return selected()
-						},
-						view,
-						getPos,
-						setAttrs(patch: Partial<Attrs>) {
-							const pos = getPos()
-							if (pos === undefined) return
-							const current = node()
-							view.dispatch(
-								view.state.tr.setNodeMarkup(pos, undefined, { ...current.attrs, ...patch }),
-							)
-						},
-						content: contentDOM,
-					}),
-				dom,
-			)
-
-			return {
-				dom,
-				contentDOM,
-				update(nextNode) {
-					if (nextNode.type !== initialNode.type) return false
-					setNode(nextNode)
-					return true
-				},
-				selectNode: () => setSelected(true),
-				deselectNode: () => setSelected(false),
-				stopEvent(event) {
-					const target = event.target
-					return (
-						target instanceof HTMLElement &&
-						(target.isContentEditable ||
-							target.closest(
-								'button, input, select, textarea, a[href], [popover], [data-prosekit-stop-events]',
-							) !== null)
-					)
-				},
-				destroy: dispose,
-			}
-		},
+		// ProseMirror builds a node view whenever it updates the view — which can be
+		// inside whatever Solid scope dispatched the transaction (an `onSettled` that binds
+		// a collaborative doc, an effect). The view is ProseMirror's, not that scope's: it
+		// is created detached, as its own root, and disposed only by `destroy`.
+		constructor: (initialNode, view, getPos): NodeView => runWithOwner(null, () => constructNodeView(initialNode, view, getPos)),
 	})
+
+	function constructNodeView(
+		initialNode: ProseMirrorNode,
+		view: EditorView,
+		getPos: () => number | undefined,
+	): NodeView {
+		const dom = createNodeViewElement(
+			options.as,
+			initialNode,
+			initialNode.isInline ? 'span' : 'div',
+		)
+		dom.dataset.solidBlock = options.name
+		const contentDOM = hasContent
+			? createNodeViewElement(options.contentAs, initialNode, 'div')
+			: undefined
+		const [node, setNode] = createSignal(initialNode, { equals: false })
+		const [selected, setSelected] = createSignal(false)
+
+		const dispose = render(
+			() =>
+				createComponent(options.component, {
+					get node() {
+						return node()
+					},
+					get attrs() {
+						return options.readAttrs(node())
+					},
+					get selected() {
+						return selected()
+					},
+					view,
+					getPos,
+					setAttrs(patch: Partial<Attrs>) {
+						const pos = getPos()
+						if (pos === undefined) return
+						const current = node()
+						view.dispatch(
+							view.state.tr.setNodeMarkup(pos, undefined, { ...current.attrs, ...patch }),
+						)
+					},
+					content: contentDOM,
+				}),
+			dom,
+		)
+
+		return {
+			dom,
+			contentDOM,
+			update(nextNode) {
+				if (nextNode.type !== initialNode.type) return false
+				setNode(nextNode)
+				return true
+			},
+			selectNode: () => setSelected(true),
+			deselectNode: () => setSelected(false),
+			stopEvent(event) {
+				const target = event.target
+				return (
+					target instanceof HTMLElement &&
+					(target.isContentEditable ||
+						target.closest(
+							'button, input, select, textarea, a[href], [popover], [data-prosekit-stop-events]',
+						) !== null)
+				)
+			},
+			destroy: dispose,
+		}
+	}
 }
