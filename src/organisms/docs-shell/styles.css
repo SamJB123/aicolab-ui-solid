@@ -83,6 +83,14 @@
 	padding-left: 1.4rem;
 	font-size: var(--t-sm);
 }
+/* A nav item's mark: a chapter number, lined up in a column of its own. */
+.docs-nav-mark {
+	display: inline-block;
+	min-inline-size: 1.2em;
+	font-variant-numeric: tabular-nums;
+	font-weight: 600;
+	text-align: center;
+}
 }
 
 /* ── Prose — long-form document rhythm for DocsShell articles ──

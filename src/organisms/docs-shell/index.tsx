@@ -29,6 +29,8 @@ export type DocsNavItem = {
 	current?: boolean
 	/** Indent as a child of the previous top-level item. */
 	sub?: boolean
+	/** A short mark before the label: a chapter's number, a glyph. */
+	mark?: string
 }
 
 /**
@@ -57,6 +59,10 @@ export function DocsShell(
 		 *  its own typography — a published document with its own sheet — sets false, and
 		 *  the shell contributes only the frame: rails, compass, progress. */
 		prose?: boolean
+		/** "On this page" lists every chapter and the active chapter's sections (the
+		 *  default). A host whose nav already names the chapters — its in-page hrefs are
+		 *  the h2 ids — sets false, and the list holds the active chapter's sections. */
+		tocChapters?: boolean
 	}> &
 		ColorTreatmentProps &
 		KnobProps<typeof knobs.spec>,
@@ -79,8 +85,10 @@ export function DocsShell(
 	}
 	/** A nav item is current when the host says so, or when its in-page href is the active chapter. */
 	const navCurrent = (item: DocsNavItem) => item.current ?? (item.href.startsWith('#') && item.href === `#${activeChapterId()}`)
-	/** "On this page" lists every chapter and only the active chapter's sections. */
-	const visibleToc = () => toc().filter((item) => item.depth === 2 || item.chapter === activeChapterId())
+	/** "On this page" lists every chapter (unless the nav names them) and only the active
+	 *  chapter's sections. */
+	const visibleToc = () =>
+		toc().filter((item) => (item.depth === 2 ? props.tocChapters !== false : item.chapter === activeChapterId()))
 	const closeCompass = () => document.getElementById(compassId)?.hidePopover()
 
 	onSettled(() => {
@@ -119,13 +127,22 @@ export function DocsShell(
 			<Eyebrow colorBase={props.colorBase}>{props.navLabel ?? 'Chapters'}</Eyebrow>
 			<RichList navigation label={props.navLabel ?? 'Chapters'} colorBase={props.colorBase} colorLevel={props.colorLevel}>
 				<For each={props.nav}>
-					{(item) => <RichListItem href={item.href} title={item.label} selected={navCurrent(item)} class={{ 'docs-nav-sub': !!item.sub }} onSelect={closeCompass} />}
+					{(item) => (
+						<RichListItem
+							href={item.href}
+							title={item.label}
+							leading={item.mark ? <span class="docs-nav-mark">{item.mark}</span> : undefined}
+							selected={navCurrent(item)}
+							class={{ 'docs-nav-sub': !!item.sub }}
+							onSelect={closeCompass}
+						/>
+					)}
 				</For>
 			</RichList>
 		</Show>
 	)
 	const TocList = () => (
-		<Show when={toc().length}>
+		<Show when={visibleToc().length}>
 			<Eyebrow colorBase={props.colorBase}>On this page</Eyebrow>
 			<RichList navigation label="On this page" colorBase={props.colorBase} colorLevel={props.colorLevel}>
 				<For each={visibleToc()}>
