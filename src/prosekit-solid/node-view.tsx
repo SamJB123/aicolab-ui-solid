@@ -152,6 +152,21 @@ export function defineSolidNodeView<Attrs extends object>(
 			},
 			selectNode: () => setSelected(true),
 			deselectNode: () => setSelected(false),
+			// Only what happens INSIDE the content element is the document's (typed text, a
+			// child block); everything else in the view is the view's own — an attribute
+			// Solid sets when a signal moves, a mark the page puts on the block — and must not
+			// make ProseMirror re-parse the node, which would rebuild this view and lose it.
+			// Without this, ProseMirror's default re-parses on any mutation once a view has
+			// a content element.
+			ignoreMutation(mutation) {
+				if (mutation.type === 'selection') return false
+				if (!contentDOM) return true
+				const inContent =
+					mutation.target === contentDOM
+						? mutation.type === 'childList'
+						: contentDOM.contains(mutation.target)
+				return !inContent
+			},
 			stopEvent(event) {
 				const target = event.target
 				return (
