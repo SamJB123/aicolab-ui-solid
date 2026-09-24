@@ -167,14 +167,18 @@ export function defineSolidNodeView<Attrs extends object>(
 						: contentDOM.contains(mutation.target)
 				return !inContent
 			},
+			// Only an event on one of the view's own controls is the view's to handle; every
+			// other event inside the view is the editor's — the mouse-down that starts a
+			// column resize or a cell selection, the key a keymap answers (Tab, Mod-B). Every
+			// element inside the editor is content-editable, so that is never a reason to
+			// keep an event from ProseMirror.
 			stopEvent(event) {
 				const target = event.target
 				return (
 					target instanceof HTMLElement &&
-					(target.isContentEditable ||
-						target.closest(
-							'button, input, select, textarea, a[href], [popover], [data-prosekit-stop-events]',
-						) !== null)
+					target.closest(
+						'button, input, select, textarea, a[href], [popover], [data-prosekit-stop-events]',
+					) !== null
 				)
 			},
 			destroy: dispose,
