@@ -68,6 +68,20 @@
 	--ui-border-disabled: color-mix(in oklab, var(--ui-border) 42%, transparent);
 }
 
+/* An engine without contrast-color() (Chrome before 138 — the browser Cloudflare's
+   Browser Rendering prints PDFs with) would otherwise drop --ui-content at
+   computed-value time and every solid surface's ink with it, so the pair falls back
+   to plain black or white by the surface's lightness. */
+@supports not (color: contrast-color(red)) {
+	:where([data-ui-color-base]) {
+		--ui-content: color-mix(
+			in oklch,
+			var(--ui-color) 10%,
+			oklch(from var(--ui-color) clamp(0, calc((0.62 - l) * 1000), 1) 0 h)
+		);
+	}
+}
+
 /* Compatibility base axis. */
 :where([data-ui-color-base="secondary"]) { --ui-color-base: var(--color-secondary); }
 :where([data-ui-color-base="accent"]) { --ui-color-base: var(--color-accent); }

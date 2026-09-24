@@ -25,6 +25,22 @@
 	   selectors force the document scheme. A forced subtree is an explicit
 	   `.ui-theme` boundary that hosts its own authored anchors; registered root
 	   colours otherwise inherit as values already computed in the root scheme. */
+	/* An engine without contrast-color() (Chrome before 138 — the browser Cloudflare's
+	   Browser Rendering prints PDFs with) gets each family's content ink as plain black
+	   or white by the family colour's lightness, instead of no ink at all. */
+	@supports not (color: contrast-color(red)) {
+		:root {
+			--color-primary-content: oklch(from var(--color-primary) clamp(0, calc((0.62 - l) * 1000), 1) 0 h);
+			--color-secondary-content: oklch(from var(--color-secondary) clamp(0, calc((0.62 - l) * 1000), 1) 0 h);
+			--color-accent-content: oklch(from var(--color-accent) clamp(0, calc((0.62 - l) * 1000), 1) 0 h);
+			--color-neutral-content: oklch(from var(--color-neutral) clamp(0, calc((0.62 - l) * 1000), 1) 0 h);
+			--color-info-content: oklch(from var(--color-info) clamp(0, calc((0.62 - l) * 1000), 1) 0 h);
+			--color-success-content: oklch(from var(--color-success) clamp(0, calc((0.62 - l) * 1000), 1) 0 h);
+			--color-warning-content: oklch(from var(--color-warning) clamp(0, calc((0.62 - l) * 1000), 1) 0 h);
+			--color-error-content: oklch(from var(--color-error) clamp(0, calc((0.62 - l) * 1000), 1) 0 h);
+		}
+	}
+
 	.theme-dark,
 	[data-theme="dark"] {
 		color-scheme: dark;
