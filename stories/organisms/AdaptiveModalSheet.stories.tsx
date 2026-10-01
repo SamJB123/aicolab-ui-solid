@@ -15,6 +15,8 @@ const meta = {
 		accent: { control: 'text', table: { category: 'knobs' } },
 		surface: { control: 'text', table: { category: 'knobs' } },
 		width: { control: 'text', table: { category: 'knobs' } },
+		gutterInline: { control: 'text', table: { category: 'knobs' } },
+		gutterBlock: { control: 'text', table: { category: 'knobs' } },
 	},
 } satisfies Meta<typeof AdaptiveModalSheet>
 

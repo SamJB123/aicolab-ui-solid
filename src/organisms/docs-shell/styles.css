@@ -46,6 +46,24 @@
 	inherits: true;
 	initial-value: currentColor;
 }
+/* The shell's own inset: direct wires (not knobs), read by the compass
+   that bleeds through them. */
+@property --_ui-docs-pad-block {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 48px;
+}
+@property --_ui-docs-pad-inline {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 24px;
+}
+/* The rails' offset below the sticky chrome: a direct wire of the rail. */
+@property --_ui-docs-side-offset {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 2.5rem;
+}
 
 @scope (.docs-shell) {
 .docs-progress {

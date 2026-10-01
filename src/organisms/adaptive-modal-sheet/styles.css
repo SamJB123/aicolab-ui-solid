@@ -30,6 +30,16 @@
 	inherits: false;
 	initial-value: 58rem;
 }
+@property --_ui-sheet-gutter-inline {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 1.5rem;
+}
+@property --_ui-sheet-gutter-block {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 1.5rem;
+}
 
 @scope (.ui-adaptive-modal-sheet) {
 	:scope {
@@ -43,6 +53,9 @@
 		--_ui-sheet-accent: var(--ui-sheet-accent, var(--color-primary));
 		--_ui-sheet-surface: var(--ui-sheet-surface, var(--color-base-100));
 		--_ui-sheet-width: var(--ui-sheet-width, min(58rem, calc(100vw - 1rem), max(58vw, var(--ui-adaptive-modal-sheet-portrait-width))));
+		/* The body's reading gutter, defined here once for every sheet. */
+		--_ui-sheet-gutter-inline: var(--ui-sheet-gutter-inline, clamp(1.25rem, 4vw, 2.6rem));
+		--_ui-sheet-gutter-block: var(--ui-sheet-gutter-block, 1.5rem);
 		position: fixed;
 		inset: 0 0 0 auto;
 		display: grid;
@@ -198,6 +211,7 @@
 		height: 100%;
 		min-height: 0;
 		max-height: 100%;
+		padding: var(--_ui-sheet-gutter-block) var(--_ui-sheet-gutter-inline) calc(var(--_ui-sheet-gutter-block) * 2);
 		overflow-x: hidden;
 		overflow-y: auto;
 		overscroll-behavior: contain;
@@ -282,6 +296,8 @@
 			--_ui-sheet-accent: attr(data-ui-sheet-accent type(<color>), var(--ui-sheet-accent, var(--color-primary)));
 			--_ui-sheet-surface: attr(data-ui-sheet-surface type(<color>), var(--ui-sheet-surface, var(--color-base-100)));
 			--_ui-sheet-width: attr(data-ui-sheet-width type(<length>), var(--ui-sheet-width, min(58rem, calc(100vw - 1rem), max(58vw, var(--ui-adaptive-modal-sheet-portrait-width)))));
+			--_ui-sheet-gutter-inline: attr(data-ui-sheet-gutter-inline type(<length>), var(--ui-sheet-gutter-inline, clamp(1.25rem, 4vw, 2.6rem)));
+			--_ui-sheet-gutter-block: attr(data-ui-sheet-gutter-block type(<length>), var(--ui-sheet-gutter-block, 1.5rem));
 		}
 		:scope[data-ui-color-base] {
 			--_ui-sheet-header-surface: attr(data-ui-sheet-header-surface type(<color>), var(--ui-sheet-header-surface, var(--ui-color)));

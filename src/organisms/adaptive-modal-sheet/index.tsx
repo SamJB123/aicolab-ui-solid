@@ -13,13 +13,19 @@ import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
  * painted FAMILY surface (primary by default) — headerSurface/headerInk
  * travel as a pair and every header voice derives from them; `accent`
  * drives the seams, scrollbar and backdrop tint. The body stays the
- * structural base surface unless the surface knob overrides. */
+ * structural base surface unless the surface knob overrides. The body
+ * carries the reading gutter — `gutterInline` either side, `gutterBlock`
+ * above (and twice that below, so the end of a long read clears the
+ * edge) — so no consumer restates it; content that brings its own page
+ * margins (an embedded page) sets both to 0. */
 const knobs = defineKnobs('ui-sheet', {
 	headerSurface: '<color>',
 	headerInk: '<color>',
 	accent: '<color>',
 	surface: '<color>',
 	width: '<length>',
+	gutterInline: '<length>',
+	gutterBlock: '<length>',
 })
 
 /**
