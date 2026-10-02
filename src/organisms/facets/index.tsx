@@ -13,7 +13,7 @@
 // Structural CSS lives in styles.css under "── Facets ──".
 
 import type { JSX } from '@solidjs/web'
-import { createSignal, createUniqueId, For } from 'solid-js'
+import { createSignal, createUniqueId, For, Show } from 'solid-js'
 import {
 	colorTreatmentData,
 	type ClassProp,
@@ -53,6 +53,9 @@ export function Facets(props: {
 	 *  'pill' = content-hugging sliding pill (Segmented-style),
 	 *  'pill-stretch' = sliding pill stretched across the frame. */
 	tabStyle?: FacetTabStyle
+	/** The glyph rail beside the pane (a mouse-only duplicate of the tab
+	 *  row). Default on; off for a short tab row that needs no second way. */
+	rail?: boolean
 	label?: string
 	class?: ClassProp
 } & ColorTreatmentProps &
@@ -141,20 +144,22 @@ export function Facets(props: {
 				<span class="facets-pill" style={`position-anchor:${anchor}`} aria-hidden="true" />
 			</div>
 			<div class="facets-body">
-				<div class="facets-rail" aria-hidden="true">
-					<For each={props.items}>
-						{(item, i) => (
-							<button
-								type="button"
-								tabindex={-1}
-								class={{ 'facets-rail-btn': true, 'facets-rail-active': active() === i() }}
-								onClick={() => select(i())}
-							>
-								<span>{item.glyph}</span>
-							</button>
-						)}
-					</For>
-				</div>
+				<Show when={props.rail !== false}>
+					<div class="facets-rail" aria-hidden="true">
+						<For each={props.items}>
+							{(item, i) => (
+								<button
+									type="button"
+									tabindex={-1}
+									class={{ 'facets-rail-btn': true, 'facets-rail-active': active() === i() }}
+									onClick={() => select(i())}
+								>
+									<span>{item.glyph}</span>
+								</button>
+							)}
+						</For>
+					</div>
+				</Show>
 				<div
 					class="facets-pane"
 					id={`facets-${uid}-panel`}

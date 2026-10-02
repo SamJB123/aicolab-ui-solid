@@ -22,6 +22,20 @@
 	padding: 0;
 }
 }
+/* The veil under the chips: the whole viewport, so a press on the dimmed
+   page closes the fan and reaches nothing behind it (the ::backdrop alone
+   is paint, not a surface — presses fall through it). Chips come after
+   it in the fan, so they sit above. */
+@scope (.ui-radial) {
+	.ui-radial-veil {
+		position: fixed;
+		inset: 0;
+		border: 0;
+		padding: 0;
+		background: none;
+		cursor: default;
+	}
+}
 @property --_ui-radial-chip-size {
 	syntax: "<length>";
 	inherits: true;

@@ -104,6 +104,18 @@ export function RadialMenu(props: {
 					menuEl = el
 				}}
 			>
+				{/* The veil is real: it covers the viewport under the chips, so
+				    a press on the dimmed page closes the fan and lands nowhere
+				    else — what a dimmed page says it does. (A popover's own
+				    light dismiss would close the fan AND pass the press
+				    through to whatever was under it.) */}
+				<button
+					type="button"
+					class="ui-radial-veil"
+					tabindex={-1}
+					aria-label="Close menu"
+					onClick={() => menuEl?.hidePopover()}
+				/>
 				<For each={props.items}>
 					{(item, index) => (
 						<button
