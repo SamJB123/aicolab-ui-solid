@@ -58,11 +58,17 @@ export function Facets(props: {
 	rail?: boolean
 	label?: string
 	class?: ClassProp
+	/** The item to show (default the first): a change selects it, and the
+	 *  viewer's own choice stands in between — a host opening its facets on
+	 *  a chosen view, such as a map opened on its widest facet. */
+	openOn?: number
 } & ColorTreatmentProps &
 	KnobProps<typeof knobs.spec>) {
 	const uid = createUniqueId()
 	const anchor = `--facets-${uid}`
-	const [active, setActive] = createSignal(0)
+	// A writable derived signal: re-derived from `openOn` when it changes,
+	// written by the tabs in between.
+	const [active, setActive] = createSignal(() => props.openOn ?? 0)
 	const style = () => props.tabStyle ?? 'bar'
 	const isPill = () => style() !== 'bar'
 
