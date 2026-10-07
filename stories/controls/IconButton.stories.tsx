@@ -11,6 +11,17 @@ const meta = {
 		...treatmentArgTypes,
 		size: { control: 'text', description: "'sm' | 'md' | 'lg' or a measurement like 27px" },
 		radius: { control: 'text', table: { category: 'knobs' } },
+		surface: {
+			control: 'text',
+			description: 'Resting face colour (paint it with `ink`)',
+			table: { category: 'knobs' },
+		},
+		ink: {
+			control: 'text',
+			description: 'Resting glyph colour (paired with `surface`)',
+			table: { category: 'knobs' },
+		},
+		ring: { control: 'text', table: { category: 'knobs' } },
 		hoverSurface: { control: 'text', table: { category: 'knobs' } },
 		hoverInk: { control: 'text', table: { category: 'knobs' } },
 	},

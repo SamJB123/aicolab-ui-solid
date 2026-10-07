@@ -1,7 +1,11 @@
 /* ── IconButton ──
-   Knobs (size, radius, hoverSurface, hoverInk) on the usual two wires. The
-   named data-size vocabulary supplies per-context DEFAULTS for the size
-   adapter; an explicit size knob outranks whichever name is set. */
+   Knobs (size, radius, surface, ink, ring, hoverSurface, hoverInk) on the
+   usual two wires. The named data-size vocabulary supplies per-context
+   DEFAULTS for the size adapter; an explicit size knob outranks whichever
+   name is set. `surface` + `ink` are the RESTING pair, painted together
+   (a face from one scheme and a glyph from another is the trap they close);
+   absent, the face is transparent and the glyph the page's muted ink (or the
+   treatment's foreground). */
 @property --_ui-iconbtn-size {
 	syntax: "<length>";
 	inherits: false;
@@ -11,6 +15,16 @@
 	syntax: "<length-percentage>";
 	inherits: false;
 	initial-value: 999px;
+}
+@property --_ui-iconbtn-surface {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --_ui-iconbtn-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: currentColor;
 }
 @property --_ui-iconbtn-ring {
 	syntax: "<color>";
@@ -32,6 +46,8 @@
 	:scope {
 		--_ui-iconbtn-size: var(--ui-iconbtn-size, 36px);
 		--_ui-iconbtn-radius: var(--ui-iconbtn-radius, var(--r-pill));
+		--_ui-iconbtn-surface: var(--ui-iconbtn-surface, transparent);
+		--_ui-iconbtn-ink: var(--ui-iconbtn-ink, var(--color-base-content-muted));
 		--_ui-iconbtn-ring: var(--ui-iconbtn-ring, var(--color-border));
 		--_ui-iconbtn-hover-surface: var(--ui-iconbtn-hover-surface, var(--color-base-150));
 		--_ui-iconbtn-hover-ink: var(--ui-iconbtn-hover-ink, var(--color-base-content));
@@ -45,18 +61,19 @@
 		padding: 0;
 		font: inherit;
 		cursor: pointer;
-		background: transparent;
-		color: var(--color-base-content-muted);
+		background: var(--_ui-iconbtn-surface);
+		color: var(--_ui-iconbtn-ink);
 		box-shadow: 0 0 0 1px var(--_ui-iconbtn-ring);
 		transition: all 0.2s;
 	}
 	:scope[data-size="sm"] { --_ui-iconbtn-size: var(--ui-iconbtn-size, 30px); }
 	:scope[data-size="lg"] { --_ui-iconbtn-size: var(--ui-iconbtn-size, 44px); }
 	:scope[data-ui-color-base] {
+		--_ui-iconbtn-ink: var(--ui-iconbtn-ink, var(--ui-color-foreground));
 		--_ui-iconbtn-ring: var(--ui-iconbtn-ring, var(--ui-border));
 		--_ui-iconbtn-hover-surface: var(--ui-iconbtn-hover-surface, var(--ui-surface-hover));
 		--_ui-iconbtn-hover-ink: var(--ui-iconbtn-hover-ink, var(--ui-ink-hover));
-		color: var(--ui-color-foreground);
+		color: var(--_ui-iconbtn-ink);
 		box-shadow: 0 0 0 1px var(--_ui-iconbtn-ring);
 	}
 	:scope:hover:not(:disabled) {
@@ -71,6 +88,8 @@
 		:scope {
 			--_ui-iconbtn-size: attr(data-ui-iconbtn-size type(<length>), var(--ui-iconbtn-size, 36px));
 			--_ui-iconbtn-radius: attr(data-ui-iconbtn-radius type(<length-percentage>), var(--ui-iconbtn-radius, var(--r-pill)));
+			--_ui-iconbtn-surface: attr(data-ui-iconbtn-surface type(<color>), var(--ui-iconbtn-surface, transparent));
+			--_ui-iconbtn-ink: attr(data-ui-iconbtn-ink type(<color>), var(--ui-iconbtn-ink, var(--color-base-content-muted)));
 			--_ui-iconbtn-ring: attr(data-ui-iconbtn-ring type(<color>), var(--ui-iconbtn-ring, var(--color-border)));
 			--_ui-iconbtn-hover-surface: attr(data-ui-iconbtn-hover-surface type(<color>), var(--ui-iconbtn-hover-surface, var(--color-base-150)));
 			--_ui-iconbtn-hover-ink: attr(data-ui-iconbtn-hover-ink type(<color>), var(--ui-iconbtn-hover-ink, var(--color-base-content)));
@@ -78,6 +97,7 @@
 		:scope[data-size="sm"] { --_ui-iconbtn-size: attr(data-ui-iconbtn-size type(<length>), var(--ui-iconbtn-size, 30px)); }
 		:scope[data-size="lg"] { --_ui-iconbtn-size: attr(data-ui-iconbtn-size type(<length>), var(--ui-iconbtn-size, 44px)); }
 		:scope[data-ui-color-base] {
+			--_ui-iconbtn-ink: attr(data-ui-iconbtn-ink type(<color>), var(--ui-iconbtn-ink, var(--ui-color-foreground)));
 			--_ui-iconbtn-ring: attr(data-ui-iconbtn-ring type(<color>), var(--ui-iconbtn-ring, var(--ui-border)));
 			--_ui-iconbtn-hover-surface: attr(data-ui-iconbtn-hover-surface type(<color>), var(--ui-iconbtn-hover-surface, var(--ui-surface-hover)));
 			--_ui-iconbtn-hover-ink: attr(data-ui-iconbtn-hover-ink type(<color>), var(--ui-iconbtn-hover-ink, var(--ui-ink-hover)));

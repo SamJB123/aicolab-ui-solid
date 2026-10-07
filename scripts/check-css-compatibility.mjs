@@ -119,6 +119,12 @@ requireAll(
 		/@supports \(width: attr\(data-ui-compat-probe type\(<length>\), 0px\)\)/,
 		/--_ui-iconbtn-size: var\(--ui-iconbtn-size, 30px\)/,
 		/--_ui-iconbtn-size: attr\(data-ui-iconbtn-size type\(<length>\), var\(--ui-iconbtn-size, 30px\)\)/,
+		/--_ui-iconbtn-surface: var\(--ui-iconbtn-surface, transparent\)/,
+		/--_ui-iconbtn-surface: attr\(data-ui-iconbtn-surface type\(<color>\), var\(--ui-iconbtn-surface, transparent\)\)/,
+		/--_ui-iconbtn-ink: var\(--ui-iconbtn-ink, var\(--color-base-content-muted\)\)/,
+		/--_ui-iconbtn-ink: attr\(data-ui-iconbtn-ink type\(<color>\), var\(--ui-iconbtn-ink, var\(--color-base-content-muted\)\)\)/,
+		/--_ui-iconbtn-ink: var\(--ui-iconbtn-ink, var\(--ui-color-foreground\)\)/,
+		/--_ui-iconbtn-ink: attr\(data-ui-iconbtn-ink type\(<color>\), var\(--ui-iconbtn-ink, var\(--ui-color-foreground\)\)\)/,
 	],
 	'icon-button knob boundary',
 )

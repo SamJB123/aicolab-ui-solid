@@ -8,10 +8,16 @@ import {
 } from '../../shared/color-treatment'
 import { defineKnobs, mergeKnobStyle, type KnobProps, type UiLength } from '../../shared/knobs'
 
-/** Per-instance styling contract (see shared/knobs.ts). */
+/** Per-instance styling contract (see shared/knobs.ts). `surface` and `ink`
+ *  are the button's RESTING pair — a button on a surface of its own (a
+ *  theme-fixed map, a media frame) paints its face and glyph from them so
+ *  the two can never come from different schemes; absent, the face stays
+ *  transparent and the glyph takes the page's muted ink. */
 const knobs = defineKnobs('ui-iconbtn', {
 	size: '<length>',
 	radius: '<length-percentage>',
+	surface: '<color>',
+	ink: '<color>',
 	ring: '<color>',
 	hoverSurface: '<color>',
 	hoverInk: '<color>',
@@ -40,6 +46,8 @@ export function IconButton(props: IconButtonProps) {
 		'colorLevel',
 		'variant',
 		'radius',
+		'surface',
+		'ink',
 		'ring',
 		'hoverSurface',
 		'hoverInk',
@@ -55,6 +63,8 @@ export function IconButton(props: IconButtonProps) {
 	const knobValues = () => ({
 		size: measuredSize(),
 		radius: props.radius,
+		surface: props.surface,
+		ink: props.ink,
 		ring: props.ring,
 		hoverSurface: props.hoverSurface,
 		hoverInk: props.hoverInk,
