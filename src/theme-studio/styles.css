@@ -1,0 +1,602 @@
+/*
+ * Theme studio compartment stylesheet. Consumers add it beside the package
+ * sheet, on the page that mounts the studio:
+ *   @import "@aicolab/ui-solid/theme-studio/styles.css";
+ *
+ * SELF-LAYERED under `ui.theme-studio`, after the package's own layers, so the
+ * studio's rules outrank the atoms they style (a slimmer text input, a
+ * smaller button) and a consumer's unlayered rules still outrank the studio.
+ *
+ * The chrome (.ui-studio) is a theme boundary carrying the host's shipped
+ * theme; the previews (.ui-studio-pane, the frames) carry the draft. Every
+ * rule here reads tokens from whichever boundary it sits in.
+ */
+@layer ui.theme-studio {
+	.ui-studio {
+		display: grid;
+		gap: 1.5rem;
+		padding: clamp(1rem, 2.5vw, 2rem);
+		background: var(--color-base-200);
+		color: var(--color-base-content);
+		font-family: var(--font-sans);
+		font-size: var(--t-md);
+	}
+
+	.ui-studio-probe,
+	.ui-studio-probe[hidden] {
+		display: none;
+	}
+
+	/* ── Header ── */
+	.ui-studio-head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: end;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+	.ui-studio-title {
+		margin: 0;
+		font-family: var(--font-display);
+		font-size: var(--t-3xl);
+		font-weight: 600;
+		line-height: 1.1;
+	}
+	.ui-studio-lede {
+		margin: 0.5rem 0 0;
+		max-width: 62ch;
+		color: var(--color-base-content-muted);
+		line-height: 1.5;
+	}
+	.ui-studio-head-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.ui-studio-confirm {
+		font-size: var(--t-sm);
+		color: var(--color-base-content-muted);
+	}
+
+	/* ── Editor beside previews ── */
+	.ui-studio-body {
+		display: grid;
+		grid-template-columns: minmax(20rem, 27rem) minmax(0, 1fr);
+		gap: 1.5rem;
+		align-items: start;
+	}
+	.ui-studio-editor {
+		position: sticky;
+		top: 1rem;
+		max-block-size: calc(100dvh - 2rem);
+		overflow: auto;
+		overscroll-behavior: contain;
+		scrollbar-width: thin;
+		scrollbar-color: var(--color-border-strong) transparent;
+		padding-inline-end: 0.25rem;
+	}
+	/* The accordion is a grid: without this an item is at least as wide as its
+	   widest content (the CSS block's longest line) and the column scrolls sideways. */
+	.ui-studio-editor .ui-acc {
+		min-inline-size: 0;
+	}
+	@media (max-width: 70rem) {
+		.ui-studio-body {
+			grid-template-columns: minmax(0, 1fr);
+		}
+		.ui-studio-editor {
+			position: static;
+			max-block-size: none;
+		}
+	}
+
+	.ui-studio-note {
+		margin: 0;
+		font-size: var(--t-xs);
+		line-height: 1.5;
+		color: var(--color-base-content-muted);
+	}
+	.ui-studio-anchor-head code,
+	.ui-studio-font-label code,
+	.ui-studio-step-name {
+		font-family: var(--font-data);
+		font-size: var(--t-2xs);
+		color: var(--color-base-content-faint);
+	}
+	.ui-studio-css {
+		/* Long lines scroll inside the block instead of widening the column. */
+		contain: inline-size;
+		margin: 0;
+		padding: 0.75rem;
+		max-block-size: 24rem;
+		overflow: auto;
+		border-radius: var(--r-sm);
+		background: var(--color-base-100);
+		color: var(--color-base-content);
+		box-shadow: inset 0 0 0 1px var(--color-border);
+		font-family: var(--font-data);
+		font-size: var(--t-2xs);
+		line-height: 1.6;
+		white-space: pre;
+	}
+
+	/* ── Starting points ── */
+	.ui-studio-presets,
+	.ui-studio-rail {
+		display: grid;
+		gap: 0.6rem;
+	}
+	.ui-studio-rail-cards {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(7.25rem, 1fr));
+		gap: 0.4rem;
+	}
+	/* A card is its own theme boundary: the current theme with the card's
+	   colours for its scheme, so it previews exactly what a click applies. */
+	.ui-studio-card {
+		display: grid;
+		gap: 0.3rem;
+		align-content: start;
+		justify-items: start;
+		padding: 0.55rem 0.6rem;
+		border: 0;
+		border-radius: var(--r-sm);
+		background: var(--color-base-200);
+		color: var(--color-base-content);
+		box-shadow: inset 0 0 0 1px var(--color-border-strong);
+		font: inherit;
+		font-family: var(--font-sans);
+		text-align: start;
+		cursor: pointer;
+		transition: box-shadow 0.15s;
+	}
+	.ui-studio-card:hover {
+		box-shadow: inset 0 0 0 2px var(--color-primary);
+	}
+	.ui-studio-card:focus-visible {
+		outline: 2px solid var(--color-ring);
+		outline-offset: 2px;
+	}
+	.ui-studio-card-dots {
+		display: flex;
+		gap: 3px;
+	}
+	.ui-studio-card-dots > span {
+		inline-size: 0.75rem;
+		block-size: 0.75rem;
+		border-radius: 50%;
+		box-shadow: inset 0 0 0 1px var(--color-border-strong);
+	}
+	.ui-studio-card-name {
+		font-size: var(--t-xs);
+		font-weight: 600;
+	}
+	.ui-studio-card-note {
+		font-size: var(--t-2xs);
+		line-height: 1.3;
+		color: var(--color-base-content-muted);
+	}
+
+	/* ── Colours ── */
+	.ui-studio-anchors {
+		display: grid;
+		gap: 1rem;
+	}
+	.ui-studio-anchor {
+		display: grid;
+		gap: 0.4rem;
+		padding-block-end: 1rem;
+		border-block-end: 1px solid var(--color-border);
+	}
+	.ui-studio-anchor:last-child {
+		padding-block-end: 0;
+		border-block-end: 0;
+	}
+	.ui-studio-anchor-head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.5rem;
+	}
+	.ui-studio-anchor-head .ui-studio-reset {
+		margin-inline-start: auto;
+	}
+	.ui-studio-sides {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.6rem;
+	}
+	.ui-studio-side {
+		display: grid;
+		gap: 0.35rem;
+		align-content: start;
+		min-inline-size: 0;
+	}
+	.ui-studio-side-label {
+		font-family: var(--font-label, var(--font-data));
+		font-size: var(--t-2xs);
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--color-base-content-muted);
+	}
+	.ui-studio-changed {
+		font-weight: 700;
+		color: var(--color-base-content);
+	}
+	.ui-studio-side-controls {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		min-inline-size: 0;
+	}
+	.ui-studio-swatch {
+		flex: none;
+		inline-size: 2.25rem;
+		block-size: 2.25rem;
+		padding: 0;
+		border: 0;
+		border-radius: var(--r-xs);
+		background: none;
+		cursor: pointer;
+	}
+	.ui-studio-swatch::-webkit-color-swatch-wrapper {
+		padding: 0;
+	}
+	.ui-studio-swatch::-webkit-color-swatch {
+		border: 0;
+		border-radius: var(--r-xs);
+		box-shadow: inset 0 0 0 1px var(--color-border-strong);
+	}
+	.ui-studio-swatch::-moz-color-swatch {
+		border: 0;
+		border-radius: var(--r-xs);
+	}
+	.ui-studio-swatch:focus-visible {
+		outline: 2px solid var(--color-ring);
+		outline-offset: 2px;
+	}
+	.ui-studio-value,
+	.ui-studio-step-value {
+		flex: 1;
+		min-inline-size: 0;
+		inline-size: 100%;
+		font-family: var(--font-data);
+		font-size: var(--t-2xs);
+	}
+	.ui-studio-side-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem;
+	}
+
+	/* ── Fonts and ladders ── */
+	.ui-studio-fonts,
+	.ui-studio-ladder {
+		display: grid;
+		gap: 0.9rem;
+	}
+	.ui-studio-font {
+		display: grid;
+		gap: 0.35rem;
+	}
+	.ui-studio-font-label {
+		display: flex;
+		align-items: baseline;
+		gap: 0.5rem;
+	}
+	.ui-studio-font-select {
+		inline-size: 100%;
+	}
+	.ui-studio-font-specimen {
+		margin: 0;
+		font-size: var(--t-lg);
+		line-height: 1.3;
+		overflow-wrap: anywhere;
+	}
+	.ui-studio-step {
+		display: grid;
+		grid-template-columns: 4.75rem minmax(0, 6.5rem) minmax(0, 1fr) auto;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.ui-studio-step-sample {
+		display: flex;
+		align-items: center;
+		min-block-size: 2rem;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+	.ui-studio-radius-sample {
+		inline-size: 3rem;
+		block-size: 2rem;
+		background: var(--color-primary-soft);
+		box-shadow: inset 0 0 0 1.5px var(--color-primary);
+	}
+
+	/* ── Previews ── */
+	.ui-studio-previews {
+		container: ui-studio-previews / inline-size;
+		display: grid;
+		gap: 2rem;
+		min-inline-size: 0;
+	}
+	.ui-studio-preview,
+	.ui-studio-frames,
+	.ui-studio-catalogue {
+		display: grid;
+		gap: 0.75rem;
+		min-inline-size: 0;
+	}
+	.ui-studio-frames-bar,
+	.ui-studio-catalogue-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: end;
+		gap: 0.75rem;
+	}
+	.ui-studio-frames-grid,
+	.ui-studio-panes {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+		align-items: start;
+	}
+	/* Phone frames show at their real width when there is room for it. */
+	.ui-studio-frames-grid[data-viewport="phone"] {
+		grid-template-columns: repeat(2, minmax(0, 390px));
+	}
+	@container ui-studio-previews (max-width: 44rem) {
+		.ui-studio-frames-grid,
+		.ui-studio-frames-grid[data-viewport="phone"],
+		.ui-studio-panes {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+	.ui-studio-frame {
+		display: grid;
+		gap: 0.4rem;
+		margin: 0;
+		min-inline-size: 0;
+	}
+	.ui-studio-frame-caption,
+	.ui-studio-pane-tag {
+		font-family: var(--font-label, var(--font-data));
+		font-size: var(--t-2xs);
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-base-content-muted);
+	}
+	/* The page renders at its real viewport size; the box scales it to fit. */
+	.ui-studio-frame-box {
+		position: relative;
+		overflow: hidden;
+		block-size: calc(var(--ui-studio-frame-height) * var(--ui-studio-frame-scale));
+		border-radius: var(--r-md);
+		background: var(--color-base-100);
+		box-shadow: 0 0 0 1px var(--color-border-strong);
+	}
+	.ui-studio-frame-page {
+		display: block;
+		inline-size: var(--ui-studio-frame-width);
+		block-size: var(--ui-studio-frame-height);
+		border: 0;
+		transform: scale(var(--ui-studio-frame-scale));
+		transform-origin: 0 0;
+	}
+
+	/* ── Catalogue panes ── */
+	.ui-studio-pane {
+		position: relative;
+		min-inline-size: 0;
+		padding: 2.25rem 1rem 1.25rem;
+		border-radius: var(--r-md);
+		background: var(--color-base-200);
+		color: var(--color-base-content);
+		font-family: var(--font-sans);
+		box-shadow: inset 0 0 0 1px var(--color-border-strong);
+	}
+	.ui-studio-pane-tag {
+		position: absolute;
+		inset-block-start: 0.7rem;
+		inset-inline-end: 0.85rem;
+		color: var(--color-base-content-faint);
+	}
+	.ui-studio-specimens {
+		display: grid;
+		gap: 1rem;
+		min-inline-size: 0;
+	}
+	.ui-studio-type {
+		display: grid;
+		gap: 0.85rem;
+	}
+	.ui-studio-type-row {
+		display: grid;
+		gap: 0.25rem;
+	}
+	.ui-studio-type-row[data-role="display"] .ui-studio-type-sample {
+		font-size: var(--t-3xl);
+		font-weight: 600;
+		line-height: 1.1;
+	}
+	.ui-studio-type-row[data-role="sans"] .ui-studio-type-sample {
+		max-width: 52ch;
+		line-height: 1.55;
+		color: var(--color-base-content-muted);
+	}
+	.ui-studio-type-row[data-role="data"] .ui-studio-type-sample {
+		font-size: var(--t-lg);
+	}
+	.ui-studio-type-row[data-role="label"] .ui-studio-type-sample {
+		font-size: var(--t-2xs);
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		color: var(--color-base-content-muted);
+	}
+	.ui-studio-swatches,
+	.ui-studio-type-ladder,
+	.ui-studio-radius-ladder {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: end;
+		gap: 0.75rem 1rem;
+	}
+	.ui-studio-swatch-cell,
+	.ui-studio-ladder-cell {
+		display: grid;
+		gap: 0.25rem;
+		justify-items: center;
+	}
+	.ui-studio-swatch-cell code,
+	.ui-studio-ladder-cell code {
+		font-family: var(--font-data);
+		font-size: var(--t-2xs);
+		color: var(--color-base-content-muted);
+	}
+	.ui-studio-swatch-chip {
+		inline-size: 2.75rem;
+		block-size: 2rem;
+		border-radius: var(--r-xs);
+		box-shadow: inset 0 0 0 1px var(--color-border-strong);
+	}
+	.ui-studio-matrix,
+	.ui-studio-variants {
+		display: grid;
+		gap: 4px;
+		overflow-x: auto;
+		padding-block-end: 4px;
+		scrollbar-width: thin;
+	}
+	.ui-studio-matrix-row {
+		display: grid;
+		grid-template-columns: 4.5rem repeat(11, minmax(1.9rem, 1fr));
+		gap: 3px;
+		align-items: center;
+		min-inline-size: 26rem;
+	}
+	.ui-studio-variants-row {
+		display: grid;
+		grid-template-columns: 4.5rem repeat(5, minmax(4.25rem, 1fr));
+		gap: 0.35rem;
+		align-items: center;
+		min-inline-size: 28rem;
+	}
+	.ui-studio-matrix-row strong,
+	.ui-studio-variants-row strong {
+		font-size: var(--t-2xs);
+	}
+	/* Each level swatch paints its treated surface and its paired ink. */
+	.ui-studio-level {
+		display: grid;
+		place-items: center;
+		block-size: 2rem;
+		padding: 0;
+		border: 0;
+		border-radius: var(--r-xs);
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-base-content) 12%, transparent);
+		font-family: var(--font-data);
+		font-size: var(--t-2xs);
+		font-weight: 700;
+		cursor: copy;
+	}
+	.ui-studio-level:focus-visible {
+		outline: 2px solid var(--color-ring);
+		outline-offset: 1px;
+	}
+	.ui-studio-shapes,
+	.ui-studio-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.6rem;
+	}
+	.ui-studio-specimen-panels {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+		gap: 0.75rem;
+		align-items: start;
+	}
+	.ui-studio-stack {
+		display: grid;
+		gap: 0.85rem;
+	}
+
+	/* Resolver roles: the treated surfaces, and ink on the treated surface. */
+	.ui-studio-anatomy {
+		display: grid;
+		gap: 0.75rem;
+	}
+	.ui-studio-anatomy-surfaces {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+		gap: 0.5rem;
+	}
+	.ui-studio-anatomy-surface {
+		display: grid;
+		gap: 0.3rem;
+	}
+	.ui-studio-anatomy-swatch {
+		block-size: 2.25rem;
+		border: 1px solid var(--ui-border);
+		border-radius: var(--r-xs);
+	}
+	.ui-studio-anatomy-ink {
+		display: grid;
+		gap: 0.25rem;
+		padding: 0.75rem;
+		border: 2px solid var(--ui-border);
+		border-radius: var(--r-sm);
+		background: var(--ui-surface);
+		color: var(--ui-ink);
+	}
+	.ui-studio-ink-muted {
+		color: var(--ui-ink-muted);
+	}
+	.ui-studio-ink-faint {
+		color: var(--ui-ink-faint);
+	}
+	.ui-studio-anatomy-marks {
+		display: grid;
+		gap: 0.35rem;
+	}
+	.ui-studio-anatomy-track {
+		block-size: 6px;
+		overflow: hidden;
+		border-radius: var(--r-pill);
+		background: var(--ui-track);
+	}
+	.ui-studio-anatomy-track > span {
+		display: block;
+		inline-size: 68%;
+		block-size: 100%;
+		background: var(--ui-color);
+	}
+	.ui-studio-role {
+		display: grid;
+		gap: 1px;
+	}
+	.ui-studio-role code {
+		font-family: var(--font-data);
+		font-size: var(--t-2xs);
+		font-weight: 700;
+	}
+	.ui-studio-role span {
+		font-size: var(--t-2xs);
+		color: color-mix(in oklab, currentColor 72%, transparent);
+	}
+
+	.ui-studio-type-step {
+		font-family: var(--font-display);
+		line-height: 1;
+	}
+	.ui-studio-radius-box {
+		inline-size: 3.5rem;
+		block-size: 2.5rem;
+		background: var(--color-primary-soft);
+		box-shadow: inset 0 0 0 1.5px var(--color-primary);
+	}
+}

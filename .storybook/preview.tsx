@@ -26,7 +26,9 @@ import './preview.css'
 
 import { createEffect, Show } from 'solid-js'
 import { createJSXDecorator, type Preview } from 'storybook-solidjs-vite'
-import { ensureGoogleFontLoaded, FONT_OPTIONS, FONT_ROLES, fontOption } from './fonts'
+import { COLOR_ANCHORS } from '../src/theme-studio/contract'
+import { readThemeSource } from '../src/theme-studio/read-theme'
+import { ensureGoogleFontLoaded, FONT_OPTIONS, FONT_ROLES, fontOption } from '../src/theme-studio/fonts'
 
 type ThemeMode = 'auto' | 'light' | 'dark' | 'split'
 
@@ -43,36 +45,14 @@ const themeMode = (value: unknown): ThemeMode =>
 // pane. The pane is a .ui-theme boundary, so ui-solid derives its entire role
 // set locally. Storybook therefore exercises the same anchor-only contract as
 // a consumer application instead of copying a derived token matrix.
-const THEME_ANCHORS = new Set([
-	'--color-base-100',
-	'--color-base-content',
-	'--color-primary',
-	'--color-secondary',
-	'--color-accent',
-	'--color-neutral',
-	'--color-info',
-	'--color-success',
-	'--color-warning',
-	'--color-error',
-])
+// The anchors are the root's WINNING declarations as written, read through the
+// cascade layers the package ships them in (a top-level-only `:root` scan finds
+// none — the defaults live in @layer ui.tokens).
+const ANCHOR_TOKENS = COLOR_ANCHORS.map((anchor) => anchor.token)
+const THEME_ANCHORS = new Set<string>(ANCHOR_TOKENS)
 
 const rehostThemeAnchors = (el: HTMLElement) => {
-	for (let s = 0; s < document.styleSheets.length; s++) {
-		let rules: CSSRuleList
-		try {
-			rules = document.styleSheets[s].cssRules
-		} catch {
-			continue // cross-origin sheet — none of ours
-		}
-		for (let r = 0; r < rules.length; r++) {
-			const rule = rules[r]
-			if (!(rule instanceof CSSStyleRule) || rule.selectorText !== ':root') continue
-			for (let d = 0; d < rule.style.length; d++) {
-				const name = rule.style.item(d)
-				if (THEME_ANCHORS.has(name)) el.style.setProperty(name, rule.style.getPropertyValue(name))
-			}
-		}
-	}
+	for (const [name, value] of readThemeSource(document, ANCHOR_TOKENS).site) el.style.setProperty(name, value)
 }
 
 // A pane also needs any INLINE overrides currently on <html> (the Fonts

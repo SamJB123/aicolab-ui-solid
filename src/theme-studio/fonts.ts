@@ -1,6 +1,7 @@
 // Curated Google Fonts candidates for the package's font roles
 // (--font-display / --font-sans / --font-data / --font-label), plus an
-// on-demand loader.
+// on-demand loader. One list for the Storybook font toolbar and the theme
+// studio's font pickers.
 //
 // `spec` is the css2 API family value (axes must be alphabetical; ranges are
 // each family's published variable axes — static families list fixed
@@ -10,7 +11,18 @@
 // falls back to whatever --font-data resolves to.
 
 export type FontRole = 'display' | 'sans' | 'data' | 'label'
-export const FONT_ROLES: FontRole[] = ['display', 'sans', 'data', 'label']
+export const FONT_ROLES: readonly FontRole[] = ['display', 'sans', 'data', 'label']
+
+/** The custom property each role is carried on. */
+export const fontToken = (role: FontRole): `--font-${FontRole}` => `--font-${role}`
+
+/** What each role is for, in the words the studio shows beside its picker. */
+export const FONT_ROLE_NAMES: Record<FontRole, { label: string; note: string }> = {
+	display: { label: 'Display', note: 'Headings, panel titles and hero lines' },
+	sans: { label: 'Body', note: 'Running text and controls' },
+	data: { label: 'Data', note: 'Numbers, code and timestamps' },
+	label: { label: 'Micro-labels', note: 'Eyebrows, chips, kickers and field labels; unset, they use the data font' },
+}
 
 export type FontOption = {
 	id: string
@@ -482,22 +494,76 @@ export const FONT_OPTIONS: Record<FontRole, FontOption[]> = {
 export const fontOption = (role: FontRole, id: unknown): FontOption | undefined =>
 	FONT_OPTIONS[role].find((o) => o.id === id)
 
-/** Inject the Google Fonts css2 stylesheet for an option, once per family. */
-export const ensureGoogleFontLoaded = (option: FontOption): void => {
+/** The first family named in a font-family stack, unquoted. */
+export const leadingFamily = (stack: string): string =>
+	(stack.split(',')[0] ?? '').trim().replace(/^["']|["']$/g, '')
+
+/** The curated option whose leading family matches a stack's — how a stack an
+ *  app authored itself is recognised among the candidates. */
+export const fontOptionForStack = (role: FontRole, stack: string): FontOption | undefined => {
+	const family = leadingFamily(stack).toLowerCase()
+	return FONT_OPTIONS[role].find(
+		(o) => o.stack !== undefined && leadingFamily(o.stack).toLowerCase() === family,
+	)
+}
+
+/** The css2 family parameter for a spec, keeping the API's own punctuation
+ *  (`:` `,` `;` `@`) literal as Google documents it. */
+const css2Family = (spec: string): string =>
+	encodeURIComponent(spec)
+		.replaceAll('%3A', ':')
+		.replaceAll('%2C', ',')
+		.replaceAll('%3B', ';')
+		.replaceAll('%40', '@')
+
+/** One css2 stylesheet URL loading every given family spec. A family named
+ *  twice (the same face offered to two roles with different axis ranges) is
+ *  requested once, with its first spec: css2 refuses a repeated family. */
+export const googleFontsHref = (specs: readonly string[]): string => {
+	const byFamily = new Map<string, string>()
+	for (const spec of specs) {
+		const family = spec.split(':')[0] ?? spec
+		if (!byFamily.has(family)) byFamily.set(family, spec)
+	}
+	const families = [...byFamily.values()].map((spec) => `family=${css2Family(spec)}`)
+	return `https://fonts.googleapis.com/css2?${families.join('&')}&display=swap`
+}
+
+const ensurePreconnect = (doc: Document): void => {
+	if (doc.getElementById('gf-preconnect')) return
+	const pre = doc.createElement('link')
+	pre.id = 'gf-preconnect'
+	pre.rel = 'preconnect'
+	pre.href = 'https://fonts.gstatic.com'
+	pre.crossOrigin = 'anonymous'
+	doc.head.appendChild(pre)
+}
+
+/** Inject the Google Fonts css2 stylesheet for an option, once per family,
+ *  into `doc` (the current document unless a frame's is given). */
+export const ensureGoogleFontLoaded = (option: FontOption, doc: Document = document): void => {
 	if (option.spec === undefined) return
 	const linkId = `gf-${option.id}`
-	if (document.getElementById(linkId)) return
-	if (!document.getElementById('gf-preconnect')) {
-		const pre = document.createElement('link')
-		pre.id = 'gf-preconnect'
-		pre.rel = 'preconnect'
-		pre.href = 'https://fonts.gstatic.com'
-		pre.crossOrigin = 'anonymous'
-		document.head.append(pre)
-	}
-	const link = document.createElement('link')
+	if (doc.getElementById(linkId)) return
+	ensurePreconnect(doc)
+	const link = doc.createElement('link')
 	link.id = linkId
 	link.rel = 'stylesheet'
-	link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(option.spec).replaceAll('%3A', ':').replaceAll('%2C', ',').replaceAll('%3B', ';').replaceAll('%40', '@')}&display=swap`
-	document.head.append(link)
+	link.href = googleFontsHref([option.spec])
+	doc.head.appendChild(link)
+}
+
+/** Every curated family in one stylesheet, so a picker can show each name in
+ *  its own face. css2 only downloads a font file once a glyph in it paints. */
+export const ensureAllCandidatesLoaded = (doc: Document = document): void => {
+	if (doc.getElementById('gf-all-candidates')) return
+	ensurePreconnect(doc)
+	const specs = FONT_ROLES.flatMap((role) =>
+		FONT_OPTIONS[role].flatMap((o) => (o.spec === undefined ? [] : [o.spec])),
+	)
+	const link = doc.createElement('link')
+	link.id = 'gf-all-candidates'
+	link.rel = 'stylesheet'
+	link.href = googleFontsHref(specs)
+	doc.head.appendChild(link)
 }

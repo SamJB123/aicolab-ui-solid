@@ -29,6 +29,9 @@
 		"./prosekit-solid/block-identity": "./src/prosekit-solid/block-identity.ts",
 		"./prosekit-solid/presence": "./src/prosekit-solid/presence.ts",
 		"./prosekit-solid/styles.css": "./src/prosekit-solid/styles.css",
+		"./theme-studio": "./src/theme-studio/index.ts",
+		"./theme-studio/draft": "./src/theme-studio/draft.ts",
+		"./theme-studio/styles.css": "./src/theme-studio/styles.css",
 		"./package.json": "./package.json",
 		"./*": "./src/*.ts"
 	},

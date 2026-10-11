@@ -1,4 +1,4 @@
-// Theme Lab preset swatches — curated starting points for the token contract.
+// Theme studio preset swatches — curated starting points for the token contract.
 //
 // Light and dark presets are INDEPENDENT rails. Each preset authors only the
 // four core theme anchors for one scheme: surface, content, primary and
@@ -12,9 +12,12 @@
 // lean on weight/size where they're used as ink.
 //
 // MARIGOLD, the original stand-out of this rail, was PROMOTED to the
-// canonical light scheme (2026-08-07) — it now lives in theme-defaults.css and
-// appears as the canonical card at the head of the light rail rather than
-// as an entry here.
+// canonical light scheme (2026-08-07) — it now lives in theme-defaults.css.
+// The studio heads each rail with the host's own theme and ui-solid's
+// defaults, both read from the stylesheets rather than restated here.
+//
+// The keys are the `key`s of COLOR_ANCHORS (contract.ts), which maps each to
+// its custom property.
 
 export type SchemeValues = {
 	base: string
