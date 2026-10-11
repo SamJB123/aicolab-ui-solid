@@ -1,7 +1,7 @@
 import { createContext, useContext } from "solid-js";
 
 // Keyed by the consumer's process/window id (an opaque string here — the
-// reference app used Convex Ids; hub uses collection row ids).
+// reference app used database document ids; hub uses collection row ids).
 type TaskbarButtonRefs = Map<string, HTMLElement | null>;
 
 export interface DesktopContextValue {

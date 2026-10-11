@@ -1,6 +1,6 @@
 // XP compartment of @aicolab/ui-solid: the Windows-XP-authentic desktop-shell
 // component library (window chrome, taskbar, start menu, widget set), ported
-// from the convex-os reference app with all state coupling removed. Pure
+// from an XP-desktop reference app with all state coupling removed. Pure
 // presentational + gesture logic — window/process STATE lives with the host
 // (hub keeps it in TanStack DB collections) and arrives via props/handles.
 

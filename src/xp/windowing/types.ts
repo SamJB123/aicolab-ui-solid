@@ -1,5 +1,5 @@
 // Window-manager data shapes, re-homed as plain TS from the reference app's
-// Convex validators (convex-os `convex/windows/schema.ts`). The state itself
+// windows schema validators. The state itself
 // lives with the consumer (hub keeps it in TanStack DB collections); these are
 // only the contracts the presentational window chrome renders from.
 

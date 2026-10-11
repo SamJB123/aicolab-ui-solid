@@ -5,7 +5,7 @@ import { s } from "../style";
 
 interface StartButtonProps {
   onClick?: () => void;
-  // TODO(colab-os): the reference shipped the Convex logo here; the host
+  // TODO(colab-os): the reference shipped its own logo here; the host
   // supplies its own brand mark (and label) for the Colab OS skin.
   logoSrc?: string;
   label?: string;

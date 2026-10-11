@@ -1,8 +1,8 @@
 import type { JSX } from "@solidjs/web";
 import { s, type StyleValue } from "../style";
 // TODO(colab-os): wallpaper is a prime reskin candidate — NOTE the bundled
-// bliss.webp has the CONVEX LOGO composited into the image itself (rising
-// behind the hill; inherited from the convex-os demo). Swapping in an
+// bliss.webp has the REFERENCE DEMO'S LOGO composited into the image itself
+// (rising behind the hill). Swapping in an
 // aicolab wallpaper is a one-file replacement here.
 import blissUrl from "../assets/bliss.webp";
 

@@ -1,4 +1,4 @@
-// Presentational start-menu item. The reference coupled items to its Convex
+// Presentational start-menu item. The reference coupled items to its backend
 // process kinds; here an item is pure data + an optional onSelect, and the
 // host decides what selecting it does (launch an app, open a link, ...).
 // `separatorBefore` replaces the reference's hard-coded separator indexes so
