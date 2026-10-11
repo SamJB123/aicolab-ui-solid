@@ -11,6 +11,16 @@ const DOCUMENTS = [
 	{ id: 'minutes', glyph: '✎', title: 'Meeting minutes', description: 'Raw notes, unreviewed', when: '1w ago', muted: true },
 ]
 
+/** A picture mark (no intrinsic size) — the case the `mark` leading box exists for. */
+function CalendarMark() {
+	return (
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+			<rect x="4" y="5.5" width="16" height="14" rx="2" />
+			<path d="M4 10h16M8.5 3.5v4M15.5 3.5v4" />
+		</svg>
+	)
+}
+
 const meta = {
 	title: 'Molecules/RichList',
 	component: RichList,
@@ -27,6 +37,7 @@ const meta = {
 		descriptionInk: { control: 'text', table: { category: 'knobs' } },
 		trailingInk: { control: 'text', table: { category: 'knobs' } },
 		leadingInk: { control: 'text', table: { category: 'knobs' } },
+		leadingMarkSize: { control: 'text', table: { category: 'knobs' } },
 		metadataPrimaryInk: { control: 'text', table: { category: 'knobs' } },
 		metadataSecondaryInk: { control: 'text', table: { category: 'knobs' } },
 		divider: { control: 'text', table: { category: 'knobs' } },
@@ -45,7 +56,10 @@ export const Playground: Story = {
 					<For each={DOCUMENTS}>
 						{(doc) => (
 							<RichListItem
-								leading={<span aria-hidden="true">{doc.glyph}</span>}
+								// Mark leadings: text glyphs and one picture share a fixed box
+								// (the leadingMarkSize knob), so every title lines up.
+								leading={doc.id === 'season' ? <CalendarMark /> : <span aria-hidden="true">{doc.glyph}</span>}
+								leadingWidth="mark"
 								title={doc.title}
 								description={doc.description}
 								trailing={<RichListMetadata primary={doc.when} />}

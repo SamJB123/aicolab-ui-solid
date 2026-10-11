@@ -203,10 +203,13 @@ export function WorkspaceNavigationItem(props: {
 	muted?: boolean
 	class?: ClassProp
 }) {
+	// A navigation mark is an icon: RichList's mark mode gives it a fixed box,
+	// so every label in the navigation starts on the same x.
 	return (
 		<RichListItem
 			title={props.label}
 			leading={props.mark}
+			leadingWidth="mark"
 			onSelect={props.onSelect}
 			selected={props.current}
 			muted={props.muted}

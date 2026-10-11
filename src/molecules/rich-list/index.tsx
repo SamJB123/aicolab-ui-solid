@@ -23,6 +23,7 @@ const knobs = defineKnobs('ui-rl', {
 	descriptionInk: '<color>',
 	trailingInk: '<color>',
 	leadingInk: '<color>',
+	leadingMarkSize: '<length>',
 	metadataPrimaryInk: '<color>',
 	metadataSecondaryInk: '<color>',
 	divider: '<color>',
@@ -102,7 +103,10 @@ export function RichListMetadata(props: {
 export function RichListItem(
 	props: {
 		leading?: JSX.Element
-		leadingWidth?: 'auto' | 'wide'
+		/** `mark` — the leading is an icon: a fixed square of its own (the
+		 *  leadingMarkSize knob), so every title starts on the same x; an SVG or
+		 *  image fills it, a text glyph sits centred in it. */
+		leadingWidth?: 'auto' | 'wide' | 'mark'
 		title: JSX.Element
 		description?: JSX.Element
 		trailing?: JSX.Element

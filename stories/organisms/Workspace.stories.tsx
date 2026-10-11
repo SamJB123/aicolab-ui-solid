@@ -8,6 +8,23 @@ import {
 } from '../../src'
 import { treatmentArgTypes } from '../primitives/color-treatment-story'
 
+/** Navigation marks as callers pass them: a picture (an SVG has no size of
+ *  its own) beside text glyphs; the item's mark box sizes both alike. */
+function CommonsMark() {
+	return (
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<path d="M4 11.5 12 4.5l8 7" />
+			<path d="M6.5 10v9h11v-9" />
+		</svg>
+	)
+}
+
+const SPACES = [
+	{ label: 'Commons', mark: () => <CommonsMark /> },
+	{ label: 'Studio', mark: () => <span aria-hidden="true">🎨</span> },
+	{ label: 'Workshop', mark: () => <span aria-hidden="true">🛠️</span> },
+]
+
 const meta = {
 	title: 'Organisms/Workspace',
 	component: WorkspaceShell,
@@ -29,7 +46,6 @@ type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {
 	render: (args) => {
-		const spaces = ['Commons', 'Studio', 'Workshop']
 		const [selected, setSelected] = createSignal('Commons')
 		return (
 			<div style={{ height: '42rem' }}>
@@ -39,7 +55,7 @@ export const Playground: Story = {
 						<WorkspaceNavigation label="Workspace" brand={<strong>AI CoLab</strong>} footer={<Button variant="text">Settings</Button>}>
 							{/* Slot content is caller-authored: the caller passes the family. */}
 							<WorkspaceNavigationGroup id="spaces" label="Spaces" colorBase={args.colorBase} colorLevel={args.colorLevel}>
-								<For each={spaces}>{(space) => <WorkspaceNavigationItem label={space} current={selected() === space} onSelect={() => setSelected(space)} />}</For>
+								<For each={SPACES}>{(space) => <WorkspaceNavigationItem label={space.label} mark={space.mark()} current={selected() === space.label} onSelect={() => setSelected(space.label)} />}</For>
 							</WorkspaceNavigationGroup>
 						</WorkspaceNavigation>
 					}
@@ -58,7 +74,6 @@ export const Playground: Story = {
 
 export const CompleteWorkspace: Story = {
 	render: () => {
-		const spaces = ['Commons', 'Studio', 'Workshop']
 		const [selected, setSelected] = createSignal('Commons')
 		const [sheet, setSheet] = createSignal(false)
 		return (
@@ -67,7 +82,7 @@ export const CompleteWorkspace: Story = {
 					navigation={
 						<WorkspaceNavigation label="Workspace" brand={<strong>AI CoLab</strong>} footer={<Button variant="text">Settings</Button>}>
 							<WorkspaceNavigationGroup id="spaces" label="Spaces">
-								<For each={spaces}>{(space) => <WorkspaceNavigationItem label={space} current={selected() === space} onSelect={() => setSelected(space)} />}</For>
+								<For each={SPACES}>{(space) => <WorkspaceNavigationItem label={space.label} mark={space.mark()} current={selected() === space.label} onSelect={() => setSelected(space.label)} />}</For>
 							</WorkspaceNavigationGroup>
 						</WorkspaceNavigation>
 					}

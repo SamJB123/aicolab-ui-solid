@@ -56,6 +56,11 @@
 	inherits: true;
 	initial-value: currentColor;
 }
+@property --_ui-rl-leading-mark-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 1.25rem;
+}
 @property --_ui-rl-metadata-primary-ink {
 	syntax: "<color>";
 	inherits: true;
@@ -95,6 +100,7 @@
 		--_ui-rl-description-ink: var(--ui-rl-description-ink, var(--color-base-content-faint));
 		--_ui-rl-trailing-ink: var(--ui-rl-trailing-ink, var(--color-base-content-faint));
 		--_ui-rl-leading-ink: var(--ui-rl-leading-ink, var(--ui-color-foreground));
+		--_ui-rl-leading-mark-size: var(--ui-rl-leading-mark-size, 1.25rem);
 		--_ui-rl-metadata-primary-ink: var(--ui-rl-metadata-primary-ink, var(--color-base-content-muted));
 		--_ui-rl-metadata-secondary-ink: var(--ui-rl-metadata-secondary-ink, var(--color-base-content-faint));
 		--_ui-rl-divider: var(--ui-rl-divider, var(--color-border));
@@ -241,6 +247,22 @@
 
 	.ui-rich-list-leading { color: var(--_ui-rl-leading-ink); }
 
+	/* A MARK leading is an icon in a fixed square of its own, so every title
+	   in the list starts on the same x whatever the mark is. A picture (an
+	   SVG or image, which has no size of its own) fills the square; a text
+	   glyph sits centred in it. */
+	.ui-rich-list-leading[data-width="mark"] {
+		display: grid;
+		place-items: center;
+		inline-size: var(--_ui-rl-leading-mark-size);
+		block-size: var(--_ui-rl-leading-mark-size);
+	}
+
+	.ui-rich-list-leading[data-width="mark"] > :is(svg, img) {
+		inline-size: 100%;
+		block-size: 100%;
+	}
+
 	.ui-rich-list-main {
 		display: flex;
 		flex-direction: column;
@@ -319,6 +341,7 @@
 			--_ui-rl-description-ink: attr(data-ui-rl-description-ink type(<color>), var(--ui-rl-description-ink, var(--color-base-content-faint)));
 			--_ui-rl-trailing-ink: attr(data-ui-rl-trailing-ink type(<color>), var(--ui-rl-trailing-ink, var(--color-base-content-faint)));
 			--_ui-rl-leading-ink: attr(data-ui-rl-leading-ink type(<color>), var(--ui-rl-leading-ink, var(--ui-color-foreground)));
+		--_ui-rl-leading-mark-size: attr(data-ui-rl-leading-mark-size type(<length>), var(--ui-rl-leading-mark-size, 1.25rem));
 			--_ui-rl-metadata-primary-ink: attr(data-ui-rl-metadata-primary-ink type(<color>), var(--ui-rl-metadata-primary-ink, var(--color-base-content-muted)));
 			--_ui-rl-metadata-secondary-ink: attr(data-ui-rl-metadata-secondary-ink type(<color>), var(--ui-rl-metadata-secondary-ink, var(--color-base-content-faint)));
 			--_ui-rl-divider: attr(data-ui-rl-divider type(<color>), var(--ui-rl-divider, var(--color-border)));

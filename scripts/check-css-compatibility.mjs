@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises'
 
 const read = (path) => readFile(new URL(path, import.meta.url), 'utf8')
 
-const [resolver, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit, callout, flowMap] = await Promise.all([
+const [resolver, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit, callout, flowMap, richList] = await Promise.all([
 	read('../src/resolver.css'),
 	read('../src/molecules/accordion/styles.css'),
 	read('../src/atoms/select-control/styles.css'),
@@ -20,6 +20,7 @@ const [resolver, accordion, selectControl, button, formControl, iconButton, hold
 	read('../src/prosekit-solid/styles.css'),
 	read('../src/molecules/callout/styles.css'),
 	read('../src/organisms/flow-map/styles.css'),
+	read('../src/molecules/rich-list/styles.css'),
 ])
 
 const requireAll = (source, expressions, contract) => {
@@ -171,6 +172,17 @@ requireAll(
 		/@supports \(anchor-name: --a\)/,
 	],
 	'flow map knob boundary',
+)
+requireAll(
+	richList,
+	[
+		/--_ui-rl-leading-mark-size: var\(--ui-rl-leading-mark-size, 1\.25rem\)/,
+		/--_ui-rl-leading-mark-size: attr\(data-ui-rl-leading-mark-size type\(<length>\), var\(--ui-rl-leading-mark-size, 1\.25rem\)\)/,
+		/* The mark box: a fixed square, pictures fill it. */
+		/\.ui-rich-list-leading\[data-width="mark"\] \{/,
+		/\.ui-rich-list-leading\[data-width="mark"\] > :is\(svg, img\) \{/,
+	],
+	'rich-list knob boundary',
 )
 requireAll(
 	accordionItem,
