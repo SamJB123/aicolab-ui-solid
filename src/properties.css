@@ -263,6 +263,90 @@
 	initial-value: 999px;
 }
 
+/* ── The surface treatment ladder ──
+   How a plate is painted beyond its colours: the gradient across it, the
+   rings round its edge, the bevel inside it, the studs in its corners, the
+   shape of its corners, how far it lifts on hover and the shadow it casts.
+   Theme anchors (a theme writes them, as it writes --r-*): ui-solid's own
+   values paint today's flat house look — every initial is a zero or the
+   plain value — so a theme that leaves them alone changes nothing.
+   theme-defaults.css derives the two roles component sheets paint from
+   them: --ui-surface-paint (the gradient and the studs, as image layers
+   over any surface colour) and --ui-edge (the rings, the bevel and the
+   shadow, as one box-shadow list). The chessboard's brass register
+   (themes/brass.css) is the first theme to set them. */
+@property --s-gradient {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
+@property --s-angle {
+	syntax: "<angle>";
+	inherits: true;
+	initial-value: 160deg;
+}
+@property --s-ring-inner {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+@property --s-ring-gap {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+@property --s-ring-outer {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+@property --s-bevel {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
+@property --s-stud {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+@property --s-corner {
+	syntax: "<custom-ident>";
+	inherits: true;
+	initial-value: round;
+}
+@property --s-lift {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+@property --s-shadow-y {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+@property --s-shadow-blur {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+@property --s-shadow-alpha {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
+/* The two derived roles: image and shadow lists have no registrable syntax,
+   so these carry the universal syntax and no initial; theme-defaults.css
+   always assigns them on the theme root. */
+@property --ui-surface-paint {
+	syntax: "*";
+	inherits: true;
+}
+@property --ui-edge {
+	syntax: "*";
+	inherits: true;
+}
+
 /* ── Panel density (the durable replacement for the old --ui-density if()
       knob; the opt-in selector lives with .ui-panel further down) ── */
 @property --ui-panel-pad {

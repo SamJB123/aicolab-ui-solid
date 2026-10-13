@@ -39,7 +39,71 @@ export type ThemePreset = {
 	values: SchemeValues
 }
 
+/** A starting point for the surface treatment ladder (--s-*): the values
+ *  of every step, the same in light and dark. */
+export type SurfacePreset = {
+	name: string
+	note: string
+	values: Readonly<Record<`--s-${string}`, string>>
+}
+
+export const SURFACE_PRESETS: SurfacePreset[] = [
+	{
+		name: 'Flat',
+		note: 'ui-solid’s own: no gradient, no rings, no studs, no lift, no cast shadow',
+		values: {
+			'--s-gradient': '0',
+			'--s-angle': '160deg',
+			'--s-ring-inner': '0px',
+			'--s-ring-gap': '0px',
+			'--s-ring-outer': '0px',
+			'--s-bevel': '0',
+			'--s-stud': '0px',
+			'--s-corner': 'round',
+			'--s-lift': '0px',
+			'--s-shadow-y': '0px',
+			'--s-shadow-blur': '0px',
+			'--s-shadow-alpha': '0',
+		},
+	},
+	{
+		// The values themes/brass.css and themes/house-brass.css author.
+		name: 'Brass',
+		note: 'The walking worlds’ plates: washed, triple-ringed, bevelled, studded, squircle, lifted, long shadow',
+		values: {
+			'--s-gradient': '1',
+			'--s-angle': '160deg',
+			'--s-ring-inner': '1.5px',
+			'--s-ring-gap': '1.5px',
+			'--s-ring-outer': '1px',
+			'--s-bevel': '1',
+			'--s-stud': '2px',
+			'--s-corner': 'squircle',
+			'--s-lift': '1px',
+			'--s-shadow-y': '10px',
+			'--s-shadow-blur': '24px',
+			'--s-shadow-alpha': '0.55',
+		},
+	},
+]
+
 export const LIGHT_PRESETS: ThemePreset[] = [
+	{
+		// The shipped `themes/brass.css`, light side: the chessboard HUD's
+		// parchment with the gold deepened to carry as ink (3.7:1, the rail's
+		// chroma-over-contrast rule), the dialogue's moss and the plates'
+		// leather as the pinned families.
+		name: 'Brass Parchment',
+		note: 'Shipped theme — the walking worlds’ parchment, deep gold',
+		values: {
+			base: '#f8eed6',
+			content: '#2a1f0c',
+			primary: '#ae6a00',
+			success: '#3d8634',
+			secondary: '#2e5a24',
+			accent: '#7a5a2a',
+		},
+	},
 	{
 		name: 'Honey Pop',
 		note: 'Warm white, saturated honey amber',
@@ -143,6 +207,20 @@ export const LIGHT_PRESETS: ThemePreset[] = [
 ]
 
 export const DARK_PRESETS: ThemePreset[] = [
+	{
+		// The shipped `themes/brass.css`, dark side: the HUD's plate and cream
+		// ink under the marigold gold, with its moss and leather families.
+		name: 'Brass Plate',
+		note: 'Shipped theme — the walking worlds’ plate, marigold gold',
+		values: {
+			base: '#1b160b',
+			content: '#fff4dc',
+			primary: '#e8b04c',
+			success: '#7fd67a',
+			secondary: '#9fd68a',
+			accent: '#c9b48a',
+		},
+	},
 	{
 		name: 'Midnight Hive',
 		note: 'Near-black warmth, lantern gold',

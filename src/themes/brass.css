@@ -1,0 +1,68 @@
+/* ── brass — the chessboard's chrome as a theme ────────────────────────────
+   Authored 2026-10-14 from the walking worlds' HUD (kolo chessboard/solid/
+   chessboard-hud.css: the "Rogue Trader" register): a near-black warm PLATE
+   with a cream ink and the marigold gold as the lead, and in light the
+   PARCHMENT the HUD reads on, with the gold deepened to carry as ink. The
+   dialogue's moss green is the second family; the leather of the plates'
+   warm shadows the third. Success is the HUD's own live green.
+
+   Anchors only — the ui-solid ladder derives every surface, border and
+   content role per scheme. What this theme cannot carry is the HUD's
+   ornament (the double gold rings, the corner studs, the squircle corners,
+   the plate gradient): those are component paint, not theme tokens.
+
+   Faces: Source Serif 4 (display; the face the report sites and the HUD's
+   headings use) over the ui-solid sans and data defaults. The consumer loads
+   the font file (Google Fonts). The corner ladder is a step tighter than the
+   default: the HUD's plates sit at 10 px. */
+
+/* AUTHORED ON `.ui-theme` ONLY — never on `:root`; see the note in
+   night-ochre.css. A consumer that wants the theme everywhere puts the class
+   on its <html>; one that wants it on part of a document puts it on that
+   subtree. */
+.ui-theme {
+	--color-base-100: light-dark(#f8eed6, #1b160b);
+	--color-base-content: light-dark(#2a1f0c, #fff4dc);
+	--color-primary: light-dark(#ae6a00, #e8b04c);
+	--color-secondary: light-dark(#2e5a24, #9fd68a);
+	--color-accent: light-dark(#7a5a2a, #c9b48a);
+
+	/* Functional data states: the HUD's live green; warning and error keep
+	   ui-solid's defaults, which the HUD already uses. */
+	--color-success: light-dark(#3d8634, #7fd67a);
+
+	/* The rims are gold, not the text ink at a tenth: the HUD edges every
+	   plate in the lead colour (a 45% wash for the quiet border, the full
+	   gold for the strong one). ui-solid derives these two from the text
+	   ink by default; a theme may author them, and this one does. */
+	--color-border: light-dark(
+		color-mix(in oklab, #ae6a00 45%, transparent),
+		color-mix(in oklab, #e8b04c 45%, transparent)
+	);
+	--color-border-strong: light-dark(#ae6a00, #e8b04c);
+
+	--font-display: "Source Serif 4", "Iowan Old Style", Georgia, "Times New Roman", serif;
+
+	/* The plates' treatment, as the HUD draws them: the lead colour washed
+	   across the plate, three rings at the edge (a deep gold, a dark gap, the
+	   gold), a highlight and a shade inside, gold studs in the corners,
+	   squircle corners, a pixel's lift on hover, and a long soft shadow. */
+	--s-gradient: 1;
+	--s-angle: 160deg;
+	--s-ring-inner: 1.5px;
+	--s-ring-gap: 1.5px;
+	--s-ring-outer: 1px;
+	--s-bevel: 1;
+	--s-stud: 2px;
+	--s-corner: squircle;
+	--s-lift: 1px;
+	--s-shadow-y: 10px;
+	--s-shadow-blur: 24px;
+	--s-shadow-alpha: 0.55;
+
+	--r-xs: 5px;
+	--r-sm: 7px;
+	--r-md: 10px;
+	--r-lg: 12px;
+	--r-xl: 14px;
+}

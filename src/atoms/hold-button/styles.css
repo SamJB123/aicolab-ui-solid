@@ -28,9 +28,11 @@
 		min-height: var(--_ui-hold-size);
 		border: 2px solid var(--ui-border);
 		border-radius: var(--_ui-hold-radius);
-		background: var(--ui-surface);
+		/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
+		corner-shape: var(--s-corner);
+		background: var(--ui-surface-paint), var(--ui-surface);
 		color: var(--ui-ink);
-		box-shadow: var(--ui-glow);
+		box-shadow: var(--ui-glow), var(--ui-edge);
 		font-family: var(--font-label);
 		font-size: var(--t-xs);
 		font-weight: 700;
@@ -45,7 +47,7 @@
 			transform 180ms linear(0, 0.4, 0.82, 1.1, 1);
 	}
 
-	:scope:active { background: var(--ui-surface-active); transform: scale(0.94); }
+	:scope:active { background: var(--ui-surface-paint), var(--ui-surface-active); transform: scale(0.94); }
 	:scope:focus-visible { outline: 2px solid var(--_ui-hold-focus-ring); outline-offset: 3px; }
 	:scope:disabled { cursor: not-allowed; opacity: 0.45; }
 

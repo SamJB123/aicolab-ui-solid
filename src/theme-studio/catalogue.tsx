@@ -237,7 +237,22 @@ function Specimens(props: { scheme: Scheme; treatment: Treatment; ladders: reado
 
 			<For each={props.ladders}>
 				{(ladder) => (
-					<>
+					<Show
+						when={ladder.specimen !== 'surface'}
+						fallback={
+							<>
+								<Rule label={ladder.label} />
+								{/* One specimen for the whole treatment: a plate painted the
+								    way every component sheet paints, and the treated pair. */}
+								<div class="ui-studio-surface-sample">
+									<span class="ui-studio-surface-plate">A plate</span>
+									<span class="ui-studio-surface-plate" data-ui-color-base={props.treatment.colorBase} data-ui-color-level={props.treatment.colorLevel} data-ui-color-variant={props.treatment.variant}>
+										Treated
+									</span>
+								</div>
+							</>
+						}
+					>
 						<Rule label={ladder.label} />
 						<div class={ladder.specimen === 'type' ? 'ui-studio-type-ladder' : 'ui-studio-radius-ladder'}>
 							<For each={ladder.steps}>
@@ -256,7 +271,7 @@ function Specimens(props: { scheme: Scheme; treatment: Treatment; ladders: reado
 								)}
 							</For>
 						</div>
-					</>
+					</Show>
 				)}
 			</For>
 		</div>

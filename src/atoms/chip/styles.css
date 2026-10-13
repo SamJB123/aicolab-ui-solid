@@ -57,19 +57,21 @@
 		align-items: center;
 		gap: var(--_ui-chip-gap);
 		border-radius: var(--_ui-chip-radius);
+		/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
+		corner-shape: var(--s-corner);
 		padding: var(--_ui-chip-pad-block) var(--_ui-chip-pad-inline);
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
 		font-size: var(--_ui-chip-font-size);
 		text-transform: uppercase;
 		letter-spacing: var(--_ui-chip-letter-spacing);
-		background: var(--_ui-chip-surface);
+		background: var(--ui-surface-paint), var(--_ui-chip-surface);
 		color: var(--_ui-chip-ink);
-		box-shadow: 0 0 0 1px var(--color-border);
+		box-shadow: 0 0 0 1px var(--color-border), var(--ui-edge);
 	}
 	:scope[data-ui-color-base] {
 		--_ui-chip-surface: var(--ui-chip-surface, var(--ui-surface));
 		--_ui-chip-ink: var(--ui-chip-ink, var(--ui-ink));
-		box-shadow: 0 0 0 1px var(--ui-border);
+		box-shadow: 0 0 0 1px var(--ui-border), var(--ui-edge);
 	}
 
 	/* ── Frontier knob boundary (see select-control for the pattern) ── */

@@ -136,11 +136,14 @@
 		border: 0;
 		padding: 0;
 		border-radius: var(--_ui-palette-radius);
-		background: var(--color-base-100);
+		/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
+		corner-shape: var(--s-corner);
+		background: var(--ui-surface-paint), var(--color-base-100);
 		color: var(--color-base-content);
 		box-shadow:
 			0 0 0 1px var(--color-border-strong),
-			0 25px 50px -12px rgb(0 0 0 / 0.4);
+			0 25px 50px -12px rgb(0 0 0 / 0.4),
+			var(--ui-edge);
 		overflow: hidden;
 		opacity: 1;
 		scale: 1;

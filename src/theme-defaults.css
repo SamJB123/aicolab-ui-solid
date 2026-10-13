@@ -109,6 +109,56 @@
 		--color-overlay-content-muted: color-mix(in oklab, var(--color-overlay-content) 65%, transparent);
 		--color-overlay-border: color-mix(in oklab, var(--color-overlay-content) 14%, transparent);
 		--color-overlay-soft: color-mix(in oklab, var(--color-overlay-content) 12%, transparent);
+
+		/* ── Surface treatment roles, from the --s-* anchors (properties.css) ──
+		   A component sheet paints `background: var(--ui-surface-paint), <its
+		   surface colour>` and adds `var(--ui-edge)` to its box-shadow list;
+		   nothing else changes per theme. Both resolve on the theme root, so
+		   they use only theme anchors — never a component's own roles — and
+		   both are invisible at ui-solid's defaults: every gradient stop is
+		   transparent, every ring is zero wide, the shadow has no alpha.
+		   The paint: four corner studs in the strong border colour (a radius
+		   of --s-stud, so none at 0), then the gradient — the lead colour
+		   washed across the top-left, clear through the middle, a shade at
+		   the bottom-right — scaled by --s-gradient. */
+		--ui-surface-paint:
+			radial-gradient(
+				circle at calc(2 * var(--s-stud)) calc(2 * var(--s-stud)),
+				var(--color-border-strong) 0 var(--s-stud),
+				transparent calc(var(--s-stud) * 1.3)
+			),
+			radial-gradient(
+				circle at calc(100% - 2 * var(--s-stud)) calc(2 * var(--s-stud)),
+				var(--color-border-strong) 0 var(--s-stud),
+				transparent calc(var(--s-stud) * 1.3)
+			),
+			radial-gradient(
+				circle at calc(2 * var(--s-stud)) calc(100% - 2 * var(--s-stud)),
+				var(--color-border-strong) 0 var(--s-stud),
+				transparent calc(var(--s-stud) * 1.3)
+			),
+			radial-gradient(
+				circle at calc(100% - 2 * var(--s-stud)) calc(100% - 2 * var(--s-stud)),
+				var(--color-border-strong) 0 var(--s-stud),
+				transparent calc(var(--s-stud) * 1.3)
+			),
+			linear-gradient(
+				var(--s-angle),
+				color-mix(in oklab, var(--color-primary) calc(var(--s-gradient) * 20%), transparent) 0%,
+				transparent 45%,
+				color-mix(in oklab, black calc(var(--s-gradient) * 10%), transparent) 100%
+			);
+		/* The edge: an inner ring in the strong border deepened, a gap ring in
+		   the page shade, an outer ring in the strong border; a highlight along
+		   the top and a shade along the bottom inside, by --s-bevel; and the
+		   shadow the plate casts. */
+		--ui-edge:
+			0 0 0 var(--s-ring-inner) color-mix(in oklab, var(--color-border-strong) 70%, black),
+			0 0 0 calc(var(--s-ring-inner) + var(--s-ring-gap)) color-mix(in oklab, var(--color-base-200) 70%, black),
+			0 0 0 calc(var(--s-ring-inner) + var(--s-ring-gap) + var(--s-ring-outer)) var(--color-border-strong),
+			inset 0 1px 0 color-mix(in oklab, var(--color-border-strong) calc(var(--s-bevel) * 45%), transparent),
+			inset 0 -2px 6px color-mix(in oklab, black calc(var(--s-bevel) * 35%), transparent),
+			0 var(--s-shadow-y) var(--s-shadow-blur) color-mix(in oklab, black calc(var(--s-shadow-alpha) * 100%), transparent);
 	}
 
 	body {

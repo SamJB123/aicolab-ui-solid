@@ -39,9 +39,9 @@ import {
 	googleFontsHref,
 	leadingFamily,
 } from './fonts'
-import { DARK_PRESETS, LIGHT_PRESETS, type SchemeValues } from './presets'
+import { DARK_PRESETS, LIGHT_PRESETS, type SchemeValues, SURFACE_PRESETS } from './presets'
 import { PreviewFrames, type PreviewPage } from './frames'
-import { joinLightDark, type RegisteredToken, readRegisteredTokens, readThemeSource, splitLightDark } from './read-theme'
+import { acceptsSyntax, joinLightDark, type RegisteredToken, readRegisteredTokens, readThemeSource, splitLightDark } from './read-theme'
 
 export type ThemeStudioProps = {
 	/** Save the draft in localStorage under this key. The host renders
@@ -89,7 +89,6 @@ const sameInBoth = (a: string, b: string) => {
 }
 
 const isColor = (value: string) => value.trim() !== '' && CSS.supports('color', value)
-const isLength = (value: string) => value.trim() !== '' && !value.includes('%') && CSS.supports('width', value)
 
 let hexContext: CanvasRenderingContext2D | null | undefined
 /** sRGB hex for a resolved colour — what <input type="color"> accepts. */
@@ -584,9 +583,43 @@ function FontRoleField(props: { role: FontRole }) {
 // ── Size ladders ────────────────────────────────────────────────────────────
 
 function LadderSection(props: { ladder: Ladder }) {
+	const model = useContext(StudioContext)
+	// The surface ladder's steps are mixed (numbers, lengths, an angle, an
+	// ident): each step says its own syntax. The other ladders are lengths.
+	const kinds = () => [...new Set(props.ladder.steps.map((step) => step.syntax))].map((s) => s.replace(/[<>]/g, '')).join(', ')
 	return (
 		<div class="ui-studio-ladder">
-			<p class="ui-studio-note">{props.ladder.note} The same in light and dark. Any CSS length.</p>
+			<p class="ui-studio-note">
+				{props.ladder.note} The same in light and dark. Any CSS {kinds()}.
+			</p>
+			<Show when={props.ladder.specimen === 'surface'}>
+				{/* The whole treatment at once, as a plate painted the way every
+				    component sheet paints: the two roles recompute on this element
+				    because it is its own theme boundary carrying the draft. */}
+				<div class="ui-studio-surface-starts">
+					<For each={SURFACE_PRESETS}>
+						{(preset) => (
+							<Button
+								variant="ghost"
+								colorBase="neutral"
+								title={preset.note}
+								onClick={() => {
+									// Whole values, not a side: these steps are one value for both schemes.
+									for (const [token, value] of Object.entries(preset.values)) model.set(token, value)
+								}}
+							>
+								{preset.name}
+							</Button>
+						)}
+					</For>
+				</div>
+				<div class="ui-theme ui-studio-surface-sample" style={model.themeStyle()} aria-hidden="true">
+					<span class="ui-studio-surface-plate">A plate</span>
+					<span class="ui-studio-surface-plate" data-ui-color-base="primary" data-ui-color-variant="solid">
+						Primary
+					</span>
+				</div>
+			</Show>
 			<For each={props.ladder.steps}>{(step) => <LadderRow ladder={props.ladder} step={step} />}</For>
 		</div>
 	)
@@ -605,13 +638,15 @@ function LadderRow(props: { ladder: Ladder; step: RegisteredToken }) {
 				value={value()}
 				onChange={(event) => {
 					const next = event.currentTarget.value.trim()
-					if (isLength(next)) model.set(props.step.token, next)
+					if (acceptsSyntax(props.step.syntax, next)) model.set(props.step.token, next)
 					else event.currentTarget.value = value()
 				}}
 			/>
 			<span class="ui-studio-step-sample" aria-hidden="true">
-				<Show when={props.ladder.specimen === 'type'} fallback={<span class="ui-studio-radius-sample" style={{ 'border-radius': value() }} />}>
-					<span style={{ 'font-size': value() }}>Aa</span>
+				<Show when={props.ladder.specimen !== 'surface'}>
+					<Show when={props.ladder.specimen === 'type'} fallback={<span class="ui-studio-radius-sample" style={{ 'border-radius': value() }} />}>
+						<span style={{ 'font-size': value() }}>Aa</span>
+					</Show>
 				</Show>
 			</span>
 			<Show when={model.isEdited(props.step.token)}>

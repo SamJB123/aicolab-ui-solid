@@ -42,8 +42,10 @@
 		gap: var(--_ui-tg-gap);
 		padding: var(--_ui-tg-tray-pad);
 		border-radius: var(--_ui-tg-tray-radius);
-		background: var(--_ui-tg-tray-surface);
-		box-shadow: inset 0 0 0 1px var(--_ui-tg-tray-border);
+		/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
+		corner-shape: var(--s-corner);
+		background: var(--ui-surface-paint), var(--_ui-tg-tray-surface);
+		box-shadow: inset 0 0 0 1px var(--_ui-tg-tray-border), var(--ui-edge);
 	}
 
 	:scope[data-ui-color-base] {

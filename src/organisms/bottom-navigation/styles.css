@@ -167,20 +167,23 @@
 			height: var(--_ui-bnav-chip-size);
 			margin-top: calc(var(--_ui-bnav-chip-size) * -0.5333);
 			border-radius: var(--r-pill);
-			background: var(--_ui-bnav-chip-surface);
+			/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
+			background: var(--ui-surface-paint), var(--_ui-bnav-chip-surface);
 			color: var(--_ui-bnav-chip-ink);
 			box-shadow:
 				0 0 0 1px color-mix(in oklab, var(--_ui-bnav-chip-active-surface) 45%, transparent),
 				inset 0 1px 0 color-mix(in oklab, white 14%, transparent),
-				0 8px 20px -8px rgb(0 0 0 / 0.5);
+				0 8px 20px -8px rgb(0 0 0 / 0.5),
+				var(--ui-edge);
 		}
 
 		.ui-bottom-navigation-centre-chip[data-active] {
-			background: var(--_ui-bnav-chip-active-surface);
+			background: var(--ui-surface-paint), var(--_ui-bnav-chip-active-surface);
 			color: var(--_ui-bnav-chip-active-ink);
 			box-shadow:
 				0 0 0 1px var(--_ui-bnav-chip-active-surface),
-				0 0 1.25rem var(--_ui-bnav-chip-active-surface);
+				0 0 1.25rem var(--_ui-bnav-chip-active-surface),
+				var(--ui-edge);
 		}
 
 		.ui-bottom-navigation-centre-chip > * {

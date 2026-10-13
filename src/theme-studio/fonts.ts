@@ -43,6 +43,14 @@ export const FONT_OPTIONS: Record<FontRole, FontOption[]> = {
 			stack: '"Fraunces", Georgia, serif',
 		},
 		{
+			// The face the report sites, the chessboard HUD and the brass theme set
+			// their display in (themes/brass.css, themes/night-ochre.css).
+			id: 'source-serif',
+			label: 'Source Serif 4',
+			spec: 'Source Serif 4:opsz,wght@8..60,400..700',
+			stack: '"Source Serif 4", "Iowan Old Style", Georgia, serif',
+		},
+		{
 			id: 'playfair',
 			label: 'Playfair Display',
 			spec: 'Playfair Display:wght@400..900',

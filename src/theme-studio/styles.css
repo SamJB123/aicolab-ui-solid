@@ -313,6 +313,37 @@
 		background: var(--color-primary-soft);
 		box-shadow: inset 0 0 0 1.5px var(--color-primary);
 	}
+	/* The surface treatment's starting points and its sample: two plates
+	   painted exactly as a component sheet paints (the paint role over the
+	   surface, the edge role on the shadow, the corner shape), on a boundary
+	   that carries the draft so the roles recompute from it. */
+	.ui-studio-surface-starts {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.ui-studio-surface-sample {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1.25rem;
+		padding: 1.25rem;
+		border-radius: var(--r-md);
+		background: var(--color-base-200);
+		color: var(--color-base-content);
+	}
+	.ui-studio-surface-plate {
+		padding: 0.6rem 1rem;
+		border-radius: var(--r-md);
+		corner-shape: var(--s-corner);
+		background: var(--ui-surface-paint), var(--color-base-100);
+		box-shadow: inset 0 0 0 1px var(--color-border), var(--ui-edge);
+		font-weight: 600;
+	}
+	.ui-studio-surface-plate[data-ui-color-base] {
+		background: var(--ui-surface-paint), var(--ui-surface);
+		color: var(--ui-ink);
+		box-shadow: var(--ui-edge);
+	}
 
 	/* ── Previews ── */
 	.ui-studio-previews {

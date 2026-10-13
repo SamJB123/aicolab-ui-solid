@@ -70,9 +70,10 @@
 		border: 0;
 		overflow: hidden;
 		border-left: 1px solid color-mix(in oklab, var(--_ui-sheet-accent) 55%, var(--color-border));
-		background: var(--_ui-sheet-surface);
+		/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
+		background: var(--ui-surface-paint), var(--_ui-sheet-surface);
 		color: var(--color-base-content);
-		box-shadow: -35px 0 90px rgb(0 0 0 / 0.5);
+		box-shadow: -35px 0 90px rgb(0 0 0 / 0.5), var(--ui-edge);
 		opacity: 1;
 		transform: none;
 		transform-origin: right center;
@@ -234,11 +235,13 @@
 			max-height: 92dvh;
 			border-left: 0;
 			border-radius: var(--r-lg) var(--r-lg) 0 0;
-			background: var(--color-base-300);
+			corner-shape: var(--s-corner);
+			background: var(--ui-surface-paint), var(--color-base-300);
 			box-shadow:
 				0 -1px 0 var(--color-border),
 				inset 0 2px 0 var(--_ui-sheet-accent),
-				0 -18px 40px rgb(0 0 0 / 0.35);
+				0 -18px 40px rgb(0 0 0 / 0.35),
+				var(--ui-edge);
 		}
 
 		:scope:not([open]) {

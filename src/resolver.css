@@ -66,6 +66,18 @@
 	--ui-surface-disabled: color-mix(in oklab, var(--ui-surface) 46%, var(--ui-context-surface));
 	--ui-ink-disabled: color-mix(in oklab, var(--ui-ink) 42%, transparent);
 	--ui-border-disabled: color-mix(in oklab, var(--ui-border) 42%, transparent);
+
+	/* The edge of a TREATED surface rings it in its own family's border
+	   (theme-defaults.css derives the theme root's --ui-edge from the strong
+	   border; the geometry — the --s-* anchors — is the same). A text or
+	   ghost treatment has a transparent border, so its rings are too. */
+	--ui-edge:
+		0 0 0 var(--s-ring-inner) color-mix(in oklab, var(--ui-border) 70%, black),
+		0 0 0 calc(var(--s-ring-inner) + var(--s-ring-gap)) color-mix(in oklab, var(--color-base-200) 70%, black),
+		0 0 0 calc(var(--s-ring-inner) + var(--s-ring-gap) + var(--s-ring-outer)) var(--ui-border),
+		inset 0 1px 0 color-mix(in oklab, var(--ui-border) calc(var(--s-bevel) * 45%), transparent),
+		inset 0 -2px 6px color-mix(in oklab, black calc(var(--s-bevel) * 35%), transparent),
+		0 var(--s-shadow-y) var(--s-shadow-blur) color-mix(in oklab, black calc(var(--s-shadow-alpha) * 100%), transparent);
 }
 
 /* An engine without contrast-color() (Chrome before 138 — the browser Cloudflare's

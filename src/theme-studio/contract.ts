@@ -95,15 +95,21 @@ export type SizeLadder = {
 	prefix: `--${string}`
 	label: string
 	note: string
-	specimen: 'type' | 'radius'
+	specimen: 'type' | 'radius' | 'surface'
 }
 
 /** The scheme-independent ladders. Their steps are not listed here: the
  *  studio reads them from the `@property` registrations under each prefix,
- *  in the order properties.css declares them. */
+ *  in the order properties.css declares them, with each step's syntax. */
 export const SIZE_LADDERS: readonly SizeLadder[] = [
 	{ prefix: '--t-', label: 'Type scale', note: 'The text sizes every ui-solid component reads.', specimen: 'type' },
 	{ prefix: '--r-', label: 'Corner radii', note: 'The corner steps every ui-solid component reads.', specimen: 'radius' },
+	{
+		prefix: '--s-',
+		label: 'Surface treatment',
+		note: 'How every plate is painted beyond its colours: the gradient across it, the rings at its edge, the bevel, the corner studs, the corner shape, the lift on hover and the shadow it casts. ui-solid’s own values paint flat.',
+		specimen: 'surface',
+	},
 ]
 
 export type Scheme = 'light' | 'dark'

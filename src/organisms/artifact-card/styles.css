@@ -44,8 +44,11 @@
 		padding: var(--_ui-artifact-pad);
 		border: 1px solid var(--color-border);
 		border-radius: var(--_ui-artifact-radius);
-		background: var(--color-base-100);
+		/* The surface treatment (theme-defaults.css), inert at ui-solid's own
+		   values; the squircle below is the card's own choice and stays. */
+		background: var(--ui-surface-paint), var(--color-base-100);
 		color: var(--color-base-content);
+		box-shadow: var(--ui-edge);
 		transition:
 			border-color 160ms,
 			box-shadow 160ms,
@@ -59,21 +62,21 @@
 	}
 	:scope[data-ui-color-base] {
 		--_ui-artifact-accent: var(--ui-artifact-accent, var(--ui-color));
-		background: var(--ui-surface);
+		background: var(--ui-surface-paint), var(--ui-surface);
 		border-color: var(--ui-border);
 		color: var(--ui-ink);
 	}
 	:scope:has(.ui-artifact-card-hit:hover),
 	:scope:has(.ui-artifact-card-hit:focus-visible) {
 		border-color: var(--_ui-artifact-accent);
-		box-shadow: 0 0.35rem 1.2rem -0.7rem color-mix(in oklab, var(--_ui-artifact-accent) 60%, transparent);
-		translate: 0 -1px;
+		box-shadow: 0 0.35rem 1.2rem -0.7rem color-mix(in oklab, var(--_ui-artifact-accent) 60%, transparent), var(--ui-edge);
+		translate: 0 calc(-1px - var(--s-lift));
 	}
 
 	/* The live beacon: someone is on this artifact right now. */
 	:scope[data-live] {
 		border-color: color-mix(in oklab, var(--_ui-artifact-accent) 55%, var(--color-border));
-		box-shadow: 0 0 0 1px color-mix(in oklab, var(--_ui-artifact-accent) 35%, transparent);
+		box-shadow: 0 0 0 1px color-mix(in oklab, var(--_ui-artifact-accent) 35%, transparent), var(--ui-edge);
 	}
 
 	/* Pinned ribbon — a folded corner in the card accent. */

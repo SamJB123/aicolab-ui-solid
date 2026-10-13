@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises'
 
 const read = (path) => readFile(new URL(path, import.meta.url), 'utf8')
 
-const [resolver, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit, callout, flowMap, richList] = await Promise.all([
+const [resolver, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit, callout, flowMap, richList, properties, themeDefaults] = await Promise.all([
 	read('../src/resolver.css'),
 	read('../src/molecules/accordion/styles.css'),
 	read('../src/atoms/select-control/styles.css'),
@@ -21,6 +21,8 @@ const [resolver, accordion, selectControl, button, formControl, iconButton, hold
 	read('../src/molecules/callout/styles.css'),
 	read('../src/organisms/flow-map/styles.css'),
 	read('../src/molecules/rich-list/styles.css'),
+	read('../src/properties.css'),
+	read('../src/theme-defaults.css'),
 ])
 
 const requireAll = (source, expressions, contract) => {
@@ -63,6 +65,34 @@ requireAll(
 	],
 	'frontier resolver boundary',
 )
+
+/* The surface treatment ladder (--s-*): every anchor registered with a flat
+   initial, the two derived roles assigned on the theme root, and the treated
+   edge resolved per component. A theme that sets none of them must paint
+   exactly as before. */
+requireAll(
+	properties,
+	[
+		/@property --s-gradient \{\n\tsyntax: "<number>";\n\tinherits: true;\n\tinitial-value: 0;/,
+		/@property --s-ring-inner \{\n\tsyntax: "<length>";\n\tinherits: true;\n\tinitial-value: 0px;/,
+		/@property --s-ring-gap \{\n\tsyntax: "<length>";\n\tinherits: true;\n\tinitial-value: 0px;/,
+		/@property --s-ring-outer \{\n\tsyntax: "<length>";\n\tinherits: true;\n\tinitial-value: 0px;/,
+		/@property --s-bevel \{\n\tsyntax: "<number>";\n\tinherits: true;\n\tinitial-value: 0;/,
+		/@property --s-stud \{\n\tsyntax: "<length>";\n\tinherits: true;\n\tinitial-value: 0px;/,
+		/@property --s-corner \{\n\tsyntax: "<custom-ident>";\n\tinherits: true;\n\tinitial-value: round;/,
+		/@property --s-lift \{\n\tsyntax: "<length>";\n\tinherits: true;\n\tinitial-value: 0px;/,
+		/@property --s-shadow-alpha \{\n\tsyntax: "<number>";\n\tinherits: true;\n\tinitial-value: 0;/,
+		/@property --ui-surface-paint \{\n\tsyntax: "\*";/,
+		/@property --ui-edge \{\n\tsyntax: "\*";/,
+	],
+	'surface treatment anchors',
+)
+requireAll(
+	themeDefaults,
+	[/--ui-surface-paint:\n\t\t\tradial-gradient\(/, /--ui-edge:\n\t\t\t0 0 0 var\(--s-ring-inner\)/],
+	'surface treatment roles on the theme root',
+)
+requireAll(resolver, [/--ui-edge:\n\t\t0 0 0 var\(--s-ring-inner\) color-mix\(in oklab, var\(--ui-border\) 70%, black\)/], 'treated edge in the resolver')
 
 requireAll(
 	accordion,

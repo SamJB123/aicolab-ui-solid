@@ -29,8 +29,9 @@ export {
 	leadingFamily,
 } from './fonts'
 export { type PreviewPage } from './frames'
-export { DARK_PRESETS, LIGHT_PRESETS, type SchemeValues, type ThemePreset } from './presets'
+export { DARK_PRESETS, LIGHT_PRESETS, type SchemeValues, SURFACE_PRESETS, type SurfacePreset, type ThemePreset } from './presets'
 export {
+	acceptsSyntax,
 	joinLightDark,
 	type RegisteredToken,
 	readRegisteredTokens,

@@ -56,9 +56,11 @@
 		border: 1px solid var(--ui-border);
 		border-radius: var(--_ui-toast-radius);
 		corner-shape: squircle;
-		background: var(--ui-surface);
+		/* The surface treatment (theme-defaults.css), inert at ui-solid's own
+		   values; the squircle above is the toast's own choice and stays. */
+		background: var(--ui-surface-paint), var(--ui-surface);
 		color: var(--ui-ink);
-		box-shadow: 0 12px 32px -12px color-mix(in oklab, var(--color-base-content) 35%, transparent);
+		box-shadow: 0 12px 32px -12px color-mix(in oklab, var(--color-base-content) 35%, transparent), var(--ui-edge);
 		pointer-events: auto;
 		transition:
 			opacity 200ms ease,

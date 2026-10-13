@@ -176,11 +176,13 @@
 		width: var(--radial-chip);
 		height: var(--radial-chip);
 		border-radius: var(--r-pill);
-		background: var(--_ui-radial-chip-surface);
+		/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
+		background: var(--ui-surface-paint), var(--_ui-radial-chip-surface);
 		color: var(--_ui-radial-chip-ink);
 		box-shadow:
 			0 0 0 1px var(--color-border-strong),
-			0 10px 24px -8px rgb(0 0 0 / 0.45);
+			0 10px 24px -8px rgb(0 0 0 / 0.45),
+			var(--ui-edge);
 	}
 	.ui-radial-chip > * {
 		width: 1.5rem;
@@ -209,7 +211,9 @@
 	.ui-radial-item:hover .ui-radial-chip {
 		box-shadow:
 			0 0 0 2px var(--_ui-radial-hover-ring),
-			0 10px 24px -8px rgb(0 0 0 / 0.45);
+			0 10px 24px -8px rgb(0 0 0 / 0.45),
+			var(--ui-edge);
+		translate: 0 calc(-1 * var(--s-lift));
 	}
 }
 
