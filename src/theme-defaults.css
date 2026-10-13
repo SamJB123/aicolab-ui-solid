@@ -111,16 +111,23 @@
 		--color-overlay-soft: color-mix(in oklab, var(--color-overlay-content) 12%, transparent);
 
 		/* ── Surface treatment roles, from the --s-* anchors (properties.css) ──
-		   A component sheet paints `background: var(--ui-surface-paint), <its
-		   surface colour>` and adds `var(--ui-edge)` to its box-shadow list;
-		   nothing else changes per theme. Both resolve on the theme root, so
-		   they use only theme anchors — never a component's own roles — and
-		   both are invisible at ui-solid's defaults: every gradient stop is
+		   A plate is painted `background: var(--ui-surface-paint), <its surface
+		   colour>` and carries `var(--ui-edge)` on its box-shadow list; the
+		   same two lines in every state rule, over that state's surface.
+		   WHY THE PAINT IS A TRANSLUCENT GRADIENT laid over the surface, not a
+		   gradient OF the surface: the plate's colour reaches a sheet as a
+		   resolver role, a page token or a knob adapter, and only the first
+		   is something a shared rule could match and derive from. Derived
+		   from anchors alone — the lead colour at 20% fading to clear, clear
+		   to black at 10% — the paint composites the same mix over any of
+		   the three, so it belongs with the other anchor-derived washes here
+		   (the overlay tokens above). The resolver re-derives the pair for a
+		   treated element from its own border, as it does its other roles.
+		   Both are invisible at ui-solid's defaults: every gradient stop is
 		   transparent, every ring is zero wide, the shadow has no alpha.
 		   The paint: four corner studs in the strong border colour (a radius
-		   of --s-stud, so none at 0), then the gradient — the lead colour
-		   washed across the top-left, clear through the middle, a shade at
-		   the bottom-right — scaled by --s-gradient. */
+		   of --s-stud, so none at 0), then the gradient scaled by
+		   --s-gradient at the angle --s-angle. */
 		--ui-surface-paint:
 			radial-gradient(
 				circle at calc(2 * var(--s-stud)) calc(2 * var(--s-stud)),

@@ -67,10 +67,41 @@
 	--ui-ink-disabled: color-mix(in oklab, var(--ui-ink) 42%, transparent);
 	--ui-border-disabled: color-mix(in oklab, var(--ui-border) 42%, transparent);
 
-	/* The edge of a TREATED surface rings it in its own family's border
-	   (theme-defaults.css derives the theme root's --ui-edge from the strong
-	   border; the geometry — the --s-* anchors — is the same). A text or
-	   ghost treatment has a transparent border, so its rings are too. */
+	/* The surface treatment of a TREATED element, derived here from its own
+	   border the way its other roles are (theme-defaults.css derives the
+	   theme root's pair from the strong border, for plates whose surface is a
+	   page token or a knob). The paint is the same translucent gradient and
+	   the same studs, the studs in this family's border; the edge rings the
+	   plate in its family's border. The geometry — the --s-* anchors — is one
+	   and the same. A text or ghost treatment has a transparent border, so
+	   its rings and studs are too. */
+	--ui-surface-paint:
+		radial-gradient(
+			circle at calc(2 * var(--s-stud)) calc(2 * var(--s-stud)),
+			var(--ui-border) 0 var(--s-stud),
+			transparent calc(var(--s-stud) * 1.3)
+		),
+		radial-gradient(
+			circle at calc(100% - 2 * var(--s-stud)) calc(2 * var(--s-stud)),
+			var(--ui-border) 0 var(--s-stud),
+			transparent calc(var(--s-stud) * 1.3)
+		),
+		radial-gradient(
+			circle at calc(2 * var(--s-stud)) calc(100% - 2 * var(--s-stud)),
+			var(--ui-border) 0 var(--s-stud),
+			transparent calc(var(--s-stud) * 1.3)
+		),
+		radial-gradient(
+			circle at calc(100% - 2 * var(--s-stud)) calc(100% - 2 * var(--s-stud)),
+			var(--ui-border) 0 var(--s-stud),
+			transparent calc(var(--s-stud) * 1.3)
+		),
+		linear-gradient(
+			var(--s-angle),
+			color-mix(in oklab, var(--color-primary) calc(var(--s-gradient) * 20%), transparent) 0%,
+			transparent 45%,
+			color-mix(in oklab, black calc(var(--s-gradient) * 10%), transparent) 100%
+		);
 	--ui-edge:
 		0 0 0 var(--s-ring-inner) color-mix(in oklab, var(--ui-border) 70%, black),
 		0 0 0 calc(var(--s-ring-inner) + var(--s-ring-gap)) color-mix(in oklab, var(--color-base-200) 70%, black),
