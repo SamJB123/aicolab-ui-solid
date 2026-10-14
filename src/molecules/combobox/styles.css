@@ -71,7 +71,7 @@
 	:scope {
 		/* Shell re-defaults: the classic listbox look on the shared surface. */
 		--_ui-anchored-pad: var(--ui-anchored-pad, 0.3rem);
-		--_ui-anchored-radius: var(--ui-anchored-radius, var(--r-sm));
+		--_ui-radius: var(--ui-anchored-radius, var(--r-sm));
 		--_ui-anchored-surface: var(--ui-anchored-surface, var(--color-base-100));
 		--_ui-cb-list-max-height: var(--ui-cb-list-max-height, min(20rem, 45vh));
 		--_ui-cb-gap: var(--ui-cb-gap, 8px);
@@ -142,7 +142,7 @@
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
 			--_ui-anchored-pad: attr(data-ui-anchored-pad type(<length>), var(--ui-anchored-pad, 0.3rem));
-			--_ui-anchored-radius: attr(data-ui-anchored-radius type(<length-percentage>), var(--ui-anchored-radius, var(--r-sm)));
+			--_ui-radius: attr(data-ui-anchored-radius type(<length-percentage>), var(--ui-anchored-radius, var(--r-sm)));
 			--_ui-anchored-surface: attr(data-ui-anchored-surface type(<color>), var(--ui-anchored-surface, var(--color-base-100)));
 			--_ui-cb-list-max-height: attr(data-ui-cb-list-max-height type(<length>), var(--ui-cb-list-max-height, min(20rem, 45vh)));
 			--_ui-cb-gap: attr(data-ui-cb-gap type(<length>), var(--ui-cb-gap, 8px));

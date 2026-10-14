@@ -11,11 +11,6 @@
 	inherits: false;
 	initial-value: 36px;
 }
-@property --_ui-iconbtn-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 999px;
-}
 @property --_ui-iconbtn-surface {
 	syntax: "<color>";
 	inherits: false;
@@ -45,7 +40,7 @@
 @scope (.ui-iconbtn) {
 	:scope {
 		--_ui-iconbtn-size: var(--ui-iconbtn-size, 36px);
-		--_ui-iconbtn-radius: var(--ui-iconbtn-radius, var(--r-pill));
+		--_ui-radius: var(--ui-iconbtn-radius, var(--r-pill));
 		--_ui-iconbtn-surface: var(--ui-iconbtn-surface, transparent);
 		--_ui-iconbtn-ink: var(--ui-iconbtn-ink, var(--color-base-content-muted));
 		--_ui-iconbtn-ring: var(--ui-iconbtn-ring, var(--color-border));
@@ -57,7 +52,7 @@
 		width: var(--_ui-iconbtn-size);
 		height: var(--_ui-iconbtn-size);
 		border: 0;
-		border-radius: var(--_ui-iconbtn-radius);
+		border-radius: var(--_ui-radius);
 		/* Not a plate: the face is transparent at rest (a ring around a
 		   glyph), so it takes the theme's corner shape and hover lift but no
 		   surface paint or edge (resolver.css "Surface paint and edge"). */
@@ -92,7 +87,7 @@
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
 			--_ui-iconbtn-size: attr(data-ui-iconbtn-size type(<length>), var(--ui-iconbtn-size, 36px));
-			--_ui-iconbtn-radius: attr(data-ui-iconbtn-radius type(<length-percentage>), var(--ui-iconbtn-radius, var(--r-pill)));
+			--_ui-radius: attr(data-ui-iconbtn-radius type(<length-percentage>), var(--ui-iconbtn-radius, var(--r-pill)));
 			--_ui-iconbtn-surface: attr(data-ui-iconbtn-surface type(<color>), var(--ui-iconbtn-surface, transparent));
 			--_ui-iconbtn-ink: attr(data-ui-iconbtn-ink type(<color>), var(--ui-iconbtn-ink, var(--color-base-content-muted)));
 			--_ui-iconbtn-ring: attr(data-ui-iconbtn-ring type(<color>), var(--ui-iconbtn-ring, var(--color-border)));

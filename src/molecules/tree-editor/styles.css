@@ -10,9 +10,11 @@
 	inherits: true;
 	initial-value: 20px;
 }
+/* Read by the rows, inputs and the add button beneath the root, so it
+   inherits (it did not, and the radius knob never reached them). */
 @property --_ui-tree-radius {
 	syntax: "<length-percentage>";
-	inherits: false;
+	inherits: true;
 	initial-value: 8px;
 }
 

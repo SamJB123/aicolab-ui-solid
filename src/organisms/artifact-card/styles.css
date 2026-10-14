@@ -1,6 +1,8 @@
 /* ArtifactCard — one artifact (file or document) as a card.
    Per-instance knobs (pad, gap, radius, previewSize) on the dual wire;
-   adapter pattern per shared/knobs.ts (select-control is the exemplar). */
+   adapter pattern per shared/knobs.ts (select-control is the exemplar).
+   The radius resolves into the shared plate corner --_ui-radius; the
+   ribbon's corner inherits the card's own. */
 @property --_ui-artifact-pad {
 	syntax: "<length>";
 	inherits: false;
@@ -10,11 +12,6 @@
 	syntax: "<length>";
 	inherits: false;
 	initial-value: 8px;
-}
-@property --_ui-artifact-radius {
-	syntax: "<length>";
-	inherits: false;
-	initial-value: 12px;
 }
 @property --_ui-artifact-preview-size {
 	syntax: "<length>";
@@ -32,7 +29,7 @@
 	:scope {
 		--_ui-artifact-pad: var(--ui-artifact-pad, 1rem);
 		--_ui-artifact-gap: var(--ui-artifact-gap, 0.5rem);
-		--_ui-artifact-radius: var(--ui-artifact-radius, var(--r-md));
+		--_ui-radius: var(--ui-artifact-radius, var(--r-md));
 		/* Emphasis accent (hover border/glow, ribbon, live beacon):
 		   secondary by default; the treatment axes retarget it below. */
 		--_ui-artifact-accent: var(--ui-artifact-accent, var(--color-secondary));
@@ -47,7 +44,7 @@
 		gap: var(--_ui-artifact-gap);
 		padding: var(--_ui-artifact-pad);
 		border: 1px solid var(--color-border);
-		border-radius: var(--_ui-artifact-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		background: var(--ui-surface-paint);
 		color: var(--color-base-content);
@@ -88,7 +85,7 @@
 		height: 1.35rem;
 		background: var(--_ui-artifact-accent);
 		clip-path: polygon(100% 0, 0 0, 100% 100%);
-		border-start-end-radius: var(--_ui-artifact-radius);
+		border-start-end-radius: inherit;
 	}
 
 	/* ONE tab stop: the stretched hit surface behind the content. */
@@ -212,8 +209,8 @@
 		:scope {
 			--_ui-artifact-pad: attr(data-ui-artifact-pad type(<length>), var(--ui-artifact-pad, 1rem));
 			--_ui-artifact-gap: attr(data-ui-artifact-gap type(<length>), var(--ui-artifact-gap, 0.5rem));
-			--_ui-artifact-radius: attr(
-				data-ui-artifact-radius type(<length>),
+			--_ui-radius: attr(
+				data-ui-artifact-radius type(<length-percentage>),
 				var(--ui-artifact-radius, var(--r-md))
 			);
 			--_ui-artifact-accent: attr(

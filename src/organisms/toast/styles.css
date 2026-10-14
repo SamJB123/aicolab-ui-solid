@@ -4,7 +4,8 @@
    role pair paints them — this sheet owns layout, entry motion, and the
    close affordance. Host-consumed wires land on the host, toast-consumed
    wires on each toast (the Meter fill-element pattern), so both wires
-   apply everywhere. */
+   apply everywhere. A toast's radius resolves into the shared plate
+   corner --_ui-radius. */
 @property --_ui-toast-inset {
 	syntax: "<length>";
 	inherits: false;
@@ -19,11 +20,6 @@
 	syntax: "<length>";
 	inherits: false;
 	initial-value: 340px;
-}
-@property --_ui-toast-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 12px;
 }
 @property --_ui-toast-pad {
 	syntax: "<length>";
@@ -47,14 +43,14 @@
 	}
 
 	.ui-toast {
-		--_ui-toast-radius: var(--ui-toast-radius, var(--r-md));
+		--_ui-radius: var(--ui-toast-radius, var(--r-md));
 		--_ui-toast-pad: var(--ui-toast-pad, 0.75rem);
 		display: flex;
 		align-items: flex-start;
 		gap: 0.6rem;
 		padding: var(--_ui-toast-pad);
 		border: 1px solid var(--ui-border);
-		border-radius: var(--_ui-toast-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: squircle;
 		/* A plate: the surface paint and the edge (resolver.css "Surface
 		   paint and edge") where the surface and the shadow are painted. */
@@ -133,7 +129,7 @@
 			--_ui-toast-width: attr(data-ui-toast-width type(<length>), var(--ui-toast-width, 340px));
 		}
 		.ui-toast {
-			--_ui-toast-radius: attr(data-ui-toast-radius type(<length-percentage>), var(--ui-toast-radius, var(--r-md)));
+			--_ui-radius: attr(data-ui-toast-radius type(<length-percentage>), var(--ui-toast-radius, var(--r-md)));
 			--_ui-toast-pad: attr(data-ui-toast-pad type(<length>), var(--ui-toast-pad, 0.75rem));
 		}
 	}

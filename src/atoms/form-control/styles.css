@@ -10,11 +10,6 @@
    registered inherits: true and assigned on the element — the values reach
    the pseudo/highlight surface by inheritance instead of in-rule
    assignment. */
-@property --_ui-input-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 6px;
-}
 @property --_ui-input-min-height {
 	syntax: "<length>";
 	inherits: false;
@@ -78,7 +73,7 @@
 
 @scope (.ui-text-input, .ui-number-input, .ui-text-area) {
 	:scope {
-		--_ui-input-radius: var(--ui-input-radius, var(--r-xs));
+		--_ui-radius: var(--ui-input-radius, var(--r-xs));
 		--_ui-input-min-height: var(--ui-input-min-height, 2.25rem);
 		--_ui-input-pad-block: var(--ui-input-pad-block, 0.45rem);
 		--_ui-input-pad-inline: var(--ui-input-pad-inline, 0.55rem);
@@ -93,7 +88,7 @@
 		box-sizing: border-box;
 		min-height: var(--_ui-input-min-height);
 		border: 1px solid var(--color-border-strong);
-		border-radius: var(--_ui-input-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: squircle;
 		padding: var(--_ui-input-pad-block) var(--_ui-input-pad-inline);
 		background: var(--color-base-100);
@@ -173,7 +168,7 @@
 	/* ── Frontier knob boundary (see select-control for the pattern) ── */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
-			--_ui-input-radius: attr(data-ui-input-radius type(<length-percentage>), var(--ui-input-radius, var(--r-xs)));
+			--_ui-radius: attr(data-ui-input-radius type(<length-percentage>), var(--ui-input-radius, var(--r-xs)));
 			--_ui-input-min-height: attr(data-ui-input-min-height type(<length>), var(--ui-input-min-height, 2.25rem));
 			--_ui-input-pad-block: attr(data-ui-input-pad-block type(<length>), var(--ui-input-pad-block, 0.45rem));
 			--_ui-input-pad-inline: attr(data-ui-input-pad-inline type(<length>), var(--ui-input-pad-inline, 0.55rem));

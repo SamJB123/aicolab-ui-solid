@@ -19,6 +19,18 @@ const knobs = defineKnobs('ui-hero', {
 	ledeInk: '<color>',
 })
 
+/** A lede given as a list of paragraphs, or nothing for a single element —
+ * the branch is decided by the value's shape, so neither side is asserted. */
+const paragraphs = (lede: JSX.Element | readonly string[]): readonly string[] | undefined => {
+	if (!Array.isArray(lede)) return undefined
+	const list: string[] = []
+	for (const item of lede) {
+		if (typeof item !== 'string') return undefined
+		list.push(item)
+	}
+	return list
+}
+
 export function PageHero(
 	props: {
 		eyebrow?: string
@@ -51,14 +63,16 @@ export function PageHero(
 			</Show>
 			<h1>{props.title}</h1>
 			<Show when={props.lede}>
-				<Show
-					when={Array.isArray(props.lede)}
-					fallback={<p class="ui-hero-lede">{props.lede as JSX.Element}</p>}
-				>
-					<For each={props.lede as readonly string[]}>
-						{(paragraph) => <p class="ui-hero-lede">{paragraph}</p>}
-					</For>
-				</Show>
+				{(lede) => (
+					<Show
+						when={paragraphs(lede())}
+						fallback={<p class="ui-hero-lede">{lede()}</p>}
+					>
+						{(list) => (
+							<For each={list()}>{(paragraph) => <p class="ui-hero-lede">{paragraph}</p>}</For>
+						)}
+					</Show>
+				)}
 			</Show>
 			<Show when={props.actions}>
 				<div class="ui-hero-actions">{props.actions?.()}</div>

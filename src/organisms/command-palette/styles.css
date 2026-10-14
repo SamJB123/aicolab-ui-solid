@@ -20,11 +20,6 @@
 	inherits: false;
 	initial-value: 14dvh;
 }
-@property --_ui-palette-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 16px;
-}
 @property --_ui-palette-list-max-height {
 	syntax: "<length>";
 	inherits: true;
@@ -120,7 +115,7 @@
 	:scope {
 		--_ui-palette-width: var(--ui-palette-width, min(34rem, 92vw));
 		--_ui-palette-top-offset: var(--ui-palette-top-offset, 14dvh);
-		--_ui-palette-radius: var(--ui-palette-radius, var(--r-lg));
+		--_ui-radius: var(--ui-palette-radius, var(--r-lg));
 		--_ui-palette-list-max-height: var(--ui-palette-list-max-height, 46dvh);
 		--_ui-palette-active-surface: var(--ui-palette-active-surface, var(--color-primary-soft));
 		--_ui-palette-active-ink: var(--ui-palette-active-ink, var(--color-base-content));
@@ -129,8 +124,9 @@
 		--_ui-palette-focus-seam: var(--ui-palette-focus-seam, var(--color-primary));
 		/* The dialog is a PLATE (the component marks it data-ui-plate): its
 		   body is the structural base surface whatever the treatment, so the
-		   paint sources are pinned to it here. It paints the surface paint
-		   and the edge (resolver.css "Surface paint and edge") where it paints
+		   paint sources are pinned to it here; its radius resolves into the
+		   shared plate corner --_ui-radius. It paints the surface paint and
+		   the edge (resolver.css "Surface paint and edge") where it paints
 		   its surface and its ring. */
 		--ui-paint-source: var(--color-base-100);
 		--ui-paint-source-hover: var(--color-base-100);
@@ -143,7 +139,7 @@
 		margin: 0;
 		border: 0;
 		padding: 0;
-		border-radius: var(--_ui-palette-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		background: var(--ui-surface-paint);
 		color: var(--color-base-content);
@@ -316,7 +312,7 @@
 		:scope {
 			--_ui-palette-width: attr(data-ui-palette-width type(<length>), var(--ui-palette-width, min(34rem, 92vw)));
 			--_ui-palette-top-offset: attr(data-ui-palette-top-offset type(<length>), var(--ui-palette-top-offset, 14dvh));
-			--_ui-palette-radius: attr(data-ui-palette-radius type(<length-percentage>), var(--ui-palette-radius, var(--r-lg)));
+			--_ui-radius: attr(data-ui-palette-radius type(<length-percentage>), var(--ui-palette-radius, var(--r-lg)));
 			--_ui-palette-list-max-height: attr(data-ui-palette-list-max-height type(<length>), var(--ui-palette-list-max-height, 46dvh));
 			--_ui-palette-active-surface: attr(data-ui-palette-active-surface type(<color>), var(--ui-palette-active-surface, var(--color-primary-soft)));
 			--_ui-palette-active-ink: attr(data-ui-palette-active-ink type(<color>), var(--ui-palette-active-ink, var(--color-base-content)));

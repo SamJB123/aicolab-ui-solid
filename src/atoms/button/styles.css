@@ -6,12 +6,8 @@
    default-context into a registered private adapter; consuming declarations
    read the adapter. Note padInline's default differs per context (16px
    normally, 4px for the text variant) — the per-context default lives in
-   the adapter assignments, never in the registrations. */
-@property --_ui-btn-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 999px;
-}
+   the adapter assignments, never in the registrations. The radius resolves
+   into the shared element corner --_ui-radius (foundations.css). */
 @property --_ui-btn-pad-block {
 	syntax: "<length>";
 	inherits: false;
@@ -45,7 +41,7 @@
 
 @scope (.ui-btn) {
 	:scope {
-		--_ui-btn-radius: var(--ui-btn-radius, var(--r-pill));
+		--_ui-radius: var(--ui-btn-radius, var(--r-pill));
 		--_ui-btn-pad-block: var(--ui-btn-pad-block, 8px);
 		--_ui-btn-pad-inline: var(--ui-btn-pad-inline, 16px);
 		--_ui-btn-gap: var(--ui-btn-gap, 8px);
@@ -57,7 +53,7 @@
 		align-items: center;
 		gap: var(--_ui-btn-gap);
 		border: 0;
-		border-radius: var(--_ui-btn-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		padding: var(--_ui-btn-pad-block) var(--_ui-btn-pad-inline);
 		font: inherit;
@@ -124,7 +120,7 @@
 	   Baseline across ui-solid's browser floor. */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
-			--_ui-btn-radius: attr(data-ui-btn-radius type(<length-percentage>), var(--ui-btn-radius, var(--r-pill)));
+			--_ui-radius: attr(data-ui-btn-radius type(<length-percentage>), var(--ui-btn-radius, var(--r-pill)));
 			--_ui-btn-pad-block: attr(data-ui-btn-pad-block type(<length>), var(--ui-btn-pad-block, 8px));
 			--_ui-btn-pad-inline: attr(data-ui-btn-pad-inline type(<length>), var(--ui-btn-pad-inline, 16px));
 			--_ui-btn-gap: attr(data-ui-btn-gap type(<length>), var(--ui-btn-gap, 8px));

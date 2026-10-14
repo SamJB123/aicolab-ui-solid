@@ -170,12 +170,13 @@
 			--ui-paint-source-hover: var(--_ui-bnav-chip-surface);
 			--ui-paint-source-selected: var(--_ui-bnav-chip-active-surface);
 			--ui-edge-source: var(--_ui-bnav-chip-active-surface);
+			--_ui-radius: var(--r-pill);
 			display: grid;
 			place-items: center;
 			width: var(--_ui-bnav-chip-size);
 			height: var(--_ui-bnav-chip-size);
 			margin-top: calc(var(--_ui-bnav-chip-size) * -0.5333);
-			border-radius: var(--r-pill);
+			border-radius: var(--_ui-radius);
 			corner-shape: var(--s-corner);
 			background: var(--ui-surface-paint);
 			color: var(--_ui-bnav-chip-ink);

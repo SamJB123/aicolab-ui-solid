@@ -13,11 +13,6 @@
 	inherits: false;
 	initial-value: 8px;
 }
-@property --_ui-menuitem-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 10px;
-}
 @property --_ui-menuitem-hover-surface {
 	syntax: "<color>";
 	inherits: false;
@@ -43,7 +38,7 @@
 
 	.ui-menu-item {
 		--_ui-menuitem-pad: var(--ui-menuitem-pad, var(--ui-menu-item-pad, 0.5rem));
-		--_ui-menuitem-radius: var(--ui-menuitem-radius, var(--ui-menu-item-radius, var(--r-sm)));
+		--_ui-radius: var(--ui-menuitem-radius, var(--ui-menu-item-radius, var(--r-sm)));
 		--_ui-menuitem-hover-surface: var(--ui-menuitem-hover-surface, var(--ui-menu-item-hover-surface, color-mix(in oklab, var(--color-base-content) 9%, transparent)));
 		box-sizing: border-box;
 		display: flex;
@@ -52,7 +47,7 @@
 		width: 100%;
 		padding: var(--_ui-menuitem-pad) calc(var(--_ui-menuitem-pad) * 1.4);
 		border: 0;
-		border-radius: var(--_ui-menuitem-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: squircle;
 		background: transparent;
 		color: inherit;
@@ -111,7 +106,7 @@
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		.ui-menu-item {
 			--_ui-menuitem-pad: attr(data-ui-menuitem-pad type(<length>), var(--ui-menuitem-pad, var(--ui-menu-item-pad, 0.5rem)));
-			--_ui-menuitem-radius: attr(data-ui-menuitem-radius type(<length-percentage>), var(--ui-menuitem-radius, var(--ui-menu-item-radius, var(--r-sm))));
+			--_ui-radius: attr(data-ui-menuitem-radius type(<length-percentage>), var(--ui-menuitem-radius, var(--ui-menu-item-radius, var(--r-sm))));
 			--_ui-menuitem-hover-surface: attr(data-ui-menuitem-hover-surface type(<color>), var(--ui-menuitem-hover-surface, var(--ui-menu-item-hover-surface, color-mix(in oklab, var(--color-base-content) 9%, transparent))));
 		}
 	}

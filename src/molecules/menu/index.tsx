@@ -79,8 +79,8 @@ export function Menu(props: MenuProps) {
 		const list = items(event.currentTarget)
 		if (list.length === 0) return
 		event.preventDefault()
-		const active = document.activeElement as HTMLElement | null
-		const index = active ? list.indexOf(active) : -1
+		const active = document.activeElement
+		const index = active instanceof HTMLElement ? list.indexOf(active) : -1
 		const next =
 			event.key === 'Home'
 				? 0
@@ -197,7 +197,7 @@ export function MenuItem(props: MenuItemProps) {
 			when={props.href !== undefined}
 			fallback={
 				<button
-					{...(attributes as JSX.ButtonHTMLAttributes<HTMLButtonElement>)}
+					{...attributes}
 					{...itemKnobs.attributes(props)}
 					type="button"
 					role="menuitem"
@@ -212,7 +212,7 @@ export function MenuItem(props: MenuItemProps) {
 			}
 		>
 			<a
-				{...(attributes as JSX.AnchorHTMLAttributes<HTMLAnchorElement>)}
+				{...attributes}
 				{...itemKnobs.attributes(props)}
 				href={props.href}
 				role="menuitem"

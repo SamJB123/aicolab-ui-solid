@@ -114,7 +114,8 @@
 	--ui-paint-source: var(--_ui-depth-surface);
 	--ui-paint-source-hover: var(--_ui-depth-surface);
 	--ui-paint-source-selected: var(--_ui-depth-surface);
-	border-radius: var(--_ui-depth-radius);
+	--_ui-radius: var(--_ui-depth-radius);
+	border-radius: var(--_ui-radius);
 	corner-shape: var(--s-corner);
 	background: var(--ui-surface-paint);
 	box-shadow: var(--ui-edge), inset 0 0 0 1px var(--color-border);

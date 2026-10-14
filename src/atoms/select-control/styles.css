@@ -13,12 +13,10 @@
    app CSS can still supply values. The dummy initial-value below is never
    visible: this stylesheet always assigns the adapter wherever it is read.
    Transition consuming properties as usual; transition an adapter instead
-   only when its destination cannot interpolate — never both. */
-@property --_ui-select-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 12px;
-}
+   only when its destination cannot interpolate — never both. The trigger's
+   radius resolves into the shared element corner --_ui-radius (foundations.css);
+   the picker, a pseudo-element with a corner of its own, resolves its knob
+   into the same adapter where it is consumed. */
 @property --_ui-select-min-height {
 	syntax: "<length>";
 	inherits: false;
@@ -49,15 +47,10 @@
 	inherits: false;
 	initial-value: currentColor;
 }
-@property --_ui-select-picker-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 12px;
-}
 
 @scope (.ui-select-control) {
 	:scope {
-		--_ui-select-radius: var(--ui-select-radius, var(--r-md));
+		--_ui-radius: var(--ui-select-radius, var(--r-md));
 		--_ui-select-min-height: var(--ui-select-min-height, 2.25rem);
 		--_ui-select-pad-block: var(--ui-select-pad-block, 0.42rem);
 		--_ui-select-pad-inline: var(--ui-select-pad-inline, 0.75rem);
@@ -76,7 +69,7 @@
 		min-height: var(--_ui-select-min-height);
 		padding: var(--_ui-select-pad-block) var(--_ui-select-pad-inline);
 		border: 1px solid var(--color-border-strong);
-		border-radius: var(--_ui-select-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: squircle;
 		background: var(--ui-surface-paint);
 		color: var(--color-base-content);
@@ -164,10 +157,10 @@
 			/* Adapter assigned here, where it is consumed: the PUBLIC knob
 			   inherits from the select into its ::picker, so the read works
 			   without making the private adapter inheritable. */
-			--_ui-select-picker-radius: var(--ui-select-picker-radius, var(--r-md));
+			--_ui-radius: var(--ui-select-picker-radius, var(--r-md));
 			appearance: base-select;
 			border: 1px solid var(--color-border-strong);
-			border-radius: var(--_ui-select-picker-radius);
+			border-radius: var(--_ui-radius);
 			corner-shape: squircle;
 			background: var(--color-base-100);
 			color: var(--color-base-content);
@@ -249,7 +242,7 @@
 	   together with the component's style-variable emission. */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
-			--_ui-select-radius: attr(data-ui-select-radius type(<length-percentage>), var(--ui-select-radius, var(--r-md)));
+			--_ui-radius: attr(data-ui-select-radius type(<length-percentage>), var(--ui-select-radius, var(--r-md)));
 			--_ui-select-min-height: attr(data-ui-select-min-height type(<length>), var(--ui-select-min-height, 2.25rem));
 			--_ui-select-pad-block: attr(data-ui-select-pad-block type(<length>), var(--ui-select-pad-block, 0.42rem));
 			--_ui-select-pad-inline: attr(data-ui-select-pad-inline type(<length>), var(--ui-select-pad-inline, 0.75rem));
@@ -266,7 +259,7 @@
 
 		@supports (appearance: base-select) {
 			:scope::picker(select) {
-				--_ui-select-picker-radius: attr(data-ui-select-picker-radius type(<length-percentage>), var(--ui-select-picker-radius, var(--r-md)));
+				--_ui-radius: attr(data-ui-select-picker-radius type(<length-percentage>), var(--ui-select-picker-radius, var(--r-md)));
 			}
 		}
 	}

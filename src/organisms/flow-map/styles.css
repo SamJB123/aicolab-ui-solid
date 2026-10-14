@@ -91,12 +91,14 @@
 		grid-column: var(--ui-fm-col) / span var(--ui-fm-cols, 1);
 		grid-row: var(--ui-fm-row) / span var(--ui-fm-rows, 1);
 		display: grid;
-		border-radius: var(--_ui-fm-node-radius);
+		--_ui-radius: var(--_ui-fm-node-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: squircle;
-		/* A node is a plate: the surface paint and the edge (resolver.css
-		   "Surface paint and edge") where the surface and the ring are
-		   painted; the theme's lift joins its own. A note node is an outline
-		   treatment, whose paint and edge the resolver leaves flat. */
+		/* A node is a plate: its corner is the inherited node radius, and
+		   the surface paint and the edge (resolver.css "Surface paint and
+		   edge") where the surface and the ring are painted; the theme's
+		   lift joins its own. A note node is an outline treatment, whose
+		   paint and edge the resolver leaves flat. */
 		background: var(--ui-surface-paint);
 		color: var(--ui-ink);
 		box-shadow: var(--ui-edge), inset 0 0 0 1px var(--ui-border);
@@ -199,7 +201,8 @@
 		display: grid;
 		place-items: center;
 		padding: 0.9em 0.55em;
-		border-radius: var(--_ui-fm-node-radius);
+		--_ui-radius: var(--_ui-fm-node-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: squircle;
 		background: var(--ui-surface-paint);
 		color: var(--ui-ink);
@@ -358,7 +361,8 @@
 	}
 	.ui-flow-map-footer-band {
 		padding: 0.55em 1em;
-		border-radius: var(--r-sm);
+		--_ui-radius: var(--r-sm);
+		border-radius: var(--_ui-radius);
 		corner-shape: squircle;
 		background: var(--ui-surface-paint);
 		color: var(--ui-ink);
@@ -383,7 +387,8 @@
 		width: 100%;
 		min-height: 3.2rem;
 		padding: 0.5em 0.7em;
-		border-radius: var(--r-sm);
+		--_ui-radius: var(--r-sm);
+		border-radius: var(--_ui-radius);
 		corner-shape: squircle;
 		background: var(--ui-surface-paint);
 		color: var(--ui-ink);

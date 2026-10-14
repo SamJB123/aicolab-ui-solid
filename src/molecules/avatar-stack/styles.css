@@ -82,13 +82,14 @@
 		--ui-paint-source: var(--_ui-avstack-extra-surface);
 		--ui-paint-source-hover: var(--_ui-avstack-extra-surface);
 		--ui-paint-source-selected: var(--_ui-avstack-extra-surface);
+		--_ui-radius: var(--r-pill);
 		position: relative;
 		z-index: 0;
 		display: grid;
 		place-items: center;
 		width: var(--_ui-avstack-size);
 		height: var(--_ui-avstack-size);
-		border-radius: var(--r-pill);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		font-family: var(--font-data, ui-monospace, monospace);
 		font-size: var(--t-xs);

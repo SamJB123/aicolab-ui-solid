@@ -182,11 +182,12 @@
 		--ui-paint-source: var(--_ui-radial-chip-surface);
 		--ui-paint-source-hover: var(--_ui-radial-chip-surface);
 		--ui-paint-source-selected: var(--_ui-radial-chip-surface);
+		--_ui-radius: var(--r-pill);
 		display: grid;
 		place-items: center;
 		width: var(--radial-chip);
 		height: var(--radial-chip);
-		border-radius: var(--r-pill);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		background: var(--ui-surface-paint);
 		color: var(--_ui-radial-chip-ink);

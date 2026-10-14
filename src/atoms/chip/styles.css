@@ -1,9 +1,5 @@
-/* ── Chip — tone via treatment mapping; knobs on the usual two wires ── */
-@property --_ui-chip-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 999px;
-}
+/* ── Chip — tone via treatment mapping; knobs on the usual two wires; the
+      radius resolves into the shared plate corner --_ui-radius ── */
 @property --_ui-chip-pad-block {
 	syntax: "<length>";
 	inherits: false;
@@ -44,7 +40,7 @@
 
 @scope (.ui-chip) {
 	:scope {
-		--_ui-chip-radius: var(--ui-chip-radius, var(--r-pill));
+		--_ui-radius: var(--ui-chip-radius, var(--r-pill));
 		--_ui-chip-pad-block: var(--ui-chip-pad-block, 4px);
 		--_ui-chip-pad-inline: var(--ui-chip-pad-inline, 10px);
 		--_ui-chip-gap: var(--ui-chip-gap, 6px);
@@ -64,7 +60,7 @@
 		display: inline-flex;
 		align-items: center;
 		gap: var(--_ui-chip-gap);
-		border-radius: var(--_ui-chip-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		padding: var(--_ui-chip-pad-block) var(--_ui-chip-pad-inline);
 		font-family: var(--font-label, var(--font-data, ui-monospace, monospace));
@@ -84,7 +80,7 @@
 	/* ── Frontier knob boundary (see select-control for the pattern) ── */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
-			--_ui-chip-radius: attr(data-ui-chip-radius type(<length-percentage>), var(--ui-chip-radius, var(--r-pill)));
+			--_ui-radius: attr(data-ui-chip-radius type(<length-percentage>), var(--ui-chip-radius, var(--r-pill)));
 			--_ui-chip-pad-block: attr(data-ui-chip-pad-block type(<length>), var(--ui-chip-pad-block, 4px));
 			--_ui-chip-pad-inline: attr(data-ui-chip-pad-inline type(<length>), var(--ui-chip-pad-inline, 10px));
 			--_ui-chip-gap: attr(data-ui-chip-gap type(<length>), var(--ui-chip-gap, 6px));

@@ -17,11 +17,6 @@
 	inherits: false;
 	initial-value: 0.5rem;
 }
-@property --_ui-presence-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 999px;
-}
 
 @scope (.ui-presence) {
 	:scope {
@@ -44,21 +39,21 @@
 	   wire, deliberately outside the treatment system. */
 	.ui-presence-swatch {
 		--_ui-presence-size: var(--ui-presence-size, 0.5rem);
-		--_ui-presence-radius: var(--ui-presence-radius, var(--r-pill));
+		--_ui-radius: var(--ui-presence-radius, var(--r-pill));
 		display: inline-block;
 		inline-size: var(--_ui-presence-size);
 		block-size: var(--_ui-presence-size);
-		border-radius: var(--_ui-presence-radius);
+		border-radius: var(--_ui-radius);
 		background: var(--ui-presence-color);
 		transition: background-color 220ms ease;
 	}
 	.ui-attribution-swatch {
 		--_ui-presence-size: var(--ui-presence-size, 0.75rem);
-		--_ui-presence-radius: var(--ui-presence-radius, 0.25rem);
+		--_ui-radius: var(--ui-presence-radius, 0.25rem);
 		display: inline-block;
 		inline-size: var(--_ui-presence-size);
 		block-size: var(--_ui-presence-size);
-		border-radius: var(--_ui-presence-radius);
+		border-radius: var(--_ui-radius);
 		background: var(--ui-presence-color);
 		transition: background-color 220ms ease;
 	}
@@ -76,11 +71,11 @@
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		.ui-presence-swatch {
 			--_ui-presence-size: attr(data-ui-presence-size type(<length>), var(--ui-presence-size, 0.5rem));
-			--_ui-presence-radius: attr(data-ui-presence-radius type(<length-percentage>), var(--ui-presence-radius, var(--r-pill)));
+			--_ui-radius: attr(data-ui-presence-radius type(<length-percentage>), var(--ui-presence-radius, var(--r-pill)));
 		}
 		.ui-attribution-swatch {
 			--_ui-presence-size: attr(data-ui-presence-size type(<length>), var(--ui-presence-size, 0.75rem));
-			--_ui-presence-radius: attr(data-ui-presence-radius type(<length-percentage>), var(--ui-presence-radius, 0.25rem));
+			--_ui-radius: attr(data-ui-presence-radius type(<length-percentage>), var(--ui-presence-radius, 0.25rem));
 		}
 	}
 }

@@ -54,11 +54,14 @@ from them, so components never paint a finish of their own).
 
 An app's own surfaces take the finish the same way: put `data-ui-plate` on
 the element, name its surface in `--ui-paint-source` when it is not
-`--color-base-100`, and paint `background: var(--ui-surface-paint)`,
-`box-shadow: var(--ui-edge), <its ring>` and `corner-shape: var(--s-corner)`;
-lift it on hover with `translate: 0 calc(-1 * var(--s-lift))`. Without the
-attribute nothing derives the two roles on that element, so a theme's
-finish never reaches it.
+`--color-base-100`, state its corner once in `--_ui-radius` and paint
+`border-radius: var(--_ui-radius)` from it (the corner studs are placed
+from that same value and the theme's corner shape), and paint
+`background: var(--ui-surface-paint)`, `box-shadow: var(--ui-edge), <its
+ring>` and `corner-shape: var(--s-corner)`; lift it on hover with
+`translate: 0 calc(-1 * var(--s-lift))`. Without the attribute nothing
+derives the two roles on that element, so a theme's finish never reaches
+it; without the corner the studs sit where they would on a square plate.
 
 ## The three-axis colour system
 

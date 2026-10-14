@@ -1,14 +1,10 @@
 /* Per-instance knobs (gap, radius, pad) on the dual wire; adapter pattern
-   per shared/knobs.ts. */
+   per shared/knobs.ts; the row's radius resolves into the shared plate
+   corner --_ui-radius. */
 @property --_ui-mapper-gap {
 	syntax: "<length>";
 	inherits: false;
 	initial-value: 8px;
-}
-@property --_ui-mapper-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 12px;
 }
 @property --_ui-mapper-pad {
 	syntax: "<length>";
@@ -24,7 +20,7 @@
 	}
 
 	.ui-mapper-row {
-		--_ui-mapper-radius: var(--ui-mapper-radius, var(--r-md));
+		--_ui-radius: var(--ui-mapper-radius, var(--r-md));
 		--_ui-mapper-pad: var(--ui-mapper-pad, 0.625rem);
 		display: grid;
 		grid-template-columns: minmax(12rem, 1.4fr) repeat(auto-fit, minmax(9rem, 1fr));
@@ -32,7 +28,7 @@
 		align-items: start;
 		padding: var(--_ui-mapper-pad);
 		border: 1px solid var(--color-border);
-		border-radius: var(--_ui-mapper-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: squircle;
 		/* A row is a PLATE (the component marks it data-ui-plate): it paints
 		   the surface paint and the edge (resolver.css "Surface paint and

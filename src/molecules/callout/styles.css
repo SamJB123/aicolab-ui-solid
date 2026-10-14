@@ -5,12 +5,8 @@
    carries its own SOLID treatment of the same family, so the two paint from
    the resolver independently and a band-less callout is a plain treated
    surface. Adapters are assigned on :scope and inherit into the band and
-   body, which only read them. */
-@property --_ui-callout-radius {
-	syntax: "<length-percentage>";
-	inherits: true;
-	initial-value: 6px;
-}
+   body, which only read them; the radius resolves into the shared plate
+   corner --_ui-radius, read on :scope alone. */
 @property --_ui-callout-pad {
 	syntax: "<length>";
 	inherits: true;
@@ -29,7 +25,7 @@
 
 @scope (.ui-callout) {
 	:scope {
-		--_ui-callout-radius: var(--ui-callout-radius, var(--r-sm));
+		--_ui-radius: var(--ui-callout-radius, var(--r-sm));
 		--_ui-callout-pad: var(--ui-callout-pad, 0.8rem);
 		--_ui-callout-band-pad: var(--ui-callout-band-pad, 0.45rem);
 		--_ui-callout-icon-size: var(--ui-callout-icon-size, 1.1rem);
@@ -37,7 +33,7 @@
 		display: grid;
 		margin: 0;
 		border: 1px solid var(--ui-border);
-		border-radius: var(--_ui-callout-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		/* A plate: the surface paint and the edge (resolver.css "Surface
 		   paint and edge") where the surface is painted; the band is a region
@@ -57,7 +53,7 @@
 	/* ── Frontier knob boundary (see select-control for the pattern) ── */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
-			--_ui-callout-radius: attr(data-ui-callout-radius type(<length-percentage>), var(--ui-callout-radius, var(--r-sm)));
+			--_ui-radius: attr(data-ui-callout-radius type(<length-percentage>), var(--ui-callout-radius, var(--r-sm)));
 			--_ui-callout-pad: attr(data-ui-callout-pad type(<length>), var(--ui-callout-pad, 0.8rem));
 			--_ui-callout-band-pad: attr(data-ui-callout-band-pad type(<length>), var(--ui-callout-band-pad, 0.45rem));
 			--_ui-callout-icon-size: attr(data-ui-callout-icon-size type(<length>), var(--ui-callout-icon-size, 1.1rem));

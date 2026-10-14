@@ -75,8 +75,11 @@
 		--_ui-acc-body-ink: var(--ui-acc-body-ink, var(--color-base-content-muted));
 		--_ui-acc-body-surface: var(--ui-acc-body-surface, color-mix(in oklab, var(--color-base-content) 4%, transparent));
 		--_ui-acc-divider: var(--ui-acc-divider, var(--color-border));
+		/* The item's own corner is the inherited radius carrier (the summary
+		   and body read the carrier for theirs). */
+		--_ui-radius: var(--_ui-acc-radius);
 		border-bottom: 1px solid var(--_ui-acc-divider);
-		border-radius: var(--_ui-acc-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		/* Compatibility note: unsupported engines still use native <details> and
 		   simply snap between closed/open sizes. Remove this note/gating concern

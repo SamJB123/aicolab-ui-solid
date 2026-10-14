@@ -7,11 +7,6 @@
 	inherits: false;
 	initial-value: 18px;
 }
-@property --_ui-checkbox-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 5px;
-}
 @property --_ui-checkbox-accent {
 	syntax: "<color>";
 	inherits: false;
@@ -57,7 +52,7 @@
 
 	.ui-checkbox-box {
 		--_ui-checkbox-size: var(--ui-checkbox-size, 18px);
-		--_ui-checkbox-radius: var(--ui-checkbox-radius, var(--r-xs));
+		--_ui-radius: var(--ui-checkbox-radius, var(--r-xs));
 		--_ui-checkbox-accent: var(--ui-checkbox-accent, var(--color-primary));
 		--_ui-checkbox-focus-ring: var(--ui-checkbox-focus-ring, var(--color-ring));
 		box-sizing: border-box;
@@ -65,7 +60,7 @@
 		width: var(--_ui-checkbox-size);
 		height: var(--_ui-checkbox-size);
 		border: 1.5px solid var(--color-border-strong);
-		border-radius: var(--_ui-checkbox-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: squircle;
 		background: var(--color-base-100);
 		display: grid;
@@ -157,7 +152,7 @@
 		}
 		.ui-checkbox-box {
 			--_ui-checkbox-size: attr(data-ui-checkbox-size type(<length>), var(--ui-checkbox-size, 18px));
-			--_ui-checkbox-radius: attr(data-ui-checkbox-radius type(<length-percentage>), var(--ui-checkbox-radius, var(--r-xs)));
+			--_ui-radius: attr(data-ui-checkbox-radius type(<length-percentage>), var(--ui-checkbox-radius, var(--r-xs)));
 			--_ui-checkbox-accent: attr(data-ui-checkbox-accent type(<color>), var(--ui-checkbox-accent, var(--color-primary)));
 			--_ui-checkbox-focus-ring: attr(data-ui-checkbox-focus-ring type(<color>), var(--ui-checkbox-focus-ring, var(--color-ring)));
 		}

@@ -1,12 +1,8 @@
 /* ── Facets — tabs + glyph rail + swapped pane (facets.tsx) ──
    Knobs on the usual two wires, assigned on :scope. The active tab, active
    rail cell and the sliding pill are painted PAIRS: base surfaces plain,
-   the selected family pair when treated; the frame stays structural. */
-@property --_ui-facets-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 20px;
-}
+   the selected family pair when treated; the frame stays structural. The
+   frame's radius resolves into the shared plate corner --_ui-radius. */
 @property --_ui-facets-rail-width {
 	syntax: "<length>";
 	inherits: true;
@@ -40,7 +36,7 @@
 
 @scope (.facets) {
 :scope {
-	--_ui-facets-radius: var(--ui-facets-radius, var(--r-xl));
+	--_ui-radius: var(--ui-facets-radius, var(--r-xl));
 	--_ui-facets-rail-width: var(--ui-facets-rail-width, 5rem);
 	--_ui-facets-pane-pad-block: var(--ui-facets-pane-pad-block, 1.5rem);
 	--_ui-facets-pane-pad-inline: var(--ui-facets-pane-pad-inline, 2rem);
@@ -55,7 +51,7 @@
 	--ui-paint-source: var(--color-base-100);
 	--ui-paint-source-hover: var(--color-base-100);
 	--ui-paint-source-selected: var(--color-base-100);
-	border-radius: var(--_ui-facets-radius);
+	border-radius: var(--_ui-radius);
 	corner-shape: var(--s-corner);
 	background: var(--ui-surface-paint);
 	box-shadow: var(--ui-edge), inset 0 0 0 1px var(--color-border);
@@ -72,6 +68,7 @@
    inside a treated frame their rim is its family colour. */
 .facets-tab,
 .facets-pill {
+	--_ui-radius: var(--r-pill);
 	--ui-paint-source: var(--_ui-facets-pill-surface);
 	--ui-paint-source-hover: var(--_ui-facets-pill-surface);
 	--ui-paint-source-selected: var(--_ui-facets-pill-surface);
@@ -124,7 +121,7 @@
 }
 .facets-tabs-pill .facets-tab,
 .facets-tabs-stretch .facets-tab {
-	border-radius: var(--r-pill);
+	border-radius: var(--_ui-radius);
 	corner-shape: var(--s-corner);
 	padding: 0.45rem 1rem;
 	white-space: nowrap;
@@ -158,7 +155,7 @@
 		left: anchor(left);
 		width: anchor-size(width);
 		height: anchor-size(height);
-		border-radius: var(--r-pill);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		background: var(--ui-surface-paint);
 		box-shadow: var(--ui-edge), inset 0 0 0 1px var(--color-border-strong);
@@ -235,7 +232,7 @@
 /* ── Frontier knob boundary (see select-control for the pattern) ── */
 @supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 	:scope {
-		--_ui-facets-radius: attr(data-ui-facets-radius type(<length-percentage>), var(--ui-facets-radius, var(--r-xl)));
+		--_ui-radius: attr(data-ui-facets-radius type(<length-percentage>), var(--ui-facets-radius, var(--r-xl)));
 		--_ui-facets-rail-width: attr(data-ui-facets-rail-width type(<length>), var(--ui-facets-rail-width, 5rem));
 		--_ui-facets-pane-pad-block: attr(data-ui-facets-pane-pad-block type(<length>), var(--ui-facets-pane-pad-block, 1.5rem));
 		--_ui-facets-pane-pad-inline: attr(data-ui-facets-pane-pad-inline type(<length>), var(--ui-facets-pane-pad-inline, 2rem));

@@ -1,15 +1,11 @@
 /* ── HoldButton ──
    Knobs (size, radius, focusRing) on the usual two wires; colour states stay
-   with the treatment roles. */
+   with the treatment roles; the radius resolves into the shared plate
+   corner --_ui-radius. */
 @property --_ui-hold-size {
 	syntax: "<length>";
 	inherits: false;
 	initial-value: 4.25rem;
-}
-@property --_ui-hold-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 50%;
 }
 @property --_ui-hold-focus-ring {
 	syntax: "<color>";
@@ -20,14 +16,14 @@
 @scope (.ui-hold-button) {
 	:scope {
 		--_ui-hold-size: var(--ui-hold-size, 4.25rem);
-		--_ui-hold-radius: var(--ui-hold-radius, 50%);
+		--_ui-radius: var(--ui-hold-radius, 50%);
 		--_ui-hold-focus-ring: var(--ui-hold-focus-ring, var(--ui-focus-ring));
 
 		box-sizing: border-box;
 		min-width: var(--_ui-hold-size);
 		min-height: var(--_ui-hold-size);
 		border: 2px solid var(--ui-border);
-		border-radius: var(--_ui-hold-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		/* A plate: the surface paint and the edge (resolver.css "Surface
 		   paint and edge") where the surface is painted; the theme's lift on
@@ -60,7 +56,7 @@
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
 			--_ui-hold-size: attr(data-ui-hold-size type(<length>), var(--ui-hold-size, 4.25rem));
-			--_ui-hold-radius: attr(data-ui-hold-radius type(<length-percentage>), var(--ui-hold-radius, 50%));
+			--_ui-radius: attr(data-ui-hold-radius type(<length-percentage>), var(--ui-hold-radius, 50%));
 			--_ui-hold-focus-ring: attr(data-ui-hold-focus-ring type(<color>), var(--ui-hold-focus-ring, var(--ui-focus-ring)));
 		}
 	}

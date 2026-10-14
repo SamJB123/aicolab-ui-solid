@@ -241,7 +241,8 @@
 			height: auto;
 			max-height: 92dvh;
 			border-left: 0;
-			border-radius: var(--r-lg) var(--r-lg) 0 0;
+			--_ui-radius: var(--r-lg);
+			border-radius: var(--_ui-radius) var(--_ui-radius) 0 0;
 			corner-shape: var(--s-corner);
 			--ui-paint-source: var(--color-base-300);
 			--ui-paint-source-hover: var(--color-base-300);

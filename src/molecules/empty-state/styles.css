@@ -30,7 +30,8 @@
 		gap: var(--_ui-empty-gap);
 		justify-items: center;
 		padding: var(--_ui-empty-pad);
-		border-radius: var(--r-md);
+		--_ui-radius: var(--r-md);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		text-align: center;
 		color: var(--color-base-content-muted);

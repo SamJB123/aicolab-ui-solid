@@ -28,6 +28,14 @@ import type { JSX } from '@solidjs/web'
    system. Transition consuming properties as usual; transition an adapter
    itself only when its destination cannot interpolate (gradients, masks)
    — never both, or the eases compound.
+   An adapter is private to its ELEMENT, not to a component (inherits:
+   false), so an adapter every component resolves the same way is
+   registered once and shared, in foundations.css with the anchored shell's:
+   an element's corner is `--_ui-radius` — each sheet resolves its radius
+   knob into it and paints `border-radius: var(--_ui-radius)`, and on a
+   plate the resolver places the corner studs from the same value. A sheet
+   whose radius is read by DESCENDANTS keeps an inherited carrier
+   (`--_ui-seg-radius`) and sets the element's own corner from it.
 
    Enumerated modes are NOT value knobs and use none of this machinery:
    a union-typed prop maps to a data attribute styled with plain attribute

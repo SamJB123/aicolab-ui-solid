@@ -341,7 +341,25 @@
 
    SURFACE PAINT — the plate's shine: a gradient from its surface toward
    its shade colour at the top to its surface toward black at the bottom,
-   by the grade, with a stud of the edge colour in each corner.
+   by the grade, with a stud of the edge colour in each corner. A stud sits
+   on the corner's own diagonal: the plate states its corner once in
+   --_ui-radius (foundations.css) and paints its border-radius from it, and
+   the stud centre is worked out from that radius and the theme's corner
+   shape — the 45° point of the corner curve, pushed in along the diagonal
+   by the stud's radius plus two pixels of clearance, and never nearer the
+   edge than it was on a square plate. The curve's 45° point lies at
+   r·(1 − 2^(−1/k)) in from the corner for a superellipse of exponent k
+   (round k=2, squircle 4, bevel 1, scoop ½, notch →0, square →∞); the
+   corner-shape keywords are superellipse(K) with k = 2^K. The radius is
+   taken no larger than half the plate's own extent on each axis, as the
+   browser itself clamps a radius to the box. And a plate has a corner on
+   an axis only where that clamp did not bite: where the stated radius
+   exceeds half the plate's extent the end is a cap, not a corner — a pill,
+   on whichever axis is long — and no stud is drawn. Each stud is its own
+   background tile, centred on the stud, sized to nothing on an axis the
+   plate has no corner on (sign() of the radius less its clamped self: 0
+   where the corner is real, 1 where it was clamped). A 50% circle or
+   ellipse keeps its studs; a 999px pill loses them.
    EDGE — a shadow list: three stacked rings (the edge colour deepened, the
    context deepened, the edge colour), an inner bevel (the surface toward
    white along the top, toward black along the bottom) and the plate's own
@@ -384,11 +402,25 @@
 :where([data-ui-plate], [data-ui-color-base]) {
 	--ui-paint-source-active: var(--ui-paint-source-hover);
 	--ui-stud-ink: color-mix(in oklab, var(--ui-edge-source) 55%, white);
+	/* The corner's exponent: round here, where corner-shape is not drawn;
+	   the frontier block below reads the theme's shape where it is. */
+	--ui-corner-k: 1;
+	--ui-corner-inset: calc(1 - pow(2, -1 / pow(2, var(--ui-corner-k))));
+	--ui-stud-at: max(
+		calc(var(--s-stud) + 2px),
+		calc(var(--ui-corner-inset) * min(var(--_ui-radius), 50%) + (var(--s-stud) + 2px) * max(0.7072, var(--ui-corner-inset)))
+	);
+	/* The stud's tile: twice the centre offset, so the stud sits at its
+	   centre; nothing on an axis the plate has no corner on. The 50%s
+	   resolve against the plate's width in the first size and its height in
+	   the second. */
+	--ui-stud-tile: calc(2 * var(--ui-stud-at) * (1 - sign(var(--_ui-radius) - min(var(--_ui-radius), 50%))));
+	--ui-stud: radial-gradient(circle at 50% 50%, var(--ui-stud-ink) 0 var(--s-stud), transparent calc(var(--s-stud) * 1.3));
 	--ui-studs:
-		radial-gradient(circle at 4px 4px, var(--ui-stud-ink) 0 var(--s-stud), transparent calc(var(--s-stud) * 1.3)),
-		radial-gradient(circle at calc(100% - 4px) 4px, var(--ui-stud-ink) 0 var(--s-stud), transparent calc(var(--s-stud) * 1.3)),
-		radial-gradient(circle at 4px calc(100% - 4px), var(--ui-stud-ink) 0 var(--s-stud), transparent calc(var(--s-stud) * 1.3)),
-		radial-gradient(circle at calc(100% - 4px) calc(100% - 4px), var(--ui-stud-ink) 0 var(--s-stud), transparent calc(var(--s-stud) * 1.3));
+		var(--ui-stud) left top / var(--ui-stud-tile) var(--ui-stud-tile) no-repeat,
+		var(--ui-stud) right top / var(--ui-stud-tile) var(--ui-stud-tile) no-repeat,
+		var(--ui-stud) left bottom / var(--ui-stud-tile) var(--ui-stud-tile) no-repeat,
+		var(--ui-stud) right bottom / var(--ui-stud-tile) var(--ui-stud-tile) no-repeat;
 	--ui-shine: linear-gradient(
 		var(--s-grade-angle),
 		color-mix(in oklab, var(--ui-paint-source) calc(100% - 20% * var(--s-grade)), var(--ui-shade-source)) 0%,
@@ -438,6 +470,23 @@
 		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) color-mix(in oklab, var(--ui-paint-source-selected) calc(100% - 35% * var(--s-bevel)), black),
 		0 calc(10px * var(--s-shadow)) calc(24px * var(--s-shadow)) color-mix(in oklab, var(--ui-gap-source) calc(100% - 55% * var(--s-shadow)), black);
 	--ui-edge-disabled: 0 0 0 0 transparent;
+}
+/* Frontier: where the theme's corner shape is drawn, the studs follow it.
+   An engine that draws corner-shape but has no if() would still read the
+   round exponent above, which places a stud further in than any tighter
+   shape needs — inside the plate either way. Remove with the frontier
+   resolver above. */
+@supports (corner-shape: squircle) and (color: if(style(--ui-compat-probe: yes): red; else: blue)) {
+	:where([data-ui-plate], [data-ui-color-base]) {
+		--ui-corner-k: if(
+			style(--s-corner: squircle): 2;
+			style(--s-corner: bevel): 0;
+			style(--s-corner: scoop): -1;
+			style(--s-corner: notch): -8;
+			style(--s-corner: square): 8;
+			else: 1
+		);
+	}
 }
 /* Frontier: at the ladder's rest (no grade, no studs) the paint is the
    flat colour itself rather than an image of it, so a sheet that fades its

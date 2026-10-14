@@ -4,8 +4,9 @@ import { readFile } from 'node:fs/promises'
 
 const read = (path) => readFile(new URL(path, import.meta.url), 'utf8')
 
-const [resolver, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit, callout, flowMap, richList] = await Promise.all([
+const [resolver, foundations, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit, callout, flowMap, richList] = await Promise.all([
 	read('../src/resolver.css'),
+	read('../src/foundations.css'),
 	read('../src/molecules/accordion/styles.css'),
 	read('../src/atoms/select-control/styles.css'),
 	read('../src/atoms/button/styles.css'),
@@ -91,8 +92,21 @@ requireAll(
 		/var\(--s-bevel\)/,
 		/var\(--s-stud\)/,
 		/var\(--s-shadow\)/,
+		/* The studs are placed from the plate's own corner (the shared radius
+		   adapter) and the theme's corner shape: never a fixed offset. */
+		/--ui-stud-at: max\(/,
+		/min\(var\(--_ui-radius\), 50%\)/,
+		/--ui-stud-tile: calc\(2 \* var\(--ui-stud-at\) \* \(1 - sign\(var\(--_ui-radius\) - min\(var\(--_ui-radius\), 50%\)\)\)\);/,
+		/var\(--ui-stud\) left top \/ var\(--ui-stud-tile\) var\(--ui-stud-tile\) no-repeat,/,
+		/@supports \(corner-shape: squircle\) and \(color: if\(style\(--ui-compat-probe: yes\): red; else: blue\)\)/,
+		/style\(--s-corner: squircle\): 2;/,
 	],
 	'surface ladder resolver',
+)
+requireAll(
+	foundations,
+	[/@property --_ui-radius \{\n\tsyntax: "<length-percentage>";\n\tinherits: false;\n\tinitial-value: 0px;\n\}/],
+	'shared element corner registration',
 )
 requireAll(
 	button,
@@ -125,9 +139,8 @@ requireAll(
 	[
 		/@supports \(appearance: base-select\)/,
 		/@supports \(width: attr\(data-ui-compat-probe type\(<length>\), 0px\)\)/,
-		/@property --_ui-select-radius \{\n\tsyntax: "<length-percentage>";/,
-		/--_ui-select-radius: var\(--ui-select-radius, var\(--r-md\)\)/,
-		/--_ui-select-radius: attr\(data-ui-select-radius type\(<length-percentage>\), var\(--ui-select-radius, var\(--r-md\)\)\)/,
+		/--_ui-radius: var\(--ui-select-radius, var\(--r-md\)\)/,
+		/--_ui-radius: attr\(data-ui-select-radius type\(<length-percentage>\), var\(--ui-select-radius, var\(--r-md\)\)\)/,
 		/--_ui-select-hover-border: var\(--ui-select-hover-border, var\(--ui-border-hover\)\)/,
 		/--_ui-select-hover-border: attr\(data-ui-select-hover-border type\(<color>\), var\(--ui-select-hover-border, var\(--ui-border-hover\)\)\)/,
 	],
@@ -137,9 +150,9 @@ requireAll(
 	button,
 	[
 		/@supports \(width: attr\(data-ui-compat-probe type\(<length>\), 0px\)\)/,
-		/@property --_ui-btn-radius \{\n\tsyntax: "<length-percentage>";/,
-		/--_ui-btn-radius: var\(--ui-btn-radius, var\(--r-pill\)\)/,
-		/--_ui-btn-radius: attr\(data-ui-btn-radius type\(<length-percentage>\), var\(--ui-btn-radius, var\(--r-pill\)\)\)/,
+		/--_ui-radius: var\(--ui-btn-radius, var\(--r-pill\)\)/,
+		/--_ui-radius: attr\(data-ui-btn-radius type\(<length-percentage>\), var\(--ui-btn-radius, var\(--r-pill\)\)\)/,
+		/border-radius: var\(--_ui-radius\);/,
 		/--_ui-btn-pad-inline: var\(--ui-btn-pad-inline, 4px\)/,
 		/--_ui-btn-pad-inline: attr\(data-ui-btn-pad-inline type\(<length>\), var\(--ui-btn-pad-inline, 4px\)\)/,
 	],
@@ -149,8 +162,8 @@ requireAll(
 	formControl,
 	[
 		/@supports \(width: attr\(data-ui-compat-probe type\(<length>\), 0px\)\)/,
-		/--_ui-input-radius: var\(--ui-input-radius, var\(--r-xs\)\)/,
-		/--_ui-input-radius: attr\(data-ui-input-radius type\(<length-percentage>\), var\(--ui-input-radius, var\(--r-xs\)\)\)/,
+		/--_ui-radius: var\(--ui-input-radius, var\(--r-xs\)\)/,
+		/--_ui-radius: attr\(data-ui-input-radius type\(<length-percentage>\), var\(--ui-input-radius, var\(--r-xs\)\)\)/,
 		/--_ui-input-placeholder-ink: var\(--ui-input-placeholder-ink, var\(--color-base-content-faint\)\)/,
 		/--_ui-input-placeholder-ink: attr\(data-ui-input-placeholder-ink type\(<color>\), var\(--ui-input-placeholder-ink, var\(--color-base-content-faint\)\)\)/,
 		/--_ui-input-min-height: var\(--ui-input-min-height, 5rem\)/,
@@ -192,16 +205,16 @@ requireAll(
 requireAll(
 	notice,
 	[
-		/--_ui-notice-radius: var\(--ui-notice-radius, var\(--r-xs\)\)/,
-		/--_ui-notice-radius: attr\(data-ui-notice-radius type\(<length-percentage>\), var\(--ui-notice-radius, var\(--r-xs\)\)\)/,
+		/--_ui-radius: var\(--ui-notice-radius, var\(--r-xs\)\)/,
+		/--_ui-radius: attr\(data-ui-notice-radius type\(<length-percentage>\), var\(--ui-notice-radius, var\(--r-xs\)\)\)/,
 	],
 	'notice knob boundary',
 )
 requireAll(
 	callout,
 	[
-		/--_ui-callout-radius: var\(--ui-callout-radius, var\(--r-sm\)\)/,
-		/--_ui-callout-radius: attr\(data-ui-callout-radius type\(<length-percentage>\), var\(--ui-callout-radius, var\(--r-sm\)\)\)/,
+		/--_ui-radius: var\(--ui-callout-radius, var\(--r-sm\)\)/,
+		/--_ui-radius: attr\(data-ui-callout-radius type\(<length-percentage>\), var\(--ui-callout-radius, var\(--r-sm\)\)\)/,
 		/--_ui-callout-pad: attr\(data-ui-callout-pad type\(<length>\), var\(--ui-callout-pad, 0\.8rem\)\)/,
 	],
 	'callout knob boundary',
@@ -259,8 +272,9 @@ requireAll(prosekit, [/@supports \(container-type: scroll-state\)/], 'ProseKit s
       assignment of the same adapter IN THAT SHEET — the two wires cannot
       disagree (per-context re-defaults live with their own swaps);
    3. registration/assignment pairing is checked GLOBALLY — shared adapters
-      (the .ui-anchored shell) are registered once and re-defaulted by
-      composing sheets.
+      (the .ui-anchored shell; the element corner --_ui-radius, assigned by
+      every sheet that rounds something) are registered once in
+      foundations.css and re-defaulted by composing sheets.
    Knobs consumed on descendants/child-state contexts legitimately have no
    attr() swap (attr() reads only the matched element) — they simply
    contribute no frontier lines. */

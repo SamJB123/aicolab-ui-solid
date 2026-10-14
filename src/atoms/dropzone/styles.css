@@ -2,11 +2,6 @@
    activeSurface) on the dual wire; adapter pattern per shared/knobs.ts
    (select-control is the exemplar). Drag-over state arrives as the
    data-drag-over attribute from the component. */
-@property --_ui-dropzone-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 16px;
-}
 @property --_ui-dropzone-pad {
 	syntax: "<length>";
 	inherits: false;
@@ -35,7 +30,7 @@
 
 @scope (.ui-dropzone) {
 	:scope {
-		--_ui-dropzone-radius: var(--ui-dropzone-radius, var(--r-lg));
+		--_ui-radius: var(--ui-dropzone-radius, var(--r-lg));
 		--_ui-dropzone-pad: var(--ui-dropzone-pad, 1.5rem);
 		--_ui-dropzone-min-height: var(--ui-dropzone-min-height, 6rem);
 		--_ui-dropzone-border: var(--ui-dropzone-border, var(--color-border-strong));
@@ -47,7 +42,7 @@
 		min-height: var(--_ui-dropzone-min-height);
 		padding: var(--_ui-dropzone-pad);
 		border: 1.5px dashed var(--_ui-dropzone-border);
-		border-radius: var(--_ui-dropzone-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: squircle;
 		background: var(--color-base-100);
 		color: var(--color-base-content-muted);
@@ -127,7 +122,7 @@
 	/* ── Frontier knob boundary (see select-control for the pattern) ── */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
-			--_ui-dropzone-radius: attr(data-ui-dropzone-radius type(<length-percentage>), var(--ui-dropzone-radius, var(--r-lg)));
+			--_ui-radius: attr(data-ui-dropzone-radius type(<length-percentage>), var(--ui-dropzone-radius, var(--r-lg)));
 			--_ui-dropzone-pad: attr(data-ui-dropzone-pad type(<length>), var(--ui-dropzone-pad, 1.5rem));
 			--_ui-dropzone-min-height: attr(data-ui-dropzone-min-height type(<length>), var(--ui-dropzone-min-height, 6rem));
 			--_ui-dropzone-border: attr(data-ui-dropzone-border type(<color>), var(--ui-dropzone-border, var(--color-border-strong)));

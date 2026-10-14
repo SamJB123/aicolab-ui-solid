@@ -5,12 +5,9 @@
    inherited by the row's children. The collection re-defaults rows through
    the inheriting public variables. Hover on an UNSELECTED row deliberately
    paints the SELECTED pair (a preview of selection); hover on a selected
-   row brightens through the hover pair — a settled crossover, not a bug. */
-@property --_ui-rl-row-radius {
-	syntax: "<length-percentage>";
-	inherits: true;
-	initial-value: 8px;
-}
+   row brightens through the hover pair — a settled crossover, not a bug.
+   The row's radius resolves into the shared plate corner --_ui-radius
+   (the navigator's moving surface reads the public knob directly). */
 @property --_ui-rl-row-pad-block {
 	syntax: "<length>";
 	inherits: true;
@@ -90,7 +87,7 @@
 	.ui-rich-list-entry { margin: 0; }
 
 	.ui-rich-list-item {
-		--_ui-rl-row-radius: var(--ui-rl-row-radius, var(--r-sm));
+		--_ui-radius: var(--ui-rl-row-radius, var(--r-sm));
 		--_ui-rl-row-pad-block: var(--ui-rl-row-pad-block, 0.55rem);
 		--_ui-rl-row-pad-inline: var(--ui-rl-row-pad-inline, 0.25rem);
 		--_ui-rl-row-gap: var(--ui-rl-row-gap, 0.65rem);
@@ -115,7 +112,7 @@
 		font: inherit;
 		text-align: left;
 		color: inherit;
-		border-radius: var(--_ui-rl-row-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		transition:
 			background-color 160ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -337,7 +334,7 @@
 	/* ── Frontier knob boundary (see select-control for the pattern) ── */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		.ui-rich-list-item {
-			--_ui-rl-row-radius: attr(data-ui-rl-row-radius type(<length-percentage>), var(--ui-rl-row-radius, var(--r-sm)));
+			--_ui-radius: attr(data-ui-rl-row-radius type(<length-percentage>), var(--ui-rl-row-radius, var(--r-sm)));
 			--_ui-rl-row-pad-block: attr(data-ui-rl-row-pad-block type(<length>), var(--ui-rl-row-pad-block, 0.55rem));
 			--_ui-rl-row-pad-inline: attr(data-ui-rl-row-pad-inline type(<length>), var(--ui-rl-row-pad-inline, 0.25rem));
 			--_ui-rl-row-gap: attr(data-ui-rl-row-gap type(<length>), var(--ui-rl-row-gap, 0.65rem));

@@ -103,6 +103,7 @@
    inside a treated switcher their rim is its family colour. */
 .seg-btn,
 .seg-pill {
+	--_ui-radius: var(--_ui-seg-radius);
 	--ui-paint-source: var(--_ui-seg-active-surface);
 	--ui-paint-source-hover: var(--_ui-seg-active-surface);
 	--ui-paint-source-selected: var(--_ui-seg-active-surface);
@@ -116,7 +117,7 @@
 	flex: 0 0 auto;
 	scroll-snap-align: center;
 	white-space: nowrap;
-	border-radius: var(--_ui-seg-radius);
+	border-radius: var(--_ui-radius);
 	corner-shape: var(--s-corner);
 	padding: var(--_ui-seg-tab-pad-block) var(--_ui-seg-tab-pad-inline);
 	font-size: var(--_ui-seg-font-size);
@@ -162,7 +163,7 @@
 		left: anchor(left);
 		width: anchor-size(width);
 		height: anchor-size(height);
-		border-radius: var(--_ui-seg-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		background: var(--ui-surface-paint);
 		box-shadow: var(--ui-edge), inset 0 0 0 1px var(--color-border-strong);

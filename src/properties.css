@@ -415,10 +415,17 @@
 @property --ui-gap-source { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-shade-source { syntax: "<color>"; inherits: true; initial-value: transparent; }
 /* The derived paints. A background image list and a shadow list have no
-   registrable syntax, like the font stacks above. The stud ink, the stud
-   layers and the shine are the resolver's private intermediates (see the
-   private list in scripts/check-atomic-boundaries.mjs). */
+   registrable syntax, like the font stacks above. The stud ink, the corner
+   working (the corner shape's exponent, the inset of its 45° point, the
+   stud centre's offset), the stud layers and the shine are the resolver's
+   private intermediates (see the private list in
+   scripts/check-atomic-boundaries.mjs). */
 @property --ui-stud-ink { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-corner-k { syntax: "<number>"; inherits: false; initial-value: 1; }
+@property --ui-corner-inset { syntax: "<number>"; inherits: false; initial-value: 0.2929; }
+@property --ui-stud-at { syntax: "<length-percentage>"; inherits: false; initial-value: 4px; }
+@property --ui-stud-tile { syntax: "*"; inherits: false; }
+@property --ui-stud { syntax: "*"; inherits: false; }
 @property --ui-studs { syntax: "*"; inherits: true; }
 @property --ui-shine { syntax: "*"; inherits: true; }
 @property --ui-shine-hover { syntax: "*"; inherits: true; }

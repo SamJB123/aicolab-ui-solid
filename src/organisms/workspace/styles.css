@@ -128,11 +128,12 @@
 		--ui-paint-source: var(--color-base-200);
 		--ui-paint-source-hover: var(--color-base-200);
 		--ui-paint-source-selected: var(--color-base-200);
+		--_ui-radius: var(--r-lg);
 		position: absolute;
 		inset: 3.4rem 1.25rem 1.25rem;
 		display: flex;
 		flex-direction: column;
-		border-radius: var(--r-lg);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		background: var(--ui-surface-paint);
 		box-shadow:

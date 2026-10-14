@@ -5,12 +5,8 @@
    ride the inheriting variable wire only (attr() reads the matched element,
    and the attribute lives on the root). `pad` is NOT read here: it rides
    the pre-existing registered, inherited --ui-panel-pad density token,
-   emitted inline by the component so ancestor density still cascades. */
-@property --_ui-panel-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 16px;
-}
+   emitted inline by the component so ancestor density still cascades. The
+   radius resolves into the shared plate corner --_ui-radius. */
 @property --_ui-panel-surface {
 	syntax: "<color>";
 	inherits: false;
@@ -29,7 +25,7 @@
 
 @scope (.ui-panel) {
 	:scope {
-		--_ui-panel-radius: var(--ui-panel-radius, var(--r-lg));
+		--_ui-radius: var(--ui-panel-radius, var(--r-lg));
 		--_ui-panel-surface: var(--ui-panel-surface, var(--color-base-100));
 		/* A panel is a PLATE (the component marks it data-ui-plate): its paint
 		   source is its surface adapter, and it paints the surface paint and
@@ -43,7 +39,7 @@
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
-		border-radius: var(--_ui-panel-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		background: var(--ui-surface-paint);
 		padding: var(--ui-panel-pad);
@@ -137,7 +133,7 @@
 	   consumed off-root, see header note; pad rides the density token) ── */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
-			--_ui-panel-radius: attr(data-ui-panel-radius type(<length-percentage>), var(--ui-panel-radius, var(--r-lg)));
+			--_ui-radius: attr(data-ui-panel-radius type(<length-percentage>), var(--ui-panel-radius, var(--r-lg)));
 			--_ui-panel-surface: attr(data-ui-panel-surface type(<color>), var(--ui-panel-surface, var(--color-base-100)));
 		}
 		:scope[data-ui-color-base] {

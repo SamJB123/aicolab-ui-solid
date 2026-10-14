@@ -49,7 +49,8 @@
 		--_ui-breadcrumb-separator-ink: var(--ui-breadcrumb-separator-ink, var(--ui-ink-faint));
 		--_ui-breadcrumb-link-ink: var(--ui-breadcrumb-link-ink, var(--ui-ink-muted));
 		--_ui-breadcrumb-focus-ring: var(--ui-breadcrumb-focus-ring, var(--ui-focus-ring));
-		border-radius: var(--r-sm);
+		--_ui-radius: var(--r-sm);
+		border-radius: var(--_ui-radius);
 		corner-shape: var(--s-corner);
 		padding: 6px 9px;
 		/* A treated trail is a plate: the surface paint and the edge

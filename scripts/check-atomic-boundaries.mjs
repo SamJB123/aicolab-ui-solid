@@ -27,6 +27,11 @@ const privateResolverProperties = [
 	// edge"): components paint --ui-surface-paint… and --ui-edge…, and
 	// re-point the --ui-*-source colours; they never assemble the finish.
 	'--ui-stud-ink',
+	'--ui-corner-k',
+	'--ui-corner-inset',
+	'--ui-stud-at',
+	'--ui-stud-tile',
+	'--ui-stud',
 	'--ui-studs',
 	'--ui-shine',
 	'--ui-shine-hover',

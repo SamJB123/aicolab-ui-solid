@@ -1,15 +1,11 @@
 /* Per-instance knobs (gap, radius, pad) on the dual wire; adapter pattern
    per shared/knobs.ts. Cell provenance arrives as data-provenance from the
-   component: human edits read as deliberate, inferred values as tentative. */
+   component: human edits read as deliberate, inferred values as tentative.
+   The frame's radius resolves into the shared plate corner --_ui-radius. */
 @property --_ui-grid-gap {
 	syntax: "<length>";
 	inherits: false;
 	initial-value: 4px;
-}
-@property --_ui-grid-radius {
-	syntax: "<length-percentage>";
-	inherits: false;
-	initial-value: 12px;
 }
 @property --_ui-grid-pad {
 	syntax: "<length>";
@@ -20,13 +16,13 @@
 @scope (.ui-grid) {
 	:scope {
 		--_ui-grid-gap: var(--ui-grid-gap, 0.25rem);
-		--_ui-grid-radius: var(--ui-grid-radius, var(--r-md));
+		--_ui-radius: var(--ui-grid-radius, var(--r-md));
 		--_ui-grid-pad: var(--ui-grid-pad, 0.5rem);
 		display: block;
 		max-width: 100%;
 		overflow: auto;
 		border: 1px solid var(--color-border);
-		border-radius: var(--_ui-grid-radius);
+		border-radius: var(--_ui-radius);
 		corner-shape: squircle;
 		/* The frame is a PLATE (the component marks it data-ui-plate): it
 		   paints the surface paint and the edge (resolver.css "Surface paint
