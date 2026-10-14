@@ -392,30 +392,35 @@
    the edge paints nothing, so the house look is unchanged until a theme
    asks (themes/brass.css asks).
 
-   A treated element takes its sources from its own roles; a plain plate
-   declares itself with [data-ui-plate] and takes the theme's; where both
-   are present the treated sources win. The RIM — the colour the rings and
-   studs are drawn in — is always solid: the theme's rim (--color-rim, the
-   lead colour by default) on a plain plate, and on a treated one its family
-   AS A LINE ON THIS SCHEME (--ui-color-foreground: the family's hue with
-   its lightness clamped to read on the page, darker in light, lighter in
-   dark) — the family colour itself is a solid plate's own surface, and a
-   rim the colour of its surface draws no ring; a plate inside a treated
-   component takes the same. It is never the hairline border, which
-   ui-solid derives as a wash by default.
+   A treated element takes its sources from its own roles. A plate with
+   NO family ([data-ui-plate] and no data-ui-color-base) paints the raised
+   surface, and for its rim, its groove's context and its sheen's tint it
+   INHERITS: inside a treated component it takes that component's family
+   (a tab switcher in an info panel is rimmed in info), and on the page it
+   takes the theme root's — the theme's rim (--color-rim: the neutral
+   family unless the theme names one; brass names its gold), the raised
+   surface, the lead colour as tint. The RIM — the colour the rings and
+   studs are drawn in — is always solid: on a treated plate its family AS
+   A LINE ON THIS SCHEME (--ui-color-foreground: the family's hue with its
+   lightness clamped to read on the page, darker in light, lighter in dark)
+   — the family colour itself is a solid plate's own surface, and a rim the
+   colour of its surface draws no ring. It is never the hairline border,
+   which ui-solid derives as a wash by default.
    A sheet whose surface is a knob re-points the paint source at its
    adapter. A transparent face has no plate: the outline and text styles
    paint their flat surface and no edge, whatever the ladder; a disabled
    plate likewise loses its finish. A WELL — a field typed or chosen into,
    a track, a tray — is not a plate: it keeps its flat surface and single
    ring, and takes only the theme's corner shape. */
+:where(:root, .ui-theme) {
+	--ui-edge-source: var(--color-rim);
+	--ui-gap-source: var(--color-base-100);
+	--ui-shade-source: var(--color-primary);
+}
 :where([data-ui-plate]) {
 	--ui-paint-source: var(--color-base-100);
 	--ui-paint-source-hover: var(--color-base-150);
 	--ui-paint-source-selected: var(--color-base-150);
-	--ui-edge-source: var(--color-rim);
-	--ui-gap-source: var(--color-base-100);
-	--ui-shade-source: var(--color-primary);
 }
 :where([data-ui-color-base]) {
 	--ui-paint-source: var(--ui-surface);

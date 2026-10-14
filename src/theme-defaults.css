@@ -98,11 +98,12 @@
 		--color-border-strong: color-mix(in oklab, var(--color-base-content) 20%, transparent);
 		--color-primary-soft: color-mix(in oklab, var(--color-primary) 14%, transparent);
 		--color-ring: var(--color-primary);
-		/* The rim a finished plate is drawn with (resolver.css "Surface paint
-		   and edge"): the lead colour, solid, as the walking worlds' plates
-		   are rimmed in their gold. Seen only when a theme's surface finish
-		   turns the rings or studs on; a theme may author it. */
-		--color-rim: var(--color-primary);
+		/* The rim a plate with no colour family is drawn with when a theme's
+		   finish turns the rings or studs on (resolver.css "Surface paint and
+		   edge"): the neutral family, solid — a plate with no family is
+		   rimmed as a neutral one is. A theme whose plates are rimmed in its
+		   lead colour names it (brass names its gold). */
+		--color-rim: var(--color-neutral);
 		/* How far a finished plate's edge reaches beyond its box: the three
 		   rings of the surface ladder, summed (resolver.css "Surface paint and
 		   edge" draws the outer ring at this width). Zero at the house look.

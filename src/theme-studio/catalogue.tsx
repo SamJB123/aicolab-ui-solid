@@ -136,7 +136,7 @@ export function PlateSpecimen(props: { style?: JSX.CSSProperties }) {
 	return (
 		<div class="ui-studio-plates" style={props.style}>
 			<span class="ui-studio-plate-sample" data-ui-plate="">
-				Plain plate
+				No family
 			</span>
 			<Button colorBase="primary">Primary</Button>
 			<Button colorBase="neutral" variant="soft">

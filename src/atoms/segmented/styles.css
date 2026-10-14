@@ -61,7 +61,7 @@
 
 @scope (.seg) {
 :scope {
-	--_ui-seg-radius: var(--ui-seg-radius, var(--r-pill));
+	--_ui-seg-radius: var(--ui-seg-radius, var(--r-md));
 	--_ui-seg-track-pad: var(--ui-seg-track-pad, 4px);
 	--_ui-seg-tab-pad-block: var(--ui-seg-tab-pad-block, 6px);
 	--_ui-seg-tab-pad-inline: var(--ui-seg-tab-pad-inline, 16px);
@@ -185,7 +185,7 @@
    child-state context, see header note) ── */
 @supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 	:scope {
-		--_ui-seg-radius: attr(data-ui-seg-radius type(<length-percentage>), var(--ui-seg-radius, var(--r-pill)));
+		--_ui-seg-radius: attr(data-ui-seg-radius type(<length-percentage>), var(--ui-seg-radius, var(--r-md)));
 		--_ui-seg-track-pad: attr(data-ui-seg-track-pad type(<length>), var(--ui-seg-track-pad, 4px));
 		--_ui-seg-tab-pad-block: attr(data-ui-seg-tab-pad-block type(<length>), var(--ui-seg-tab-pad-block, 6px));
 		--_ui-seg-tab-pad-inline: attr(data-ui-seg-tab-pad-inline type(<length>), var(--ui-seg-tab-pad-inline, 16px));

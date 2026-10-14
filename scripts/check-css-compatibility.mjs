@@ -158,8 +158,8 @@ requireAll(
 	button,
 	[
 		/@supports \(width: attr\(data-ui-compat-probe type\(<length>\), 0px\)\)/,
-		/--_ui-radius: var\(--ui-btn-radius, var\(--r-pill\)\)/,
-		/--_ui-radius: attr\(data-ui-btn-radius type\(<length-percentage>\), var\(--ui-btn-radius, var\(--r-pill\)\)\)/,
+		/--_ui-radius: var\(--ui-btn-radius, var\(--r-md\)\)/,
+		/--_ui-radius: attr\(data-ui-btn-radius type\(<length-percentage>\), var\(--ui-btn-radius, var\(--r-md\)\)\)/,
 		/border-radius: var\(--_ui-radius\);/,
 		/--_ui-btn-pad-inline: var\(--ui-btn-pad-inline, 4px\)/,
 		/--_ui-btn-pad-inline: attr\(data-ui-btn-pad-inline type\(<length>\), var\(--ui-btn-pad-inline, 4px\)\)/,

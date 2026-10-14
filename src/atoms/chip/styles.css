@@ -40,7 +40,7 @@
 
 @scope (.ui-chip) {
 	:scope {
-		--_ui-radius: var(--ui-chip-radius, var(--r-pill));
+		--_ui-radius: var(--ui-chip-radius, var(--r-md));
 		--_ui-chip-pad-block: var(--ui-chip-pad-block, 4px);
 		--_ui-chip-pad-inline: var(--ui-chip-pad-inline, 10px);
 		--_ui-chip-gap: var(--ui-chip-gap, 6px);
@@ -80,7 +80,7 @@
 	/* ── Frontier knob boundary (see select-control for the pattern) ── */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
-			--_ui-radius: attr(data-ui-chip-radius type(<length-percentage>), var(--ui-chip-radius, var(--r-pill)));
+			--_ui-radius: attr(data-ui-chip-radius type(<length-percentage>), var(--ui-chip-radius, var(--r-md)));
 			--_ui-chip-pad-block: attr(data-ui-chip-pad-block type(<length>), var(--ui-chip-pad-block, 4px));
 			--_ui-chip-pad-inline: attr(data-ui-chip-pad-inline type(<length>), var(--ui-chip-pad-inline, 10px));
 			--_ui-chip-gap: attr(data-ui-chip-gap type(<length>), var(--ui-chip-gap, 6px));

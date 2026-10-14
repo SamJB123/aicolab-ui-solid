@@ -41,6 +41,9 @@
 		color-mix(in oklab, #e8b04c 45%, #1b160b)
 	);
 	--color-border-strong: light-dark(#ae6a00, #e8b04c);
+	/* The rim a finished plate is drawn with: the HUD rims every plate in
+	   its gold (ui-solid's default rim is the neutral family). */
+	--color-rim: light-dark(#ae6a00, #e8b04c);
 
 	--font-display: "Source Serif 4", "Iowan Old Style", Georgia, "Times New Roman", serif;
 
