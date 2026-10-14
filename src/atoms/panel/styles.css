@@ -107,7 +107,7 @@
 	:scope[data-ui-color-base] > header .ui-panel-index {
 		color: var(--ui-ink-faint);
 	}
-	:scope > header h2 {
+	:scope > header :is(h2, h3, h4) {
 		margin: 0;
 		font-family: var(--font-display, Georgia, serif);
 		font-optical-sizing: auto;
@@ -116,7 +116,7 @@
 		line-height: 1;
 		color: var(--color-base-content);
 	}
-	:scope[data-ui-color-base] > header h2 {
+	:scope[data-ui-color-base] > header :is(h2, h3, h4) {
 		color: var(--ui-ink);
 	}
 	:scope > header .ui-panel-kicker {

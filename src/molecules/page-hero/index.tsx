@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { Show } from 'solid-js'
+import { For, Show } from 'solid-js'
 import { Eyebrow } from '../../atoms/eyebrow'
 import {
 	colorTreatmentData,
@@ -23,7 +23,7 @@ export function PageHero(
 	props: {
 		eyebrow?: string
 		title: JSX.Element
-		lede?: JSX.Element
+		lede?: JSX.Element | readonly string[]
 		/** Render function (lazy slot) — hydration-safe, see Panel.action. */
 		actions?: () => JSX.Element
 		align?: 'center' | 'start'
@@ -51,7 +51,14 @@ export function PageHero(
 			</Show>
 			<h1>{props.title}</h1>
 			<Show when={props.lede}>
-				<p class="ui-hero-lede">{props.lede}</p>
+				<Show
+					when={Array.isArray(props.lede)}
+					fallback={<p class="ui-hero-lede">{props.lede as JSX.Element}</p>}
+				>
+					<For each={props.lede as readonly string[]}>
+						{(paragraph) => <p class="ui-hero-lede">{paragraph}</p>}
+					</For>
+				</Show>
 			</Show>
 			<Show when={props.actions}>
 				<div class="ui-hero-actions">{props.actions?.()}</div>

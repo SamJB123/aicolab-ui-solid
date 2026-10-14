@@ -1,5 +1,5 @@
 /** @jsxImportSource @solidjs/web */
-import type { JSX } from '@solidjs/web'
+import { Dynamic, type JSX } from '@solidjs/web'
 import { omit, Show } from 'solid-js'
 import {
 	colorTreatmentData,
@@ -24,6 +24,10 @@ type PanelProps = Omit<JSX.HTMLAttributes<HTMLElement>, 'class'> & {
 	class?: ClassProp
 	index?: string
 	title: string
+	/** Document heading level for `title` (defaults to `'h2'`). */
+	headingLevel?: 'h2' | 'h3' | 'h4'
+	/** Alias for `headingLevel`. */
+	heading?: 'h2' | 'h3' | 'h4'
 	kicker?: string
 	// A render function (lazy slot), not a pre-created element: created in
 	// Panel's own scope so its hydration keys align (a pre-created element
@@ -43,6 +47,8 @@ export function Panel(props: PanelProps) {
 		'children',
 		'index',
 		'title',
+		'headingLevel',
+		'heading',
 		'kicker',
 		'action',
 		'glow',
@@ -80,7 +86,9 @@ export function Panel(props: PanelProps) {
 						<span class="ui-panel-index">{props.index}</span>
 					</Show>
 					<div>
-						<h2>{props.title}</h2>
+						<Dynamic component={props.headingLevel ?? props.heading ?? 'h2'}>
+							{props.title}
+						</Dynamic>
 						<Show when={props.kicker}>
 							<p class="ui-panel-kicker">{props.kicker}</p>
 						</Show>

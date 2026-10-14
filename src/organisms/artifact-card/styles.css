@@ -32,7 +32,7 @@
 	:scope {
 		--_ui-artifact-pad: var(--ui-artifact-pad, 1rem);
 		--_ui-artifact-gap: var(--ui-artifact-gap, 0.5rem);
-		--_ui-artifact-radius: var(--ui-artifact-radius, 0.75rem);
+		--_ui-artifact-radius: var(--ui-artifact-radius, var(--r-md));
 		/* Emphasis accent (hover border/glow, ribbon, live beacon):
 		   secondary by default; the treatment axes retarget it below. */
 		--_ui-artifact-accent: var(--ui-artifact-accent, var(--color-secondary));
@@ -48,6 +48,7 @@
 		padding: var(--_ui-artifact-pad);
 		border: 1px solid var(--color-border);
 		border-radius: var(--_ui-artifact-radius);
+		corner-shape: var(--s-corner);
 		background: var(--ui-surface-paint);
 		color: var(--color-base-content);
 		box-shadow: var(--ui-edge);
@@ -55,12 +56,6 @@
 			border-color 160ms,
 			box-shadow 160ms,
 			translate 160ms;
-	}
-	/* Squircle corners where the engine has them (Tier 3, pure enhancement). */
-	@supports (corner-shape: squircle) {
-		:scope {
-			corner-shape: squircle;
-		}
 	}
 	:scope[data-ui-color-base] {
 		--_ui-artifact-accent: var(--ui-artifact-accent, var(--ui-color));
@@ -219,7 +214,7 @@
 			--_ui-artifact-gap: attr(data-ui-artifact-gap type(<length>), var(--ui-artifact-gap, 0.5rem));
 			--_ui-artifact-radius: attr(
 				data-ui-artifact-radius type(<length>),
-				var(--ui-artifact-radius, 0.75rem)
+				var(--ui-artifact-radius, var(--r-md))
 			);
 			--_ui-artifact-accent: attr(
 				data-ui-artifact-accent type(<color>),

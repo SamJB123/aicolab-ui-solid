@@ -78,7 +78,6 @@ export function Button(props: ButtonProps) {
 
 /** Native navigation with the same treatment and knob contract as Button. */
 type ButtonLinkProps = Omit<JSX.AnchorHTMLAttributes<HTMLAnchorElement>, 'class'> & {
-	href: string
 	class?: ClassProp
 } & ColorTreatmentProps &
 	KnobProps<typeof knobs.spec>

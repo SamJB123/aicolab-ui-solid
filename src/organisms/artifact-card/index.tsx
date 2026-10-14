@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { omit, Show } from 'solid-js'
+import { createUniqueId, omit, Show } from 'solid-js'
 import {
 	type ClassProp,
 	type ColorTreatmentProps,
@@ -80,6 +80,9 @@ export function ArtifactCard(props: ArtifactCardProps) {
 		'previewSize',
 		'accent',
 	)
+	const titleId = `ui-artifact-title-${createUniqueId()}`
+	const hitLabel = () =>
+		props.label ?? (typeof props.title === 'string' ? props.title : undefined)
 	const rootValues = () => ({
 		pad: props.pad,
 		gap: props.gap,
@@ -109,7 +112,8 @@ export function ArtifactCard(props: ArtifactCardProps) {
 							<button
 								type="button"
 								class="ui-artifact-card-hit"
-								aria-label={props.label}
+								aria-label={hitLabel()}
+								aria-labelledby={hitLabel() === undefined ? titleId : undefined}
 								onClick={() => onSelect()()}
 							/>
 						)}
@@ -119,7 +123,8 @@ export function ArtifactCard(props: ArtifactCardProps) {
 				<a
 					class="ui-artifact-card-hit"
 					href={props.href}
-					aria-label={props.label}
+					aria-label={hitLabel()}
+					aria-labelledby={hitLabel() === undefined ? titleId : undefined}
 					onClick={(event) => {
 						const onSelect = props.onSelect
 						if (!onSelect) return
@@ -146,7 +151,7 @@ export function ArtifactCard(props: ArtifactCardProps) {
 					{(presence) => <span class="ui-artifact-card-presence">{presence()()}</span>}
 				</Show>
 			</div>
-			<h3 class="ui-artifact-card-title">{props.title}</h3>
+			<h3 id={titleId} class="ui-artifact-card-title">{props.title}</h3>
 			<Show when={props.preview}>
 				{(preview) => (
 					<div

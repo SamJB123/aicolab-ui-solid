@@ -101,7 +101,7 @@
 		outline: 2px solid var(--_ui-btn-focus-ring);
 		outline-offset: 2px;
 	}
-	:scope[data-ui-color-base]:is([aria-pressed="true"], [aria-selected="true"]) {
+	:scope[data-ui-color-base]:is([aria-pressed="true"], [aria-selected="true"], [aria-current="page"]) {
 		background: var(--ui-surface-paint-selected);
 		color: var(--ui-ink-selected);
 		box-shadow: var(--ui-edge-selected), inset 0 0 0 1px var(--ui-border-selected);

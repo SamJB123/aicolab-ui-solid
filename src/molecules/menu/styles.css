@@ -45,6 +45,7 @@
 		--_ui-menuitem-pad: var(--ui-menuitem-pad, var(--ui-menu-item-pad, 0.5rem));
 		--_ui-menuitem-radius: var(--ui-menuitem-radius, var(--ui-menu-item-radius, var(--r-sm)));
 		--_ui-menuitem-hover-surface: var(--ui-menuitem-hover-surface, var(--ui-menu-item-hover-surface, color-mix(in oklab, var(--color-base-content) 9%, transparent)));
+		box-sizing: border-box;
 		display: flex;
 		align-items: center;
 		gap: 0.55rem;
@@ -58,6 +59,7 @@
 		font: inherit;
 		font-size: var(--t-sm, 0.9rem);
 		text-align: start;
+		text-decoration: none;
 		cursor: pointer;
 		transition: background-color 120ms ease;
 	}

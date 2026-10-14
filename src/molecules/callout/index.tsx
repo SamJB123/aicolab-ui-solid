@@ -26,7 +26,7 @@ type CalloutProps = Omit<JSX.HTMLAttributes<HTMLElement>, 'class'> & {
 	icon?: () => JSX.Element
 	/** Which element the callout renders as; a document block is a <section>, an
 	 *  incidental note an <aside>. */
-	as?: 'section' | 'aside' | 'div'
+	as?: 'section' | 'aside' | 'div' | 'header' | 'article' | 'blockquote'
 } & ColorTreatmentProps &
 	KnobProps<typeof knobs.spec>
 

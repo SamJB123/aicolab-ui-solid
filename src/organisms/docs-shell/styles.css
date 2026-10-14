@@ -131,7 +131,7 @@
 	letter-spacing: -0.015em;
 	margin: 0 0 1rem;
 }
-:scope h2 {
+:scope h2:not(.ui-panel > header *) {
 	font-family: var(--font-display);
 	font-weight: 500;
 	font-size: var(--t-3xl);
@@ -139,7 +139,7 @@
 	margin: 2.75rem 0 0.9rem;
 	scroll-margin-top: calc(var(--_ui-docs-sticky-top) + 3rem);
 }
-:scope h3 {
+:scope h3:not(.ui-panel > header *) {
 	font-family: var(--font-display);
 	font-weight: 500;
 	font-size: var(--t-xl);

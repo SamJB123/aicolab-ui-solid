@@ -149,8 +149,12 @@ const itemKnobs = defineKnobs('ui-menuitem', {
 	hoverSurface: '<color>',
 })
 
-type MenuItemProps = Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, 'class'> & {
+type MenuItemProps = Omit<
+	JSX.ButtonHTMLAttributes<HTMLButtonElement> & JSX.AnchorHTMLAttributes<HTMLAnchorElement>,
+	'class'
+> & {
 	class?: ClassProp
+	href?: string
 	onSelect?: () => void
 	/** Destructive action styling (error family). */
 	danger?: boolean
@@ -164,6 +168,7 @@ export function MenuItem(props: MenuItemProps) {
 		'class',
 		'style',
 		'children',
+		'href',
 		'onSelect',
 		'danger',
 		'glyph',
@@ -171,21 +176,8 @@ export function MenuItem(props: MenuItemProps) {
 		'radius',
 		'hoverSurface',
 	)
-	return (
-		<button
-			{...attributes}
-			{...itemKnobs.attributes(props)}
-			type="button"
-			role="menuitem"
-			tabindex={-1}
-			class={['ui-menu-item', props.class]}
-			style={mergeKnobStyle(itemKnobs.style(props), props.style)}
-			data-danger={props.danger ? '' : undefined}
-			onClick={(event) => {
-				event.currentTarget.closest<HTMLElement & { hidePopover(): void }>('[popover]')?.hidePopover()
-				props.onSelect?.()
-			}}
-		>
+	const body = () => (
+		<>
 			<Show when={props.glyph}>
 				{(glyph) => (
 					<span class="ui-menu-item-glyph" aria-hidden="true">
@@ -194,7 +186,45 @@ export function MenuItem(props: MenuItemProps) {
 				)}
 			</Show>
 			<span class="ui-menu-item-label">{props.children}</span>
-		</button>
+		</>
+	)
+	const activate = (event: MouseEvent & { currentTarget: HTMLElement }): void => {
+		event.currentTarget.closest<HTMLElement & { hidePopover(): void }>('[popover]')?.hidePopover()
+		props.onSelect?.()
+	}
+	return (
+		<Show
+			when={props.href !== undefined}
+			fallback={
+				<button
+					{...(attributes as JSX.ButtonHTMLAttributes<HTMLButtonElement>)}
+					{...itemKnobs.attributes(props)}
+					type="button"
+					role="menuitem"
+					tabindex={-1}
+					class={['ui-menu-item', props.class]}
+					style={mergeKnobStyle(itemKnobs.style(props), props.style)}
+					data-danger={props.danger ? '' : undefined}
+					onClick={activate}
+				>
+					{body()}
+				</button>
+			}
+		>
+			<a
+				{...(attributes as JSX.AnchorHTMLAttributes<HTMLAnchorElement>)}
+				{...itemKnobs.attributes(props)}
+				href={props.href}
+				role="menuitem"
+				tabindex={-1}
+				class={['ui-menu-item', props.class]}
+				style={mergeKnobStyle(itemKnobs.style(props), props.style)}
+				data-danger={props.danger ? '' : undefined}
+				onClick={activate}
+			>
+				{body()}
+			</a>
+		</Show>
 	)
 }
 
