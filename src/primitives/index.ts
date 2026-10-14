@@ -15,6 +15,7 @@ export {
 	ButtonLink,
 	Checkbox,
 	Chip,
+	CoLabMark,
 	Counter,
 	createAttributionColor,
 	createResolvedAttributionColor,

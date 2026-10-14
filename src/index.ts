@@ -141,6 +141,7 @@ export {
 	ButtonLink,
 	Checkbox,
 	Chip,
+	CoLabMark,
 	Counter,
 	Dropzone,
 	createAttributionColor,

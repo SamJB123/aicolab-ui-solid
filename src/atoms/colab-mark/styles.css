@@ -1,0 +1,114 @@
+/* ── CoLabMark — the AI CoLab mark ──
+   Knobs (size, ink, cells, lineWidth) on the usual two wires, assigned on
+   :scope; the tone is an enumerated mode carried by data-tone. The line
+   layer strokes the paths in the ink at a screen-pixel width that holds at
+   any size; the solid layer fills them, the shell and frame in the ink and
+   the cells in their colour, with the window cut out so the ground shows
+   through. The reveal tone keeps the line layer at rest and crossfades to
+   the solid layer while the link or button the mark sits in is hovered or
+   focused — that trigger is scoped on the host below, as the mark cannot
+   name its own ancestor. */
+@property --_ui-colabmark-size {
+	syntax: "<length>";
+	inherits: false;
+	/* Dummy only — the real default (1.5em) is context-dependent, so it
+	   lives in the assignment below; em values are not allowed here. */
+	initial-value: 24px;
+}
+/* ink, cells and line-width are read on the layers and paths below the
+   root, so they inherit; size is read on the root alone. */
+@property --_ui-colabmark-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-colabmark-cells {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-colabmark-line-width {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 1px;
+}
+
+@scope (.ui-colab-mark) {
+	:scope {
+		--_ui-colabmark-size: var(--ui-colabmark-size, 1.5em);
+		--_ui-colabmark-ink: var(--ui-colabmark-ink, currentColor);
+		--_ui-colabmark-cells: var(--ui-colabmark-cells, var(--color-primary));
+		--_ui-colabmark-line-width: var(--ui-colabmark-line-width, 1px);
+		display: inline-block;
+		height: var(--_ui-colabmark-size);
+		line-height: 0;
+		vertical-align: middle;
+	}
+	/* Treated instances light their cells in the family's strong colour. */
+	:scope[data-ui-color-base] {
+		--_ui-colabmark-cells: var(--ui-colabmark-cells, var(--ui-color));
+	}
+	/* The artwork keeps its own aspect from the height; overflow visible so
+	   the line layer's stroke along the shell's outer edge is not clipped. */
+	:scope svg {
+		display: block;
+		height: 100%;
+		width: auto;
+		overflow: visible;
+	}
+	.ui-colab-mark-line {
+		fill: none;
+		stroke: var(--_ui-colabmark-ink);
+		stroke-width: var(--_ui-colabmark-line-width);
+		stroke-linejoin: round;
+	}
+	.ui-colab-mark-line path {
+		vector-effect: non-scaling-stroke;
+	}
+	.ui-colab-mark-solid {
+		fill: var(--_ui-colabmark-ink);
+	}
+	.ui-colab-mark-solid .ui-colab-mark-cells {
+		fill: var(--_ui-colabmark-cells);
+	}
+	/* Reveal: the solid layer sits after the line layer in the source, so it
+	   paints on top and the crossfade is a pure fade-in. */
+	:scope[data-tone="reveal"] .ui-colab-mark-solid {
+		opacity: 0;
+		transition: opacity 0.2s;
+	}
+	:scope[data-tone="reveal"] .ui-colab-mark-line {
+		transition: opacity 0.2s;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:scope[data-tone="reveal"] .ui-colab-mark-solid,
+		:scope[data-tone="reveal"] .ui-colab-mark-line {
+			transition: none;
+		}
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-colabmark-size: attr(data-ui-colabmark-size type(<length>), var(--ui-colabmark-size, 1.5em));
+			--_ui-colabmark-ink: attr(data-ui-colabmark-ink type(<color>), var(--ui-colabmark-ink, currentColor));
+			--_ui-colabmark-cells: attr(data-ui-colabmark-cells type(<color>), var(--ui-colabmark-cells, var(--color-primary)));
+			--_ui-colabmark-line-width: attr(data-ui-colabmark-line-width type(<length>), var(--ui-colabmark-line-width, 1px));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-colabmark-cells: attr(data-ui-colabmark-cells type(<color>), var(--ui-colabmark-cells, var(--ui-color)));
+		}
+	}
+}
+
+/* The reveal's trigger: the solid mark fades in while the link or button
+   the mark sits in is hovered or keyboard-focused. */
+@scope (a, button) {
+	:scope:is(:hover, :focus-visible) .ui-colab-mark[data-tone="reveal"] .ui-colab-mark-solid {
+		opacity: 1;
+	}
+	:scope:is(:hover, :focus-visible) .ui-colab-mark[data-tone="reveal"] .ui-colab-mark-line {
+		opacity: 0;
+	}
+}

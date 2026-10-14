@@ -17,6 +17,7 @@ export {
 	Checkbox,
 	Chip,
 	type ClassProp,
+	CoLabMark,
 	type ColorBase,
 	type ColorLevel,
 	colorTreatmentData,
