@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { omit, Show } from 'solid-js'
+import { omit } from 'solid-js'
 import {
 	colorTreatmentData,
 	type ClassProp,
@@ -9,14 +9,12 @@ import {
 import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 
 /** Per-instance styling contract (see shared/knobs.ts). size is the mark's
- * height; ink draws the line and, in the solid tone, the shell and frame;
- * cells is the ten cells' colour in the solid tone; lineWidth is the line
- * tone's stroke, in screen pixels at any size. */
+ * height; ink draws the shell, the frame and, at rest, the cells; cells is
+ * the ten cells' colour when they are lit. */
 const knobs = defineKnobs('ui-colabmark', {
 	size: '<length>',
 	ink: '<color>',
 	cells: '<color>',
-	lineWidth: '<length>',
 })
 
 /* The AI CoLab mark, as drawn in platform/landing/public/ai-colab-logo.svg
@@ -43,38 +41,20 @@ const CELLS = [
 	'M257.72,288.19l27.4,49.36c2.68,4.82,2.58,10.7-.25,15.44l-31.68,52.98c-2.76,4.61-7.72,7.46-13.09,7.52l-55.1.61c-5.69.06-10.96-3.01-13.71-7.99l-26.07-47.28c-2.61-4.74-2.56-10.5.15-15.19l31.53-54.61c2.71-4.69,7.67-7.62,13.08-7.73l53.92-1.06c5.72-.11,11.04,2.95,13.82,7.95Z',
 ]
 
-/** The artwork once, for one layer. The solid layer's shell carries the
- * window as a second subpath under the even-odd rule, so the window is cut
- * out of it and whatever the mark sits on shows through; the line layer
- * strokes the shell's outer edge, the frame and the cells, and leaves the
- * window edge undrawn (the frame already runs along it). */
-function Artwork(props: { layer: 'line' | 'solid' }) {
-	const shell = () => (props.layer === 'solid' ? `${SHELL}${WINDOW}` : SHELL)
-	return (
-		<>
-			<path class="ui-colab-mark-shell" d={shell()} fill-rule="evenodd" />
-			<path class="ui-colab-mark-frame" d={FRAME} />
-			{CELLS.map((d) => (
-				<path class="ui-colab-mark-cells" d={d} />
-			))}
-		</>
-	)
-}
-
 type CoLabMarkProps = Omit<JSX.HTMLAttributes<HTMLSpanElement>, 'class'> & {
 	class?: ClassProp
-	/** `line` = the mark as a line drawing in the ink. `solid` = the mark
-	 *  filled: shell and frame in the ink, the cells in their colour, the
-	 *  window open. `reveal` = the line drawing at rest; the solid mark fades
-	 *  in while the link or button the mark sits in is hovered or focused. */
-	tone?: 'line' | 'solid' | 'reveal'
+	/** `ink` = the whole mark in the ink. `lit` = the ten cells in their
+	 *  colour. `reveal` = ink at rest; the cells light while the link or
+	 *  button the mark sits in is hovered or focused. */
+	tone?: 'ink' | 'lit' | 'reveal'
 } & ColorTreatmentProps &
 	KnobProps<typeof knobs.spec>
 
 /**
  * The AI CoLab mark. Decorative — it carries no name of its own, so it sits
- * beside the wordmark or inside a labelled link. Both layers are drawn from
- * the same paths, so the reveal tone is a pure crossfade.
+ * beside the wordmark or inside a labelled link. The shell carries the
+ * window as a second subpath under the even-odd rule, so the window is cut
+ * out of it and whatever the mark sits on shows through.
  */
 export function CoLabMark(props: CoLabMarkProps) {
 	const attributes = omit(
@@ -88,30 +68,23 @@ export function CoLabMark(props: CoLabMarkProps) {
 		'size',
 		'ink',
 		'cells',
-		'lineWidth',
 	)
-	const tone = () => props.tone ?? 'line'
 	return (
 		<span
 			{...attributes}
 			{...colorTreatmentData(props)}
 			{...knobs.attributes(props)}
-			data-tone={tone()}
+			data-tone={props.tone ?? 'ink'}
 			class={['ui-colab-mark', props.class]}
 			style={mergeKnobStyle(knobs.style(props), props.style)}
 			aria-hidden="true"
 		>
 			<svg viewBox={VIEW_BOX}>
-				<Show when={tone() !== 'solid'}>
-					<g class="ui-colab-mark-line">
-						<Artwork layer="line" />
-					</g>
-				</Show>
-				<Show when={tone() !== 'line'}>
-					<g class="ui-colab-mark-solid">
-						<Artwork layer="solid" />
-					</g>
-				</Show>
+				<path class="ui-colab-mark-shell" d={`${SHELL}${WINDOW}`} fill-rule="evenodd" />
+				<path class="ui-colab-mark-frame" d={FRAME} />
+				{CELLS.map((d) => (
+					<path class="ui-colab-mark-cells" d={d} />
+				))}
 			</svg>
 		</span>
 	)

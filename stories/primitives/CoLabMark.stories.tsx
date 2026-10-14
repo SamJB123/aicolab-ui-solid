@@ -9,11 +9,10 @@ const meta = {
 	parameters: { layout: 'centered' },
 	argTypes: {
 		...treatmentArgTypes,
-		tone: { control: 'radio', options: ['line', 'solid', 'reveal'] },
+		tone: { control: 'radio', options: ['ink', 'lit', 'reveal'] },
 		size: { control: 'text', table: { category: 'knobs' } },
 		ink: { control: 'text', table: { category: 'knobs' } },
 		cells: { control: 'text', table: { category: 'knobs' } },
-		lineWidth: { control: 'text', table: { category: 'knobs' } },
 	},
 } satisfies Meta<typeof CoLabMark>
 
@@ -49,8 +48,8 @@ export const Playground: Story = {
 export const Tones: Story = {
 	render: () => (
 		<div style={{ display: 'flex', gap: '32px', 'align-items': 'center' }}>
-			<CoLabMark tone="line" size="48px" />
-			<CoLabMark tone="solid" size="48px" />
+			<CoLabMark tone="ink" size="48px" />
+			<CoLabMark tone="lit" size="48px" />
 			<a href="#" style={{ display: 'inline-flex', color: 'inherit' }}>
 				<CoLabMark tone="reveal" size="48px" />
 			</a>
@@ -61,11 +60,11 @@ export const Tones: Story = {
 export const Sizes: Story = {
 	render: () => (
 		<div style={{ display: 'flex', gap: '24px', 'align-items': 'center' }}>
-			<CoLabMark tone="solid" size="16px" />
-			<CoLabMark tone="solid" />
-			<CoLabMark tone="solid" size="30px" />
-			<CoLabMark tone="solid" size="64px" />
-			<CoLabMark tone="line" size="64px" lineWidth="1.5px" />
+			<CoLabMark tone="lit" size="16px" />
+			<CoLabMark tone="lit" />
+			<CoLabMark tone="lit" size="30px" />
+			<CoLabMark tone="lit" size="64px" />
+			<CoLabMark tone="ink" size="64px" />
 		</div>
 	),
 }
@@ -75,7 +74,7 @@ export const ThreeAxes: Story = {
 	render: () => (
 		<ColorTreatmentStory
 			render={({ colorBase, colorLevel, variant }) => (
-				<CoLabMark tone="solid" colorBase={colorBase} colorLevel={colorLevel} variant={variant} size="36px" />
+				<CoLabMark tone="lit" colorBase={colorBase} colorLevel={colorLevel} variant={variant} size="36px" />
 			)}
 		/>
 	),
