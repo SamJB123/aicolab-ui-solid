@@ -361,9 +361,15 @@
    plate has no corner on (sign() of the radius less its clamped self: 0
    where the corner is real, 1 where it was clamped). A 50% circle or
    ellipse keeps its studs; a 999px pill loses them.
-   EDGE — a shadow list: three stacked rings (the edge colour deepened, the
-   groove, the edge colour), an inner bevel (the surface brightened along
-   the top, deepened along the bottom) and the plate's own cast shadow.
+   EDGE — a shadow list: three stacked rings (the step, the groove, the
+   rim), an inner bevel (the surface brightened along the top, deepened
+   along the bottom) and the plate's own cast shadow. The STEP, the ring
+   nearest the plate, is the midpoint of the two colours either side of
+   it — the groove and the plate's surface — so it reads against both in
+   either scheme: on a dark page a dark orange between a near-black groove
+   and an orange plate, on a light page a light pink between a cream
+   groove and a pink plate. A ring worked from the rim instead lands at the
+   plate's own lightness on a light page and vanishes into it.
 
    Every term is a mix onto a known THEME colour, never a wash and never a
    literal black or white — a literal is black in either scheme, and a
@@ -460,14 +466,14 @@
 	   step as well as coloured by it, so at zero they paint nothing even
 	   where a plate's background is not its paint source. */
 	--ui-edge:
-		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-edge-source) 70%, var(--color-base-300)),
+		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-gap-source), var(--ui-paint-source)),
 		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) var(--ui-gap-source),
 		0 0 0 var(--ui-edge-outset) var(--ui-edge-source),
 		inset 0 calc(1px * var(--s-bevel)) 0 color-mix(in oklab, var(--ui-paint-source) calc(100% - 40% * var(--s-bevel)), var(--color-overlay-content)),
 		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) color-mix(in oklab, var(--ui-paint-source) calc(100% - 35% * var(--s-bevel)), var(--color-base-300)),
 		0 calc(10px * var(--s-shadow)) calc(24px * var(--s-shadow)) color-mix(in oklab, var(--ui-gap-source) calc(100% - 55% * var(--s-shadow)), light-dark(var(--color-base-content), var(--color-base-100)));
 	--ui-edge-hover:
-		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-edge-source) 70%, var(--color-base-300)),
+		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-gap-source), var(--ui-paint-source-hover)),
 		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) var(--ui-gap-source),
 		0 0 0 var(--ui-edge-outset) var(--ui-edge-source),
 		inset 0 calc(1px * var(--s-bevel)) 0 color-mix(in oklab, var(--ui-paint-source-hover) calc(100% - 40% * var(--s-bevel)), var(--color-overlay-content)),
@@ -475,7 +481,7 @@
 		0 calc(12px * var(--s-shadow)) calc(28px * var(--s-shadow)) color-mix(in oklab, var(--ui-gap-source) calc(100% - 55% * var(--s-shadow)), light-dark(var(--color-base-content), var(--color-base-100)));
 	--ui-edge-active: var(--ui-edge-hover);
 	--ui-edge-selected:
-		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-edge-source) 70%, var(--color-base-300)),
+		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-gap-source), var(--ui-paint-source-selected)),
 		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) var(--ui-gap-source),
 		0 0 0 var(--ui-edge-outset) var(--ui-edge-source),
 		inset 0 calc(1px * var(--s-bevel)) 0 color-mix(in oklab, var(--ui-paint-source-selected) calc(100% - 40% * var(--s-bevel)), var(--color-overlay-content)),
