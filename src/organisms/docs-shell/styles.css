@@ -115,8 +115,17 @@
    The accent (markers, links, blockquote seam) reads the inheriting PUBLIC
    --ui-prose-accent variable: a treated DocsShell supplies the family, any
    container or app CSS can supply its own, and the house accent is the
-   fallback. */
-@scope (.ui-prose) {
+   fallback.
+
+   The scope has a FLOOR: it stops at any ui-solid component root (a class
+   that begins with `ui-`), so these element rules reach the article's own
+   headings, paragraphs, lists and links and never the ones a Panel, Steps,
+   RichList or button lays out for itself. Without the floor each component
+   placed in an article lost its own rules to these — an organism sheet,
+   later in the bundle, with `:not()` exclusions that outweighed them — and
+   was patched one hole at a time. Inheritance is unaffected: text inside a
+   component still inherits the prose size and leading. */
+@scope (.ui-prose) to ([class^="ui-"], [class*=" ui-"]) {
 :scope {
 	--_ui-prose-accent: var(--ui-prose-accent, var(--color-primary));
 	font-size: var(--t-lg);
@@ -131,7 +140,7 @@
 	letter-spacing: -0.015em;
 	margin: 0 0 1rem;
 }
-:scope h2:not(.ui-panel > header *) {
+:scope h2 {
 	font-family: var(--font-display);
 	font-weight: 500;
 	font-size: var(--t-3xl);
@@ -139,7 +148,7 @@
 	margin: 2.75rem 0 0.9rem;
 	scroll-margin-top: calc(var(--_ui-docs-sticky-top) + 3rem);
 }
-:scope h3:not(.ui-panel > header *) {
+:scope h3 {
 	font-family: var(--font-display);
 	font-weight: 500;
 	font-size: var(--t-xl);
@@ -150,9 +159,8 @@
 	margin: 0 0 1.1rem;
 	color: color-mix(in oklab, var(--color-base-content) 88%, transparent);
 }
-/* A list in running text is a bare one; a list that carries a class — a
-   component's (a logo cloud, a rich list, steps) or the app's own — lays
-   itself out, and this sheet's layer would otherwise override it. */
+/* A list in running text is a bare one; a list that carries the app's own
+   class lays itself out (a component's list is already below the floor). */
 :scope :is(ul, ol):not([class]) {
 	margin: 0 0 1.1rem;
 	padding-left: 1.4rem;
@@ -170,16 +178,14 @@
 	color: var(--color-base-content-muted);
 	font-style: italic;
 }
-/* A link in running text. A button that happens to be a link (ButtonLink,
-   a router link made from it) keeps the button's own ink and no underline:
-   this sheet's layer outranks the atom's, so prose must leave it alone. */
-:scope a:not(.ui-btn) {
+/* A link in running text (a button that is a link is below the floor). */
+:scope a {
 	color: var(--_ui-prose-accent);
 	text-decoration: underline;
 	text-decoration-color: color-mix(in oklab, var(--_ui-prose-accent) 40%, transparent);
 	text-underline-offset: 0.2em;
 }
-:scope a:not(.ui-btn):hover {
+:scope a:hover {
 	text-decoration-color: var(--_ui-prose-accent);
 }
 }
