@@ -42,6 +42,7 @@
 		--ui-paint-source: var(--ui-surface);
 		--ui-paint-source-hover: var(--ui-surface-hover);
 		--ui-paint-source-selected: var(--ui-surface-selected);
+		--ui-edge-source: var(--ui-color);
 		--ui-gap-source: var(--ui-context-surface);
 		--ui-shade-source: var(--ui-bright-color);
 		border-color: var(--ui-border);

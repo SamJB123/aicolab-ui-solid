@@ -64,13 +64,17 @@
 }
 /* The sliding pill (or the active tab where anchor positioning is
    unavailable) is a PLATE: the component marks the tabs and the pill
-   data-ui-plate; their paint source is the pill surface adapter. */
+   data-ui-plate; their paint source is the pill surface adapter, and
+   inside a treated frame their rim is its family colour. */
 .facets-tab,
 .facets-pill {
 	--_ui-radius: var(--r-pill);
 	--ui-paint-source: var(--_ui-facets-pill-surface);
 	--ui-paint-source-hover: var(--_ui-facets-pill-surface);
 	--ui-paint-source-selected: var(--_ui-facets-pill-surface);
+}
+:scope[data-ui-color-base] :is(.facets-tab, .facets-pill) {
+	--ui-edge-source: var(--ui-color);
 }
 .facets-tabs {
 	position: relative;
