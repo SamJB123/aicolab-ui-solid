@@ -47,17 +47,37 @@
 	--_ui-facets-active-surface: var(--ui-facets-active-surface, var(--color-base-300));
 	--_ui-facets-active-ink: var(--ui-facets-active-ink, var(--color-base-content));
 	--_ui-facets-pill-surface: var(--ui-facets-pill-surface, var(--color-base-150));
+	/* The frame is a PLATE (the component marks it data-ui-plate): its body
+	   is the structural base surface whatever the treatment, so the paint
+	   sources are pinned to it here. It paints the surface paint and the
+	   edge (resolver.css "Surface paint and edge") where it paints its
+	   surface and its ring. */
+	--ui-paint-source: var(--color-base-100);
+	--ui-paint-source-hover: var(--color-base-100);
+	--ui-paint-source-selected: var(--color-base-100);
 	border-radius: var(--_ui-facets-radius);
-	/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
 	corner-shape: var(--s-corner);
-	background: var(--ui-surface-paint), var(--color-base-100);
-	box-shadow: inset 0 0 0 1px var(--color-border), var(--ui-edge);
+	background: var(--ui-surface-paint);
+	box-shadow: var(--ui-edge), inset 0 0 0 1px var(--color-border);
 	overflow: hidden;
 }
 :scope[data-ui-color-base] {
 	--_ui-facets-active-surface: var(--ui-facets-active-surface, var(--ui-surface-selected));
 	--_ui-facets-active-ink: var(--ui-facets-active-ink, var(--ui-ink-selected));
 	--_ui-facets-pill-surface: var(--ui-facets-pill-surface, var(--ui-surface-selected));
+}
+/* The sliding pill (or the active tab where anchor positioning is
+   unavailable) is a PLATE: the component marks the tabs and the pill
+   data-ui-plate; their paint source is the pill surface adapter, and
+   inside a treated frame their rim is its family colour. */
+.facets-tab,
+.facets-pill {
+	--ui-paint-source: var(--_ui-facets-pill-surface);
+	--ui-paint-source-hover: var(--_ui-facets-pill-surface);
+	--ui-paint-source-selected: var(--_ui-facets-pill-surface);
+}
+:scope[data-ui-color-base] :is(.facets-tab, .facets-pill) {
+	--ui-edge-source: var(--ui-color);
 }
 .facets-tabs {
 	position: relative;
@@ -105,6 +125,7 @@
 .facets-tabs-pill .facets-tab,
 .facets-tabs-stretch .facets-tab {
 	border-radius: var(--r-pill);
+	corner-shape: var(--s-corner);
 	padding: 0.45rem 1rem;
 	white-space: nowrap;
 }
@@ -116,8 +137,8 @@
 .facets-tabs-stretch .facets-tab-active {
 	color: var(--_ui-facets-active-ink);
 	/* Fallback indicator where anchor positioning is unavailable. */
-	background: var(--ui-surface-paint), var(--_ui-facets-pill-surface);
-	box-shadow: inset 0 0 0 1px var(--color-border-strong), var(--ui-edge);
+	background: var(--ui-surface-paint);
+	box-shadow: var(--ui-edge), inset 0 0 0 1px var(--color-border-strong);
 }
 .facets-pill {
 	display: none;
@@ -138,8 +159,9 @@
 		width: anchor-size(width);
 		height: anchor-size(height);
 		border-radius: var(--r-pill);
-		background: var(--ui-surface-paint), var(--_ui-facets-pill-surface);
-		box-shadow: inset 0 0 0 1px var(--color-border-strong), var(--ui-edge);
+		corner-shape: var(--s-corner);
+		background: var(--ui-surface-paint);
+		box-shadow: var(--ui-edge), inset 0 0 0 1px var(--color-border-strong);
 		transition:
 			top 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
 			left 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),

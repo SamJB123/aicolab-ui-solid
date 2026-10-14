@@ -32,17 +32,22 @@
 }
 
 /* Trigger: classic neutral look for UNTREATED pickers only (the molecule
-   adds -plain when no family is given); treated triggers are pure Button. */
+   adds -plain when no family is given); treated triggers are pure Button.
+   The plain trigger is still a plate: it re-points the Button's paint
+   source at its own surface (resolver.css "Surface paint and edge") rather
+   than painting a flat colour over the Button's roles. */
 .ui-btn.ui-picker-trigger-plain {
-	background: var(--color-base-300);
+	--ui-paint-source: var(--color-base-300);
+	--ui-paint-source-hover: var(--color-base-300);
+	background: var(--ui-surface-paint);
 	color: var(--color-base-content);
-	box-shadow: 0 0 0 1px var(--color-border);
+	box-shadow: var(--ui-edge), 0 0 0 1px var(--color-border);
 }
 .ui-btn.ui-picker-trigger-plain:hover:not(:disabled) {
-	background: var(--color-base-300);
+	background: var(--ui-surface-paint-hover);
 	color: var(--color-base-content);
 	text-shadow: none;
-	box-shadow: 0 0 0 1px var(--color-border-strong);
+	box-shadow: var(--ui-edge-hover), 0 0 0 1px var(--color-border-strong);
 }
 .ui-picker-trigger { font-weight: 400; }
 .ui-picker-trigger .ui-picker-trigger-icon { opacity: 0.72; }

@@ -58,9 +58,6 @@
 		gap: var(--_ui-btn-gap);
 		border: 0;
 		border-radius: var(--_ui-btn-radius);
-		/* The surface treatment (theme-defaults.css): the theme's corner shape,
-		   its paint layered over the surface, its edge on the shadow list and
-		   its lift on hover — all inert at ui-solid's own values. */
 		corner-shape: var(--s-corner);
 		padding: var(--_ui-btn-pad-block) var(--_ui-btn-pad-inline);
 		font: inherit;
@@ -73,44 +70,47 @@
 	}
 	:scope:active:not(:disabled) { transform: scale(0.97); }
 	:scope:disabled { cursor: not-allowed; opacity: 0.5; }
+	/* A treated button is a PLATE: it paints the surface paint and the edge
+	   (resolver.css "Surface paint and edge") where it paints its surface
+	   and its ring, and lifts on hover by the theme's step. */
 	:scope[data-ui-color-base] {
-		background: var(--ui-surface-paint), var(--ui-surface);
+		background: var(--ui-surface-paint);
 		color: var(--ui-ink);
-		box-shadow: inset 0 0 0 1px var(--ui-border), var(--ui-edge);
+		box-shadow: var(--ui-edge), inset 0 0 0 1px var(--ui-border);
 	}
 	:scope[data-ui-color-base]:hover:not(:disabled) {
-		background: var(--ui-surface-paint), var(--ui-surface-hover);
+		background: var(--ui-surface-paint-hover);
 		color: var(--ui-ink-hover);
 		text-shadow: 0 0 14px var(--ui-ink-glow-hover);
 		box-shadow:
+			var(--ui-edge-hover),
 			inset 0 0 0 1px var(--_ui-btn-hover-border),
-			0 4px 24px -6px var(--ui-surface-glow-hover),
-			var(--ui-edge);
+			0 4px 24px -6px var(--ui-surface-glow-hover);
 		translate: 0 calc(-1 * var(--s-lift));
 	}
 	:scope[data-ui-color-base]:active:not(:disabled) {
-		background: var(--ui-surface-paint), var(--ui-surface-active);
+		background: var(--ui-surface-paint-active);
 		color: var(--ui-ink-active);
 		text-shadow: 0 0 14px var(--ui-ink-glow-active);
 		box-shadow:
+			var(--ui-edge-active),
 			inset 0 0 0 1px var(--ui-border-active),
-			0 4px 24px -6px var(--ui-surface-glow-active),
-			var(--ui-edge);
+			0 4px 24px -6px var(--ui-surface-glow-active);
 	}
 	:scope[data-ui-color-base]:focus-visible {
 		outline: 2px solid var(--_ui-btn-focus-ring);
 		outline-offset: 2px;
 	}
 	:scope[data-ui-color-base]:is([aria-pressed="true"], [aria-selected="true"]) {
-		background: var(--ui-surface-paint), var(--ui-surface-selected);
+		background: var(--ui-surface-paint-selected);
 		color: var(--ui-ink-selected);
-		box-shadow: inset 0 0 0 1px var(--ui-border-selected), var(--ui-edge);
+		box-shadow: var(--ui-edge-selected), inset 0 0 0 1px var(--ui-border-selected);
 	}
 	:scope[data-ui-color-base]:disabled {
 		opacity: 1;
-		background: var(--ui-surface-paint), var(--ui-surface-disabled);
+		background: var(--ui-surface-paint-disabled);
 		color: var(--ui-ink-disabled);
-		box-shadow: inset 0 0 0 1px var(--ui-border-disabled), var(--ui-edge);
+		box-shadow: var(--ui-edge-disabled), inset 0 0 0 1px var(--ui-border-disabled);
 	}
 	:scope[data-ui-color-variant="text"] {
 		--_ui-btn-pad-inline: var(--ui-btn-pad-inline, 4px);

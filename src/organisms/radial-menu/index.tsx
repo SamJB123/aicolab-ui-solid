@@ -128,7 +128,7 @@ export function RadialMenu(props: {
 								item.onSelect()
 							}}
 						>
-							<span class="ui-radial-chip">{item.icon}</span>
+							<span class="ui-radial-chip" data-ui-plate="">{item.icon}</span>
 							<span class="ui-radial-label">{item.label}</span>
 						</button>
 					)}

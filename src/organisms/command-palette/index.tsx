@@ -232,6 +232,7 @@ export function CommandPalette<T extends CommandPaletteItem>(props: {
 			class={['ui-command-palette', props.class]}
 			{...colorTreatmentData(props)}
 			{...knobs.attributes(props)}
+			data-ui-plate=""
 			style={mergeKnobStyle(knobs.style(props), undefined)}
 			ref={(element) => {
 				rootEl = element

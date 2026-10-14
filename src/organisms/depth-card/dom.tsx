@@ -163,7 +163,7 @@ export function DepthCard(props: {
 			onClick={onClick}
 		>
 			<div class="dc-inner">
-				<div class="dc-face dc-front">
+				<div class="dc-face dc-front" data-ui-plate="">
 					<Show when={props.content} fallback={props.front?.()}>
 						{(c) => (
 							<StructuredFront
@@ -185,7 +185,7 @@ export function DepthCard(props: {
 					</Show>
 				</div>
 				<Show when={hasBack()}>
-					<div class="dc-face dc-back">
+					<div class="dc-face dc-back" data-ui-plate="">
 						<Show when={props.content} fallback={props.back?.()}>
 							{(c) => <StructuredBack content={c()} core={core} />}
 						</Show>

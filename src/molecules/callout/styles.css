@@ -38,9 +38,11 @@
 		margin: 0;
 		border: 1px solid var(--ui-border);
 		border-radius: var(--_ui-callout-radius);
-		/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
 		corner-shape: var(--s-corner);
-		background: var(--ui-surface-paint), var(--ui-surface);
+		/* A plate: the surface paint and the edge (resolver.css "Surface
+		   paint and edge") where the surface is painted; the band is a region
+		   of the plate and stays flat. */
+		background: var(--ui-surface-paint);
 		color: var(--ui-ink);
 		box-shadow: var(--ui-edge);
 		overflow: clip;
@@ -48,7 +50,7 @@
 
 	/* The outline body reads on the page surface, not the family tint. */
 	:scope[data-ui-color-variant="outline"] {
-		background: var(--ui-surface-paint), var(--ui-surface-occluding);
+		background: var(--ui-surface-occluding);
 		color: var(--color-base-content);
 	}
 

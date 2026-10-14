@@ -177,7 +177,7 @@ export function DocsShell(
 							☰
 						</span>
 					</button>
-					<div id={compassId} class="docs-compass-pop" popover="auto">
+					<div id={compassId} class="docs-compass-pop" data-ui-plate="" popover="auto">
 						<NavList />
 						<TocList />
 					</div>

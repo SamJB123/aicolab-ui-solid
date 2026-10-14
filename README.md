@@ -39,13 +39,18 @@ features are gated behind `@supports` and are pure enhancements.
 |---|---|
 | `@aicolab/ui-solid` | Atoms, molecules and organisms (`Button`, `Panel`, `WorkspaceShell`, `BottomNavigation`, `CommandPalette`, `MonthCalendar`, …) plus `colorTreatmentData`, `defineKnobs`, `mergeKnobStyle` for your own components |
 | `./styles.css`, `./reset.css` | The full layered stylesheet; the reset alone |
-| `./themes/crimson-legal.css` | An alternative theme root |
+| `./themes/crimson-legal.css`, `./themes/night-ochre.css`, `./themes/brass.css` | Alternative theme roots (brass sets the surface finish: shine, rings, bevel, studs, shadow, lift, squircle corners) |
 | `./depth-card` | The structured depth card |
 | `./prosekit-solid`, `./prosekit-solid/presence`, `./prosekit-solid/block-identity`, `./prosekit-solid/styles.css` | ProseKit editor bindings with yjs presence |
 | `./xp`, `./xp/styles.css` | The Windows XP-flavoured desktop kit |
 
 Apps define the semantic `--color-*` family/content palette and font roles
-on a theme root (see `src/styles.css` for the contract).
+on a theme root (see `src/styles.css` for the contract), plus three
+ladders: the type scale (`--t-*`), the corner radii (`--r-*`) and the
+surface finish (`--s-*`: how every plate — a panel, a card, a chip, a
+button, a popover — is finished; its defaults are the flat house look, and
+the resolver derives each plate's `--ui-surface-paint` and `--ui-edge`
+from them, so components never paint a finish of their own).
 
 ## The three-axis colour system
 

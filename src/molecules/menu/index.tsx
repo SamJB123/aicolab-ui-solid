@@ -125,6 +125,7 @@ export function Menu(props: MenuProps) {
 				popover="auto"
 				role="menu"
 				aria-label={props.label}
+				data-ui-plate=""
 				class={['ui-anchored', 'ui-menu', props.class]}
 				style={mergeKnobStyle(knobs.style(props), {
 					'position-anchor': anchor,

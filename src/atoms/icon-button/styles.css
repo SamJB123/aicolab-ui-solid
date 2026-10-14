@@ -58,14 +58,16 @@
 		height: var(--_ui-iconbtn-size);
 		border: 0;
 		border-radius: var(--_ui-iconbtn-radius);
-		/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
+		/* Not a plate: the face is transparent at rest (a ring around a
+		   glyph), so it takes the theme's corner shape and hover lift but no
+		   surface paint or edge (resolver.css "Surface paint and edge"). */
 		corner-shape: var(--s-corner);
 		padding: 0;
 		font: inherit;
 		cursor: pointer;
-		background: var(--ui-surface-paint), var(--_ui-iconbtn-surface);
+		background: var(--_ui-iconbtn-surface);
 		color: var(--_ui-iconbtn-ink);
-		box-shadow: 0 0 0 1px var(--_ui-iconbtn-ring), var(--ui-edge);
+		box-shadow: 0 0 0 1px var(--_ui-iconbtn-ring);
 		transition: all 0.2s;
 	}
 	:scope[data-size="sm"] { --_ui-iconbtn-size: var(--ui-iconbtn-size, 30px); }
@@ -76,10 +78,10 @@
 		--_ui-iconbtn-hover-surface: var(--ui-iconbtn-hover-surface, var(--ui-surface-hover));
 		--_ui-iconbtn-hover-ink: var(--ui-iconbtn-hover-ink, var(--ui-ink-hover));
 		color: var(--_ui-iconbtn-ink);
-		box-shadow: 0 0 0 1px var(--_ui-iconbtn-ring), var(--ui-edge);
+		box-shadow: 0 0 0 1px var(--_ui-iconbtn-ring);
 	}
 	:scope:hover:not(:disabled) {
-		background: var(--ui-surface-paint), var(--_ui-iconbtn-hover-surface);
+		background: var(--_ui-iconbtn-hover-surface);
 		color: var(--_ui-iconbtn-hover-ink);
 		translate: 0 calc(-1 * var(--s-lift));
 	}

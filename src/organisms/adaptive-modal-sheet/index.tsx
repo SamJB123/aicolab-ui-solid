@@ -82,6 +82,7 @@ export function AdaptiveModalSheet(
 			}}
 			{...colorTreatmentData(props)}
 			{...knobs.attributes(props)}
+			data-ui-plate=""
 			style={mergeKnobStyle(knobs.style(props), undefined)}
 		>
 			<header class="ui-adaptive-modal-sheet-header">

@@ -20,12 +20,12 @@
 // server mount it with clientOnly() (see platform/landing's /theme route).
 
 import type { JSX } from '@solidjs/web'
-import { createContext, createMemo, createSignal, For, onSettled, Show, untrack, useContext } from 'solid-js'
+import { createContext, createMemo, createSignal, For, Match, onSettled, Show, Switch, untrack, useContext } from 'solid-js'
 import { Accordion, AccordionItem } from '../marketing'
 import { Button, Eyebrow, SelectControl, TextInput } from '../primitives'
 import type { ClassProp } from '../shared/color-treatment'
 import { createEffect } from '../solid-v2'
-import { Catalogue } from './catalogue'
+import { Catalogue, PlateSpecimen } from './catalogue'
 import { COLOR_ANCHORS, type ColorAnchor, FONT_TOKENS, type Scheme, SCHEMES, SIZE_LADDERS, type SizeLadder } from './contract'
 import { applyDraft, applyDraftFonts, DRAFT_BOOT_ATTRIBUTE, readStoredDraft, type ThemeDraft, writeStoredDraft } from './draft'
 import {
@@ -39,9 +39,9 @@ import {
 	googleFontsHref,
 	leadingFamily,
 } from './fonts'
-import { DARK_PRESETS, LIGHT_PRESETS, type SchemeValues, SURFACE_PRESETS } from './presets'
+import { DARK_PRESETS, LIGHT_PRESETS, type SchemeValues } from './presets'
 import { PreviewFrames, type PreviewPage } from './frames'
-import { acceptsSyntax, joinLightDark, type RegisteredToken, readRegisteredTokens, readThemeSource, splitLightDark } from './read-theme'
+import { joinLightDark, type RegisteredToken, readRegisteredTokens, readThemeSource, splitLightDark } from './read-theme'
 
 export type ThemeStudioProps = {
 	/** Save the draft in localStorage under this key. The host renders
@@ -68,6 +68,8 @@ type StudioModel = {
 	set: (token: string, value: string | undefined) => void
 	setSide: (token: string, scheme: Scheme, value: string) => void
 	applyScheme: (scheme: Scheme, sides: ReadonlyMap<string, string>) => void
+	/** Set scheme-independent tokens (a finish) whole. */
+	applyWhole: (values: ReadonlyMap<string, string>) => void
 	/** A colour anchor as the browser resolved it in a scheme. */
 	resolved: (scheme: Scheme, token: string) => string
 	/** Every token's current value: what a theme boundary declares. */
@@ -89,6 +91,28 @@ const sameInBoth = (a: string, b: string) => {
 }
 
 const isColor = (value: string) => value.trim() !== '' && CSS.supports('color', value)
+
+/** Whether a typed value fits a registered step's syntax. Lengths and angles
+ *  are judged by the engine; numbers and idents by shape, since an ident
+ *  such as a corner-shape keyword may be one the engine has not learnt. */
+const acceptsSyntax = (syntax: string, value: string): boolean => {
+	const text = value.trim()
+	if (text === '') return false
+	switch (syntax) {
+		case '<length>':
+			return !text.includes('%') && CSS.supports('width', text)
+		case '<length-percentage>':
+			return CSS.supports('width', text)
+		case '<number>':
+			return Number.isFinite(Number(text))
+		case '<angle>':
+			return CSS.supports('rotate', text)
+		case '<custom-ident>':
+			return /^[a-z][\w-]*$/i.test(text)
+		default:
+			return CSS.supports('width', text)
+	}
+}
 
 let hexContext: CanvasRenderingContext2D | null | undefined
 /** sRGB hex for a resolved colour — what <input type="color"> accepts. */
@@ -202,6 +226,7 @@ export function ThemeStudio(props: ThemeStudioProps) {
 		setSide: (token, scheme, value) => setDraft((d) => withSide(d, token, scheme, value)),
 		applyScheme: (scheme, sides) =>
 			setDraft((d) => [...sides].reduce((next, [token, value]) => withSide(next, token, scheme, value), d)),
+		applyWhole: (values) => setDraft((d) => [...values].reduce((next, [token, value]) => withValue(next, token, value), d)),
 		resolved: (scheme, token) => resolved()[scheme][token] ?? '',
 		themeStyle,
 		ladders,
@@ -345,7 +370,13 @@ function themeCss(
 
 // ── Starting points ─────────────────────────────────────────────────────────
 
-type Starting = { name: string; note: string; sides: ReadonlyMap<Token, string> }
+type Starting = {
+	name: string
+	note: string
+	sides: ReadonlyMap<Token, string>
+	/** Scheme-independent tokens the card sets whole (a shipped theme's finish). */
+	whole?: ReadonlyMap<Token, string>
+}
 
 const presetSides = (values: SchemeValues): ReadonlyMap<Token, string> => {
 	const sides = new Map<Token, string>()
@@ -374,13 +405,15 @@ function PresetsSection() {
 				name: preset.name,
 				note: preset.note,
 				sides: presetSides(preset.values),
+				whole: preset.finish,
 			})),
 		]
 	}
 	return (
 		<div class="ui-studio-presets">
 			<p class="ui-studio-note">
-				A card sets the colours it names for one scheme and leaves the rest as they are. Light and dark are chosen separately.
+				A card sets the colours it names for one scheme and leaves the rest as they are. Light and dark are chosen separately. A
+				shipped theme’s card also sets its surface finish, which is the same in both schemes.
 			</p>
 			<For each={SCHEMES}>
 				{(scheme) => (
@@ -388,7 +421,16 @@ function PresetsSection() {
 						<Eyebrow>{scheme === 'light' ? 'Light' : 'Dark'}</Eyebrow>
 						<div class="ui-studio-rail-cards">
 							<For each={rail(scheme)}>
-								{(start) => <PresetCard scheme={scheme} start={start} onApply={() => model.applyScheme(scheme, start.sides)} />}
+								{(start) => (
+									<PresetCard
+										scheme={scheme}
+										start={start}
+										onApply={() => {
+											model.applyScheme(scheme, start.sides)
+											if (start.whole) model.applyWhole(start.whole)
+										}}
+									/>
+								)}
 							</For>
 						</div>
 					</div>
@@ -402,13 +444,22 @@ const PREVIEW_TOKENS = ['--color-base-100', '--color-base-content', '--color-pri
 
 function PresetCard(props: { scheme: Scheme; start: Starting; onApply: () => void }) {
 	const model = useContext(StudioContext)
+	// The card is a plate under the theme it offers, finish included.
 	const style = (): JSX.CSSProperties => {
 		const anchors: Record<Token, string> = { ...model.themeStyle() }
 		for (const [token, value] of props.start.sides) anchors[token] = value
+		for (const [token, value] of props.start.whole ?? []) anchors[token] = value
 		return { ...anchors, 'color-scheme': props.scheme }
 	}
 	return (
-		<button type="button" class="ui-theme ui-studio-card" style={style()} onClick={() => props.onApply()} title={`Use ${props.start.name} for ${props.scheme}`}>
+		<button
+			type="button"
+			class="ui-theme ui-studio-card"
+			data-ui-plate=""
+			style={style()}
+			onClick={() => props.onApply()}
+			title={`Use ${props.start.name} for ${props.scheme}`}
+		>
 			<span class="ui-studio-card-dots" aria-hidden="true">
 				<For each={PREVIEW_TOKENS}>{(token) => <span style={{ background: `var(${token})` }} />}</For>
 			</span>
@@ -584,41 +635,18 @@ function FontRoleField(props: { role: FontRole }) {
 
 function LadderSection(props: { ladder: Ladder }) {
 	const model = useContext(StudioContext)
-	// The surface ladder's steps are mixed (numbers, lengths, an angle, an
-	// ident): each step says its own syntax. The other ladders are lengths.
-	const kinds = () => [...new Set(props.ladder.steps.map((step) => step.syntax))].map((s) => s.replace(/[<>]/g, '')).join(', ')
+	// The surface finish is one look made of every step, so it has one
+	// specimen above its rows, carrying the draft's values into the chrome.
+	const finish = (): Record<Token, string> => {
+		const out: Record<Token, string> = {}
+		for (const step of props.ladder.steps) out[step.token] = model.current(step.token) ?? step.initial
+		return out
+	}
 	return (
 		<div class="ui-studio-ladder">
-			<p class="ui-studio-note">
-				{props.ladder.note} The same in light and dark. Any CSS {kinds()}.
-			</p>
+			<p class="ui-studio-note">{props.ladder.note} The same in light and dark.</p>
 			<Show when={props.ladder.specimen === 'surface'}>
-				{/* The whole treatment at once, as a plate painted the way every
-				    component sheet paints: the two roles recompute on this element
-				    because it is its own theme boundary carrying the draft. */}
-				<div class="ui-studio-surface-starts">
-					<For each={SURFACE_PRESETS}>
-						{(preset) => (
-							<Button
-								variant="ghost"
-								colorBase="neutral"
-								title={preset.note}
-								onClick={() => {
-									// Whole values, not a side: these steps are one value for both schemes.
-									for (const [token, value] of Object.entries(preset.values)) model.set(token, value)
-								}}
-							>
-								{preset.name}
-							</Button>
-						)}
-					</For>
-				</div>
-				<div class="ui-theme ui-studio-surface-sample" style={model.themeStyle()} aria-hidden="true">
-					<span class="ui-studio-surface-plate">A plate</span>
-					<span class="ui-studio-surface-plate" data-ui-color-base="primary" data-ui-color-variant="solid">
-						Primary
-					</span>
-				</div>
+				<PlateSpecimen style={finish()} />
 			</Show>
 			<For each={props.ladder.steps}>{(step) => <LadderRow ladder={props.ladder} step={step} />}</For>
 		</div>
@@ -643,11 +671,14 @@ function LadderRow(props: { ladder: Ladder; step: RegisteredToken }) {
 				}}
 			/>
 			<span class="ui-studio-step-sample" aria-hidden="true">
-				<Show when={props.ladder.specimen !== 'surface'}>
-					<Show when={props.ladder.specimen === 'type'} fallback={<span class="ui-studio-radius-sample" style={{ 'border-radius': value() }} />}>
+				<Switch>
+					<Match when={props.ladder.specimen === 'type'}>
 						<span style={{ 'font-size': value() }}>Aa</span>
-					</Show>
-				</Show>
+					</Match>
+					<Match when={props.ladder.specimen === 'radius'}>
+						<span class="ui-studio-radius-sample" style={{ 'border-radius': value() }} />
+					</Match>
+				</Switch>
 			</span>
 			<Show when={model.isEdited(props.step.token)}>
 				<Button variant="text" colorBase="neutral" onClick={() => model.set(props.step.token, undefined)}>

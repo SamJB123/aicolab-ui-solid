@@ -66,49 +66,6 @@
 	--ui-surface-disabled: color-mix(in oklab, var(--ui-surface) 46%, var(--ui-context-surface));
 	--ui-ink-disabled: color-mix(in oklab, var(--ui-ink) 42%, transparent);
 	--ui-border-disabled: color-mix(in oklab, var(--ui-border) 42%, transparent);
-
-	/* The surface treatment of a TREATED element, derived here from its own
-	   border the way its other roles are (theme-defaults.css derives the
-	   theme root's pair from the strong border, for plates whose surface is a
-	   page token or a knob). The paint is the same translucent gradient and
-	   the same studs, the studs in this family's border; the edge rings the
-	   plate in its family's border. The geometry — the --s-* anchors — is one
-	   and the same. A text or ghost treatment has a transparent border, so
-	   its rings and studs are too. */
-	--ui-surface-paint:
-		radial-gradient(
-			circle at calc(2 * var(--s-stud)) calc(2 * var(--s-stud)),
-			var(--ui-border) 0 var(--s-stud),
-			transparent calc(var(--s-stud) * 1.3)
-		),
-		radial-gradient(
-			circle at calc(100% - 2 * var(--s-stud)) calc(2 * var(--s-stud)),
-			var(--ui-border) 0 var(--s-stud),
-			transparent calc(var(--s-stud) * 1.3)
-		),
-		radial-gradient(
-			circle at calc(2 * var(--s-stud)) calc(100% - 2 * var(--s-stud)),
-			var(--ui-border) 0 var(--s-stud),
-			transparent calc(var(--s-stud) * 1.3)
-		),
-		radial-gradient(
-			circle at calc(100% - 2 * var(--s-stud)) calc(100% - 2 * var(--s-stud)),
-			var(--ui-border) 0 var(--s-stud),
-			transparent calc(var(--s-stud) * 1.3)
-		),
-		linear-gradient(
-			var(--s-angle),
-			color-mix(in oklab, var(--color-primary) calc(var(--s-gradient) * 20%), transparent) 0%,
-			transparent 45%,
-			color-mix(in oklab, black calc(var(--s-gradient) * 10%), transparent) 100%
-		);
-	--ui-edge:
-		0 0 0 var(--s-ring-inner) color-mix(in oklab, var(--ui-border) 70%, black),
-		0 0 0 calc(var(--s-ring-inner) + var(--s-ring-gap)) color-mix(in oklab, var(--color-base-200) 70%, black),
-		0 0 0 calc(var(--s-ring-inner) + var(--s-ring-gap) + var(--s-ring-outer)) var(--ui-border),
-		inset 0 1px 0 color-mix(in oklab, var(--ui-border) calc(var(--s-bevel) * 45%), transparent),
-		inset 0 -2px 6px color-mix(in oklab, black calc(var(--s-bevel) * 35%), transparent),
-		0 var(--s-shadow-y) var(--s-shadow-blur) color-mix(in oklab, black calc(var(--s-shadow-alpha) * 100%), transparent);
 }
 
 /* An engine without contrast-color() (Chrome before 138 — the browser Cloudflare's
@@ -374,6 +331,147 @@
 
 	/* Track is the intentionally reduced-colour counterpart to the foreground. */
 	--ui-track: color-mix(in oklab, var(--ui-color) 18%, transparent);
+}
+
+/* ── Surface paint and edge ───────────────────────────────────────────────
+   How a plate is finished, from the theme's surface ladder (properties.css
+   --s-*). A plate is a bounded surface read as an object — a panel, a card,
+   a chip, a button, a pill, a popover, a sheet, a toast, a node, a row. It
+   paints two roles where it painted its surface and its ring:
+
+   SURFACE PAINT — the plate's shine: a gradient from its surface toward
+   its shade colour at the top to its surface toward black at the bottom,
+   by the grade, with a stud of the edge colour in each corner.
+   EDGE — a shadow list: three stacked rings (the edge colour deepened, the
+   context deepened, the edge colour), an inner bevel (the surface toward
+   white along the top, toward black along the bottom) and the plate's own
+   cast shadow.
+
+   Every term is a mix onto a known colour, never a wash. At the ladder's
+   defaults every mix returns its own source and every width is zero: the
+   paint IS the flat surface and the edge paints nothing, so the house look
+   is unchanged until a theme asks (themes/brass.css asks).
+
+   A treated element takes its sources from its own roles; a plain plate
+   declares itself with [data-ui-plate] and takes the theme's; where both
+   are present the treated sources win. The RIM — the colour the rings and
+   studs are drawn in — is always solid: the theme's rim (--color-rim, the
+   lead colour by default) on a plain plate, the family colour on a treated
+   one, and the family colour on a plate inside a treated component. It is
+   never the hairline border, which ui-solid derives as a wash by default.
+   A sheet whose surface is a knob re-points the paint source at its
+   adapter. A transparent face has no plate: the outline and text styles
+   paint their flat surface and no edge, whatever the ladder; a disabled
+   plate likewise loses its finish. A WELL — a field typed or chosen into,
+   a track, a tray — is not a plate: it keeps its flat surface and single
+   ring, and takes only the theme's corner shape. */
+:where([data-ui-plate]) {
+	--ui-paint-source: var(--color-base-100);
+	--ui-paint-source-hover: var(--color-base-150);
+	--ui-paint-source-selected: var(--color-base-150);
+	--ui-edge-source: var(--color-rim);
+	--ui-gap-source: var(--color-base-100);
+	--ui-shade-source: var(--color-primary);
+}
+:where([data-ui-color-base]) {
+	--ui-paint-source: var(--ui-surface);
+	--ui-paint-source-hover: var(--ui-surface-hover);
+	--ui-paint-source-selected: var(--ui-surface-selected);
+	--ui-edge-source: var(--ui-color);
+	--ui-gap-source: var(--ui-context-surface);
+	--ui-shade-source: var(--ui-bright-color);
+}
+:where([data-ui-plate], [data-ui-color-base]) {
+	--ui-paint-source-active: var(--ui-paint-source-hover);
+	--ui-stud-ink: color-mix(in oklab, var(--ui-edge-source) 55%, white);
+	--ui-studs:
+		radial-gradient(circle at 4px 4px, var(--ui-stud-ink) 0 var(--s-stud), transparent calc(var(--s-stud) * 1.3)),
+		radial-gradient(circle at calc(100% - 4px) 4px, var(--ui-stud-ink) 0 var(--s-stud), transparent calc(var(--s-stud) * 1.3)),
+		radial-gradient(circle at 4px calc(100% - 4px), var(--ui-stud-ink) 0 var(--s-stud), transparent calc(var(--s-stud) * 1.3)),
+		radial-gradient(circle at calc(100% - 4px) calc(100% - 4px), var(--ui-stud-ink) 0 var(--s-stud), transparent calc(var(--s-stud) * 1.3));
+	--ui-shine: linear-gradient(
+		var(--s-grade-angle),
+		color-mix(in oklab, var(--ui-paint-source) calc(100% - 20% * var(--s-grade)), var(--ui-shade-source)) 0%,
+		var(--ui-paint-source) 45%,
+		color-mix(in oklab, var(--ui-paint-source) calc(100% - 10% * var(--s-grade)), black) 100%
+	);
+	--ui-shine-hover: linear-gradient(
+		var(--s-grade-angle),
+		color-mix(in oklab, var(--ui-paint-source-hover) calc(100% - 20% * var(--s-grade)), var(--ui-shade-source)) 0%,
+		var(--ui-paint-source-hover) 45%,
+		color-mix(in oklab, var(--ui-paint-source-hover) calc(100% - 10% * var(--s-grade)), black) 100%
+	);
+	--ui-shine-selected: linear-gradient(
+		var(--s-grade-angle),
+		color-mix(in oklab, var(--ui-paint-source-selected) calc(100% - 20% * var(--s-grade)), var(--ui-shade-source)) 0%,
+		var(--ui-paint-source-selected) 45%,
+		color-mix(in oklab, var(--ui-paint-source-selected) calc(100% - 10% * var(--s-grade)), black) 100%
+	);
+	--ui-surface-paint: var(--ui-studs), var(--ui-shine);
+	--ui-surface-paint-hover: var(--ui-studs), var(--ui-shine-hover);
+	--ui-surface-paint-active: var(--ui-surface-paint-hover);
+	--ui-surface-paint-selected: var(--ui-studs), var(--ui-shine-selected);
+	--ui-surface-paint-disabled: var(--ui-surface-disabled);
+	/* The bevel's two lines and the cast shadow are sized by their ladder
+	   step as well as coloured by it, so at zero they paint nothing even
+	   where a plate's background is not its paint source. */
+	--ui-edge:
+		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-edge-source) 70%, black),
+		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) color-mix(in oklab, var(--ui-gap-source) 40%, black),
+		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap) + var(--s-edge-outer)) var(--ui-edge-source),
+		inset 0 calc(1px * var(--s-bevel)) 0 color-mix(in oklab, var(--ui-paint-source) calc(100% - 40% * var(--s-bevel)), white),
+		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) color-mix(in oklab, var(--ui-paint-source) calc(100% - 35% * var(--s-bevel)), black),
+		0 calc(10px * var(--s-shadow)) calc(24px * var(--s-shadow)) color-mix(in oklab, var(--ui-gap-source) calc(100% - 55% * var(--s-shadow)), black);
+	--ui-edge-hover:
+		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-edge-source) 70%, black),
+		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) color-mix(in oklab, var(--ui-gap-source) 40%, black),
+		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap) + var(--s-edge-outer)) var(--ui-edge-source),
+		inset 0 calc(1px * var(--s-bevel)) 0 color-mix(in oklab, var(--ui-paint-source-hover) calc(100% - 40% * var(--s-bevel)), white),
+		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) color-mix(in oklab, var(--ui-paint-source-hover) calc(100% - 35% * var(--s-bevel)), black),
+		0 calc(12px * var(--s-shadow)) calc(28px * var(--s-shadow)) color-mix(in oklab, var(--ui-gap-source) calc(100% - 55% * var(--s-shadow)), black);
+	--ui-edge-active: var(--ui-edge-hover);
+	--ui-edge-selected:
+		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-edge-source) 70%, black),
+		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) color-mix(in oklab, var(--ui-gap-source) 40%, black),
+		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap) + var(--s-edge-outer)) var(--ui-edge-source),
+		inset 0 calc(1px * var(--s-bevel)) 0 color-mix(in oklab, var(--ui-paint-source-selected) calc(100% - 40% * var(--s-bevel)), white),
+		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) color-mix(in oklab, var(--ui-paint-source-selected) calc(100% - 35% * var(--s-bevel)), black),
+		0 calc(10px * var(--s-shadow)) calc(24px * var(--s-shadow)) color-mix(in oklab, var(--ui-gap-source) calc(100% - 55% * var(--s-shadow)), black);
+	--ui-edge-disabled: 0 0 0 0 transparent;
+}
+/* Frontier: at the ladder's rest (no grade, no studs) the paint is the
+   flat colour itself rather than an image of it, so a sheet that fades its
+   background (transition: background-color) still fades — an image list
+   cannot interpolate. Engines without if() paint the flat image; only the
+   fade differs there. Remove together with the frontier resolver above. */
+@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) and (color: if(style(--ui-compat-probe: yes): red; else: blue)) {
+	:where([data-ui-plate], [data-ui-color-base]) {
+		--ui-surface-paint: if(
+			style(--s-grade: 0): if(style(--s-stud: 0px): var(--ui-paint-source); else: var(--ui-studs), var(--ui-shine));
+			else: var(--ui-studs), var(--ui-shine)
+		);
+		--ui-surface-paint-hover: if(
+			style(--s-grade: 0): if(style(--s-stud: 0px): var(--ui-paint-source-hover); else: var(--ui-studs), var(--ui-shine-hover));
+			else: var(--ui-studs), var(--ui-shine-hover)
+		);
+		--ui-surface-paint-selected: if(
+			style(--s-grade: 0): if(style(--s-stud: 0px): var(--ui-paint-source-selected); else: var(--ui-studs), var(--ui-shine-selected));
+			else: var(--ui-studs), var(--ui-shine-selected)
+		);
+	}
+}
+/* A transparent face has no plate (see above): the outline and text
+   styles paint their flat surface and no edge, whatever the ladder. Last,
+   so it wins over both paths. */
+:where([data-ui-color-variant="outline"], [data-ui-color-variant="text"]) {
+	--ui-surface-paint: var(--ui-surface);
+	--ui-surface-paint-hover: var(--ui-surface-hover);
+	--ui-surface-paint-active: var(--ui-surface-active);
+	--ui-surface-paint-selected: var(--ui-surface-selected);
+	--ui-edge: 0 0 0 0 transparent;
+	--ui-edge-hover: 0 0 0 0 transparent;
+	--ui-edge-active: 0 0 0 0 transparent;
+	--ui-edge-selected: 0 0 0 0 transparent;
 }
 
 /* Environmental treatment stays semantic: a container declares what kind of

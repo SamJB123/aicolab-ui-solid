@@ -134,6 +134,11 @@
 	inherits: true;
 	initial-value: #e8b04c;
 }
+@property --color-rim {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: #e8b04c;
+}
 @property --color-overlay-surface {
 	syntax: "<color>";
 	inherits: true;
@@ -263,39 +268,35 @@
 	initial-value: 999px;
 }
 
-/* ── The surface treatment ladder ──
-   How a plate is painted beyond its colours: the gradient across it, the
-   rings round its edge, the bevel inside it, the studs in its corners, the
-   shape of its corners, how far it lifts on hover and the shadow it casts.
-   Theme anchors (a theme writes them, as it writes --r-*): ui-solid's own
-   values paint today's flat house look — every initial is a zero or the
-   plain value — so a theme that leaves them alone changes nothing.
-   theme-defaults.css derives the two roles component sheets paint from
-   them: --ui-surface-paint (the gradient and the studs, as image layers
-   over any surface colour) and --ui-edge (the rings, the bevel and the
-   shadow, as one box-shadow list). The chessboard's brass register
-   (themes/brass.css) is the first theme to set them. */
-@property --s-gradient {
+/* ── The surface ladder: how a plate is finished ──
+   Theme choices, like the corner steps: a theme writes them, and the
+   resolver works a SURFACE PAINT and an EDGE out of them on every element
+   that paints a plate (resolver.css "Surface paint and edge"). Every
+   default is the house look exactly as it was before the ladder existed —
+   no shine, no rings, no bevel, no studs, no shadow of its own, no lift,
+   round corners — so each derivation collapses to the flat surface and the
+   plain border until a theme asks (themes/brass.css asks). */
+@property --s-grade {
 	syntax: "<number>";
 	inherits: true;
 	initial-value: 0;
 }
-@property --s-angle {
+@property --s-grade-angle {
 	syntax: "<angle>";
 	inherits: true;
 	initial-value: 160deg;
 }
-@property --s-ring-inner {
+@property --s-edge-inner {
 	syntax: "<length>";
 	inherits: true;
 	initial-value: 0px;
 }
-@property --s-ring-gap {
+@property --s-edge-gap {
 	syntax: "<length>";
 	inherits: true;
 	initial-value: 0px;
 }
-@property --s-ring-outer {
+@property --s-edge-outer {
 	syntax: "<length>";
 	inherits: true;
 	initial-value: 0px;
@@ -310,41 +311,20 @@
 	inherits: true;
 	initial-value: 0px;
 }
-@property --s-corner {
-	syntax: "<custom-ident>";
+@property --s-shadow {
+	syntax: "<number>";
 	inherits: true;
-	initial-value: round;
+	initial-value: 0;
 }
 @property --s-lift {
 	syntax: "<length>";
 	inherits: true;
 	initial-value: 0px;
 }
-@property --s-shadow-y {
-	syntax: "<length>";
+@property --s-corner {
+	syntax: "<custom-ident>";
 	inherits: true;
-	initial-value: 0px;
-}
-@property --s-shadow-blur {
-	syntax: "<length>";
-	inherits: true;
-	initial-value: 0px;
-}
-@property --s-shadow-alpha {
-	syntax: "<number>";
-	inherits: true;
-	initial-value: 0;
-}
-/* The two derived roles: image and shadow lists have no registrable syntax,
-   so these carry the universal syntax and no initial; theme-defaults.css
-   always assigns them on the theme root. */
-@property --ui-surface-paint {
-	syntax: "*";
-	inherits: true;
-}
-@property --ui-edge {
-	syntax: "*";
-	inherits: true;
+	initial-value: round;
 }
 
 /* ── Panel density (the durable replacement for the old --ui-density if()
@@ -421,3 +401,35 @@
 @property --ui-ink-glow-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-ink-glow-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-focus-ring { syntax: "<color>"; inherits: true; initial-value: transparent; }
+/* A plate's PAINT SOURCES: the colours its surface paint and its edge are
+   worked out from (resolver.css "Surface paint and edge"). The resolver
+   sets them for a treated element (its own surface, family colour, context
+   and bright colour) and for a plain plate ([data-ui-plate]: the theme's
+   surface and rim); a sheet whose surface is a knob re-points the paint
+   source at its adapter where it assigns the adapter. */
+@property --ui-paint-source { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-paint-source-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-paint-source-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-paint-source-selected { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-edge-source { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-gap-source { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-shade-source { syntax: "<color>"; inherits: true; initial-value: transparent; }
+/* The derived paints. A background image list and a shadow list have no
+   registrable syntax, like the font stacks above. The stud ink, the stud
+   layers and the shine are the resolver's private intermediates (see the
+   private list in scripts/check-atomic-boundaries.mjs). */
+@property --ui-stud-ink { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --ui-studs { syntax: "*"; inherits: true; }
+@property --ui-shine { syntax: "*"; inherits: true; }
+@property --ui-shine-hover { syntax: "*"; inherits: true; }
+@property --ui-shine-selected { syntax: "*"; inherits: true; }
+@property --ui-surface-paint { syntax: "*"; inherits: true; }
+@property --ui-surface-paint-hover { syntax: "*"; inherits: true; }
+@property --ui-surface-paint-active { syntax: "*"; inherits: true; }
+@property --ui-surface-paint-selected { syntax: "*"; inherits: true; }
+@property --ui-surface-paint-disabled { syntax: "*"; inherits: true; }
+@property --ui-edge { syntax: "*"; inherits: true; }
+@property --ui-edge-hover { syntax: "*"; inherits: true; }
+@property --ui-edge-active { syntax: "*"; inherits: true; }
+@property --ui-edge-selected { syntax: "*"; inherits: true; }
+@property --ui-edge-disabled { syntax: "*"; inherits: true; }

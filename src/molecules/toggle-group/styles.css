@@ -42,10 +42,11 @@
 		gap: var(--_ui-tg-gap);
 		padding: var(--_ui-tg-tray-pad);
 		border-radius: var(--_ui-tg-tray-radius);
-		/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
+		/* The tray is a WELL, not a plate (resolver.css "Surface paint and
+		   edge"): only the theme's corner shape reaches it. */
 		corner-shape: var(--s-corner);
-		background: var(--ui-surface-paint), var(--_ui-tg-tray-surface);
-		box-shadow: inset 0 0 0 1px var(--_ui-tg-tray-border), var(--ui-edge);
+		background: var(--_ui-tg-tray-surface);
+		box-shadow: inset 0 0 0 1px var(--_ui-tg-tray-border);
 	}
 
 	:scope[data-ui-color-base] {

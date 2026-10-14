@@ -114,6 +114,7 @@ export function TimePicker(
 				id={popId}
 				popover="auto"
 				class="ui-anchored ui-picker-pop"
+				data-ui-plate=""
 				style={mergeKnobStyle(knobs.style(props), { 'position-anchor': anchor })}
 				{...colorTreatmentData(props)}
 				{...knobs.attributes(props)}

@@ -64,6 +64,11 @@
 		--_ui-select-hover-border: var(--ui-select-hover-border, color-mix(in oklab, var(--color-primary) 58%, var(--color-border-strong)));
 		--_ui-select-focus-border: var(--ui-select-focus-border, var(--color-primary));
 		--_ui-select-focus-ring: var(--ui-select-focus-ring, color-mix(in oklab, var(--color-primary) 42%, transparent));
+		/* The trigger is a PLATE (the component marks it data-ui-plate): it
+		   paints the surface paint and the edge (resolver.css "Surface paint
+		   and edge") where it paints its surface, lifting on hover by the
+		   theme's step. The picker beneath is a pseudo-element, which cannot
+		   carry the mark: it keeps its flat surface and its own shadow. */
 
 		box-sizing: border-box;
 		width: fit-content;
@@ -73,8 +78,9 @@
 		border: 1px solid var(--color-border-strong);
 		border-radius: var(--_ui-select-radius);
 		corner-shape: squircle;
-		background: var(--color-base-100);
+		background: var(--ui-surface-paint);
 		color: var(--color-base-content);
+		box-shadow: var(--ui-edge);
 		font: inherit;
 		field-sizing: content;
 		/* Lets the width transition below tween intrinsic (fit-content) size
@@ -88,7 +94,8 @@
 			border-radius 160ms ease,
 			min-height 160ms ease,
 			padding 160ms ease,
-			width 160ms ease;
+			width 160ms ease,
+			translate 160ms ease;
 	}
 
 	:scope:open {
@@ -97,6 +104,7 @@
 
 	:scope:hover:not(:disabled) {
 		border-color: var(--_ui-select-hover-border);
+		translate: 0 calc(-1 * var(--s-lift));
 	}
 
 	:scope:focus-visible {
@@ -109,6 +117,7 @@
 		cursor: not-allowed;
 		background: var(--color-base-200);
 		color: var(--color-base-content-faint);
+		box-shadow: var(--ui-edge-disabled);
 	}
 
 	:scope[data-ui-color-base] {
@@ -116,27 +125,31 @@
 		--_ui-select-focus-border: var(--ui-select-focus-border, var(--ui-border-active));
 		--_ui-select-focus-ring: var(--ui-select-focus-ring, var(--ui-focus-ring));
 		border-color: var(--ui-border);
-		background: var(--ui-surface);
+		background: var(--ui-surface-paint);
 		color: var(--ui-ink);
 	}
 
 	:scope[data-ui-color-base]:hover:not(:disabled) {
 		border-color: var(--_ui-select-hover-border);
-		background: var(--ui-surface-hover);
+		background: var(--ui-surface-paint-hover);
 		color: var(--ui-ink-hover);
+		box-shadow: var(--ui-edge-hover);
 	}
 
 	:scope[data-ui-color-base]:disabled {
 		border-color: var(--ui-border-disabled);
-		background: var(--ui-surface-disabled);
+		background: var(--ui-surface-paint-disabled);
 		color: var(--ui-ink-disabled);
+		box-shadow: var(--ui-edge-disabled);
 	}
 
+	/* Overlay chrome is translucent by design: no plate finish over media. */
 	@container ui-treatment-context style(--ui-environment: overlay) {
 		:scope {
 			border-color: var(--color-overlay-border);
 			background: var(--color-overlay-soft);
 			color: var(--color-overlay-content);
+			box-shadow: none;
 		}
 		:scope:disabled { color: var(--color-overlay-content-muted); }
 	}

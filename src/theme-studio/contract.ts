@@ -95,19 +95,21 @@ export type SizeLadder = {
 	prefix: `--${string}`
 	label: string
 	note: string
+	/** What the studio shows beside the steps: a type specimen per step, a
+	 *  rounded box per step, or ONE finished plate for the whole ladder. */
 	specimen: 'type' | 'radius' | 'surface'
 }
 
 /** The scheme-independent ladders. Their steps are not listed here: the
  *  studio reads them from the `@property` registrations under each prefix,
- *  in the order properties.css declares them, with each step's syntax. */
+ *  in the order properties.css declares them, each with its syntax. */
 export const SIZE_LADDERS: readonly SizeLadder[] = [
-	{ prefix: '--t-', label: 'Type scale', note: 'The text sizes every ui-solid component reads.', specimen: 'type' },
-	{ prefix: '--r-', label: 'Corner radii', note: 'The corner steps every ui-solid component reads.', specimen: 'radius' },
+	{ prefix: '--t-', label: 'Type scale', note: 'The text sizes every ui-solid component reads. Any CSS length.', specimen: 'type' },
+	{ prefix: '--r-', label: 'Corner radii', note: 'The corner steps every ui-solid component reads. Any CSS length.', specimen: 'radius' },
 	{
 		prefix: '--s-',
-		label: 'Surface treatment',
-		note: 'How every plate is painted beyond its colours: the gradient across it, the rings at its edge, the bevel, the corner studs, the corner shape, the lift on hover and the shadow it casts. ui-solid’s own values paint flat.',
+		label: 'Surface finish',
+		note: 'How every plate is finished — its shine (grade, angle), its three rings (inner, gap, outer), its bevel, its corner studs, its cast shadow, its lift on hover and its corner shape. At zero, the flat house look.',
 		specimen: 'surface',
 	},
 ]

@@ -275,36 +275,18 @@ export function readThemeSource(doc: Document, tokens: readonly string[]): Theme
 	return { site, library, authored }
 }
 
-export type RegisteredToken = { token: `--${string}`; initial: string; syntax: string }
+export type RegisteredToken = {
+	token: `--${string}`
+	initial: string
+	/** The registration's syntax (`<length>`, `<number>`, `<angle>`, `<custom-ident>`…). */
+	syntax: string
+}
 
 const isCustomProperty = (name: string): name is `--${string}` => name.startsWith('--')
 
-/** Whether `value` is a valid value of a registered token's syntax: checked
- *  the way the browser would, against a longhand that takes that syntax. */
-export function acceptsSyntax(syntax: string, value: string): boolean {
-	const text = value.trim()
-	if (text === '') return false
-	switch (syntax) {
-		case '<length>':
-			return !text.includes('%') && CSS.supports('width', text)
-		case '<length-percentage>':
-			return CSS.supports('width', text)
-		case '<number>':
-			return CSS.supports('line-height', text) && /^[\d.+-]/.test(text)
-		case '<angle>':
-			return CSS.supports('rotate', text)
-		case '<color>':
-			return CSS.supports('color', text)
-		case '<custom-ident>':
-			return /^[A-Za-z_][\w-]*$/.test(text)
-		default:
-			return true
-	}
-}
-
 /** The `@property` registrations whose names start with `prefix`, in source
- *  order, with their initial values (ui-solid's defaults for the ladders)
- *  and their syntax (what a step's edited value must be). */
+ *  order, with their initial values (ui-solid's defaults for the ladders) and
+ *  their syntaxes (what a step accepts). */
 export function readRegisteredTokens(doc: Document, prefix: `--${string}`): RegisteredToken[] {
 	const view = doc.defaultView
 	if (!view) return []
@@ -313,8 +295,9 @@ export function readRegisteredTokens(doc: Document, prefix: `--${string}`): Regi
 		for (const rule of Array.from(rules)) {
 			if (rule instanceof view.CSSPropertyRule) {
 				const name = rule.name
-				if (isCustomProperty(name) && name.startsWith(prefix) && !found.has(name))
+				if (isCustomProperty(name) && name.startsWith(prefix) && !found.has(name)) {
 					found.set(name, { initial: rule.initialValue ?? '', syntax: rule.syntax })
+				}
 			} else if (rule instanceof view.CSSImportRule) {
 				let sheetRules: CSSRuleList | undefined
 				try {

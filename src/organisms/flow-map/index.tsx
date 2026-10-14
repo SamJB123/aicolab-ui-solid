@@ -264,6 +264,7 @@ export function FlowMap(props: FlowMapProps) {
 											id={popId}
 											popover="auto"
 											class="ui-anchored ui-flow-map-preview"
+											data-ui-plate=""
 											style={{ 'position-anchor': anchorName(uid, 'rail') }}
 										>
 											{preview()()}
@@ -346,6 +347,7 @@ export function FlowMap(props: FlowMapProps) {
 											id={popId}
 											popover="auto"
 											class="ui-anchored ui-flow-map-preview"
+											data-ui-plate=""
 											style={{ 'position-anchor': anchorName(uid, node.id) }}
 										>
 											{preview()()}

@@ -97,7 +97,7 @@ export function ColumnMapper(props: ColumnMapperProps) {
 		>
 			<For each={props.columns}>
 				{(column) => (
-					<div class="ui-mapper-row" data-role={column.role} data-matched={column.matched ? '' : undefined}>
+					<div class="ui-mapper-row" data-ui-plate="" data-role={column.role} data-matched={column.matched ? '' : undefined}>
 						<div class="ui-mapper-source">
 							<span class="ui-mapper-column">{column.column}</span>
 							<span class="ui-mapper-samples">

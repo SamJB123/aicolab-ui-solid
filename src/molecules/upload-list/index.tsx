@@ -83,6 +83,7 @@ export function UploadList(props: UploadListProps) {
 				{(item) => (
 					<li
 						class="ui-uploads-row"
+						data-ui-plate=""
 						data-status={item.status}
 						{...knobs.attributes(rowValues())}
 						style={mergeKnobStyle(knobs.style(rowValues()), false)}

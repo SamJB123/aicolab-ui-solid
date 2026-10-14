@@ -78,6 +78,7 @@ export function Segmented<T extends string>(props: SegmentedProps<T>) {
 					<button
 						type="button"
 						role="tab"
+						data-ui-plate=""
 						aria-selected={props.value === o.id ? 'true' : 'false'}
 						onClick={(e) => {
 							props.onChange(o.id)
@@ -92,7 +93,7 @@ export function Segmented<T extends string>(props: SegmentedProps<T>) {
 					</button>
 				)}
 			</For>
-			<span class="seg-pill" aria-hidden="true" />
+			<span class="seg-pill" data-ui-plate="" aria-hidden="true" />
 		</div>
 	)
 }

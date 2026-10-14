@@ -197,6 +197,7 @@ export function Combobox<T>(props: {
 				id={`${id}-listbox`}
 				popover="manual"
 				class="ui-anchored ui-combobox-pop"
+				data-ui-plate=""
 				role="listbox"
 				aria-label={`${props.label} results`}
 				ref={(element) => {

@@ -56,6 +56,14 @@
 		/* The body's reading gutter, defined here once for every sheet. */
 		--_ui-sheet-gutter-inline: var(--ui-sheet-gutter-inline, clamp(1.25rem, 4vw, 2.6rem));
 		--_ui-sheet-gutter-block: var(--ui-sheet-gutter-block, 1.5rem);
+		/* The sheet is a PLATE (the component marks it data-ui-plate): its
+		   paint source is the sheet surface adapter, and it paints the surface
+		   paint and the edge (resolver.css "Surface paint and edge") where it
+		   paints its surface and its shadow; the header is a region of it and
+		   stays flat. */
+		--ui-paint-source: var(--_ui-sheet-surface);
+		--ui-paint-source-hover: var(--_ui-sheet-surface);
+		--ui-paint-source-selected: var(--_ui-sheet-surface);
 		position: fixed;
 		inset: 0 0 0 auto;
 		display: grid;
@@ -70,10 +78,9 @@
 		border: 0;
 		overflow: hidden;
 		border-left: 1px solid color-mix(in oklab, var(--_ui-sheet-accent) 55%, var(--color-border));
-		/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
-		background: var(--ui-surface-paint), var(--_ui-sheet-surface);
+		background: var(--ui-surface-paint);
 		color: var(--color-base-content);
-		box-shadow: -35px 0 90px rgb(0 0 0 / 0.5), var(--ui-edge);
+		box-shadow: var(--ui-edge), -35px 0 90px rgb(0 0 0 / 0.5);
 		opacity: 1;
 		transform: none;
 		transform-origin: right center;
@@ -236,12 +243,15 @@
 			border-left: 0;
 			border-radius: var(--r-lg) var(--r-lg) 0 0;
 			corner-shape: var(--s-corner);
-			background: var(--ui-surface-paint), var(--color-base-300);
+			--ui-paint-source: var(--color-base-300);
+			--ui-paint-source-hover: var(--color-base-300);
+			--ui-paint-source-selected: var(--color-base-300);
+			background: var(--ui-surface-paint);
 			box-shadow:
+				var(--ui-edge),
 				0 -1px 0 var(--color-border),
 				inset 0 2px 0 var(--_ui-sheet-accent),
-				0 -18px 40px rgb(0 0 0 / 0.35),
-				var(--ui-edge);
+				0 -18px 40px rgb(0 0 0 / 0.35);
 		}
 
 		:scope:not([open]) {

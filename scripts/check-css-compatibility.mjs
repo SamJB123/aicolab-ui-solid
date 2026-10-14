@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises'
 
 const read = (path) => readFile(new URL(path, import.meta.url), 'utf8')
 
-const [resolver, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit, callout, flowMap, richList, properties, themeDefaults] = await Promise.all([
+const [resolver, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit, callout, flowMap, richList] = await Promise.all([
 	read('../src/resolver.css'),
 	read('../src/molecules/accordion/styles.css'),
 	read('../src/atoms/select-control/styles.css'),
@@ -21,8 +21,6 @@ const [resolver, accordion, selectControl, button, formControl, iconButton, hold
 	read('../src/molecules/callout/styles.css'),
 	read('../src/organisms/flow-map/styles.css'),
 	read('../src/molecules/rich-list/styles.css'),
-	read('../src/properties.css'),
-	read('../src/theme-defaults.css'),
 ])
 
 const requireAll = (source, expressions, contract) => {
@@ -66,34 +64,50 @@ requireAll(
 	'frontier resolver boundary',
 )
 
-/* The surface treatment ladder (--s-*): every anchor registered with a flat
-   initial, the two derived roles assigned on the theme root, and the treated
-   edge resolved per component. A theme that sets none of them must paint
-   exactly as before. */
+/* The surface ladder: the resolver works the surface paint and the edge out
+   of the theme's --s-* choices for treated elements and plain plates alike
+   (both paths, the frontier one collapsing the rest paint to the flat
+   colour), and the exemplar atom paints the two roles where it painted its
+   surface and its ring. */
 requireAll(
-	properties,
+	resolver,
 	[
-		/@property --s-gradient \{\n\tsyntax: "<number>";\n\tinherits: true;\n\tinitial-value: 0;/,
-		/@property --s-ring-inner \{\n\tsyntax: "<length>";\n\tinherits: true;\n\tinitial-value: 0px;/,
-		/@property --s-ring-gap \{\n\tsyntax: "<length>";\n\tinherits: true;\n\tinitial-value: 0px;/,
-		/@property --s-ring-outer \{\n\tsyntax: "<length>";\n\tinherits: true;\n\tinitial-value: 0px;/,
-		/@property --s-bevel \{\n\tsyntax: "<number>";\n\tinherits: true;\n\tinitial-value: 0;/,
-		/@property --s-stud \{\n\tsyntax: "<length>";\n\tinherits: true;\n\tinitial-value: 0px;/,
-		/@property --s-corner \{\n\tsyntax: "<custom-ident>";\n\tinherits: true;\n\tinitial-value: round;/,
-		/@property --s-lift \{\n\tsyntax: "<length>";\n\tinherits: true;\n\tinitial-value: 0px;/,
-		/@property --s-shadow-alpha \{\n\tsyntax: "<number>";\n\tinherits: true;\n\tinitial-value: 0;/,
-		/@property --ui-surface-paint \{\n\tsyntax: "\*";/,
-		/@property --ui-edge \{\n\tsyntax: "\*";/,
+		/:where\(\[data-ui-plate\]\)/,
+		/:where\(\[data-ui-plate\], \[data-ui-color-base\]\)/,
+		/* The rim is solid: the theme's rim on a plain plate, the family colour on a treated one. */
+		/--ui-edge-source: var\(--color-rim\);/,
+		/--ui-edge-source: var\(--ui-color\);/,
+		/--ui-surface-paint: var\(--ui-studs\), var\(--ui-shine\);/,
+		/--ui-surface-paint: if\(\n\t\t\tstyle\(--s-grade: 0\): if\(style\(--s-stud: 0px\): var\(--ui-paint-source\); else: var\(--ui-studs\), var\(--ui-shine\)\);/,
+		/--ui-edge:\n/,
+		/--ui-edge-hover:\n/,
+		/--ui-edge-selected:\n/,
+		/--ui-edge-disabled: 0 0 0 0 transparent;/,
+		/var\(--s-grade\)/,
+		/var\(--s-grade-angle\)/,
+		/var\(--s-edge-inner\)/,
+		/var\(--s-edge-gap\)/,
+		/var\(--s-edge-outer\)/,
+		/var\(--s-bevel\)/,
+		/var\(--s-stud\)/,
+		/var\(--s-shadow\)/,
 	],
-	'surface treatment anchors',
+	'surface ladder resolver',
 )
 requireAll(
-	themeDefaults,
-	[/--ui-surface-paint:\n\t\t\tradial-gradient\(/, /--ui-edge:\n\t\t\t0 0 0 var\(--s-ring-inner\)/],
-	'surface treatment roles on the theme root',
+	button,
+	[
+		/background: var\(--ui-surface-paint\);/,
+		/background: var\(--ui-surface-paint-hover\);/,
+		/background: var\(--ui-surface-paint-disabled\);/,
+		/var\(--ui-edge\),/,
+		/var\(--ui-edge-hover\),/,
+		/var\(--ui-edge-disabled\),/,
+		/corner-shape: var\(--s-corner\);/,
+		/translate: 0 calc\(-1 \* var\(--s-lift\)\);/,
+	],
+	'button paints the surface ladder',
 )
-requireAll(resolver, [/--ui-edge:\n\t\t0 0 0 var\(--s-ring-inner\) color-mix\(in oklab, var\(--ui-border\) 70%, black\)/], 'treated edge in the resolver')
-
 requireAll(
 	accordion,
 	[
@@ -221,8 +235,8 @@ requireAll(
 		/--_ui-acc-divider: attr\(data-ui-acc-divider type\(<color>\), var\(--ui-acc-divider, var\(--color-border\)\)\)/,
 		/--_ui-acc-icon-ink: var\(--ui-acc-icon-ink, var\(--color-primary\)\)/,
 		/--_ui-acc-icon-ink: attr\(data-ui-acc-icon-ink type\(<color>\), var\(--ui-acc-icon-ink, var\(--color-primary\)\)\)/,
-		/* Treated items paint the surface⇄ink role pair. */
-		/background: var\(--ui-surface\);\n\t\tcolor: var\(--ui-ink\);/,
+		/* Treated items paint the surface⇄ink role pair (the surface through its paint). */
+		/background: var\(--ui-surface-paint\);\n\t\tcolor: var\(--ui-ink\);/,
 		/* Mode carriers sit between the public knob and the context default. */
 		/--_ui-acc-pad-inline: var\(--ui-acc-pad-inline, var\(--ui-accordion-pad-inline, 1rem\)\)/,
 		/--_ui-acc-radius: attr\(data-ui-acc-radius type\(<length-percentage>\), var\(--ui-acc-radius, var\(--ui-accordion-radius, var\(--r-md\)\)\)\)/,
@@ -268,6 +282,16 @@ for (const sheet of knobSheets) {
 }
 for (const source of sheetSources.values()) {
 	for (const match of source.matchAll(/@property (--_[\w-]+)/g)) globallyRegistered.add(match[1])
+}
+/* A plate's rim is solid (resolver.css "Surface paint and edge"): no sheet
+   draws the rings and studs from a hairline border, which ui-solid derives
+   as a wash by default. */
+for (const [sheet, source] of sheetSources) {
+	assert.doesNotMatch(
+		source,
+		/--ui-edge-source:\s*(?:var\(--(?:color-border|ui-border)|color-mix\()/,
+		`${sheet.replace('../src/', '')}: a plate's rim must be a solid colour (the theme's rim or the family colour), not a border`,
+	)
 }
 for (const [sheet, source] of sheetSources) {
 	const name = sheet.replace('../src/', '')

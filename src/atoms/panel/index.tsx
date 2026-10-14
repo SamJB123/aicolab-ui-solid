@@ -61,6 +61,7 @@ export function Panel(props: PanelProps) {
 			{...attributes}
 			{...colorTreatmentData(props)}
 			{...knobs.attributes(props)}
+			data-ui-plate=""
 			class={['ui-panel group', props.class]}
 			style={mergeKnobStyle(
 				{

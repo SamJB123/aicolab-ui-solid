@@ -98,6 +98,11 @@
 		--color-border-strong: color-mix(in oklab, var(--color-base-content) 20%, transparent);
 		--color-primary-soft: color-mix(in oklab, var(--color-primary) 14%, transparent);
 		--color-ring: var(--color-primary);
+		/* The rim a finished plate is drawn with (resolver.css "Surface paint
+		   and edge"): the lead colour, solid, as the walking worlds' plates
+		   are rimmed in their gold. Seen only when a theme's surface finish
+		   turns the rings or studs on; a theme may author it. */
+		--color-rim: var(--color-primary);
 		/* Chrome floating over visual media uses the darkest theme anchor as
 		   material and the lightest as ink. It therefore stays legible over an
 		   image/canvas without hardcoding black and white into components. */
@@ -109,63 +114,6 @@
 		--color-overlay-content-muted: color-mix(in oklab, var(--color-overlay-content) 65%, transparent);
 		--color-overlay-border: color-mix(in oklab, var(--color-overlay-content) 14%, transparent);
 		--color-overlay-soft: color-mix(in oklab, var(--color-overlay-content) 12%, transparent);
-
-		/* ── Surface treatment roles, from the --s-* anchors (properties.css) ──
-		   A plate is painted `background: var(--ui-surface-paint), <its surface
-		   colour>` and carries `var(--ui-edge)` on its box-shadow list; the
-		   same two lines in every state rule, over that state's surface.
-		   WHY THE PAINT IS A TRANSLUCENT GRADIENT laid over the surface, not a
-		   gradient OF the surface: the plate's colour reaches a sheet as a
-		   resolver role, a page token or a knob adapter, and only the first
-		   is something a shared rule could match and derive from. Derived
-		   from anchors alone — the lead colour at 20% fading to clear, clear
-		   to black at 10% — the paint composites the same mix over any of
-		   the three, so it belongs with the other anchor-derived washes here
-		   (the overlay tokens above). The resolver re-derives the pair for a
-		   treated element from its own border, as it does its other roles.
-		   Both are invisible at ui-solid's defaults: every gradient stop is
-		   transparent, every ring is zero wide, the shadow has no alpha.
-		   The paint: four corner studs in the strong border colour (a radius
-		   of --s-stud, so none at 0), then the gradient scaled by
-		   --s-gradient at the angle --s-angle. */
-		--ui-surface-paint:
-			radial-gradient(
-				circle at calc(2 * var(--s-stud)) calc(2 * var(--s-stud)),
-				var(--color-border-strong) 0 var(--s-stud),
-				transparent calc(var(--s-stud) * 1.3)
-			),
-			radial-gradient(
-				circle at calc(100% - 2 * var(--s-stud)) calc(2 * var(--s-stud)),
-				var(--color-border-strong) 0 var(--s-stud),
-				transparent calc(var(--s-stud) * 1.3)
-			),
-			radial-gradient(
-				circle at calc(2 * var(--s-stud)) calc(100% - 2 * var(--s-stud)),
-				var(--color-border-strong) 0 var(--s-stud),
-				transparent calc(var(--s-stud) * 1.3)
-			),
-			radial-gradient(
-				circle at calc(100% - 2 * var(--s-stud)) calc(100% - 2 * var(--s-stud)),
-				var(--color-border-strong) 0 var(--s-stud),
-				transparent calc(var(--s-stud) * 1.3)
-			),
-			linear-gradient(
-				var(--s-angle),
-				color-mix(in oklab, var(--color-primary) calc(var(--s-gradient) * 20%), transparent) 0%,
-				transparent 45%,
-				color-mix(in oklab, black calc(var(--s-gradient) * 10%), transparent) 100%
-			);
-		/* The edge: an inner ring in the strong border deepened, a gap ring in
-		   the page shade, an outer ring in the strong border; a highlight along
-		   the top and a shade along the bottom inside, by --s-bevel; and the
-		   shadow the plate casts. */
-		--ui-edge:
-			0 0 0 var(--s-ring-inner) color-mix(in oklab, var(--color-border-strong) 70%, black),
-			0 0 0 calc(var(--s-ring-inner) + var(--s-ring-gap)) color-mix(in oklab, var(--color-base-200) 70%, black),
-			0 0 0 calc(var(--s-ring-inner) + var(--s-ring-gap) + var(--s-ring-outer)) var(--color-border-strong),
-			inset 0 1px 0 color-mix(in oklab, var(--color-border-strong) calc(var(--s-bevel) * 45%), transparent),
-			inset 0 -2px 6px color-mix(in oklab, black calc(var(--s-bevel) * 35%), transparent),
-			0 var(--s-shadow-y) var(--s-shadow-blur) color-mix(in oklab, black calc(var(--s-shadow-alpha) * 100%), transparent);
 	}
 
 	body {

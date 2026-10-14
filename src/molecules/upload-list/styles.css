@@ -38,12 +38,23 @@
 		border: 1px solid var(--color-border);
 		border-radius: var(--_ui-uploads-radius);
 		corner-shape: squircle;
-		background: var(--color-base-100);
+		/* A row is a PLATE (the component marks it data-ui-plate): it paints
+		   the surface paint and the edge (resolver.css "Surface paint and
+		   edge") where it paints its surface; treated, its sources are the
+		   list's roles. */
+		background: var(--ui-surface-paint);
+		box-shadow: var(--ui-edge);
 	}
 
 	:scope[data-ui-color-base] .ui-uploads-row {
+		--ui-paint-source: var(--ui-surface);
+		--ui-paint-source-hover: var(--ui-surface-hover);
+		--ui-paint-source-selected: var(--ui-surface-selected);
+		--ui-edge-source: var(--ui-color);
+		--ui-gap-source: var(--ui-context-surface);
+		--ui-shade-source: var(--ui-bright-color);
 		border-color: var(--ui-border);
-		background: var(--ui-surface);
+		background: var(--ui-surface-paint);
 		color: var(--ui-ink);
 	}
 
@@ -93,11 +104,13 @@
 
 	.ui-uploads-action { flex: none; }
 
+	/* Overlay chrome is translucent by design: no plate finish over media. */
 	@container ui-treatment-context style(--ui-environment: overlay) {
 		.ui-uploads-row {
 			border-color: var(--color-overlay-border);
 			background: var(--color-overlay-soft);
 			color: var(--color-overlay-content);
+			box-shadow: none;
 		}
 		.ui-uploads-detail,
 		.ui-uploads-state { color: var(--color-overlay-content-muted); }

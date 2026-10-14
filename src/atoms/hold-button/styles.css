@@ -28,11 +28,14 @@
 		min-height: var(--_ui-hold-size);
 		border: 2px solid var(--ui-border);
 		border-radius: var(--_ui-hold-radius);
-		/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
 		corner-shape: var(--s-corner);
-		background: var(--ui-surface-paint), var(--ui-surface);
+		/* A plate: the surface paint and the edge (resolver.css "Surface
+		   paint and edge") where the surface is painted; the theme's lift on
+		   hover. (This shadow read var(--ui-glow), a role defined nowhere, so
+		   it computed to none; the edge takes its place.) */
+		background: var(--ui-surface-paint);
 		color: var(--ui-ink);
-		box-shadow: var(--ui-glow), var(--ui-edge);
+		box-shadow: var(--ui-edge);
 		font-family: var(--font-label);
 		font-size: var(--t-xs);
 		font-weight: 700;
@@ -44,10 +47,12 @@
 		transition:
 			background 140ms ease,
 			color 140ms ease,
+			translate 140ms ease,
 			transform 180ms linear(0, 0.4, 0.82, 1.1, 1);
 	}
 
-	:scope:active { background: var(--ui-surface-paint), var(--ui-surface-active); transform: scale(0.94); }
+	:scope:hover:not(:disabled) { translate: 0 calc(-1 * var(--s-lift)); }
+	:scope:active { background: var(--ui-surface-paint-active); box-shadow: var(--ui-edge-active); transform: scale(0.94); }
 	:scope:focus-visible { outline: 2px solid var(--_ui-hold-focus-ring); outline-offset: 3px; }
 	:scope:disabled { cursor: not-allowed; opacity: 0.45; }
 

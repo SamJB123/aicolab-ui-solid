@@ -104,6 +104,7 @@ export function Facets(props: {
 			class={['facets', props.class]}
 			{...colorTreatmentData(props)}
 			{...knobs.attributes(props)}
+			data-ui-plate=""
 			style={mergeKnobStyle(knobs.style(props), undefined)}
 		>
 			<div
@@ -136,6 +137,7 @@ export function Facets(props: {
 								aria-controls={`facets-${uid}-panel`}
 								tabindex={active() === i() ? 0 : -1}
 								class={{ 'facets-tab': true, 'facets-tab-active': active() === i() }}
+								data-ui-plate=""
 								style={active() === i() && isPill() ? `anchor-name:${anchor}` : undefined}
 								ref={el}
 								onClick={() => select(i())}
@@ -147,7 +149,7 @@ export function Facets(props: {
 				</For>
 				{/* Sliding indicator for the pill variants — anchor-positioned to the
 				    active tab; where unsupported the active tab carries the pill look. */}
-				<span class="facets-pill" style={`position-anchor:${anchor}`} aria-hidden="true" />
+				<span class="facets-pill" data-ui-plate="" style={`position-anchor:${anchor}`} aria-hidden="true" />
 			</div>
 			<div class="facets-body">
 				<Show when={props.rail !== false}>

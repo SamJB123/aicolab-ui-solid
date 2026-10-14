@@ -5,7 +5,8 @@
 // theme and forces its scheme, so ui-solid re-derives every role inside it.
 // Composed only through public component props and presentation roles.
 
-import { createSignal, For, Show } from 'solid-js'
+import type { JSX } from '@solidjs/web'
+import { createSignal, For, Match, Show, Switch } from 'solid-js'
 import { Field, IconButton, Segmented } from '../controls'
 import { Accordion, AccordionItem, Mark } from '../marketing'
 import {
@@ -118,7 +119,7 @@ export function Catalogue(props: {
 							<span class="ui-studio-pane-tag" aria-hidden="true">
 								{scheme}
 							</span>
-							<Specimens scheme={scheme} treatment={treatment()} ladders={props.ladders} />
+							<Specimens scheme={scheme} treatment={treatment()} ladders={props.ladders} themeStyle={props.themeStyle} />
 						</section>
 					)}
 				</For>
@@ -127,7 +128,31 @@ export function Catalogue(props: {
 	)
 }
 
-function Specimens(props: { scheme: Scheme; treatment: Treatment; ladders: readonly (SizeLadder & { steps: RegisteredToken[] })[] }) {
+/** One finished plate beside a treated button, a soft button and a chip:
+ *  what the surface finish in force where this sits does to every plate.
+ *  The studio's chrome passes the draft's finish as `style`; a preview pane
+ *  already carries it. */
+export function PlateSpecimen(props: { style?: JSX.CSSProperties }) {
+	return (
+		<div class="ui-studio-plates" style={props.style}>
+			<span class="ui-studio-plate-sample" data-ui-plate="">
+				Plain plate
+			</span>
+			<Button colorBase="primary">Primary</Button>
+			<Button colorBase="neutral" variant="soft">
+				Soft
+			</Button>
+			<Chip tone="accent">chip</Chip>
+		</div>
+	)
+}
+
+function Specimens(props: {
+	scheme: Scheme
+	treatment: Treatment
+	ladders: readonly (SizeLadder & { steps: RegisteredToken[] })[]
+	themeStyle: Record<`--${string}`, string>
+}) {
 	const label = () => `${props.treatment.colorBase} · ${props.treatment.colorLevel} · ${props.treatment.variant}`
 	return (
 		<div class="ui-studio-specimens">
@@ -237,41 +262,44 @@ function Specimens(props: { scheme: Scheme; treatment: Treatment; ladders: reado
 
 			<For each={props.ladders}>
 				{(ladder) => (
-					<Show
-						when={ladder.specimen !== 'surface'}
-						fallback={
-							<>
-								<Rule label={ladder.label} />
-								{/* One specimen for the whole treatment: a plate painted the
-								    way every component sheet paints, and the treated pair. */}
-								<div class="ui-studio-surface-sample">
-									<span class="ui-studio-surface-plate">A plate</span>
-									<span class="ui-studio-surface-plate" data-ui-color-base={props.treatment.colorBase} data-ui-color-level={props.treatment.colorLevel} data-ui-color-variant={props.treatment.variant}>
-										Treated
-									</span>
-								</div>
-							</>
-						}
-					>
+					<>
 						<Rule label={ladder.label} />
-						<div class={ladder.specimen === 'type' ? 'ui-studio-type-ladder' : 'ui-studio-radius-ladder'}>
-							<For each={ladder.steps}>
-								{(step) => (
-									<div class="ui-studio-ladder-cell">
-										<Show
-											when={ladder.specimen === 'type'}
-											fallback={<span class="ui-studio-radius-box" style={{ 'border-radius': `var(${step.token})` }} />}
-										>
-											<span class="ui-studio-type-step" style={{ 'font-size': `var(${step.token})` }}>
-												Aa
-											</span>
-										</Show>
-										<code>{step.token}</code>
+						<Switch>
+							<Match when={ladder.specimen === 'surface'}>
+								<div class="ui-studio-surface-ladder">
+									<PlateSpecimen />
+									<div class="ui-studio-surface-steps">
+										<For each={ladder.steps}>
+											{(step) => (
+												<code>
+													{step.token}: {props.themeStyle[step.token] ?? step.initial}
+												</code>
+											)}
+										</For>
 									</div>
-								)}
-							</For>
-						</div>
-					</Show>
+								</div>
+							</Match>
+							<Match when={ladder.specimen !== 'surface'}>
+								<div class={ladder.specimen === 'type' ? 'ui-studio-type-ladder' : 'ui-studio-radius-ladder'}>
+									<For each={ladder.steps}>
+										{(step) => (
+											<div class="ui-studio-ladder-cell">
+												<Show
+													when={ladder.specimen === 'type'}
+													fallback={<span class="ui-studio-radius-box" style={{ 'border-radius': `var(${step.token})` }} />}
+												>
+													<span class="ui-studio-type-step" style={{ 'font-size': `var(${step.token})` }}>
+														Aa
+													</span>
+												</Show>
+												<code>{step.token}</code>
+											</div>
+										)}
+									</For>
+								</div>
+							</Match>
+						</Switch>
+					</>
 				)}
 			</For>
 		</div>

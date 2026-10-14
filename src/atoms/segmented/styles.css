@@ -79,11 +79,11 @@
 	gap: var(--_ui-seg-gap);
 	padding: var(--_ui-seg-track-pad);
 	border-radius: var(--_ui-seg-radius);
-	/* The surface treatment (theme-defaults.css), inert at ui-solid's own
-	   values: the track is the plate; the active pill wears the edge too. */
+	/* The track is a WELL, not a plate: flat surface, single ring (resolver.css
+	   "Surface paint and edge"); only the theme's corner shape reaches it. */
 	corner-shape: var(--s-corner);
-	background: var(--ui-surface-paint), var(--_ui-seg-track-surface);
-	box-shadow: inset 0 0 0 1px var(--color-border), var(--ui-edge);
+	background: var(--_ui-seg-track-surface);
+	box-shadow: inset 0 0 0 1px var(--color-border);
 	overflow-x: auto;
 	overscroll-behavior-x: contain;
 	scrollbar-width: none;
@@ -96,6 +96,19 @@
 }
 :scope::-webkit-scrollbar {
 	display: none;
+}
+/* The active indicator (the pill, or the active tab where anchor positioning
+   is unavailable) is a PLATE: the component marks the tabs and the pill
+   data-ui-plate; their paint source is the active surface adapter, and
+   inside a treated switcher their rim is its family colour. */
+.seg-btn,
+.seg-pill {
+	--ui-paint-source: var(--_ui-seg-active-surface);
+	--ui-paint-source-hover: var(--_ui-seg-active-surface);
+	--ui-paint-source-selected: var(--_ui-seg-active-surface);
+}
+:scope[data-ui-color-base] :is(.seg-btn, .seg-pill) {
+	--ui-edge-source: var(--ui-color);
 }
 .seg-btn {
 	position: relative;
@@ -121,11 +134,12 @@
 .seg-btn-active {
 	color: var(--_ui-seg-active-ink);
 	/* Fallback indicator where anchor positioning is unavailable. */
-	background: var(--_ui-seg-active-surface);
-	box-shadow: inset 0 0 0 1px var(--color-border-strong);
+	background: var(--ui-surface-paint);
+	box-shadow: var(--ui-edge), inset 0 0 0 1px var(--color-border-strong);
 }
 :scope[data-ui-color-base] .seg-btn-active {
 	box-shadow:
+		var(--ui-edge),
 		inset 0 0 0 1px var(--ui-border-selected),
 		0 4px 18px -6px var(--ui-surface-glow-hover);
 }
@@ -150,8 +164,8 @@
 		height: anchor-size(height);
 		border-radius: var(--_ui-seg-radius);
 		corner-shape: var(--s-corner);
-		background: var(--ui-surface-paint), var(--_ui-seg-active-surface);
-		box-shadow: inset 0 0 0 1px var(--color-border-strong), var(--ui-edge);
+		background: var(--ui-surface-paint);
+		box-shadow: var(--ui-edge), inset 0 0 0 1px var(--color-border-strong);
 		transition:
 			top 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
 			left 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
@@ -160,9 +174,9 @@
 	}
 	:scope[data-ui-color-base] .seg-pill {
 		box-shadow:
+			var(--ui-edge),
 			inset 0 0 0 1px var(--ui-border-selected),
-			0 4px 18px -6px var(--ui-surface-glow-hover),
-			var(--ui-edge);
+			0 4px 18px -6px var(--ui-surface-glow-hover);
 	}
 }
 

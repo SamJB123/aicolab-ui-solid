@@ -42,7 +42,7 @@ export function BottomNavigationCentreContent(props: {
 }) {
 	return (
 		<>
-			<span class="ui-bottom-navigation-centre-chip" data-active={props.active ? '' : undefined}>
+			<span class="ui-bottom-navigation-centre-chip" data-ui-plate="" data-active={props.active ? '' : undefined}>
 				{props.icon}
 			</span>
 			<span class="ui-bottom-navigation-item-label">{props.label}</span>

@@ -60,11 +60,9 @@
 		overflow: auto;
 		overscroll-behavior: contain;
 		border: var(--_ui-toolpanel-border-width) double var(--_ui-toolpanel-accent);
-		/* The surface treatment (theme-defaults.css), inert at ui-solid's own
-		   values; the squircle below is this panel's own choice and stays. */
-		background: var(--ui-surface-paint), var(--color-overlay-surface);
+		background: var(--color-overlay-surface);
 		color: var(--color-overlay-content);
-		box-shadow: 8px 10px 0 color-mix(in oklab, var(--color-overlay-surface) 50%, transparent), var(--ui-edge);
+		box-shadow: 8px 10px 0 color-mix(in oklab, var(--color-overlay-surface) 50%, transparent);
 		font-family: var(--font-label);
 		font-size: var(--t-xs);
 		font-weight: 700;

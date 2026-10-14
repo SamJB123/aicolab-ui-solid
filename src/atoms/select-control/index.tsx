@@ -53,6 +53,7 @@ export function SelectControl(props: SelectProps) {
 			{...attributes}
 			{...colorTreatmentData(props)}
 			{...knobs.attributes(props)}
+			data-ui-plate=""
 			class={['ui-select-control', props.class]}
 			style={mergeKnobStyle(knobs.style(props), props.style)}
 		>

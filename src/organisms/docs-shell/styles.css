@@ -306,9 +306,13 @@
 		border: 0;
 		border-top: 1px solid var(--color-border);
 		border-radius: var(--r-lg, 14px) var(--r-lg, 14px) 0 0;
-		background: var(--color-base-100);
+		corner-shape: var(--s-corner);
+		/* The compass sheet is a PLATE (the component marks it data-ui-plate):
+		   the surface paint and the edge (resolver.css "Surface paint and
+		   edge") where the surface and the shadow are painted. */
+		background: var(--ui-surface-paint);
 		color: var(--color-base-content);
-		box-shadow: 0 -18px 40px rgb(0 0 0 / 0.25);
+		box-shadow: var(--ui-edge), 0 -18px 40px rgb(0 0 0 / 0.25);
 		overflow-y: auto;
 		overscroll-behavior: contain;
 		display: none;

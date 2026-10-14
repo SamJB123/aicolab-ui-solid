@@ -116,6 +116,7 @@
 		text-align: left;
 		color: inherit;
 		border-radius: var(--_ui-rl-row-radius);
+		corner-shape: var(--s-corner);
 		transition:
 			background-color 160ms cubic-bezier(0.4, 0, 0.2, 1),
 			color 160ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -135,7 +136,9 @@
 	/* Surfaces and inks travel as PAIRS: every state that paints a row
 	   surface re-assigns ALL the child ink adapters against it — title,
 	   description, leading, trailing, and the metadata voices (which take
-	   the paired ink's muted/faint companions). */
+	   the paired ink's muted/faint companions). A painted row is a PLATE:
+	   it paints the surface paint and the edge (resolver.css "Surface paint
+	   and edge") where it paints its surface and its ring. */
 	@media (hover: hover) {
 		:is(button, a).ui-rich-list-item:hover:not([data-selected]) {
 			--_ui-rl-title-ink: var(--ui-ink-selected);
@@ -144,9 +147,10 @@
 			--_ui-rl-trailing-ink: var(--ui-ink-selected);
 			--_ui-rl-metadata-primary-ink: color-mix(in oklab, var(--ui-ink-selected) 78%, transparent);
 			--_ui-rl-metadata-secondary-ink: color-mix(in oklab, var(--ui-ink-selected) 60%, transparent);
-			background: var(--ui-surface-selected);
+			background: var(--ui-surface-paint-selected);
 			color: var(--ui-ink-selected);
 			box-shadow:
+				var(--ui-edge-selected),
 				inset 0 0 0 1px var(--ui-border-hover),
 				0 4px 18px -10px var(--ui-surface-glow-hover);
 		}
@@ -158,9 +162,10 @@
 			--_ui-rl-trailing-ink: var(--ui-ink-hover);
 			--_ui-rl-metadata-primary-ink: color-mix(in oklab, var(--ui-ink-hover) 78%, transparent);
 			--_ui-rl-metadata-secondary-ink: color-mix(in oklab, var(--ui-ink-hover) 60%, transparent);
-			background: var(--ui-surface-hover);
+			background: var(--ui-surface-paint-hover);
 			color: var(--ui-ink-hover);
 			box-shadow:
+				var(--ui-edge-hover),
 				inset 0 0 0 1px var(--ui-border-hover),
 				0 4px 24px -7px var(--ui-surface-glow-hover);
 		}
@@ -173,13 +178,12 @@
 		--_ui-rl-trailing-ink: var(--ui-ink);
 		--_ui-rl-metadata-primary-ink: var(--ui-ink-muted);
 		--_ui-rl-metadata-secondary-ink: var(--ui-ink-faint);
-		/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
-		background: var(--ui-surface-paint), var(--ui-surface);
+		background: var(--ui-surface-paint);
 		color: var(--ui-ink);
 		box-shadow:
+			var(--ui-edge),
 			inset 0 0 0 1px var(--ui-border),
-			0 4px 18px -10px var(--ui-surface-glow),
-			var(--ui-edge);
+			0 4px 18px -10px var(--ui-surface-glow);
 	}
 
 	:is(button, a).ui-rich-list-item:focus-visible {

@@ -89,7 +89,7 @@ export function ListEditor<T>(props: ListEditorProps<T>) {
 			<ol class="ui-list-editor-list">
 				<For each={props.items} keyed={(item) => props.getKey(item, props.items.indexOf(item))}>
 					{(item, index) => (
-						<li class="ui-list-editor-row">
+						<li class="ui-list-editor-row" data-ui-plate="">
 							<div class="ui-list-editor-fields">{props.renderItem(item(), (next) => replace(index(), next), index())}</div>
 							<span class="ui-list-editor-actions">
 								<Show when={props.reorder !== false}>

@@ -239,7 +239,7 @@ export function RaisedSheet(props: {
 }) {
 	const titleId = `ui-raised-sheet-${createUniqueId()}`
 	return (
-		<section class={['ui-raised-sheet', props.class]} role="dialog" aria-labelledby={titleId}>
+		<section class={['ui-raised-sheet', props.class]} data-ui-plate="" role="dialog" aria-labelledby={titleId}>
 			<header class="ui-raised-sheet-header">
 				<h2
 					class="ui-raised-sheet-title"

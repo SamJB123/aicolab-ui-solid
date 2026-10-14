@@ -160,30 +160,39 @@
 			color: var(--color-base-content-muted);
 		}
 
+		/* The raised centre chip is a PLATE (the component marks it
+		   data-ui-plate): its paint sources are the chip pair's surfaces, its
+		   edge source the active surface the ring is drawn in, and it paints
+		   the surface paint and the edge (resolver.css "Surface paint and
+		   edge") where it paints its surface and its ring. */
 		.ui-bottom-navigation-centre-chip {
+			--ui-paint-source: var(--_ui-bnav-chip-surface);
+			--ui-paint-source-hover: var(--_ui-bnav-chip-surface);
+			--ui-paint-source-selected: var(--_ui-bnav-chip-active-surface);
+			--ui-edge-source: var(--_ui-bnav-chip-active-surface);
 			display: grid;
 			place-items: center;
 			width: var(--_ui-bnav-chip-size);
 			height: var(--_ui-bnav-chip-size);
 			margin-top: calc(var(--_ui-bnav-chip-size) * -0.5333);
 			border-radius: var(--r-pill);
-			/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
-			background: var(--ui-surface-paint), var(--_ui-bnav-chip-surface);
+			corner-shape: var(--s-corner);
+			background: var(--ui-surface-paint);
 			color: var(--_ui-bnav-chip-ink);
 			box-shadow:
+				var(--ui-edge),
 				0 0 0 1px color-mix(in oklab, var(--_ui-bnav-chip-active-surface) 45%, transparent),
 				inset 0 1px 0 color-mix(in oklab, white 14%, transparent),
-				0 8px 20px -8px rgb(0 0 0 / 0.5),
-				var(--ui-edge);
+				0 8px 20px -8px rgb(0 0 0 / 0.5);
 		}
 
 		.ui-bottom-navigation-centre-chip[data-active] {
-			background: var(--ui-surface-paint), var(--_ui-bnav-chip-active-surface);
+			background: var(--ui-surface-paint-selected);
 			color: var(--_ui-bnav-chip-active-ink);
 			box-shadow:
+				var(--ui-edge-selected),
 				0 0 0 1px var(--_ui-bnav-chip-active-surface),
-				0 0 1.25rem var(--_ui-bnav-chip-active-surface),
-				var(--ui-edge);
+				0 0 1.25rem var(--_ui-bnav-chip-active-surface);
 		}
 
 		.ui-bottom-navigation-centre-chip > * {

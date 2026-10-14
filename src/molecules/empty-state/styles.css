@@ -31,13 +31,17 @@
 		justify-items: center;
 		padding: var(--_ui-empty-pad);
 		border-radius: var(--r-md);
+		corner-shape: var(--s-corner);
 		text-align: center;
 		color: var(--color-base-content-muted);
 	}
 
+	/* A treated empty state is a plate: the surface paint and the edge
+	   (resolver.css "Surface paint and edge") where the surface is painted. */
 	:scope[data-ui-color-base] {
-		background: var(--ui-surface);
+		background: var(--ui-surface-paint);
 		color: var(--ui-ink-muted);
+		box-shadow: var(--ui-edge);
 	}
 
 	/* Glyph knob wires land ON the glyph span (the Meter fill-element

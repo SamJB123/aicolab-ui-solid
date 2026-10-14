@@ -92,6 +92,7 @@ export function ArtifactCard(props: ArtifactCardProps) {
 			{...attributes}
 			{...colorTreatmentData(props)}
 			{...knobs.attributes(rootValues())}
+			data-ui-plate=""
 			class={['ui-artifact-card', props.class]}
 			style={mergeKnobStyle(knobs.style(rootValues()), props.style)}
 			data-pinned={props.pinned ? '' : undefined}

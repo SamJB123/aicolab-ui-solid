@@ -23,6 +23,14 @@ const privateResolverProperties = [
 	'--ui-level-light-shift',
 	'--ui-level-chroma-scale',
 	'--ui-family-ink',
+	// The surface ladder's intermediates (resolver.css "Surface paint and
+	// edge"): components paint --ui-surface-paint… and --ui-edge…, and
+	// re-point the --ui-*-source colours; they never assemble the finish.
+	'--ui-stud-ink',
+	'--ui-studs',
+	'--ui-shine',
+	'--ui-shine-hover',
+	'--ui-shine-selected',
 ]
 
 const walk = (directory) => readdirSync(directory).flatMap((name) => {

@@ -69,6 +69,11 @@ not exist and will silently do nothing. Three styling surfaces exist:
      `--color-neutral`, `--color-info`, `--color-success`, `--color-warning`,
      and `--color-error`, each paired with `--color-*-content`
    - hairlines `--color-border` / `--color-border-strong`
+   - the surface finish `--s-grade`, `--s-grade-angle`, `--s-edge-inner`,
+     `--s-edge-gap`, `--s-edge-outer`, `--s-bevel`, `--s-stud`, `--s-shadow`,
+     `--s-lift`, `--s-corner` — how every plate is finished (a theme sets
+     them; components read the derived `--ui-surface-paint` / `--ui-edge`;
+     never paint a shine, ring or bevel by hand)
 	- font roles `--font-display` / `--font-sans` / `--font-data`, plus
      optional `--font-label` for the micro-label voice (eyebrows, chips,
      panel kickers, field labels) — unset it falls back to `--font-data`

@@ -144,6 +144,7 @@ export function DataGrid(props: DataGridProps) {
 			{...attributes}
 			{...colorTreatmentData(props)}
 			{...knobs.attributes(props)}
+			data-ui-plate=""
 			class={['ui-grid', props.class]}
 			style={mergeKnobStyle(knobs.style(props), props.style)}
 		>

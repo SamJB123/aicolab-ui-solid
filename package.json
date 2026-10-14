@@ -23,7 +23,6 @@
 		"./themes/crimson-legal.css": "./src/themes/crimson-legal.css",
 		"./themes/night-ochre.css": "./src/themes/night-ochre.css",
 		"./themes/brass.css": "./src/themes/brass.css",
-		"./themes/house-brass.css": "./src/themes/house-brass.css",
 		"./xp": "./src/xp/index.ts",
 		"./xp/styles.css": "./src/xp/styles.css",
 		"./depth-card": "./src/depth-card/index.ts",

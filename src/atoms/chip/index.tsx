@@ -59,6 +59,7 @@ export function Chip(props: ChipProps) {
 				variant: variant(),
 			})}
 			{...knobs.attributes(props)}
+			data-ui-plate=""
 			class={['ui-chip', props.class]}
 			style={mergeKnobStyle(knobs.style(props), props.style)}
 		>

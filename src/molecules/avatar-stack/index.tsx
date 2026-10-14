@@ -83,7 +83,7 @@ export function AvatarStack(
 				)}
 			</For>
 			<Show when={extra() > 0}>
-				<span class="ui-avatar-stack-extra">+{extra()}</span>
+				<span class="ui-avatar-stack-extra" data-ui-plate="">+{extra()}</span>
 			</Show>
 		</div>
 	)

@@ -6,10 +6,10 @@
    dialogue's moss green is the second family; the leather of the plates'
    warm shadows the third. Success is the HUD's own live green.
 
-   Anchors only — the ui-solid ladder derives every surface, border and
-   content role per scheme. What this theme cannot carry is the HUD's
-   ornament (the double gold rings, the corner studs, the squircle corners,
-   the plate gradient): those are component paint, not theme tokens.
+   Anchors and ladders only — the ui-solid resolver derives every surface,
+   border and content role per scheme, and every plate's shine, rings,
+   bevel, studs, shadow, lift and corner shape from the surface ladder
+   (properties.css --s-*). Nothing here is painted by hand.
 
    Faces: Source Serif 4 (display; the face the report sites and the HUD's
    headings use) over the ui-solid sans and data defaults. The consumer loads
@@ -32,37 +32,39 @@
 	--color-success: light-dark(#3d8634, #7fd67a);
 
 	/* The rims are gold, not the text ink at a tenth: the HUD edges every
-	   plate in the lead colour (a 45% wash for the quiet border, the full
-	   gold for the strong one). ui-solid derives these two from the text
-	   ink by default; a theme may author them, and this one does. */
+	   plate in the lead colour. ui-solid derives these two from the text ink
+	   by default; a theme may author them, and this one does. The quiet
+	   border is the gold mixed INTO the surface (an opaque colour, never a
+	   wash over whatever lies beneath); the strong border is the full gold. */
 	--color-border: light-dark(
-		color-mix(in oklab, #ae6a00 45%, transparent),
-		color-mix(in oklab, #e8b04c 45%, transparent)
+		color-mix(in oklab, #ae6a00 45%, #f8eed6),
+		color-mix(in oklab, #e8b04c 45%, #1b160b)
 	);
 	--color-border-strong: light-dark(#ae6a00, #e8b04c);
 
 	--font-display: "Source Serif 4", "Iowan Old Style", Georgia, "Times New Roman", serif;
-
-	/* The plates' treatment, as the HUD draws them: the lead colour washed
-	   across the plate, three rings at the edge (a deep gold, a dark gap, the
-	   gold), a highlight and a shade inside, gold studs in the corners,
-	   squircle corners, a pixel's lift on hover, and a long soft shadow. */
-	--s-gradient: 1;
-	--s-angle: 160deg;
-	--s-ring-inner: 1.5px;
-	--s-ring-gap: 1.5px;
-	--s-ring-outer: 1px;
-	--s-bevel: 1;
-	--s-stud: 2px;
-	--s-corner: squircle;
-	--s-lift: 1px;
-	--s-shadow-y: 10px;
-	--s-shadow-blur: 24px;
-	--s-shadow-alpha: 0.55;
 
 	--r-xs: 5px;
 	--r-sm: 7px;
 	--r-md: 10px;
 	--r-lg: 12px;
 	--r-xl: 14px;
+
+	/* The surface ladder (properties.css --s-*): how the HUD finishes a
+	   plate. A full shine from the plate toward the gold at the top left to
+	   the plate toward black at the bottom right; three stacked rings (a
+	   deep-gold line, a near-black gap, the gold); a full inner bevel; a
+	   two-pixel stud in each corner; the long cast shadow; a one-pixel lift
+	   on hover; squircle corners. The resolver works every plate's paint and
+	   edge out of these, so no sheet carries brass of its own. */
+	--s-grade: 1;
+	--s-grade-angle: 160deg;
+	--s-edge-inner: 1.5px;
+	--s-edge-gap: 1.5px;
+	--s-edge-outer: 1px;
+	--s-bevel: 1;
+	--s-stud: 2px;
+	--s-shadow: 1;
+	--s-lift: 1px;
+	--s-corner: squircle;
 }

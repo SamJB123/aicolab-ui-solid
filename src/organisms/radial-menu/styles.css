@@ -170,19 +170,30 @@
 			display 260ms allow-discrete;
 		transition-delay: calc(var(--radial-i) * 35ms);
 	}
+	/* A chip is a PLATE (the component marks it data-ui-plate): its paint
+	   source is the chip surface adapter, inside a treated fan its rim is
+	   the family colour, and it paints the surface paint and the edge
+	   (resolver.css "Surface paint and edge") where it paints its surface
+	   and its ring. */
+	:scope[data-ui-color-base] .ui-radial-chip {
+		--ui-edge-source: var(--ui-color);
+	}
 	.ui-radial-chip {
+		--ui-paint-source: var(--_ui-radial-chip-surface);
+		--ui-paint-source-hover: var(--_ui-radial-chip-surface);
+		--ui-paint-source-selected: var(--_ui-radial-chip-surface);
 		display: grid;
 		place-items: center;
 		width: var(--radial-chip);
 		height: var(--radial-chip);
 		border-radius: var(--r-pill);
-		/* The surface treatment (theme-defaults.css), inert at ui-solid's own values. */
-		background: var(--ui-surface-paint), var(--_ui-radial-chip-surface);
+		corner-shape: var(--s-corner);
+		background: var(--ui-surface-paint);
 		color: var(--_ui-radial-chip-ink);
 		box-shadow:
+			var(--ui-edge),
 			0 0 0 1px var(--color-border-strong),
-			0 10px 24px -8px rgb(0 0 0 / 0.45),
-			var(--ui-edge);
+			0 10px 24px -8px rgb(0 0 0 / 0.45);
 	}
 	.ui-radial-chip > * {
 		width: 1.5rem;
@@ -210,10 +221,9 @@
 	@media (hover: hover) {
 	.ui-radial-item:hover .ui-radial-chip {
 		box-shadow:
+			var(--ui-edge-hover),
 			0 0 0 2px var(--_ui-radial-hover-ring),
-			0 10px 24px -8px rgb(0 0 0 / 0.45),
-			var(--ui-edge);
-		translate: 0 calc(-1 * var(--s-lift));
+			0 10px 24px -8px rgb(0 0 0 / 0.45);
 	}
 }
 

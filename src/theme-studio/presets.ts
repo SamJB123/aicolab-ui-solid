@@ -32,60 +32,33 @@ export type SchemeValues = {
 	error?: string
 }
 
+/** A surface finish (properties.css `--s-*`): the same in both schemes, so a
+ *  card that carries one sets it whole, alongside its scheme's colours. */
+export type ThemeFinish = ReadonlyMap<`--s-${string}`, string>
+
 export type ThemePreset = {
 	name: string
 	/** One-line mood description shown on the swatch card. */
 	note: string
 	values: SchemeValues
+	/** The finish a shipped theme sets; absent, a card leaves the finish as it is. */
+	finish?: ThemeFinish
 }
 
-/** A starting point for the surface treatment ladder (--s-*): the values
- *  of every step, the same in light and dark. */
-export type SurfacePreset = {
-	name: string
-	note: string
-	values: Readonly<Record<`--s-${string}`, string>>
-}
-
-export const SURFACE_PRESETS: SurfacePreset[] = [
-	{
-		name: 'Flat',
-		note: 'ui-solid’s own: no gradient, no rings, no studs, no lift, no cast shadow',
-		values: {
-			'--s-gradient': '0',
-			'--s-angle': '160deg',
-			'--s-ring-inner': '0px',
-			'--s-ring-gap': '0px',
-			'--s-ring-outer': '0px',
-			'--s-bevel': '0',
-			'--s-stud': '0px',
-			'--s-corner': 'round',
-			'--s-lift': '0px',
-			'--s-shadow-y': '0px',
-			'--s-shadow-blur': '0px',
-			'--s-shadow-alpha': '0',
-		},
-	},
-	{
-		// The values themes/brass.css and themes/house-brass.css author.
-		name: 'Brass',
-		note: 'The walking worlds’ plates: washed, triple-ringed, bevelled, studded, squircle, lifted, long shadow',
-		values: {
-			'--s-gradient': '1',
-			'--s-angle': '160deg',
-			'--s-ring-inner': '1.5px',
-			'--s-ring-gap': '1.5px',
-			'--s-ring-outer': '1px',
-			'--s-bevel': '1',
-			'--s-stud': '2px',
-			'--s-corner': 'squircle',
-			'--s-lift': '1px',
-			'--s-shadow-y': '10px',
-			'--s-shadow-blur': '24px',
-			'--s-shadow-alpha': '0.55',
-		},
-	},
-]
+/** The shipped `themes/brass.css` finish (its `--s-*` block is the source;
+ *  this restates it the way the brass cards restate its colours). */
+const BRASS_FINISH: ThemeFinish = new Map<`--s-${string}`, string>([
+	['--s-grade', '1'],
+	['--s-grade-angle', '160deg'],
+	['--s-edge-inner', '1.5px'],
+	['--s-edge-gap', '1.5px'],
+	['--s-edge-outer', '1px'],
+	['--s-bevel', '1'],
+	['--s-stud', '2px'],
+	['--s-shadow', '1'],
+	['--s-lift', '1px'],
+	['--s-corner', 'squircle'],
+])
 
 export const LIGHT_PRESETS: ThemePreset[] = [
 	{
@@ -94,7 +67,7 @@ export const LIGHT_PRESETS: ThemePreset[] = [
 		// chroma-over-contrast rule), the dialogue's moss and the plates'
 		// leather as the pinned families.
 		name: 'Brass Parchment',
-		note: 'Shipped theme — the walking worlds’ parchment, deep gold',
+		note: 'Shipped theme — the walking worlds’ parchment, deep gold, the brass finish',
 		values: {
 			base: '#f8eed6',
 			content: '#2a1f0c',
@@ -103,6 +76,7 @@ export const LIGHT_PRESETS: ThemePreset[] = [
 			secondary: '#2e5a24',
 			accent: '#7a5a2a',
 		},
+		finish: BRASS_FINISH,
 	},
 	{
 		name: 'Honey Pop',
@@ -211,7 +185,7 @@ export const DARK_PRESETS: ThemePreset[] = [
 		// The shipped `themes/brass.css`, dark side: the HUD's plate and cream
 		// ink under the marigold gold, with its moss and leather families.
 		name: 'Brass Plate',
-		note: 'Shipped theme — the walking worlds’ plate, marigold gold',
+		note: 'Shipped theme — the walking worlds’ plate, marigold gold, the brass finish',
 		values: {
 			base: '#1b160b',
 			content: '#fff4dc',
@@ -220,6 +194,7 @@ export const DARK_PRESETS: ThemePreset[] = [
 			secondary: '#9fd68a',
 			accent: '#c9b48a',
 		},
+		finish: BRASS_FINISH,
 	},
 	{
 		name: 'Midnight Hive',
