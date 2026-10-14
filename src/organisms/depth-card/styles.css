@@ -291,6 +291,9 @@
 	padding: 1rem var(--_ui-depth-pad);
 	background: var(--_ui-depth-band-surface);
 	border-radius: var(--_ui-depth-radius) var(--_ui-depth-radius) 0 0;
+	/* The face's corner SHAPE too, or a round band leaves the face's squircle
+	   corners showing past it. */
+	corner-shape: var(--s-corner);
 }
 :scope .dc-sb-title {
 	margin: 0;

@@ -180,6 +180,9 @@
 	:scope .ui-acc-body {
 		padding: 0.9rem var(--_ui-acc-pad-inline) 1.25rem;
 		border-radius: 0 0 var(--_ui-acc-radius) var(--_ui-acc-radius);
+		/* The item's corner SHAPE too, or a round wash leaves the item's
+		   squircle corners showing past it. */
+		corner-shape: var(--s-corner);
 		background: var(--_ui-acc-body-surface);
 		color: var(--_ui-acc-body-ink);
 		line-height: 1.65;
