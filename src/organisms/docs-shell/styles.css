@@ -168,13 +168,16 @@
 	color: var(--color-base-content-muted);
 	font-style: italic;
 }
-:scope a {
+/* A link in running text. A button that happens to be a link (ButtonLink,
+   a router link made from it) keeps the button's own ink and no underline:
+   this sheet's layer outranks the atom's, so prose must leave it alone. */
+:scope a:not(.ui-btn) {
 	color: var(--_ui-prose-accent);
 	text-decoration: underline;
 	text-decoration-color: color-mix(in oklab, var(--_ui-prose-accent) 40%, transparent);
 	text-underline-offset: 0.2em;
 }
-:scope a:hover {
+:scope a:not(.ui-btn):hover {
 	text-decoration-color: var(--_ui-prose-accent);
 }
 }
