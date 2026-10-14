@@ -1,17 +1,21 @@
-/* ── LogoCloud ──
-   Knobs on the usual two wires, assigned on :scope; treated clouds re-pair
-   the text-fallback name ink to the family's faint ink. */
-@property --_ui-logocloud-column-gap {
+/* ── LogoCloud — a marquee of logos ──
+   One row that drifts sideways and loops (the row rendered twice, the
+   second copy hidden from assistive tech, the pair translated by one
+   row's width so the join never shows), fading at its edges, pausing
+   under the pointer or keyboard focus, each logo lifting on hover. Under
+   reduced motion the row wraps and stands still, and the copy is gone.
+   Knobs on the usual two wires, assigned on :scope; the track and the
+   logos read the inheriting adapters. A logo reads on a dark scheme by
+   the treatment its item declares (data-on-dark): `ink` recolours its
+   dark marks to the scheme's ink through the SVG filter the component
+   renders, `tile` sets it on the scheme's light anchor; both are theme
+   colours, so they follow a forced scheme. */
+@property --_ui-logocloud-gap {
 	syntax: "<length>";
-	inherits: false;
+	inherits: true;
 	initial-value: 48px;
 }
-@property --_ui-logocloud-row-gap {
-	syntax: "<length>";
-	inherits: false;
-	initial-value: 32px;
-}
-@property --_ui-logocloud-logo-max-height {
+@property --_ui-logocloud-logo-height {
 	syntax: "<length>";
 	inherits: true;
 	initial-value: 40px;
@@ -21,6 +25,11 @@
 	inherits: true;
 	initial-value: 9rem;
 }
+@property --_ui-logocloud-duration {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 40;
+}
 @property --_ui-logocloud-name-ink {
 	syntax: "<color>";
 	inherits: true;
@@ -29,38 +38,73 @@
 
 @scope (.ui-logo-cloud) {
 	:scope {
-		--_ui-logocloud-column-gap: var(--ui-logocloud-column-gap, 48px);
-		--_ui-logocloud-row-gap: var(--ui-logocloud-row-gap, 32px);
-		--_ui-logocloud-logo-max-height: var(--ui-logocloud-logo-max-height, 40px);
+		--_ui-logocloud-gap: var(--ui-logocloud-gap, 3rem);
+		--_ui-logocloud-logo-height: var(--ui-logocloud-logo-height, 2.5rem);
 		--_ui-logocloud-logo-max-width: var(--ui-logocloud-logo-max-width, 9rem);
+		--_ui-logocloud-duration: var(--ui-logocloud-duration, 40);
 		--_ui-logocloud-name-ink: var(--ui-logocloud-name-ink, var(--color-base-content-faint));
-		margin: 0;
 		display: flex;
-		list-style: none;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: center;
-		column-gap: var(--_ui-logocloud-column-gap);
-		row-gap: var(--_ui-logocloud-row-gap);
-		padding: 0;
+		gap: var(--_ui-logocloud-gap);
+		overflow: hidden;
+		/* Room for the lift, so a raised logo is not clipped. */
+		padding-block: 0.25rem;
+		/* The edge fade: alpha only — the mask's colour stops are opaque and
+		   transparent, nothing painted. */
+		mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
 	}
 	:scope[data-ui-color-base] {
 		--_ui-logocloud-name-ink: var(--ui-logocloud-name-ink, var(--ui-ink-faint));
+	}
+	.ui-logo-cloud-filter {
+		position: absolute;
+		width: 0;
+		height: 0;
+		overflow: hidden;
+	}
+	/* The `ink` flood: nothing on a light scheme, the ink on a dark one. */
+	.ui-logo-cloud-ink-flood {
+		flood-color: light-dark(transparent, var(--color-base-content));
+	}
+	.ui-logo-cloud-track {
+		display: flex;
+		align-items: center;
+		justify-content: space-around;
+		flex: none;
+		min-width: 100%;
+		gap: var(--_ui-logocloud-gap);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		animation: ui-logo-cloud-marquee calc(var(--_ui-logocloud-duration) * 1s) linear infinite;
+	}
+	:scope:hover .ui-logo-cloud-track,
+	:scope:focus-within .ui-logo-cloud-track {
+		animation-play-state: paused;
+	}
+	.ui-logo-item {
+		flex: none;
+		display: grid;
+		place-items: center;
+		transition:
+			translate 160ms ease,
+			scale 160ms ease;
+	}
+	.ui-logo-item:hover {
+		translate: 0 -2px;
+		scale: 1.04;
+	}
+	.ui-logo-item[data-on-dark="tile"] {
+		padding: 0.5rem 0.75rem;
+		border-radius: var(--r-sm);
+		background: light-dark(transparent, var(--color-base-content));
+	}
+	.ui-logo-item[data-on-dark="ink"] img {
+		filter: url(#ui-logo-cloud-ink);
 	}
 	.ui-logo-name {
 		font-family: var(--font-data, ui-monospace, monospace);
 		font-size: var(--t-md);
 		color: var(--_ui-logocloud-name-ink);
-	}
-	/* Logos are drawn for a light ground: on a dark scheme each sits on a
-	   tile of the scheme's light anchor (the ink), so dark marks stay
-	   legible and brand colours stay themselves. */
-	.ui-logo-item {
-		display: grid;
-		place-items: center;
-		padding: 0.5rem 0.75rem;
-		border-radius: var(--r-sm);
-		background: light-dark(transparent, var(--color-base-content));
 	}
 	/* A definite height, not a cap: an SVG with a viewBox and no width or
 	   height has only a ratio, and takes its width from a definite height;
@@ -68,7 +112,7 @@
 	   the width knob and fit inside it. */
 	.ui-logo-item img {
 		display: block;
-		height: var(--_ui-logocloud-logo-max-height);
+		height: var(--_ui-logocloud-logo-height);
 		width: auto;
 		max-width: var(--_ui-logocloud-logo-max-width);
 		object-fit: contain;
@@ -77,14 +121,44 @@
 	/* ── Frontier knob boundary (see select-control for the pattern) ── */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
-			--_ui-logocloud-column-gap: attr(data-ui-logocloud-column-gap type(<length>), var(--ui-logocloud-column-gap, 48px));
-			--_ui-logocloud-row-gap: attr(data-ui-logocloud-row-gap type(<length>), var(--ui-logocloud-row-gap, 32px));
-			--_ui-logocloud-logo-max-height: attr(data-ui-logocloud-logo-max-height type(<length>), var(--ui-logocloud-logo-max-height, 40px));
+			--_ui-logocloud-gap: attr(data-ui-logocloud-gap type(<length>), var(--ui-logocloud-gap, 3rem));
+			--_ui-logocloud-logo-height: attr(data-ui-logocloud-logo-height type(<length>), var(--ui-logocloud-logo-height, 2.5rem));
 			--_ui-logocloud-logo-max-width: attr(data-ui-logocloud-logo-max-width type(<length>), var(--ui-logocloud-logo-max-width, 9rem));
+			--_ui-logocloud-duration: attr(data-ui-logocloud-duration type(<number>), var(--ui-logocloud-duration, 40));
 			--_ui-logocloud-name-ink: attr(data-ui-logocloud-name-ink type(<color>), var(--ui-logocloud-name-ink, var(--color-base-content-faint)));
 		}
 		:scope[data-ui-color-base] {
 			--_ui-logocloud-name-ink: attr(data-ui-logocloud-name-ink type(<color>), var(--ui-logocloud-name-ink, var(--ui-ink-faint)));
+		}
+	}
+}
+
+@keyframes ui-logo-cloud-marquee {
+	to {
+		translate: calc(-100% - var(--_ui-logocloud-gap)) 0;
+	}
+}
+
+@scope (.ui-logo-cloud) {
+	@media (prefers-reduced-motion: reduce) {
+		:scope {
+			mask-image: none;
+			overflow: visible;
+		}
+		/* The one track takes the cloud's width and wraps inside it (a
+		   fixed-basis track would keep its content width and overflow). */
+		.ui-logo-cloud-track {
+			animation: none;
+			flex: 1 1 0;
+			flex-wrap: wrap;
+			justify-content: center;
+			min-width: 0;
+		}
+		.ui-logo-cloud-track[aria-hidden] {
+			display: none;
+		}
+		.ui-logo-item {
+			transition: none;
 		}
 	}
 }

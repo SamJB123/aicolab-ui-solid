@@ -17,10 +17,10 @@ const meta = {
 	parameters: { layout: 'fullscreen' },
 	argTypes: {
 		...treatmentArgTypes,
-		columnGap: { control: 'text', table: { category: 'knobs' } },
-		rowGap: { control: 'text', table: { category: 'knobs' } },
-		logoMaxHeight: { control: 'text', table: { category: 'knobs' } },
+		gap: { control: 'text', table: { category: 'knobs' } },
+		logoHeight: { control: 'text', table: { category: 'knobs' } },
 		logoMaxWidth: { control: 'text', table: { category: 'knobs' } },
+		duration: { control: 'number', table: { category: 'knobs' } },
 		nameInk: { control: 'text', table: { category: 'knobs' } },
 	},
 } satisfies Meta<typeof LogoCloud>
@@ -47,6 +47,25 @@ export const NamesOnly: Story = {
 			{ name: 'Open Data Co-op' },
 			{ name: 'Civic Studio' },
 			{ name: 'The Press' },
+		],
+	},
+}
+
+// A black wordmark on a transparent ground, as most supplied logos are:
+// invisible on a dark scheme unless the item says how it reads there.
+const DARK_WORDMARK =
+	'data:image/svg+xml;utf8,' +
+	encodeURIComponent(
+		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 28"><text x="60" y="20" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="16" fill="#111">WORDMARK</text></svg>',
+	)
+
+export const OnDark: Story = {
+	args: {
+		logos: [
+			{ name: 'As drawn (reads on dark)', src: DEMO_LOGO },
+			{ name: 'Ink: dark marks take the scheme ink', src: DARK_WORDMARK, onDark: 'ink' },
+			{ name: 'Tile: set on the light anchor', src: DARK_WORDMARK, onDark: 'tile' },
+			{ name: 'As drawn (fails on dark)', src: DARK_WORDMARK },
 		],
 	},
 }
