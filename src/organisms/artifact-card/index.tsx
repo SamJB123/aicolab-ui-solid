@@ -143,14 +143,20 @@ export function ArtifactCard(props: ArtifactCardProps) {
 					}}
 				/>
 			</Show>
-			<div class="ui-artifact-card-head">
-				<Show when={props.eyebrow}>
-					<span class="ui-artifact-card-eyebrow">{props.eyebrow}</span>
-				</Show>
-				<Show when={props.presence}>
-					{(presence) => <span class="ui-artifact-card-presence">{presence()()}</span>}
-				</Show>
-			</div>
+			{/* The head and the foot are rows of their own only when something
+			    sits in them; an empty row would still take its height and its
+			    share of the gap, and a card with just a title and a body would
+			    open on a blank band. */}
+			<Show when={props.eyebrow || props.presence}>
+				<div class="ui-artifact-card-head">
+					<Show when={props.eyebrow}>
+						<span class="ui-artifact-card-eyebrow">{props.eyebrow}</span>
+					</Show>
+					<Show when={props.presence}>
+						{(presence) => <span class="ui-artifact-card-presence">{presence()()}</span>}
+					</Show>
+				</div>
+			</Show>
 			<h3 id={titleId} class="ui-artifact-card-title">{props.title}</h3>
 			<Show when={props.preview}>
 				{(preview) => (
@@ -164,12 +170,14 @@ export function ArtifactCard(props: ArtifactCardProps) {
 				)}
 			</Show>
 			{props.children}
-			<div class="ui-artifact-card-foot">
-				<Show when={props.meta}>{(meta) => <span class="ui-artifact-card-meta">{meta()()}</span>}</Show>
-				<Show when={props.actions}>
-					{(actions) => <span class="ui-artifact-card-actions">{actions()()}</span>}
-				</Show>
-			</div>
+			<Show when={props.meta || props.actions}>
+				<div class="ui-artifact-card-foot">
+					<Show when={props.meta}>{(meta) => <span class="ui-artifact-card-meta">{meta()()}</span>}</Show>
+					<Show when={props.actions}>
+						{(actions) => <span class="ui-artifact-card-actions">{actions()()}</span>}
+					</Show>
+				</div>
+			</Show>
 		</article>
 	)
 }
