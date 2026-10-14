@@ -10,6 +10,7 @@ const meta = {
 	argTypes: {
 		...treatmentArgTypes,
 		label: { control: 'text' },
+		inset: { control: 'boolean' },
 		radius: { control: 'text', table: { category: 'knobs' } },
 		padBlock: { control: 'text', table: { category: 'knobs' } },
 		padInline: { control: 'text', table: { category: 'knobs' } },
@@ -18,6 +19,8 @@ const meta = {
 		plateSurface: { control: 'text', table: { category: 'knobs' } },
 		ink: { control: 'text', table: { category: 'knobs' } },
 		currentInk: { control: 'text', table: { category: 'knobs' } },
+		trackSurface: { control: 'text', table: { category: 'knobs' } },
+		trackPad: { control: 'text', table: { category: 'knobs' } },
 	},
 } satisfies Meta<typeof NavLinks>
 
@@ -55,6 +58,23 @@ export const NoCurrentPage: Story = {
 			<NavLink href="#">Our model</NavLink>
 			<NavLink href="#">Who we are</NavLink>
 		</NavLinks>
+	),
+}
+
+/* The inset mode: the row in a flat well, the plate gliding inside it and
+   the words off the plate muted — for a row on a flat page surface, or a
+   section switcher; a floating pill already groups its links. */
+export const Inset: Story = {
+	args: { label: 'Site', children: null },
+	render: () => (
+		<div style={{ display: 'grid', gap: '16px', 'justify-items': 'start' }}>
+			<NavLinks label="Site" inset>
+				{links()}
+			</NavLinks>
+			<NavLinks label="Site" inset colorBase="primary">
+				{links()}
+			</NavLinks>
+		</div>
 	),
 }
 

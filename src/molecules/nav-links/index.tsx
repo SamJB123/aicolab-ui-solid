@@ -9,7 +9,8 @@ import {
 import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 
 /** Per-instance styling contract (see shared/knobs.ts). Link-consumed
- * knobs ride inheriting adapters assigned on the root. */
+ * knobs ride inheriting adapters assigned on the root; the track's two are
+ * read on the root alone and paint only in the inset mode. */
 const knobs = defineKnobs('ui-navlinks', {
 	radius: '<length-percentage>',
 	padBlock: '<length>',
@@ -19,12 +20,17 @@ const knobs = defineKnobs('ui-navlinks', {
 	plateSurface: '<color>',
 	ink: '<color>',
 	currentInk: '<color>',
+	trackSurface: '<color>',
+	trackPad: '<length>',
 })
 
 type NavLinksProps = Omit<JSX.HTMLAttributes<HTMLElement>, 'class'> & {
 	class?: ClassProp
 	/** The landmark's name, read by assistive tech ("Site", "Docs"). */
 	label: string
+	/** The row set in a track: a flat inset well the plate glides inside,
+	 *  as Segmented's tabs sit in theirs. Off by default — bare words. */
+	inset?: boolean
 	children: JSX.Element
 } & ColorTreatmentProps &
 	KnobProps<typeof knobs.spec>
@@ -45,6 +51,7 @@ export function NavLinks(props: NavLinksProps) {
 		'class',
 		'style',
 		'label',
+		'inset',
 		'children',
 		'colorBase',
 		'colorLevel',
@@ -57,6 +64,8 @@ export function NavLinks(props: NavLinksProps) {
 		'plateSurface',
 		'ink',
 		'currentInk',
+		'trackSurface',
+		'trackPad',
 	)
 	return (
 		<nav
@@ -64,6 +73,7 @@ export function NavLinks(props: NavLinksProps) {
 			{...colorTreatmentData(props)}
 			{...knobs.attributes(props)}
 			aria-label={props.label}
+			data-inset={props.inset ? '' : undefined}
 			class={['ui-nav-links', props.class]}
 			style={mergeKnobStyle(knobs.style(props), props.style)}
 		>

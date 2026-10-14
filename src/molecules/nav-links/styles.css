@@ -8,10 +8,17 @@
    nothing under the pointer there is no anchor and the plate is hidden.
    Fallback: the current link wears the plate look itself.
 
+   The inset mode (data-inset) sets the row in a track: a WELL, not a
+   plate — a flat surface with a single ring that takes only the theme's
+   corner shape (resolver.css "Surface paint and edge"), as Segmented's
+   track is — and the plate glides inside it; the words not under the plate
+   go muted so the current one stands out on the well.
+
    Knobs on the usual two wires. Link-consumed adapters are inherits: true
    and assigned on the root (plain + treated contexts get attr() frontier
-   swaps). The links and the plate are PLATES: their surface is the plate
-   surface adapter, and inside a treated row their rim is its family. */
+   swaps); the track's two are read on the root alone. The links and the
+   plate are PLATES: their surface is the plate surface adapter, and inside
+   a treated row their rim is its family. */
 @property --_ui-navlinks-radius {
 	syntax: "<length-percentage>";
 	inherits: true;
@@ -52,6 +59,16 @@
 	inherits: true;
 	initial-value: currentColor;
 }
+@property --_ui-navlinks-track-surface {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --_ui-navlinks-track-pad {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 4px;
+}
 
 @scope (.ui-nav-links) {
 	:scope {
@@ -66,6 +83,8 @@
 		--_ui-navlinks-plate-surface: var(--ui-navlinks-plate-surface, var(--color-base-150));
 		--_ui-navlinks-ink: var(--ui-navlinks-ink, var(--color-base-content));
 		--_ui-navlinks-current-ink: var(--ui-navlinks-current-ink, var(--color-base-content));
+		--_ui-navlinks-track-surface: var(--ui-navlinks-track-surface, var(--color-base-300));
+		--_ui-navlinks-track-pad: var(--ui-navlinks-track-pad, 4px);
 		position: relative;
 		display: flex;
 		align-items: center;
@@ -75,6 +94,19 @@
 		--_ui-navlinks-plate-surface: var(--ui-navlinks-plate-surface, var(--ui-surface-selected));
 		--_ui-navlinks-ink: var(--ui-navlinks-ink, var(--ui-color-foreground));
 		--_ui-navlinks-current-ink: var(--ui-navlinks-current-ink, var(--ui-ink-selected));
+	}
+	/* The inset mode: the track is a well — flat surface, single ring, the
+	   theme's corner shape only — and the words off the plate go muted. */
+	:scope[data-inset] {
+		--_ui-navlinks-ink: var(--ui-navlinks-ink, var(--color-base-content-muted));
+		padding: var(--_ui-navlinks-track-pad);
+		border-radius: var(--_ui-navlinks-radius);
+		corner-shape: var(--s-corner);
+		background: var(--_ui-navlinks-track-surface);
+		box-shadow: inset 0 0 0 1px var(--color-border);
+	}
+	:scope[data-inset][data-ui-color-base] {
+		--_ui-navlinks-ink: var(--ui-navlinks-ink, var(--ui-color-foreground));
 	}
 	.ui-nav-link,
 	.ui-nav-links-plate {
@@ -101,6 +133,11 @@
 	.ui-nav-link:focus-visible {
 		outline: 2px solid var(--color-primary);
 		outline-offset: 2px;
+	}
+	/* The link under the plate reads in the current ink: the current page,
+	   and the one hovered or focused (inert where the two inks are one). */
+	.ui-nav-link:is(:hover, :focus-visible) {
+		color: var(--_ui-navlinks-current-ink);
 	}
 	.ui-nav-link[aria-current="page"] {
 		color: var(--_ui-navlinks-current-ink);
@@ -181,11 +218,19 @@
 			--_ui-navlinks-plate-surface: attr(data-ui-navlinks-plate-surface type(<color>), var(--ui-navlinks-plate-surface, var(--color-base-150)));
 			--_ui-navlinks-ink: attr(data-ui-navlinks-ink type(<color>), var(--ui-navlinks-ink, var(--color-base-content)));
 			--_ui-navlinks-current-ink: attr(data-ui-navlinks-current-ink type(<color>), var(--ui-navlinks-current-ink, var(--color-base-content)));
+			--_ui-navlinks-track-surface: attr(data-ui-navlinks-track-surface type(<color>), var(--ui-navlinks-track-surface, var(--color-base-300)));
+			--_ui-navlinks-track-pad: attr(data-ui-navlinks-track-pad type(<length>), var(--ui-navlinks-track-pad, 4px));
 		}
 		:scope[data-ui-color-base] {
 			--_ui-navlinks-plate-surface: attr(data-ui-navlinks-plate-surface type(<color>), var(--ui-navlinks-plate-surface, var(--ui-surface-selected)));
 			--_ui-navlinks-ink: attr(data-ui-navlinks-ink type(<color>), var(--ui-navlinks-ink, var(--ui-color-foreground)));
 			--_ui-navlinks-current-ink: attr(data-ui-navlinks-current-ink type(<color>), var(--ui-navlinks-current-ink, var(--ui-ink-selected)));
+		}
+		:scope[data-inset] {
+			--_ui-navlinks-ink: attr(data-ui-navlinks-ink type(<color>), var(--ui-navlinks-ink, var(--color-base-content-muted)));
+		}
+		:scope[data-inset][data-ui-color-base] {
+			--_ui-navlinks-ink: attr(data-ui-navlinks-ink type(<color>), var(--ui-navlinks-ink, var(--ui-color-foreground)));
 		}
 	}
 }
