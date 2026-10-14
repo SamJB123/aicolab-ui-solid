@@ -135,12 +135,15 @@
 	transform: rotateY(0deg);
 }
 /* Pointer-angled conic edge glow (the GlowingEffect heir): a masked ring that
-   brightens on hover, its bright arc facing the cursor. */
+   brightens on hover, its bright arc facing the cursor. It traces the face's
+   PAINTED edge: the theme's rings reach --ui-edge-outset beyond the box, so
+   the ring sits that far out, its corners grown by the same amount. (The
+   face's radius carrier does not inherit; the inheriting adapter is read.) */
 :scope .dc-face::after {
 	content: "";
 	position: absolute;
-	inset: 0;
-	border-radius: inherit;
+	inset: calc(-1 * var(--ui-edge-outset));
+	border-radius: calc(var(--_ui-depth-radius) + var(--ui-edge-outset));
 	padding: 1.5px;
 	background: conic-gradient(
 		from var(--dc-angle),
