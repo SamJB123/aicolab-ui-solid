@@ -124,13 +124,11 @@
 		--_ui-palette-focus-seam: var(--ui-palette-focus-seam, var(--color-primary));
 		/* The dialog is a PLATE (the component marks it data-ui-plate): its
 		   body is the structural base surface whatever the treatment, so the
-		   paint sources are pinned to it here; its radius resolves into the
+		   surface is pinned to it here; its radius resolves into the
 		   shared plate corner --_ui-radius. It paints the surface paint and
 		   the edge (resolver.css "Surface paint and edge") where it paints
 		   its surface and its ring. */
-		--ui-paint-source: var(--color-base-100);
-		--ui-paint-source-hover: var(--color-base-100);
-		--ui-paint-source-selected: var(--color-base-100);
+		--ui-surface: var(--color-base-100);
 		position: fixed;
 		top: var(--_ui-palette-top-offset);
 		left: 50%;

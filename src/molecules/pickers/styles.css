@@ -37,8 +37,8 @@
    source at its own surface (resolver.css "Surface paint and edge") rather
    than painting a flat colour over the Button's roles. */
 .ui-btn.ui-picker-trigger-plain {
-	--ui-paint-source: var(--color-base-300);
-	--ui-paint-source-hover: var(--color-base-300);
+	--ui-surface: var(--color-base-300);
+	--ui-surface-hover: var(--color-base-300);
 	background: var(--ui-surface-paint);
 	color: var(--color-base-content);
 	box-shadow: var(--ui-edge), 0 0 0 1px var(--color-border);

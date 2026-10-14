@@ -44,13 +44,11 @@
 	--_ui-facets-active-ink: var(--ui-facets-active-ink, var(--color-base-content));
 	--_ui-facets-pill-surface: var(--ui-facets-pill-surface, var(--color-base-150));
 	/* The frame is a PLATE (the component marks it data-ui-plate): its body
-	   is the structural base surface whatever the treatment, so the paint
-	   sources are pinned to it here. It paints the surface paint and the
-	   edge (resolver.css "Surface paint and edge") where it paints its
-	   surface and its ring. */
-	--ui-paint-source: var(--color-base-100);
-	--ui-paint-source-hover: var(--color-base-100);
-	--ui-paint-source-selected: var(--color-base-100);
+	   is the structural base surface whatever the treatment, so its surface
+	   is pinned to it here. It paints the surface paint and the edge
+	   (resolver.css "Surface paint and edge") where it paints its surface
+	   and its ring. */
+	--ui-surface: var(--color-base-100);
 	border-radius: var(--_ui-radius);
 	corner-shape: var(--s-corner);
 	background: var(--ui-surface-paint);
@@ -64,14 +62,12 @@
 }
 /* The sliding pill (or the active tab where anchor positioning is
    unavailable) is a PLATE: the component marks the tabs and the pill
-   data-ui-plate; their paint source is the pill surface adapter, and
+   data-ui-plate; their surface is the pill surface adapter, and
    inside a treated frame their rim is its family colour. */
 .facets-tab,
 .facets-pill {
 	--_ui-radius: var(--r-md);
-	--ui-paint-source: var(--_ui-facets-pill-surface);
-	--ui-paint-source-hover: var(--_ui-facets-pill-surface);
-	--ui-paint-source-selected: var(--_ui-facets-pill-surface);
+	--ui-surface: var(--_ui-facets-pill-surface);
 }
 :scope[data-ui-color-base] :is(.facets-tab, .facets-pill) {
 	--ui-edge-source: var(--ui-color-foreground);

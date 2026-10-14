@@ -99,14 +99,12 @@
 }
 /* The active indicator (the pill, or the active tab where anchor positioning
    is unavailable) is a PLATE: the component marks the tabs and the pill
-   data-ui-plate; their paint source is the active surface adapter, and
-   inside a treated switcher their rim is its family colour. */
+   data-ui-plate; their surface is the active surface adapter, and inside a
+   treated switcher their rim is its family colour. */
 .seg-btn,
 .seg-pill {
 	--_ui-radius: var(--_ui-seg-radius);
-	--ui-paint-source: var(--_ui-seg-active-surface);
-	--ui-paint-source-hover: var(--_ui-seg-active-surface);
-	--ui-paint-source-selected: var(--_ui-seg-active-surface);
+	--ui-surface: var(--_ui-seg-active-surface);
 }
 :scope[data-ui-color-base] :is(.seg-btn, .seg-pill) {
 	--ui-edge-source: var(--ui-color-foreground);

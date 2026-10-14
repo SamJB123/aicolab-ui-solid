@@ -53,7 +53,7 @@ the resolver derives each plate's `--ui-surface-paint` and `--ui-edge`
 from them, so components never paint a finish of their own).
 
 An app's own surfaces take the finish the same way: put `data-ui-plate` on
-the element, name its surface in `--ui-paint-source` when it is not
+the element, name its surface in `--ui-surface` when it is not
 `--color-base-100`, state its corner once in `--_ui-radius` and paint
 `border-radius: var(--_ui-radius)` from it (the corner studs are placed
 from that same value and the theme's corner shape), and paint

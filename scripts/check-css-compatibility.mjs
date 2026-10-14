@@ -80,7 +80,7 @@ requireAll(
 		/--ui-edge-source: var\(--color-base-content\);/,
 		/--ui-edge-source: var\(--ui-color-foreground\);/,
 		/--ui-surface-paint: var\(--ui-studs\), var\(--ui-shine\);/,
-		/--ui-surface-paint: if\(\n\t\t\tstyle\(--s-grade: 0\): if\(style\(--s-stud: 0px\): var\(--ui-paint-source\); else: var\(--ui-studs\), var\(--ui-shine\)\);/,
+		/--ui-surface-paint: if\(\n\t\t\tstyle\(--s-grade: 0\): if\(style\(--s-stud: 0px\): var\(--ui-surface\); else: var\(--ui-studs\), var\(--ui-shine\)\);/,
 		/--ui-edge:\n/,
 		/--ui-edge-hover:\n/,
 		/--ui-edge-selected:\n/,

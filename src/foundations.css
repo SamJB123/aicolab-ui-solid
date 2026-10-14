@@ -119,13 +119,11 @@
 	--_ui-radius: var(--ui-anchored-radius, var(--r-lg));
 	--_ui-anchored-surface: var(--ui-anchored-surface, var(--color-base-150));
 	/* An anchored panel is a PLATE (its composers mark it data-ui-plate):
-	   its corner is the shared radius adapter, its paint source is the
-	   shell surface adapter, and it paints the surface paint and the edge
+	   its corner is the shared radius adapter, its surface is the shell
+	   surface adapter, and it paints the surface paint and the edge
 	   (resolver.css "Surface paint and edge") where it paints its surface
 	   and its shadow. */
-	--ui-paint-source: var(--_ui-anchored-surface);
-	--ui-paint-source-hover: var(--_ui-anchored-surface);
-	--ui-paint-source-selected: var(--_ui-anchored-surface);
+	--ui-surface: var(--_ui-anchored-surface);
 	margin: 0;
 	inset: auto;
 	width: var(--_ui-anchored-width);

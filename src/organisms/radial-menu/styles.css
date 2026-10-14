@@ -170,18 +170,16 @@
 			display 260ms allow-discrete;
 		transition-delay: calc(var(--radial-i) * 35ms);
 	}
-	/* A chip is a PLATE (the component marks it data-ui-plate): its paint
-	   source is the chip surface adapter, inside a treated fan its rim is
-	   the family colour, and it paints the surface paint and the edge
+	/* A chip is a PLATE (the component marks it data-ui-plate): its surface
+	   is the chip surface adapter, inside a treated fan its rim is the
+	   family colour, and it paints the surface paint and the edge
 	   (resolver.css "Surface paint and edge") where it paints its surface
 	   and its ring. */
 	:scope[data-ui-color-base] .ui-radial-chip {
 		--ui-edge-source: var(--ui-color-foreground);
 	}
 	.ui-radial-chip {
-		--ui-paint-source: var(--_ui-radial-chip-surface);
-		--ui-paint-source-hover: var(--_ui-radial-chip-surface);
-		--ui-paint-source-selected: var(--_ui-radial-chip-surface);
+		--ui-surface: var(--_ui-radial-chip-surface);
 		--_ui-radius: var(--r-pill);
 		display: grid;
 		place-items: center;

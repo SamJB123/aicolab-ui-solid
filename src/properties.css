@@ -391,17 +391,10 @@
 @property --ui-ink-glow-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-ink-glow-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-focus-ring { syntax: "<color>"; inherits: true; initial-value: transparent; }
-/* A plate's PAINT SOURCES: the colours its surface paint and its edge are
-   worked out from (resolver.css "Surface paint and edge"). The resolver
-   sets them for a treated element (its own surface, family colour, context
-   and bright colour) and for a plain plate ([data-ui-plate]: the theme's
-   surface and rim); a sheet whose surface is a knob re-points the paint
-   source at its adapter where it assigns the adapter. */
+/* The finish's other sources (resolver.css "Surface paint and edge"): the
+   rim, the context the plate sits on, and the sheen's tint. The surface
+   itself is the --ui-surface role above. */
 @property --ui-edge-outset { syntax: "<length>"; inherits: true; initial-value: 0px; }
-@property --ui-paint-source { syntax: "<color>"; inherits: true; initial-value: transparent; }
-@property --ui-paint-source-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
-@property --ui-paint-source-active { syntax: "<color>"; inherits: true; initial-value: transparent; }
-@property --ui-paint-source-selected { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-edge-source { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-gap-source { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-shade-source { syntax: "<color>"; inherits: true; initial-value: transparent; }

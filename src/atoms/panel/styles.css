@@ -27,14 +27,9 @@
 	:scope {
 		--_ui-radius: var(--ui-panel-radius, var(--r-lg));
 		--_ui-panel-surface: var(--ui-panel-surface, var(--color-base-100));
-		/* A panel is a PLATE (the component marks it data-ui-plate): its paint
-		   source is its surface adapter, and it paints the surface paint and
-		   the edge (resolver.css "Surface paint and edge") where it paints its
-		   surface and its ring. */
-		--ui-paint-source: var(--_ui-panel-surface);
-		--ui-paint-source-hover: var(--_ui-panel-surface);
-		--ui-paint-source-selected: var(--_ui-panel-surface);
-
+		/* A panel is a PLATE (the component marks it data-ui-plate): it
+		   paints the surface paint and the edge (resolver.css "Surface paint
+		   and edge") where it paints its surface and its ring. */
 		position: relative;
 		display: flex;
 		flex-direction: column;
@@ -44,6 +39,11 @@
 		background: var(--ui-surface-paint);
 		padding: var(--ui-panel-pad);
 		box-shadow: var(--ui-edge), 0 0 0 1px var(--color-border);
+	}
+	/* With no family, the surface adapter is the plate's surface; with one,
+	   the adapter follows the family's surface role instead. */
+	:scope:not([data-ui-color-base]) {
+		--ui-surface: var(--_ui-panel-surface);
 	}
 	:scope[data-ui-color-base] {
 		--_ui-panel-surface: var(--ui-panel-surface, var(--ui-surface));

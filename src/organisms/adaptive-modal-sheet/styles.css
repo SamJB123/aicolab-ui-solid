@@ -57,13 +57,11 @@
 		--_ui-sheet-gutter-inline: var(--ui-sheet-gutter-inline, clamp(1.25rem, 4vw, 2.6rem));
 		--_ui-sheet-gutter-block: var(--ui-sheet-gutter-block, 1.5rem);
 		/* The sheet is a PLATE (the component marks it data-ui-plate): its
-		   paint source is the sheet surface adapter, and it paints the surface
+		   surface is the sheet surface adapter, and it paints the surface
 		   paint and the edge (resolver.css "Surface paint and edge") where it
 		   paints its surface and its shadow; the header is a region of it and
 		   stays flat. */
-		--ui-paint-source: var(--_ui-sheet-surface);
-		--ui-paint-source-hover: var(--_ui-sheet-surface);
-		--ui-paint-source-selected: var(--_ui-sheet-surface);
+		--ui-surface: var(--_ui-sheet-surface);
 		position: fixed;
 		inset: 0 0 0 auto;
 		display: grid;
@@ -244,9 +242,7 @@
 			--_ui-radius: var(--r-lg);
 			border-radius: var(--_ui-radius) var(--_ui-radius) 0 0;
 			corner-shape: var(--s-corner);
-			--ui-paint-source: var(--color-base-300);
-			--ui-paint-source-hover: var(--color-base-300);
-			--ui-paint-source-selected: var(--color-base-300);
+			--ui-surface: var(--color-base-300);
 			background: var(--ui-surface-paint);
 			box-shadow:
 				var(--ui-edge),
