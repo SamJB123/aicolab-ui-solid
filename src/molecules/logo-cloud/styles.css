@@ -7,9 +7,9 @@
    Knobs on the usual two wires, assigned on :scope; the track and the
    logos read the inheriting adapters. A logo reads on a dark scheme by
    the treatment its item declares (data-on-dark): `ink` recolours its
-   dark marks to the scheme's ink through the SVG filter the component
-   renders, `tile` sets it on the scheme's light anchor; both are theme
-   colours, so they follow a forced scheme. */
+   black and grey marks to the scheme's ink through the SVG filter the
+   component renders, `tile` sets it on the scheme's light anchor; both are
+   theme colours, so they follow a forced scheme. */
 @property --_ui-logocloud-gap {
 	syntax: "<length>";
 	inherits: true;
