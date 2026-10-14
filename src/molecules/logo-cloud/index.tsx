@@ -9,10 +9,11 @@ import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 
 /** One logo. `onDark` says how its artwork reads on a dark scheme — a
  * decision per brand, since brands differ in what may be done to their
- * marks: `ink` recolours the black and grey parts of the artwork to the
- * scheme's ink (a black wordmark reads light; every colour stays as
- * drawn), `tile` sets the logo on a tile of the scheme's light anchor, and
- * none leaves it as drawn (a mark that already reads on dark). */
+ * marks: `ink` recolours the black and grey parts of the artwork that sit
+ * on the page to the scheme's ink (a black wordmark reads light; every
+ * colour, and lettering inside a coloured tile, stays as drawn), `tile`
+ * sets the logo on a tile of the scheme's light anchor, and none leaves it
+ * as drawn (a mark that already reads on dark). */
 export type LogoItem = { name: string; src?: string; onDark?: 'ink' | 'tile' }
 
 /** Per-instance styling contract (see shared/knobs.ts). `duration` is the
@@ -25,17 +26,23 @@ const knobs = defineKnobs('ui-logocloud', {
 	nameInk: '<color>',
 })
 
-/* The `ink` treatment's filter: the artwork's black and grey marks flooded
-   with the scheme's ink and laid over the original. A pixel is a mark to
-   the degree it is both dark (its luminance low) and neutral (no channel
-   far above that luminance); each measure passes through a steep ramp, so
-   a saturated colour, however dark, and a pale tint, however neutral, are
-   left alone, while black and grey take the ink in full. The weight is the
-   product of the two, scaled by the artwork's own coverage so edges stay
-   antialiased. The flood is a theme colour set in the stylesheet —
-   transparent on a light scheme, so the artwork shows as drawn — which is
-   what lets the treatment follow a forced scheme, as a CSS filter could
-   not. One id serves every cloud on a page: the graph is the same in each. */
+/* The `ink` treatment's filter: the artwork's black and grey marks that
+   sit on the page flooded with the scheme's ink and laid over the
+   original. A pixel is a mark to the degree it is both dark (its luminance
+   low) and neutral (no channel far above that luminance); each measure
+   passes through a steep ramp, so a saturated colour, however dark, and a
+   pale tint, however neutral, are left alone, while black and grey take
+   the ink in full. A mark is on the page to the degree its surroundings
+   are dark or bare: the artwork is laid over black and blurred by a
+   fraction of its own box (so the look holds at any logo height), and
+   where that blur is light the mark sits on a light painted area of the
+   logo's own — lettering inside a coloured tile — and keeps its colour.
+   The weight is the product of the three, scaled by the artwork's own
+   coverage so edges stay antialiased. The flood is a theme colour set in
+   the stylesheet — transparent on a light scheme, so the artwork shows as
+   drawn — which is what lets the treatment follow a forced scheme, as a
+   CSS filter could not. One id serves every cloud on a page: the graph is
+   the same in each. */
 const INK_FILTER = 'ui-logo-cloud-ink'
 const LUMA = '-0.2126 -0.7152 -0.0722'
 
@@ -74,7 +81,7 @@ export function LogoCloud(
 			<Show when={props.logos.some((logo) => logo.onDark === 'ink')}>
 				<svg class="ui-logo-cloud-filter" aria-hidden="true">
 					<defs>
-						<filter id={INK_FILTER} color-interpolation-filters="sRGB">
+						<filter id={INK_FILTER} color-interpolation-filters="sRGB" primitiveUnits="objectBoundingBox">
 							{/* darkness: alpha = 1 − luminance, opaque everywhere */}
 							<feColorMatrix
 								in="SourceGraphic"
@@ -100,9 +107,24 @@ export function LogoCloud(
 								result="neutral"
 							/>
 							<feComponentTransfer in="neutral" result="neutral-ramp">
-								<feFuncA type="table" tableValues="0 0 0 0 0 0 0 0.5 1 1 1" />
+								<feFuncA type="table" tableValues="0 0 0 0 0 0 0 1 1 1 1" />
 							</feComponentTransfer>
-							<feComposite in="dark-ramp" in2="neutral-ramp" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="weight" />
+							<feComposite in="dark-ramp" in2="neutral-ramp" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="mark" />
+							{/* the surroundings: the artwork over black (so the bare page counts as dark), blurred by a fraction of its box */}
+							<feFlood flood-color="#000" result="black" />
+							<feComposite in="SourceGraphic" in2="black" operator="over" result="on-black" />
+							<feGaussianBlur in="on-black" stdDeviation="0.02 0.07" result="surround" />
+							<feColorMatrix
+								in="surround"
+								type="matrix"
+								values={`0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  ${LUMA.replaceAll('-', '')} 0 0`}
+								result="surround-light"
+							/>
+							{/* on the page: 1 where the surroundings are dark or bare, 0 where they are a light painted area */}
+							<feComponentTransfer in="surround-light" result="on-page">
+								<feFuncA type="table" tableValues="1 1 1 0.5 0 0 0 0 0 0 0" />
+							</feComponentTransfer>
+							<feComposite in="mark" in2="on-page" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="weight" />
 							<feFlood class="ui-logo-cloud-ink-flood" result="ink" />
 							<feComposite in="ink" in2="weight" operator="in" result="tinted" />
 							<feComposite in="tinted" in2="SourceAlpha" operator="in" result="tinted-covered" />
