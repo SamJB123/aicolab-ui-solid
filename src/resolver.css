@@ -371,18 +371,26 @@
    groove and a pink plate. A ring worked from the rim instead lands at the
    plate's own lightness on a light page and vanishes into it.
 
-   Every term is a mix onto a known THEME colour, never a wash and never a
-   literal black or white — a literal is black in either scheme, and a
-   light scheme's finish must be light. DEEPENING mixes toward the page's
-   deepest surface step (--color-base-300: near-black on a dark page, a
-   deeper cream on a light one), and the groove between the two rings is
-   that step as it is. BRIGHTENING mixes toward the scheme's lightest
-   anchor (--color-overlay-content: the page in light, the text ink in
-   dark). The cast shadow alone mixes toward the scheme's darkest anchor,
-   a shadow being dark in both. At the ladder's defaults every mix returns
-   its own source and every width is zero: the paint IS the flat surface
-   and the edge paints nothing, so the house look is unchanged until a
-   theme asks (themes/brass.css asks).
+   A SHADE is the surface it falls on, darker; a HIGHLIGHT is that surface,
+   lighter. So every deepening and every brightening is a relative colour
+   — the source's own lightness lowered or raised (oklch(from … calc(l ∓
+   step) c h), clamped to the gamut) — never a mix toward some other theme
+   colour, which deepens only what is lighter than that colour and lightens
+   the rest (toward black, a light scheme's groove went black; toward the
+   deepest cream step, an orange plate's bevel shade came out LIGHTER than
+   the plate). Lowering the lightness darkens a cream plate, an orange one
+   and a near-black one alike, in either scheme, and keeps the plate's own
+   hue: the step ring is the plate lowered, the groove beyond it the plate
+   lowered deeper (a deep gold on a gold button, a tan on a cream card,
+   near-black on a dark plate — never the page's grey), the bevel's shade
+   is the plate lowered, its highlight the plate raised, the stud ink the
+   rim raised and softened, and the cast shadow alone the context lowered,
+   a shadow falling on the page. The one mix that remains is a TINT: the
+   shine's upper end toward the plate's shade colour, a hue. At the
+   ladder's defaults every step is zero, so every relative colour returns
+   its source and every width is zero: the paint IS the flat surface and
+   the edge paints nothing, so the house look is unchanged until a theme
+   asks (themes/brass.css asks).
 
    A treated element takes its sources from its own roles; a plain plate
    declares itself with [data-ui-plate] and takes the theme's; where both
@@ -406,7 +414,7 @@
 	--ui-paint-source-hover: var(--color-base-150);
 	--ui-paint-source-selected: var(--color-base-150);
 	--ui-edge-source: var(--color-rim);
-	--ui-gap-source: var(--color-base-300);
+	--ui-gap-source: var(--color-base-100);
 	--ui-shade-source: var(--color-primary);
 }
 :where([data-ui-color-base]) {
@@ -414,12 +422,12 @@
 	--ui-paint-source-hover: var(--ui-surface-hover);
 	--ui-paint-source-selected: var(--ui-surface-selected);
 	--ui-edge-source: var(--ui-color-foreground);
-	--ui-gap-source: var(--color-base-300);
+	--ui-gap-source: var(--ui-context-surface);
 	--ui-shade-source: var(--ui-bright-color);
 }
 :where([data-ui-plate], [data-ui-color-base]) {
 	--ui-paint-source-active: var(--ui-paint-source-hover);
-	--ui-stud-ink: color-mix(in oklab, var(--ui-edge-source) 55%, var(--color-overlay-content));
+	--ui-stud-ink: oklch(from var(--ui-edge-source) clamp(0, calc(l + 0.2), 1) calc(c * 0.7) h);
 	/* The corner's exponent: round here, where corner-shape is not drawn;
 	   the frontier block below reads the theme's shape where it is. */
 	--ui-corner-k: 1;
@@ -443,19 +451,19 @@
 		var(--s-grade-angle),
 		color-mix(in oklab, var(--ui-paint-source) calc(100% - 20% * var(--s-grade)), var(--ui-shade-source)) 0%,
 		var(--ui-paint-source) 45%,
-		color-mix(in oklab, var(--ui-paint-source) calc(100% - 10% * var(--s-grade)), var(--color-base-300)) 100%
+		oklch(from var(--ui-paint-source) clamp(0, calc(l - 0.07 * var(--s-grade)), 1) c h) 100%
 	);
 	--ui-shine-hover: linear-gradient(
 		var(--s-grade-angle),
 		color-mix(in oklab, var(--ui-paint-source-hover) calc(100% - 20% * var(--s-grade)), var(--ui-shade-source)) 0%,
 		var(--ui-paint-source-hover) 45%,
-		color-mix(in oklab, var(--ui-paint-source-hover) calc(100% - 10% * var(--s-grade)), var(--color-base-300)) 100%
+		oklch(from var(--ui-paint-source-hover) clamp(0, calc(l - 0.07 * var(--s-grade)), 1) c h) 100%
 	);
 	--ui-shine-selected: linear-gradient(
 		var(--s-grade-angle),
 		color-mix(in oklab, var(--ui-paint-source-selected) calc(100% - 20% * var(--s-grade)), var(--ui-shade-source)) 0%,
 		var(--ui-paint-source-selected) 45%,
-		color-mix(in oklab, var(--ui-paint-source-selected) calc(100% - 10% * var(--s-grade)), var(--color-base-300)) 100%
+		oklch(from var(--ui-paint-source-selected) clamp(0, calc(l - 0.07 * var(--s-grade)), 1) c h) 100%
 	);
 	--ui-surface-paint: var(--ui-studs), var(--ui-shine);
 	--ui-surface-paint-hover: var(--ui-studs), var(--ui-shine-hover);
@@ -466,27 +474,27 @@
 	   step as well as coloured by it, so at zero they paint nothing even
 	   where a plate's background is not its paint source. */
 	--ui-edge:
-		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-gap-source), var(--ui-paint-source)),
-		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) var(--ui-gap-source),
+		0 0 0 var(--s-edge-inner) oklch(from var(--ui-paint-source) clamp(0, calc(l - 0.15), 1) c h),
+		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) oklch(from var(--ui-paint-source) clamp(0, calc(l - 0.3), 1) c h),
 		0 0 0 var(--ui-edge-outset) var(--ui-edge-source),
-		inset 0 calc(1px * var(--s-bevel)) 0 color-mix(in oklab, var(--ui-paint-source) calc(100% - 40% * var(--s-bevel)), var(--color-overlay-content)),
-		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) color-mix(in oklab, var(--ui-paint-source) calc(100% - 35% * var(--s-bevel)), var(--color-base-300)),
-		0 calc(10px * var(--s-shadow)) calc(24px * var(--s-shadow)) color-mix(in oklab, var(--ui-gap-source) calc(100% - 55% * var(--s-shadow)), light-dark(var(--color-base-content), var(--color-base-100)));
+		inset 0 calc(1px * var(--s-bevel)) 0 oklch(from var(--ui-paint-source) clamp(0, calc(l + 0.22 * var(--s-bevel)), 1) c h),
+		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) oklch(from var(--ui-paint-source) clamp(0, calc(l - 0.16 * var(--s-bevel)), 1) c h),
+		0 calc(10px * var(--s-shadow)) calc(24px * var(--s-shadow)) oklch(from var(--ui-gap-source) clamp(0, calc(l - 0.45 * var(--s-shadow)), 1) c h);
 	--ui-edge-hover:
-		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-gap-source), var(--ui-paint-source-hover)),
-		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) var(--ui-gap-source),
+		0 0 0 var(--s-edge-inner) oklch(from var(--ui-paint-source-hover) clamp(0, calc(l - 0.15), 1) c h),
+		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) oklch(from var(--ui-paint-source-hover) clamp(0, calc(l - 0.3), 1) c h),
 		0 0 0 var(--ui-edge-outset) var(--ui-edge-source),
-		inset 0 calc(1px * var(--s-bevel)) 0 color-mix(in oklab, var(--ui-paint-source-hover) calc(100% - 40% * var(--s-bevel)), var(--color-overlay-content)),
-		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) color-mix(in oklab, var(--ui-paint-source-hover) calc(100% - 35% * var(--s-bevel)), var(--color-base-300)),
-		0 calc(12px * var(--s-shadow)) calc(28px * var(--s-shadow)) color-mix(in oklab, var(--ui-gap-source) calc(100% - 55% * var(--s-shadow)), light-dark(var(--color-base-content), var(--color-base-100)));
+		inset 0 calc(1px * var(--s-bevel)) 0 oklch(from var(--ui-paint-source-hover) clamp(0, calc(l + 0.22 * var(--s-bevel)), 1) c h),
+		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) oklch(from var(--ui-paint-source-hover) clamp(0, calc(l - 0.16 * var(--s-bevel)), 1) c h),
+		0 calc(12px * var(--s-shadow)) calc(28px * var(--s-shadow)) oklch(from var(--ui-gap-source) clamp(0, calc(l - 0.45 * var(--s-shadow)), 1) c h);
 	--ui-edge-active: var(--ui-edge-hover);
 	--ui-edge-selected:
-		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-gap-source), var(--ui-paint-source-selected)),
-		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) var(--ui-gap-source),
+		0 0 0 var(--s-edge-inner) oklch(from var(--ui-paint-source-selected) clamp(0, calc(l - 0.15), 1) c h),
+		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) oklch(from var(--ui-paint-source-selected) clamp(0, calc(l - 0.3), 1) c h),
 		0 0 0 var(--ui-edge-outset) var(--ui-edge-source),
-		inset 0 calc(1px * var(--s-bevel)) 0 color-mix(in oklab, var(--ui-paint-source-selected) calc(100% - 40% * var(--s-bevel)), var(--color-overlay-content)),
-		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) color-mix(in oklab, var(--ui-paint-source-selected) calc(100% - 35% * var(--s-bevel)), var(--color-base-300)),
-		0 calc(10px * var(--s-shadow)) calc(24px * var(--s-shadow)) color-mix(in oklab, var(--ui-gap-source) calc(100% - 55% * var(--s-shadow)), light-dark(var(--color-base-content), var(--color-base-100)));
+		inset 0 calc(1px * var(--s-bevel)) 0 oklch(from var(--ui-paint-source-selected) clamp(0, calc(l + 0.22 * var(--s-bevel)), 1) c h),
+		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) oklch(from var(--ui-paint-source-selected) clamp(0, calc(l - 0.16 * var(--s-bevel)), 1) c h),
+		0 calc(10px * var(--s-shadow)) calc(24px * var(--s-shadow)) oklch(from var(--ui-gap-source) clamp(0, calc(l - 0.45 * var(--s-shadow)), 1) c h);
 	--ui-edge-disabled: 0 0 0 0 transparent;
 }
 /* Frontier: where the theme's corner shape is drawn, the studs follow it.
