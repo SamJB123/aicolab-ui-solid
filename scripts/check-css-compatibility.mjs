@@ -4,10 +4,9 @@ import { readFile } from 'node:fs/promises'
 
 const read = (path) => readFile(new URL(path, import.meta.url), 'utf8')
 
-const [resolver, foundations, themeDefaults, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit, callout, flowMap, richList] = await Promise.all([
+const [resolver, foundations, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit, callout, flowMap, richList] = await Promise.all([
 	read('../src/resolver.css'),
 	read('../src/foundations.css'),
-	read('../src/theme-defaults.css'),
 	read('../src/molecules/accordion/styles.css'),
 	read('../src/atoms/select-control/styles.css'),
 	read('../src/atoms/button/styles.css'),
@@ -76,9 +75,9 @@ requireAll(
 	[
 		/:where\(\[data-ui-plate\]\)/,
 		/:where\(\[data-ui-plate\], \[data-ui-color-base\]\)/,
-		/* The rim is solid: the theme's rim on a plain plate, the family colour on a treated one. */
-		/--ui-edge-source: var\(--color-rim\);/,
-		/--ui-edge-source: var\(--ui-color\);/,
+		/* The rim is the theme's rim on every plate, treated or plain. */
+		/:where\(\[data-ui-plate\]\) \{\n\t--ui-paint-source: var\(--color-base-100\);\n\t--ui-paint-source-hover: var\(--color-base-150\);\n\t--ui-paint-source-selected: var\(--color-base-150\);\n\t--ui-edge-source: var\(--color-rim\);/,
+		/:where\(\[data-ui-color-base\]\) \{\n\t--ui-paint-source: var\(--ui-surface\);\n\t--ui-paint-source-hover: var\(--ui-surface-hover\);\n\t--ui-paint-source-selected: var\(--ui-surface-selected\);\n\t--ui-edge-source: var\(--color-rim\);/,
 		/--ui-surface-paint: var\(--ui-studs\), var\(--ui-shine\);/,
 		/--ui-surface-paint: if\(\n\t\t\tstyle\(--s-grade: 0\): if\(style\(--s-stud: 0px\): var\(--ui-paint-source\); else: var\(--ui-studs\), var\(--ui-shine\)\);/,
 		/--ui-edge:\n/,
@@ -89,7 +88,7 @@ requireAll(
 		/var\(--s-grade-angle\)/,
 		/var\(--s-edge-inner\)/,
 		/var\(--s-edge-gap\)/,
-		/0 0 0 var\(--ui-edge-outset\) var\(--ui-edge-source\),/,
+		/var\(--s-edge-outer\)/,
 		/var\(--s-bevel\)/,
 		/var\(--s-stud\)/,
 		/var\(--s-shadow\)/,
@@ -108,13 +107,6 @@ requireAll(
 	foundations,
 	[/@property --_ui-radius \{\n\tsyntax: "<length-percentage>";\n\tinherits: false;\n\tinitial-value: 0px;\n\}/],
 	'shared element corner registration',
-)
-/* The edge's reach is summed once, on the theme root, and read by the
-   resolver's outer ring and by any layout that sets plates side by side. */
-requireAll(
-	themeDefaults,
-	[/--ui-edge-outset: calc\(var\(--s-edge-inner\) \+ var\(--s-edge-gap\) \+ var\(--s-edge-outer\)\);/],
-	'edge outset derivation',
 )
 requireAll(
 	button,
@@ -305,14 +297,15 @@ for (const sheet of knobSheets) {
 for (const source of sheetSources.values()) {
 	for (const match of source.matchAll(/@property (--_[\w-]+)/g)) globallyRegistered.add(match[1])
 }
-/* A plate's rim is solid (resolver.css "Surface paint and edge"): no sheet
-   draws the rings and studs from a hairline border, which ui-solid derives
-   as a wash by default. */
+/* A plate's rim is the theme's (resolver.css "Surface paint and edge"): no
+   sheet re-points it — not at a family colour, which is the text ink for
+   the neutral family and rims a light plate in black, and not at a
+   hairline border, which ui-solid derives as a wash. */
 for (const [sheet, source] of sheetSources) {
 	assert.doesNotMatch(
 		source,
-		/--ui-edge-source:\s*(?:var\(--(?:color-border|ui-border)|color-mix\()/,
-		`${sheet.replace('../src/', '')}: a plate's rim must be a solid colour (the theme's rim or the family colour), not a border`,
+		/--ui-edge-source:/,
+		`${sheet.replace('../src/', '')}: a plate's rim is the theme's --color-rim, set by the resolver alone`,
 	)
 }
 for (const [sheet, source] of sheetSources) {

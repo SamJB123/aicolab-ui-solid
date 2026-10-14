@@ -74,10 +74,9 @@
 		margin-inline-start: calc(-1 * var(--_ui-avstack-overlap));
 	}
 	/* The +N chip is a PLATE (the component marks it data-ui-plate): its
-	   paint source is the chip surface adapter, inside a treated stack its
-	   rim is the family colour, and it paints the surface paint and the edge
-	   (resolver.css "Surface paint and edge") where it paints its surface
-	   and its ring. */
+	   paint source is the chip surface adapter, and it paints the surface
+	   paint and the edge (resolver.css "Surface paint and edge") where it
+	   paints its surface and its ring. */
 	:scope > .ui-avatar-stack-extra {
 		--ui-paint-source: var(--_ui-avstack-extra-surface);
 		--ui-paint-source-hover: var(--_ui-avstack-extra-surface);
@@ -101,7 +100,6 @@
 			inset 0 0 0 1px var(--color-border);
 	}
 	:scope[data-ui-color-base] > .ui-avatar-stack-extra {
-		--ui-edge-source: var(--ui-color);
 		box-shadow:
 			var(--ui-edge),
 			0 0 0 var(--_ui-avstack-ring-width) var(--_ui-avstack-ring),
