@@ -296,8 +296,12 @@
 	}
 	.docs-compass-btn:focus-visible { outline: 2px solid var(--_ui-docs-progress-ink); outline-offset: 2px; }
 	/* A long chapter title ends in an ellipsis rather than widen the page past the screen;
-	   it keeps up to 60% of the bar, the section the rest. */
-	.docs-compass-chapter { flex: 0 1 auto; min-width: 0; max-width: 60%; overflow: hidden; text-overflow: ellipsis; font-weight: 600; color: var(--_ui-docs-progress-ink); white-space: nowrap; }
+	   it keeps up to 60% of the bar, the section the rest. It is text, so it reads the
+	   button's ink — and a treated shell's family as a line on the scheme — not the
+	   progress bar's colour, which is a surface colour and too pale for text when the
+	   family is pale. */
+	.docs-compass-chapter { flex: 0 1 auto; min-width: 0; max-width: 60%; overflow: hidden; text-overflow: ellipsis; font-weight: 600; white-space: nowrap; }
+	:scope[data-ui-color-base] .docs-compass-chapter { color: var(--ui-color-foreground); }
 	.docs-compass-sep { flex: none; color: var(--color-base-content-muted); }
 	.docs-compass-section { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-base-content-muted); }
 	.docs-compass-glyph { flex: none; margin-left: auto; color: var(--color-base-content-muted); }

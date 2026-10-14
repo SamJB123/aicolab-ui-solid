@@ -322,10 +322,12 @@
 
 /* Foreground graphics and coloured text preserve the selected family's hue
    and chroma while clamping only the lightness that would disappear into the
-   active scheme. Exact data/fill colour remains available as --ui-color. */
+   active scheme. Exact data/fill colour remains available as --ui-color.
+   The light cap of 0.5 is where a family's small text clears 4.5:1 on the
+   raised and tinted surfaces (0.55 left it just short on both). */
 :where([data-ui-color-base]) {
 	--ui-color-foreground: light-dark(
-		oklch(from var(--ui-color) min(l, 0.55) c h),
+		oklch(from var(--ui-color) min(l, 0.5) c h),
 		oklch(from var(--ui-color) max(l, 0.72) c h)
 	);
 

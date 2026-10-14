@@ -74,8 +74,11 @@
 		--_ui-step-title-ink: var(--ui-step-accent, var(--color-base-content));
 		position: relative;
 	}
+	/* The accent is the number's ink as well as the disc's tint, so a treated
+	   list takes the family's line colour on this scheme — the exact family
+	   colour would vanish into a light disc when the family is pale. */
 	:scope[data-ui-color-base] .ui-step {
-		--_ui-step-accent: var(--ui-step-accent, var(--ui-color));
+		--_ui-step-accent: var(--ui-step-accent, var(--ui-color-foreground));
 	}
 
 	:scope > .ui-steps-line {
@@ -262,7 +265,7 @@
 			--_ui-step-title-ink: attr(data-ui-step-accent type(<color>), var(--ui-step-accent, var(--color-base-content)));
 		}
 		:scope[data-ui-color-base] .ui-step {
-			--_ui-step-accent: attr(data-ui-step-accent type(<color>), var(--ui-step-accent, var(--ui-color)));
+			--_ui-step-accent: attr(data-ui-step-accent type(<color>), var(--ui-step-accent, var(--ui-color-foreground)));
 		}
 	}
 }

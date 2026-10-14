@@ -206,10 +206,14 @@
 }
 :scope[data-ui-color-base] .dc-sf-title { color: var(--ui-ink); }
 :scope[data-ui-color-base] .dc-sf-desc { color: var(--ui-ink-muted); }
+/* The media's height is its flex basis, and it grows: when the back face
+   is the taller one the front has slack below the media, and the media
+   takes it instead of leaving a blank band; where the faces match it is
+   exactly the knob's height. The icon's row below keeps the foot clear. */
 .dc-sf-media {
 	position: relative;
+	flex: 1 0 var(--_ui-depth-media-height);
 	margin-top: 1rem;
-	height: var(--_ui-depth-media-height);
 	border-radius: var(--_ui-depth-media-radius);
 	overflow: hidden;
 	transform: translateZ(50px);
@@ -241,13 +245,14 @@
 	color: #fff;
 	pointer-events: none;
 }
+/* The icon is the face's last row, in flow, so the media above it grows
+   only into the slack and never over it. */
 .dc-sf-icon {
-	position: absolute;
-	bottom: 0.375rem;
-	left: 0;
 	display: flex;
+	flex: none;
 	width: 100%;
 	justify-content: center;
+	padding-top: 0.75rem;
 	color: var(--color-base-content-muted);
 	backface-visibility: hidden;
 }

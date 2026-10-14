@@ -82,7 +82,10 @@
 			oklch(from var(--color-base-100) calc(l - 0.11) calc(c * 1.08) h)
 		);
 		--color-base-content-muted: color-mix(in oklab, var(--color-base-content) 76%, transparent);
-		--color-base-content-faint: color-mix(in oklab, var(--color-base-content) 58%, transparent);
+		/* Faint is the quietest voice that still reads: 66% of the ink clears
+		   4.5:1 on the raised and tinted surfaces of a light scheme, where
+		   58% fell to 4.1. */
+		--color-base-content-faint: color-mix(in oklab, var(--color-base-content) 66%, transparent);
 		--color-primary-content: contrast-color(var(--color-primary));
 		--color-secondary: var(--ui-theme-secondary-default);
 		--color-secondary-content: contrast-color(var(--color-secondary));
