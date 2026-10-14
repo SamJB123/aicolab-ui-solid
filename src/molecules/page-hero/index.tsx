@@ -31,6 +31,10 @@ const paragraphs = (lede: JSX.Element | readonly string[]): readonly string[] | 
 	return list
 }
 
+/** The hero is a band the width of its container, its words in a column of
+ * at most the max-width knob. A `backdrop` fills the band behind the words:
+ * a picture, a canvas, a field — clipped to the band, out of the pointer's
+ * way, under the column. */
 export function PageHero(
 	props: {
 		eyebrow?: string
@@ -38,6 +42,8 @@ export function PageHero(
 		lede?: JSX.Element | readonly string[]
 		/** Render function (lazy slot) — hydration-safe, see Panel.action. */
 		actions?: () => JSX.Element
+		/** Render function (lazy slot): a full-bleed layer behind the words. */
+		backdrop?: () => JSX.Element
 		align?: 'center' | 'start'
 		class?: ClassProp
 	} & ColorTreatmentProps &
@@ -51,32 +57,39 @@ export function PageHero(
 			{...knobs.attributes(props)}
 			style={mergeKnobStyle(knobs.style(props), undefined)}
 		>
-			<Show when={props.eyebrow}>
-				{/* The eyebrow follows the hero's family, primary by default. */}
-				<Eyebrow
-					colorBase={props.colorBase ?? 'primary'}
-					colorLevel={props.colorLevel}
-					variant={props.variant}
-				>
-					{props.eyebrow}
-				</Eyebrow>
+			<Show when={props.backdrop}>
+				<div class="ui-hero-backdrop" aria-hidden="true">
+					{props.backdrop?.()}
+				</div>
 			</Show>
-			<h1>{props.title}</h1>
-			<Show when={props.lede}>
-				{(lede) => (
-					<Show
-						when={paragraphs(lede())}
-						fallback={<p class="ui-hero-lede">{lede()}</p>}
+			<div class="ui-hero-body">
+				<Show when={props.eyebrow}>
+					{/* The eyebrow follows the hero's family, primary by default. */}
+					<Eyebrow
+						colorBase={props.colorBase ?? 'primary'}
+						colorLevel={props.colorLevel}
+						variant={props.variant}
 					>
-						{(list) => (
-							<For each={list()}>{(paragraph) => <p class="ui-hero-lede">{paragraph}</p>}</For>
-						)}
-					</Show>
-				)}
-			</Show>
-			<Show when={props.actions}>
-				<div class="ui-hero-actions">{props.actions?.()}</div>
-			</Show>
+						{props.eyebrow}
+					</Eyebrow>
+				</Show>
+				<h1>{props.title}</h1>
+				<Show when={props.lede}>
+					{(lede) => (
+						<Show
+							when={paragraphs(lede())}
+							fallback={<p class="ui-hero-lede">{lede()}</p>}
+						>
+							{(list) => (
+								<For each={list()}>{(paragraph) => <p class="ui-hero-lede">{paragraph}</p>}</For>
+							)}
+						</Show>
+					)}
+				</Show>
+				<Show when={props.actions}>
+					<div class="ui-hero-actions">{props.actions?.()}</div>
+				</Show>
+			</div>
 		</div>
 	)
 }

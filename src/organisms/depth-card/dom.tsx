@@ -23,6 +23,7 @@ import {
 	type ClassProp,
 	type ColorTreatmentProps,
 } from '../../shared/color-treatment'
+import { cssColorToRgb } from '../../shared/css-color'
 import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 import {
 	type BackgroundStyle,
@@ -49,27 +50,9 @@ const knobs = defineKnobs('ui-depth', {
 	schemeAccent: '<color>',
 })
 
-/* Normalise ANY computed CSS colour (oklch/oklab/color-mix output) to an
-   "rgb(r, g, b)" string THREE.Color can parse. fillStyle keeps its previous
-   value on invalid input, so a failed parse yields the fallback black. */
-let parseCanvas: CanvasRenderingContext2D | null = null
-const cssColorToRgb = (css: string): string | null => {
-	if (!parseCanvas) {
-		const canvas = document.createElement('canvas')
-		canvas.width = 1
-		canvas.height = 1
-		parseCanvas = canvas.getContext('2d', { willReadFrequently: true })
-	}
-	const ctx = parseCanvas
-	if (!ctx || !css) return null
-	ctx.fillStyle = '#000'
-	ctx.fillStyle = css
-	ctx.fillRect(0, 0, 1, 1)
-	const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data
-	return `rgb(${r}, ${g}, ${b})`
-}
-
-/** Read the stylesheet-resolved scheme adapters off the (laid-out) canvas. */
+/** Read the stylesheet-resolved scheme adapters off the (laid-out) canvas,
+ *  each normalised to the "rgb(r, g, b)" THREE.Color parses
+ *  (shared/css-color.ts). */
 const resolveSchemeFromCss = async (element: HTMLElement): Promise<ColorScheme | null> => {
 	await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
 	const computed = getComputedStyle(element)

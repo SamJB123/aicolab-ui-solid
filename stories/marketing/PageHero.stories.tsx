@@ -82,3 +82,34 @@ export const StartAligned: Story = {
 		/>
 	),
 }
+
+/** A backdrop fills the band behind the words — here a wash of the family
+ *  colour, where an app would mount a picture or a canvas. */
+export const WithBackdrop: Story = {
+	render: () => (
+		<PageHero
+			eyebrow="AI CoLab"
+			title={(
+			<>
+				A commons for <Mark>collective</Mark> intelligence
+			</>
+			)}
+			lede="Workshops, working groups, and shared infrastructure for people building with AI in the public interest."
+			actions={() => (
+			<>
+				<Button variant="solid">Join a session</Button>
+				<Button variant="ghost">Read the model</Button>
+			</>
+			)}
+			backdrop={() => (
+				<div
+					style={{
+						height: '100%',
+						background:
+							'radial-gradient(60% 80% at 50% 100%, var(--color-primary-soft), transparent 70%)',
+					}}
+				/>
+			)}
+		/>
+	),
+}

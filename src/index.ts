@@ -185,6 +185,7 @@ export {
 	colorTreatmentData,
 	type Variant,
 } from './shared/color-treatment'
+export { cssColorToRgb, parseCssColor, type RgbaBytes } from './shared/css-color'
 export {
 	defineKnobs,
 	type KnobProps,

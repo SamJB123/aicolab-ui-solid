@@ -3,7 +3,13 @@
    inherited by the heading children. The width media query re-assigns the
    title-size adapter with the knob still first in the chain, so an explicit
    knob outranks the environment. Treated heroes re-pair the heading inks to
-   the family (soft/ghost inks stay readable on the page surface). */
+   the family (soft/ghost inks stay readable on the page surface).
+
+   Two boxes: the hero itself is a BAND — the width of its container, its
+   block padding the band's height, and the box a backdrop fills — and the
+   words sit in a COLUMN inside it (.ui-hero-body), centred, no wider than
+   the max-width knob, with the gutter. A consumer that trims the hero sets
+   the band's padding-block; the column keeps its own gutter. */
 @property --_ui-hero-max-width {
 	syntax: "<length>";
 	inherits: true;
@@ -43,13 +49,14 @@
 		--_ui-hero-title-ink: var(--ui-hero-title-ink, var(--color-base-content));
 		--_ui-hero-lede-size: var(--ui-hero-lede-size, var(--t-xl));
 		--_ui-hero-lede-ink: var(--ui-hero-lede-ink, var(--color-base-content-muted));
-		margin-inline: auto;
+		position: relative;
+		/* The backdrop sits under the column but never under the page: the
+		   band is its own stacking context. */
+		isolation: isolate;
 		display: flex;
 		width: 100%;
-		max-width: var(--_ui-hero-max-width);
 		flex-direction: column;
-		gap: var(--_ui-hero-gap);
-		padding: 80px 24px 64px;
+		padding-block: 80px 64px;
 	}
 	/* The hero paints NO surface — its text sits on the PAGE — so treated
 	   inks take the scheme-aware accent role (--ui-color-foreground), never
@@ -59,13 +66,30 @@
 		--_ui-hero-title-ink: var(--ui-hero-title-ink, var(--ui-color-foreground));
 		--_ui-hero-lede-ink: var(--ui-hero-lede-ink, color-mix(in oklab, var(--ui-color-foreground) 55%, var(--color-base-content-muted)));
 	}
-	:scope[data-align="center"] { align-items: center; text-align: center; }
-	:scope[data-align="start"] { align-items: flex-start; }
+	:scope[data-align="center"] { text-align: center; }
+	:scope[data-align="center"] > .ui-hero-body { align-items: center; }
+	:scope[data-align="start"] > .ui-hero-body { align-items: flex-start; }
 	@media (min-width: 640px) {
 		:scope { padding-top: 112px; }
 		:scope { --_ui-hero-title-size: var(--ui-hero-title-size, var(--t-5xl)); }
 	}
-	:scope > h1 {
+	:scope > .ui-hero-backdrop {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		overflow: clip;
+		pointer-events: none;
+	}
+	:scope > .ui-hero-body {
+		margin-inline: auto;
+		display: flex;
+		width: 100%;
+		max-width: var(--_ui-hero-max-width);
+		flex-direction: column;
+		gap: var(--_ui-hero-gap);
+		padding-inline: 24px;
+	}
+	:scope > .ui-hero-body > h1 {
 		margin: 0;
 		font-family: var(--font-display, Georgia, serif);
 		font-optical-sizing: auto;
@@ -76,7 +100,7 @@
 		color: var(--_ui-hero-title-ink);
 		text-wrap: balance;
 	}
-	:scope > .ui-hero-lede {
+	:scope > .ui-hero-body > .ui-hero-lede {
 		margin: 0;
 		max-width: 42rem;
 		font-size: var(--_ui-hero-lede-size);
@@ -84,7 +108,7 @@
 		color: var(--_ui-hero-lede-ink);
 		text-wrap: pretty;
 	}
-	:scope > .ui-hero-actions {
+	:scope > .ui-hero-body > .ui-hero-actions {
 		margin-top: 8px;
 		display: flex;
 		flex-wrap: wrap;
