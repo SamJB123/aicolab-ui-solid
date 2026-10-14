@@ -51,3 +51,8 @@ export const ThreeColumns: Story = {
 export const TwoColumns: Story = {
 	args: { items: FEATURES.slice(0, 2), columns: 2 },
 }
+
+/** The icon as a mark beside the title, at text size, with no tile. */
+export const InlineIcons: Story = {
+	args: { items: FEATURES, iconPlacement: 'inline' },
+}

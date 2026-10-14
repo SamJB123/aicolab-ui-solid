@@ -73,12 +73,49 @@
 		color: var(--ui-ink-muted);
 	}
 
+	/* ── Inline icons: a mark beside the title, no tile ──
+	   The card's first row is a two-column grid — the icon, then Panel's
+	   header — and the body spans both. The icon-size adapter re-defaults
+	   to text size in this mode (an explicit knob still outranks it); the
+	   tile's tint and corner go. A card without an icon lets its header
+	   take the whole row. */
+	:scope[data-icon-placement="inline"] {
+		--_ui-feature-icon-size: var(--ui-feature-icon-size, 1.375rem);
+	}
+	:scope[data-icon-placement="inline"] .ui-panel.ui-feature-card {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		column-gap: 10px;
+		align-items: start;
+	}
+	:scope[data-icon-placement="inline"] .ui-panel.ui-feature-card > header {
+		grid-column: 1 / -1;
+		grid-row: 1;
+	}
+	:scope[data-icon-placement="inline"] .ui-panel.ui-feature-card:has(> .ui-feature-icon) > header {
+		grid-column: 2;
+	}
+	:scope[data-icon-placement="inline"] .ui-feature-icon {
+		grid-column: 1;
+		grid-row: 1;
+		order: 0;
+		border-radius: 0;
+		font-size: inherit;
+		background: none;
+	}
+	:scope[data-icon-placement="inline"] .ui-feature-body {
+		grid-column: 1 / -1;
+	}
+
 	/* ── Frontier knob boundary (see select-control for the pattern) ── */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
 			--_ui-feature-gap: attr(data-ui-feature-gap type(<length>), var(--ui-feature-gap, 20px));
 			--_ui-feature-icon-size: attr(data-ui-feature-icon-size type(<length>), var(--ui-feature-icon-size, 40px));
 			--_ui-feature-icon-radius: attr(data-ui-feature-icon-radius type(<length-percentage>), var(--ui-feature-icon-radius, var(--r-md)));
+		}
+		:scope[data-icon-placement="inline"] {
+			--_ui-feature-icon-size: attr(data-ui-feature-icon-size type(<length>), var(--ui-feature-icon-size, 1.375rem));
 		}
 		.ui-panel.ui-feature-card {
 			--_ui-feature-accent: attr(data-ui-feature-accent type(<color>), var(--ui-feature-accent, var(--color-primary)));

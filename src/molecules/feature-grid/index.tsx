@@ -31,6 +31,9 @@ export function FeatureGrid(
 	props: {
 		items: Feature[]
 		columns?: 2 | 3
+		/** Where a card's icon sits: in a tinted tile above the title (the
+		 *  default), or inline — a small mark beside the title, no tile. */
+		iconPlacement?: 'tile' | 'inline'
 		class?: ClassProp
 	} & ColorTreatmentProps &
 		KnobProps<typeof knobs.spec>,
@@ -39,6 +42,7 @@ export function FeatureGrid(
 		<div
 			class={['ui-feature-grid', props.class]}
 			data-columns={String(props.columns ?? 3)}
+			data-icon-placement={props.iconPlacement ?? 'tile'}
 			{...knobs.attributes(props)}
 			style={mergeKnobStyle(knobs.style(props), undefined)}
 		>
