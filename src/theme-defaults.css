@@ -100,10 +100,11 @@
 		--color-ring: var(--color-primary);
 		/* The rim a plate with no colour family is drawn with when a theme's
 		   finish turns the rings or studs on (resolver.css "Surface paint and
-		   edge"): the neutral family, solid — a plate with no family is
-		   rimmed as a neutral one is. A theme whose plates are rimmed in its
-		   lead colour names it (brass names its gold). */
-		--color-rim: var(--color-neutral);
+		   edge"): the base ink, solid — such a plate's surface is the base
+		   surface, and the ink is the base colour that reads on it. A theme
+		   whose plates are rimmed in a colour of its own names it here, as it
+		   names --color-border (brass names its gold). */
+		--color-rim: var(--color-base-content);
 		/* How far a finished plate's edge reaches beyond its box: the three
 		   rings of the surface ladder, summed (resolver.css "Surface paint and
 		   edge" draws the outer ring at this width). Zero at the house look.

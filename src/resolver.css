@@ -397,9 +397,9 @@
    surface, and for its rim, its groove's context and its sheen's tint it
    INHERITS: inside a treated component it takes that component's family
    (a tab switcher in an info panel is rimmed in info), and on the page it
-   takes the theme root's — the theme's rim (--color-rim: the neutral
-   family unless the theme names one; brass names its gold), the raised
-   surface, the lead colour as tint. The RIM — the colour the rings and
+   takes the theme root's — the theme's rim (--color-rim: the base ink
+   unless the theme names one; brass names its gold), the raised surface,
+   the lead colour as tint. The RIM — the colour the rings and
    studs are drawn in — is always solid: on a treated plate its family AS
    A LINE ON THIS SCHEME (--ui-color-foreground: the family's hue with its
    lightness clamped to read on the page, darker in light, lighter in dark)
