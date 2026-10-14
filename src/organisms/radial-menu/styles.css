@@ -176,7 +176,7 @@
 	   (resolver.css "Surface paint and edge") where it paints its surface
 	   and its ring. */
 	:scope[data-ui-color-base] .ui-radial-chip {
-		--ui-edge-source: var(--ui-color);
+		--ui-edge-source: var(--ui-color-foreground);
 	}
 	.ui-radial-chip {
 		--ui-paint-source: var(--_ui-radial-chip-surface);

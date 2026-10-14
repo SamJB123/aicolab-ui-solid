@@ -78,7 +78,7 @@ requireAll(
 		/:where\(\[data-ui-plate\], \[data-ui-color-base\]\)/,
 		/* The rim is solid: the theme's rim on a plain plate, the family colour on a treated one. */
 		/--ui-edge-source: var\(--color-rim\);/,
-		/--ui-edge-source: var\(--ui-color\);/,
+		/--ui-edge-source: var\(--ui-color-foreground\);/,
 		/--ui-surface-paint: var\(--ui-studs\), var\(--ui-shine\);/,
 		/--ui-surface-paint: if\(\n\t\t\tstyle\(--s-grade: 0\): if\(style\(--s-stud: 0px\): var\(--ui-paint-source\); else: var\(--ui-studs\), var\(--ui-shine\)\);/,
 		/--ui-edge:\n/,

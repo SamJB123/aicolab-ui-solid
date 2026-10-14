@@ -124,7 +124,7 @@
 	transition: transform 0.6s cubic-bezier(0.4, 0.1, 0.2, 1);
 }
 :scope[data-ui-color-base] .dc-face {
-	--ui-edge-source: var(--ui-color);
+	--ui-edge-source: var(--ui-color-foreground);
 	box-shadow: var(--ui-edge), inset 0 0 0 1px var(--ui-border);
 }
 :scope .dc-back {

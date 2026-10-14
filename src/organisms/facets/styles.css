@@ -74,7 +74,7 @@
 	--ui-paint-source-selected: var(--_ui-facets-pill-surface);
 }
 :scope[data-ui-color-base] :is(.facets-tab, .facets-pill) {
-	--ui-edge-source: var(--ui-color);
+	--ui-edge-source: var(--ui-color-foreground);
 }
 .facets-tabs {
 	position: relative;

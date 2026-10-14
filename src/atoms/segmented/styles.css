@@ -109,7 +109,7 @@
 	--ui-paint-source-selected: var(--_ui-seg-active-surface);
 }
 :scope[data-ui-color-base] :is(.seg-btn, .seg-pill) {
-	--ui-edge-source: var(--ui-color);
+	--ui-edge-source: var(--ui-color-foreground);
 }
 .seg-btn {
 	position: relative;

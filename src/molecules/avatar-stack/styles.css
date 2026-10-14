@@ -101,7 +101,7 @@
 			inset 0 0 0 1px var(--color-border);
 	}
 	:scope[data-ui-color-base] > .ui-avatar-stack-extra {
-		--ui-edge-source: var(--ui-color);
+		--ui-edge-source: var(--ui-color-foreground);
 		box-shadow:
 			var(--ui-edge),
 			0 0 0 var(--_ui-avstack-ring-width) var(--_ui-avstack-ring),
