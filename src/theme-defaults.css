@@ -103,6 +103,13 @@
 		   are rimmed in their gold. Seen only when a theme's surface finish
 		   turns the rings or studs on; a theme may author it. */
 		--color-rim: var(--color-primary);
+		/* How far a finished plate's edge reaches beyond its box: the three
+		   rings of the surface ladder, summed (resolver.css "Surface paint and
+		   edge" draws the outer ring at this width). Zero at the house look.
+		   A layout that sets plates side by side adds it to their gap and to
+		   the inset of whatever holds them, so neighbouring rings never
+		   touch. */
+		--ui-edge-outset: calc(var(--s-edge-inner) + var(--s-edge-gap) + var(--s-edge-outer));
 		/* Chrome floating over visual media uses the darkest theme anchor as
 		   material and the lightest as ink. It therefore stays legible over an
 		   image/canvas without hardcoding black and white into components. */

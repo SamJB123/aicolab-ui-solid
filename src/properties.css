@@ -407,6 +407,7 @@
    and bright colour) and for a plain plate ([data-ui-plate]: the theme's
    surface and rim); a sheet whose surface is a knob re-points the paint
    source at its adapter where it assigns the adapter. */
+@property --ui-edge-outset { syntax: "<length>"; inherits: true; initial-value: 0px; }
 @property --ui-paint-source { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-paint-source-hover { syntax: "<color>"; inherits: true; initial-value: transparent; }
 @property --ui-paint-source-active { syntax: "<color>"; inherits: true; initial-value: transparent; }

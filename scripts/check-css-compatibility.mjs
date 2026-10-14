@@ -4,9 +4,10 @@ import { readFile } from 'node:fs/promises'
 
 const read = (path) => readFile(new URL(path, import.meta.url), 'utf8')
 
-const [resolver, foundations, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit, callout, flowMap, richList] = await Promise.all([
+const [resolver, foundations, themeDefaults, accordion, selectControl, button, formControl, iconButton, holdButton, mark, notice, accordionItem, carousel, workspace, prosekit, callout, flowMap, richList] = await Promise.all([
 	read('../src/resolver.css'),
 	read('../src/foundations.css'),
+	read('../src/theme-defaults.css'),
 	read('../src/molecules/accordion/styles.css'),
 	read('../src/atoms/select-control/styles.css'),
 	read('../src/atoms/button/styles.css'),
@@ -88,7 +89,7 @@ requireAll(
 		/var\(--s-grade-angle\)/,
 		/var\(--s-edge-inner\)/,
 		/var\(--s-edge-gap\)/,
-		/var\(--s-edge-outer\)/,
+		/0 0 0 var\(--ui-edge-outset\) var\(--ui-edge-source\),/,
 		/var\(--s-bevel\)/,
 		/var\(--s-stud\)/,
 		/var\(--s-shadow\)/,
@@ -107,6 +108,13 @@ requireAll(
 	foundations,
 	[/@property --_ui-radius \{\n\tsyntax: "<length-percentage>";\n\tinherits: false;\n\tinitial-value: 0px;\n\}/],
 	'shared element corner registration',
+)
+/* The edge's reach is summed once, on the theme root, and read by the
+   resolver's outer ring and by any layout that sets plates side by side. */
+requireAll(
+	themeDefaults,
+	[/--ui-edge-outset: calc\(var\(--s-edge-inner\) \+ var\(--s-edge-gap\) \+ var\(--s-edge-outer\)\);/],
+	'edge outset derivation',
 )
 requireAll(
 	button,

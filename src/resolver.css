@@ -450,14 +450,14 @@
 	--ui-edge:
 		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-edge-source) 70%, black),
 		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) color-mix(in oklab, var(--ui-gap-source) 40%, black),
-		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap) + var(--s-edge-outer)) var(--ui-edge-source),
+		0 0 0 var(--ui-edge-outset) var(--ui-edge-source),
 		inset 0 calc(1px * var(--s-bevel)) 0 color-mix(in oklab, var(--ui-paint-source) calc(100% - 40% * var(--s-bevel)), white),
 		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) color-mix(in oklab, var(--ui-paint-source) calc(100% - 35% * var(--s-bevel)), black),
 		0 calc(10px * var(--s-shadow)) calc(24px * var(--s-shadow)) color-mix(in oklab, var(--ui-gap-source) calc(100% - 55% * var(--s-shadow)), black);
 	--ui-edge-hover:
 		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-edge-source) 70%, black),
 		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) color-mix(in oklab, var(--ui-gap-source) 40%, black),
-		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap) + var(--s-edge-outer)) var(--ui-edge-source),
+		0 0 0 var(--ui-edge-outset) var(--ui-edge-source),
 		inset 0 calc(1px * var(--s-bevel)) 0 color-mix(in oklab, var(--ui-paint-source-hover) calc(100% - 40% * var(--s-bevel)), white),
 		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) color-mix(in oklab, var(--ui-paint-source-hover) calc(100% - 35% * var(--s-bevel)), black),
 		0 calc(12px * var(--s-shadow)) calc(28px * var(--s-shadow)) color-mix(in oklab, var(--ui-gap-source) calc(100% - 55% * var(--s-shadow)), black);
@@ -465,7 +465,7 @@
 	--ui-edge-selected:
 		0 0 0 var(--s-edge-inner) color-mix(in oklab, var(--ui-edge-source) 70%, black),
 		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) color-mix(in oklab, var(--ui-gap-source) 40%, black),
-		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap) + var(--s-edge-outer)) var(--ui-edge-source),
+		0 0 0 var(--ui-edge-outset) var(--ui-edge-source),
 		inset 0 calc(1px * var(--s-bevel)) 0 color-mix(in oklab, var(--ui-paint-source-selected) calc(100% - 40% * var(--s-bevel)), white),
 		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) color-mix(in oklab, var(--ui-paint-source-selected) calc(100% - 35% * var(--s-bevel)), black),
 		0 calc(10px * var(--s-shadow)) calc(24px * var(--s-shadow)) color-mix(in oklab, var(--ui-gap-source) calc(100% - 55% * var(--s-shadow)), black);

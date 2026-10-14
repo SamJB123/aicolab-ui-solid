@@ -62,6 +62,9 @@ ring>` and `corner-shape: var(--s-corner)`; lift it on hover with
 `translate: 0 calc(-1 * var(--s-lift))`. Without the attribute nothing
 derives the two roles on that element, so a theme's finish never reaches
 it; without the corner the studs sit where they would on a square plate.
+A finished edge reaches `--ui-edge-outset` beyond the plate's box (zero at
+the house look): a layout that sets plates side by side adds it to their
+gap, and to the inset of whatever holds them.
 
 ## The three-axis colour system
 
