@@ -52,6 +52,14 @@ button, a popover — is finished; its defaults are the flat house look, and
 the resolver derives each plate's `--ui-surface-paint` and `--ui-edge`
 from them, so components never paint a finish of their own).
 
+An app's own surfaces take the finish the same way: put `data-ui-plate` on
+the element, name its surface in `--ui-paint-source` when it is not
+`--color-base-100`, and paint `background: var(--ui-surface-paint)`,
+`box-shadow: var(--ui-edge), <its ring>` and `corner-shape: var(--s-corner)`;
+lift it on hover with `translate: 0 calc(-1 * var(--s-lift))`. Without the
+attribute nothing derives the two roles on that element, so a theme's
+finish never reaches it.
+
 ## The three-axis colour system
 
 Every colour decision is up to three orthogonal choices, passed as props and
