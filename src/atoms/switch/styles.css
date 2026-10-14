@@ -57,7 +57,7 @@
 		--_ui-switch-width: var(--ui-switch-width, 36px);
 		--_ui-switch-height: var(--ui-switch-height, 20px);
 		--_ui-switch-accent: var(--ui-switch-accent, var(--color-primary));
-		--_ui-switch-focus-ring: var(--ui-switch-focus-ring, var(--color-ring));
+		--_ui-switch-focus-ring: var(--ui-switch-focus-ring, var(--color-primary));
 		box-sizing: border-box;
 		flex: none;
 		width: var(--_ui-switch-width);
@@ -147,7 +147,7 @@
 			--_ui-switch-width: attr(data-ui-switch-width type(<length>), var(--ui-switch-width, 36px));
 			--_ui-switch-height: attr(data-ui-switch-height type(<length>), var(--ui-switch-height, 20px));
 			--_ui-switch-accent: attr(data-ui-switch-accent type(<color>), var(--ui-switch-accent, var(--color-primary)));
-			--_ui-switch-focus-ring: attr(data-ui-switch-focus-ring type(<color>), var(--ui-switch-focus-ring, var(--color-ring)));
+			--_ui-switch-focus-ring: attr(data-ui-switch-focus-ring type(<color>), var(--ui-switch-focus-ring, var(--color-primary)));
 		}
 		:scope[data-ui-color-base] .ui-switch-track {
 			--_ui-switch-accent: attr(data-ui-switch-accent type(<color>), var(--ui-switch-accent, var(--ui-color)));

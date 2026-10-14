@@ -64,7 +64,7 @@
 
 	/* Keyboard path: focusing the (visually hidden) input lights the surface. */
 	:scope:focus-within {
-		outline: 2px solid var(--color-ring);
+		outline: 2px solid var(--color-primary);
 		outline-offset: 2px;
 	}
 

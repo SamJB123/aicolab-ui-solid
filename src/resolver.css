@@ -397,9 +397,11 @@
    surface, and for its rim, its groove's context and its sheen's tint it
    INHERITS: inside a treated component it takes that component's family
    (a tab switcher in an info panel is rimmed in info), and on the page it
-   takes the theme root's — the theme's rim (--color-rim: the base ink
-   unless the theme names one; brass names its gold), the raised surface,
-   the lead colour as tint. The RIM — the colour the rings and
+   takes the theme root's: the base ink as rim (its surface is the base
+   surface, and the ink is the base colour that reads on it; a theme whose
+   plates are rimmed in a colour of its own sets --ui-edge-source on its
+   root, as brass sets its gold), the raised surface, the lead colour as
+   tint. The RIM — the colour the rings and
    studs are drawn in — is always solid: on a treated plate its family AS
    A LINE ON THIS SCHEME (--ui-color-foreground: the family's hue with its
    lightness clamped to read on the page, darker in light, lighter in dark)
@@ -413,7 +415,7 @@
    a track, a tray — is not a plate: it keeps its flat surface and single
    ring, and takes only the theme's corner shape. */
 :where(:root, .ui-theme) {
-	--ui-edge-source: var(--color-rim);
+	--ui-edge-source: var(--color-base-content);
 	--ui-gap-source: var(--color-base-100);
 	--ui-shade-source: var(--color-primary);
 }

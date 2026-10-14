@@ -54,7 +54,7 @@
 		--_ui-checkbox-size: var(--ui-checkbox-size, 18px);
 		--_ui-radius: var(--ui-checkbox-radius, var(--r-xs));
 		--_ui-checkbox-accent: var(--ui-checkbox-accent, var(--color-primary));
-		--_ui-checkbox-focus-ring: var(--ui-checkbox-focus-ring, var(--color-ring));
+		--_ui-checkbox-focus-ring: var(--ui-checkbox-focus-ring, var(--color-primary));
 		box-sizing: border-box;
 		flex: none;
 		width: var(--_ui-checkbox-size);
@@ -154,7 +154,7 @@
 			--_ui-checkbox-size: attr(data-ui-checkbox-size type(<length>), var(--ui-checkbox-size, 18px));
 			--_ui-radius: attr(data-ui-checkbox-radius type(<length-percentage>), var(--ui-checkbox-radius, var(--r-xs)));
 			--_ui-checkbox-accent: attr(data-ui-checkbox-accent type(<color>), var(--ui-checkbox-accent, var(--color-primary)));
-			--_ui-checkbox-focus-ring: attr(data-ui-checkbox-focus-ring type(<color>), var(--ui-checkbox-focus-ring, var(--color-ring)));
+			--_ui-checkbox-focus-ring: attr(data-ui-checkbox-focus-ring type(<color>), var(--ui-checkbox-focus-ring, var(--color-primary)));
 		}
 		:scope[data-ui-color-base] .ui-checkbox-box {
 			--_ui-checkbox-accent: attr(data-ui-checkbox-accent type(<color>), var(--ui-checkbox-accent, var(--ui-color)));

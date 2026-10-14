@@ -129,16 +129,6 @@
 	inherits: true;
 	initial-value: #fae5cc;
 }
-@property --color-ring {
-	syntax: "<color>";
-	inherits: true;
-	initial-value: #e8b04c;
-}
-@property --color-rim {
-	syntax: "<color>";
-	inherits: true;
-	initial-value: #e8b04c;
-}
 @property --color-overlay-surface {
 	syntax: "<color>";
 	inherits: true;

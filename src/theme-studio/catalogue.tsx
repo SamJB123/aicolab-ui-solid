@@ -49,7 +49,6 @@ const SURFACE_TOKENS = [
 	'--color-border',
 	'--color-border-strong',
 	'--color-primary-soft',
-	'--color-ring',
 ]
 
 const SURFACE_ROLES: readonly { token: string; meaning: string }[] = [
