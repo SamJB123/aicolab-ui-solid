@@ -150,8 +150,10 @@
 	margin: 0 0 1.1rem;
 	color: color-mix(in oklab, var(--color-base-content) 88%, transparent);
 }
-:scope ul,
-:scope ol {
+/* A list in running text is a bare one; a list that carries a class — a
+   component's (a logo cloud, a rich list, steps) or the app's own — lays
+   itself out, and this sheet's layer would otherwise override it. */
+:scope :is(ul, ol):not([class]) {
 	margin: 0 0 1.1rem;
 	padding-left: 1.4rem;
 	display: grid;

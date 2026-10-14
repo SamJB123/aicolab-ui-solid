@@ -52,10 +52,26 @@
 		font-size: var(--t-md);
 		color: var(--_ui-logocloud-name-ink);
 	}
+	/* Logos are drawn for a light ground: on a dark scheme each sits on a
+	   tile of the scheme's light anchor (the ink), so dark marks stay
+	   legible and brand colours stay themselves. */
+	.ui-logo-item {
+		display: grid;
+		place-items: center;
+		padding: 0.5rem 0.75rem;
+		border-radius: var(--r-sm);
+		background: light-dark(transparent, var(--color-base-content));
+	}
+	/* A definite height, not a cap: an SVG with a viewBox and no width or
+	   height has only a ratio, and takes its width from a definite height;
+	   a cap alone leaves it nothing to work from. Wide marks are clamped by
+	   the width knob and fit inside it. */
 	.ui-logo-item img {
-		max-height: var(--_ui-logocloud-logo-max-height);
+		display: block;
+		height: var(--_ui-logocloud-logo-max-height);
 		width: auto;
 		max-width: var(--_ui-logocloud-logo-max-width);
+		object-fit: contain;
 	}
 
 	/* ── Frontier knob boundary (see select-control for the pattern) ── */
