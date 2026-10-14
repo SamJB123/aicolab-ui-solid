@@ -1,0 +1,191 @@
+/* ── NavLinks — a row of page links with one sliding plate ──
+   Plain words in a row; one plate sits behind the current page and glides
+   to the link under the pointer or keyboard focus, then returns. The plate
+   is anchored to that link with CSS anchor positioning (the Segmented pill's
+   mechanism): the current link carries the anchor name, and while a link is
+   hovered or focused that link carries it instead and the current one gives
+   it up, so the one positioned plate follows. With no current page and
+   nothing under the pointer there is no anchor and the plate is hidden.
+   Fallback: the current link wears the plate look itself.
+
+   Knobs on the usual two wires. Link-consumed adapters are inherits: true
+   and assigned on the root (plain + treated contexts get attr() frontier
+   swaps). The links and the plate are PLATES: their surface is the plate
+   surface adapter, and inside a treated row their rim is its family. */
+@property --_ui-navlinks-radius {
+	syntax: "<length-percentage>";
+	inherits: true;
+	initial-value: 999px;
+}
+@property --_ui-navlinks-pad-block {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 8px;
+}
+@property --_ui-navlinks-pad-inline {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 16px;
+}
+@property --_ui-navlinks-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
+}
+@property --_ui-navlinks-font-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 13px;
+}
+@property --_ui-navlinks-plate-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: transparent;
+}
+@property --_ui-navlinks-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+@property --_ui-navlinks-current-ink {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
+
+@scope (.ui-nav-links) {
+	:scope {
+		--_ui-navlinks-radius: var(--ui-navlinks-radius, var(--r-pill));
+		--_ui-navlinks-pad-block: var(--ui-navlinks-pad-block, 8px);
+		--_ui-navlinks-pad-inline: var(--ui-navlinks-pad-inline, 16px);
+		/* No gap by default: the links' hit areas touch, so the pointer
+		   crossing from one to the next never leaves a link and the plate
+		   never heads back to the current page between them. */
+		--_ui-navlinks-gap: var(--ui-navlinks-gap, 0px);
+		--_ui-navlinks-font-size: var(--ui-navlinks-font-size, var(--t-sm));
+		--_ui-navlinks-plate-surface: var(--ui-navlinks-plate-surface, var(--color-base-150));
+		--_ui-navlinks-ink: var(--ui-navlinks-ink, var(--color-base-content));
+		--_ui-navlinks-current-ink: var(--ui-navlinks-current-ink, var(--color-base-content));
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: var(--_ui-navlinks-gap);
+	}
+	:scope[data-ui-color-base] {
+		--_ui-navlinks-plate-surface: var(--ui-navlinks-plate-surface, var(--ui-surface-selected));
+		--_ui-navlinks-ink: var(--ui-navlinks-ink, var(--ui-color-foreground));
+		--_ui-navlinks-current-ink: var(--ui-navlinks-current-ink, var(--ui-ink-selected));
+	}
+	.ui-nav-link,
+	.ui-nav-links-plate {
+		--_ui-radius: var(--_ui-navlinks-radius);
+		--ui-surface: var(--_ui-navlinks-plate-surface);
+	}
+	:scope[data-ui-color-base] :is(.ui-nav-link, .ui-nav-links-plate) {
+		--ui-edge-source: var(--ui-color-foreground);
+	}
+	.ui-nav-link {
+		position: relative;
+		z-index: 1;
+		flex: 0 0 auto;
+		white-space: nowrap;
+		border-radius: var(--_ui-radius);
+		corner-shape: var(--s-corner);
+		padding: var(--_ui-navlinks-pad-block) var(--_ui-navlinks-pad-inline);
+		font-size: var(--_ui-navlinks-font-size);
+		font-weight: 500;
+		color: var(--_ui-navlinks-ink);
+		text-decoration: none;
+		transition: color 0.2s;
+	}
+	.ui-nav-link:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+	.ui-nav-link[aria-current="page"] {
+		color: var(--_ui-navlinks-current-ink);
+		/* Fallback indicator where anchor positioning is unavailable. */
+		background: var(--ui-surface-paint);
+		box-shadow: var(--ui-edge), inset 0 0 0 1px var(--color-border-strong);
+	}
+	:scope[data-ui-color-base] .ui-nav-link[aria-current="page"] {
+		box-shadow:
+			var(--ui-edge),
+			inset 0 0 0 1px var(--ui-border-selected),
+			0 4px 18px -6px var(--ui-surface-glow-hover);
+	}
+	.ui-nav-links-plate {
+		display: none;
+	}
+	@supports (anchor-name: --x) {
+		.ui-nav-link[aria-current="page"] {
+			background: none;
+			box-shadow: none;
+		}
+		/* The anchor: the current page, or the link under the pointer or
+		   focus while there is one — the current page gives the name up. */
+		.ui-nav-link:is([aria-current="page"], :hover, :focus-visible) {
+			anchor-name: --ui-nav-plate;
+		}
+		:scope:has(.ui-nav-link:is(:hover, :focus-visible)) .ui-nav-link[aria-current="page"]:not(:hover, :focus-visible) {
+			anchor-name: none;
+		}
+		.ui-nav-links-plate {
+			display: block;
+			position: absolute;
+			z-index: 0;
+			position-anchor: --ui-nav-plate;
+			top: anchor(top);
+			left: anchor(left);
+			width: anchor-size(width);
+			height: anchor-size(height);
+			border-radius: var(--_ui-radius);
+			corner-shape: var(--s-corner);
+			background: var(--ui-surface-paint);
+			box-shadow: var(--ui-edge), inset 0 0 0 1px var(--color-border-strong);
+			transition:
+				top 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+				left 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+				width 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+				height 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+				opacity 0.2s;
+		}
+		/* No anchor at all: nothing is current and nothing is under the
+		   pointer, so there is nothing for the plate to mark. */
+		:scope:not(:has(.ui-nav-link:is([aria-current="page"], :hover, :focus-visible))) .ui-nav-links-plate {
+			opacity: 0;
+		}
+		:scope[data-ui-color-base] .ui-nav-links-plate {
+			box-shadow:
+				var(--ui-edge),
+				inset 0 0 0 1px var(--ui-border-selected),
+				0 4px 18px -6px var(--ui-surface-glow-hover);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ui-nav-link,
+		.ui-nav-links-plate {
+			transition: none;
+		}
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-navlinks-radius: attr(data-ui-navlinks-radius type(<length-percentage>), var(--ui-navlinks-radius, var(--r-pill)));
+			--_ui-navlinks-pad-block: attr(data-ui-navlinks-pad-block type(<length>), var(--ui-navlinks-pad-block, 8px));
+			--_ui-navlinks-pad-inline: attr(data-ui-navlinks-pad-inline type(<length>), var(--ui-navlinks-pad-inline, 16px));
+			--_ui-navlinks-gap: attr(data-ui-navlinks-gap type(<length>), var(--ui-navlinks-gap, 0px));
+			--_ui-navlinks-font-size: attr(data-ui-navlinks-font-size type(<length>), var(--ui-navlinks-font-size, var(--t-sm)));
+			--_ui-navlinks-plate-surface: attr(data-ui-navlinks-plate-surface type(<color>), var(--ui-navlinks-plate-surface, var(--color-base-150)));
+			--_ui-navlinks-ink: attr(data-ui-navlinks-ink type(<color>), var(--ui-navlinks-ink, var(--color-base-content)));
+			--_ui-navlinks-current-ink: attr(data-ui-navlinks-current-ink type(<color>), var(--ui-navlinks-current-ink, var(--color-base-content)));
+		}
+		:scope[data-ui-color-base] {
+			--_ui-navlinks-plate-surface: attr(data-ui-navlinks-plate-surface type(<color>), var(--ui-navlinks-plate-surface, var(--ui-surface-selected)));
+			--_ui-navlinks-ink: attr(data-ui-navlinks-ink type(<color>), var(--ui-navlinks-ink, var(--ui-color-foreground)));
+			--_ui-navlinks-current-ink: attr(data-ui-navlinks-current-ink type(<color>), var(--ui-navlinks-current-ink, var(--ui-ink-selected)));
+		}
+	}
+}

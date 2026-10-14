@@ -68,6 +68,8 @@ export {
 	MenuItem,
 	MenuSeparator,
 	type MenuTriggerWiring,
+	NavLink,
+	NavLinks,
 	setThemeMode,
 	storedThemeMode,
 	type ThemeMode,
