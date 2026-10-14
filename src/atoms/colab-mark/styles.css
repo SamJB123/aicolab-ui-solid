@@ -1,10 +1,16 @@
 /* ── CoLabMark — the AI CoLab mark ──
-   Knobs (size, ink, cells) on the usual two wires, assigned on :scope; the
-   tone is an enumerated mode carried by data-tone. The shell and frame are
-   always in the ink; the ten cells are in the ink too, or lit in their own
-   colour — always in the lit tone, and in the reveal tone while the link
-   or button the mark sits in is hovered or focused. That trigger is scoped
-   on the host below, as the mark cannot name its own ancestor. */
+   Knobs (size, ink, cells, rim) on the usual two wires, assigned on :scope;
+   the tone is an enumerated mode carried by data-tone. The shell and frame
+   are always in the ink. Each cell is drawn twice — the cell, and a core
+   scaled down about the cell's own centre — so a lit cell is a small plate
+   read the way a button's plate is: its core in the cells colour (the
+   theme's primary; a treated mark's family), its rim in the colour the
+   theme rims its plates in (--ui-edge-source: the family's line colour on
+   a treated mark, which is what keeps a pale primary legible on a light
+   scheme). At rest both are in the ink. The lit tone is always lit; the
+   reveal tone lights while the link or button the mark sits in is hovered
+   or focused — that trigger is scoped on the host below, as the mark
+   cannot name its own ancestor. */
 @property --_ui-colabmark-size {
 	syntax: "<length>";
 	inherits: false;
@@ -12,8 +18,8 @@
 	   lives in the assignment below; em values are not allowed here. */
 	initial-value: 24px;
 }
-/* ink and cells are read on the paths below the root, so they inherit;
-   size is read on the root alone. */
+/* ink, cells and rim are read on the paths below the root, so they
+   inherit; size is read on the root alone. */
 @property --_ui-colabmark-ink {
 	syntax: "<color>";
 	inherits: true;
@@ -24,18 +30,26 @@
 	inherits: true;
 	initial-value: currentColor;
 }
+@property --_ui-colabmark-rim {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: currentColor;
+}
 
 @scope (.ui-colab-mark) {
 	:scope {
 		--_ui-colabmark-size: var(--ui-colabmark-size, 1.5em);
 		--_ui-colabmark-ink: var(--ui-colabmark-ink, currentColor);
 		--_ui-colabmark-cells: var(--ui-colabmark-cells, var(--color-primary));
+		--_ui-colabmark-rim: var(--ui-colabmark-rim, var(--ui-edge-source));
 		display: inline-block;
 		height: var(--_ui-colabmark-size);
 		line-height: 0;
 		vertical-align: middle;
 	}
-	/* Treated instances light their cells in the family's strong colour. */
+	/* Treated instances light their cores in the family's strong colour;
+	   the rim follows --ui-edge-source, which the treatment sets to the
+	   family's line colour. */
 	:scope[data-ui-color-base] {
 		--_ui-colabmark-cells: var(--ui-colabmark-cells, var(--ui-color));
 	}
@@ -46,15 +60,25 @@
 		width: auto;
 		fill: var(--_ui-colabmark-ink);
 	}
+	/* The core: the cell again at two thirds of its size about its own
+	   centre, so the outer third of a lit cell is its rim. */
+	.ui-colab-mark-core {
+		transform-box: fill-box;
+		transform-origin: center;
+		transform: scale(0.66);
+	}
 	:scope[data-tone="lit"] .ui-colab-mark-cells {
+		fill: var(--_ui-colabmark-rim);
+	}
+	:scope[data-tone="lit"] .ui-colab-mark-core {
 		fill: var(--_ui-colabmark-cells);
 	}
-	:scope[data-tone="reveal"] .ui-colab-mark-cells {
+	:scope[data-tone="reveal"] :is(.ui-colab-mark-cells, .ui-colab-mark-core) {
 		transition: fill 0.2s;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		:scope[data-tone="reveal"] .ui-colab-mark-cells {
+		:scope[data-tone="reveal"] :is(.ui-colab-mark-cells, .ui-colab-mark-core) {
 			transition: none;
 		}
 	}
@@ -65,6 +89,7 @@
 			--_ui-colabmark-size: attr(data-ui-colabmark-size type(<length>), var(--ui-colabmark-size, 1.5em));
 			--_ui-colabmark-ink: attr(data-ui-colabmark-ink type(<color>), var(--ui-colabmark-ink, currentColor));
 			--_ui-colabmark-cells: attr(data-ui-colabmark-cells type(<color>), var(--ui-colabmark-cells, var(--color-primary)));
+			--_ui-colabmark-rim: attr(data-ui-colabmark-rim type(<color>), var(--ui-colabmark-rim, var(--ui-edge-source)));
 		}
 		:scope[data-ui-color-base] {
 			--_ui-colabmark-cells: attr(data-ui-colabmark-cells type(<color>), var(--ui-colabmark-cells, var(--ui-color)));
@@ -76,6 +101,9 @@
    sits in is hovered or keyboard-focused. */
 @scope (a, button) {
 	:scope:is(:hover, :focus-visible) .ui-colab-mark[data-tone="reveal"] .ui-colab-mark-cells {
+		fill: var(--_ui-colabmark-rim);
+	}
+	:scope:is(:hover, :focus-visible) .ui-colab-mark[data-tone="reveal"] .ui-colab-mark-core {
 		fill: var(--_ui-colabmark-cells);
 	}
 }

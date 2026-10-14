@@ -13,6 +13,7 @@ const meta = {
 		size: { control: 'text', table: { category: 'knobs' } },
 		ink: { control: 'text', table: { category: 'knobs' } },
 		cells: { control: 'text', table: { category: 'knobs' } },
+		rim: { control: 'text', table: { category: 'knobs' } },
 	},
 } satisfies Meta<typeof CoLabMark>
 
@@ -45,13 +46,17 @@ export const Playground: Story = {
 	),
 }
 
+/* A lit cell is a plate: its core in the cells colour, its rim in the
+   colour the theme rims plates in — the ink on a family-less mark, the
+   family's line colour on a treated one (the header's anatomy, last). */
 export const Tones: Story = {
 	render: () => (
 		<div style={{ display: 'flex', gap: '32px', 'align-items': 'center' }}>
 			<CoLabMark tone="ink" size="48px" />
 			<CoLabMark tone="lit" size="48px" />
+			<CoLabMark tone="lit" size="48px" colorBase="primary" />
 			<a href="#" style={{ display: 'inline-flex', color: 'inherit' }}>
-				<CoLabMark tone="reveal" size="48px" />
+				<CoLabMark tone="reveal" size="48px" colorBase="primary" />
 			</a>
 		</div>
 	),

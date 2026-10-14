@@ -9,12 +9,15 @@ import {
 import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 
 /** Per-instance styling contract (see shared/knobs.ts). size is the mark's
- * height; ink draws the shell, the frame and, at rest, the cells; cells is
- * the ten cells' colour when they are lit. */
+ * height; ink draws the shell, the frame and, at rest, the cells. A lit
+ * cell is a small plate: its core in `cells`, its rim in `rim` — by
+ * default the colour the theme rims its plates in (the family's line
+ * colour on a treated mark), as a button's outer ring is. */
 const knobs = defineKnobs('ui-colabmark', {
 	size: '<length>',
 	ink: '<color>',
 	cells: '<color>',
+	rim: '<color>',
 })
 
 /* The AI CoLab mark, as drawn in platform/landing/public/ai-colab-logo.svg
@@ -43,9 +46,10 @@ const CELLS = [
 
 type CoLabMarkProps = Omit<JSX.HTMLAttributes<HTMLSpanElement>, 'class'> & {
 	class?: ClassProp
-	/** `ink` = the whole mark in the ink. `lit` = the ten cells in their
-	 *  colour. `reveal` = ink at rest; the cells light while the link or
-	 *  button the mark sits in is hovered or focused. */
+	/** `ink` = the whole mark in the ink. `lit` = the ten cells lit, each a
+	 *  core in its colour inside its rim. `reveal` = ink at rest; the cells
+	 *  light while the link or button the mark sits in is hovered or
+	 *  focused. */
 	tone?: 'ink' | 'lit' | 'reveal'
 } & ColorTreatmentProps &
 	KnobProps<typeof knobs.spec>
@@ -54,7 +58,10 @@ type CoLabMarkProps = Omit<JSX.HTMLAttributes<HTMLSpanElement>, 'class'> & {
  * The AI CoLab mark. Decorative — it carries no name of its own, so it sits
  * beside the wordmark or inside a labelled link. The shell carries the
  * window as a second subpath under the even-odd rule, so the window is cut
- * out of it and whatever the mark sits on shows through.
+ * out of it and whatever the mark sits on shows through. Each cell is drawn
+ * twice: the cell itself, and a core the sheet scales down about the cell's
+ * own centre, so a lit cell is a plate with its rim inside its outline and
+ * the gaps between cells stay open.
  */
 export function CoLabMark(props: CoLabMarkProps) {
 	const attributes = omit(
@@ -68,6 +75,7 @@ export function CoLabMark(props: CoLabMarkProps) {
 		'size',
 		'ink',
 		'cells',
+		'rim',
 	)
 	return (
 		<span
@@ -84,6 +92,9 @@ export function CoLabMark(props: CoLabMarkProps) {
 				<path class="ui-colab-mark-frame" d={FRAME} />
 				{CELLS.map((d) => (
 					<path class="ui-colab-mark-cells" d={d} />
+				))}
+				{CELLS.map((d) => (
+					<path class="ui-colab-mark-core" d={d} />
 				))}
 			</svg>
 		</span>
