@@ -188,9 +188,14 @@
 				opacity 0.2s;
 		}
 		/* No anchor at all: nothing is current and nothing is under the
-		   pointer, so there is nothing for the plate to mark. */
+		   pointer, so there is nothing for the plate to mark. It goes at
+		   once, not by a fade: with its anchor gone its box collapses to
+		   nothing at the row's start, and a fade would show its rings there
+		   as a fleck. The fade still runs the other way, as the plate appears
+		   at the first hovered link's box. */
 		:scope:not(:has(.ui-nav-link:is([aria-current="page"], :hover, :focus-visible))) .ui-nav-links-plate {
 			opacity: 0;
+			transition: none;
 		}
 		:scope[data-ui-color-base] .ui-nav-links-plate {
 			box-shadow:
