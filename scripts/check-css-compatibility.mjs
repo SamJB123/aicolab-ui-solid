@@ -74,7 +74,8 @@ requireAll(
 requireAll(
 	resolver,
 	[
-		/:where\(\[data-ui-plate\]\)/,
+		/* A family-less plate's surface roles are set here; a plate with a family keeps the treatment's. */
+		/:where\(\[data-ui-plate\]:not\(\[data-ui-color-base\]\)\) \{\n\t--ui-surface: var\(--color-base-100\);/,
 		/:where\(\[data-ui-plate\], \[data-ui-color-base\]\)/,
 		/* The rim is solid: the theme's rim on a plain plate, the family colour on a treated one. */
 		/--ui-edge-source: var\(--color-base-content\);/,

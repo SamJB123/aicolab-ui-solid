@@ -421,8 +421,10 @@
 }
 /* A plate with no family has the raised surface, like a ghost treatment;
    a sheet whose surface is a knob writes its adapter into the role in the
-   family-less context (on a treated plate the role is the family's). */
-:where([data-ui-plate]) {
+   family-less context. A plate WITH a family keeps the family's surface
+   roles from the treatment above — this rule must not reach it, or it
+   would overwrite them at equal specificity from later in the sheet. */
+:where([data-ui-plate]:not([data-ui-color-base])) {
 	--ui-surface: var(--color-base-100);
 	--ui-surface-hover: var(--color-base-150);
 	--ui-surface-selected: var(--color-base-150);
