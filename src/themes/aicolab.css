@@ -1,0 +1,38 @@
+/* ── aicolab — the AI CoLab brand theme ────────────────────────────────────
+   Composed in the theme studio (2026-10-15) for the landing site and shared
+   by the platform hub: the ui-solid default palette in the light scheme and
+   the Harbour Night preset in the dark one, Outfit as the display face over
+   Schibsted Grotesk and Spline Sans Mono, and the surface finish partly on —
+   grade, bevel, cast shadow and lift, both edge rings, squircle corners; the
+   studs and the grade's angle stay at the ladder's defaults.
+
+   Anchors and ladders only — the ui-solid resolver derives every surface,
+   border and content role per scheme, and every plate's shine, rings,
+   bevel, shadow, lift and corner shape from the surface ladder
+   (properties.css --s-*). Nothing here is painted by hand. The consumer
+   loads the font files (all three are on Google Fonts). */
+
+/* AUTHORED ON `.ui-theme` ONLY — never on `:root`; see the note in
+   night-ochre.css. A consumer that wants the theme everywhere puts the class
+   on its <html>; one that wants it on part of a document puts it on that
+   subtree. */
+.ui-theme {
+	--color-base-100: light-dark(#fffffb, #1a222c);
+	--color-base-content: light-dark(#241c0b, #dfe6ec);
+	--color-primary: light-dark(#e8b04c, #f0b83d);
+	--color-secondary: light-dark(#005682, #9fd68a);
+	--color-accent: light-dark(#b9c27a, #c9b48a);
+	--color-success: light-dark(#43913a, #6fb392);
+
+	--font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+	--font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
+	--font-data: "Spline Sans Mono", ui-monospace, "SFMono-Regular", monospace;
+
+	--s-grade: 1;
+	--s-edge-inner: 1.5px;
+	--s-edge-gap: 1.5px;
+	--s-bevel: 1;
+	--s-shadow: 1;
+	--s-lift: 1px;
+	--s-corner: squircle;
+}
