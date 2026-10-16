@@ -15,6 +15,10 @@ import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
  *  are. */
 export interface BreadcrumbItem {
 	label: string
+	/** A mark before the label — a place's hex mark, an icon — as a lazy
+	 *  slot (made where it renders, never shared between two spots). The
+	 *  `words` labels mode lays mark and name out as a row. */
+	icon?: () => JSX.Element
 	href?: string
 	onSelect?: () => void
 }
@@ -39,6 +43,11 @@ type BreadcrumbProps = Omit<JSX.HTMLAttributes<HTMLElement>, 'class'> & {
 	label?: string
 	/** Separator character between steps. Default "›". */
 	separator?: string
+	/** How the steps read. `caps` (the default) — small capitals in the label
+	 *  face: a trail as a label. `words` — the names of places as words in
+	 *  the body face, each beside its mark; an ancestor lights as a plate
+	 *  on hover and the current step is bold: a trail as wayfinding. */
+	labels?: 'caps' | 'words'
 } & ColorTreatmentProps &
 	KnobProps<typeof knobs.spec>
 
@@ -56,6 +65,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
 		'items',
 		'label',
 		'separator',
+		'labels',
 		'colorBase',
 		'colorLevel',
 		'variant',
@@ -72,6 +82,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
 			{...colorTreatmentData(props)}
 			{...knobs.attributes(props)}
 			class={['ui-breadcrumb', props.class]}
+			data-labels={props.labels ?? 'caps'}
 			style={mergeKnobStyle(
 				{
 					...knobs.style(props),
@@ -92,6 +103,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
 										class="ui-breadcrumb-here"
 										aria-current={index() === last() ? 'page' : undefined}
 									>
+										{item.icon?.()}
 										{item.label}
 									</span>
 								}
@@ -104,11 +116,13 @@ export function Breadcrumb(props: BreadcrumbProps) {
 											class="ui-breadcrumb-link"
 											onClick={() => item.onSelect?.()}
 										>
+											{item.icon?.()}
 											{item.label}
 										</button>
 									}
 								>
 									<a class="ui-breadcrumb-link" href={item.href}>
+										{item.icon?.()}
 										{item.label}
 									</a>
 								</Show>

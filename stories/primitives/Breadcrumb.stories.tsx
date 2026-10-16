@@ -1,7 +1,7 @@
 /** @jsxImportSource @solidjs/web */
 import { treatmentArgTypes } from './color-treatment-story'
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
-import { Breadcrumb } from '../../src/primitives'
+import { Breadcrumb, HexMark } from '../../src/primitives'
 import { ColorTreatmentStory } from './color-treatment-story'
 
 const meta = {
@@ -10,6 +10,7 @@ const meta = {
 	argTypes: {
 		...treatmentArgTypes,
 		separator: { control: 'text' },
+		labels: { control: 'inline-radio', options: ['caps', 'words'] },
 		fontSize: { control: 'text', table: { category: 'knobs' } },
 		gap: { control: 'text', table: { category: 'knobs' } },
 		separatorInk: { control: 'text', table: { category: 'knobs' } },
@@ -65,6 +66,29 @@ export const InertAncestor: Story = {
 			{ label: 'Home World', onSelect: () => {} },
 			{ label: 'Far Shallows' },
 			{ label: 'Unclaimed cove' },
+		],
+	},
+}
+
+const placeMark = (d: string) => () => (
+	<HexMark size="20px">
+		<svg viewBox="0 0 24 24" aria-hidden="true">
+			<path d={d} />
+		</svg>
+	</HexMark>
+)
+
+export const Words: Story = {
+	name: 'Words, with marks',
+	args: {
+		// The names of places as words, each beside its hex mark: the hub's
+		// trail. An ancestor lights as a plate on hover; the current step is
+		// bold.
+		labels: 'words',
+		items: [
+			{ label: 'Hub', icon: placeMark('M12 3l8 4.5v9L12 21l-8-4.5v-9z'), onSelect: () => {} },
+			{ label: 'Insight Bridge', icon: placeMark('M3 15c3-5 15-5 18 0M5 15v4M19 15v4M12 12v7'), onSelect: () => {} },
+			{ label: 'One Basin', icon: placeMark('M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6') },
 		],
 	},
 }

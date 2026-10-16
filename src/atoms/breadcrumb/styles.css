@@ -121,6 +121,45 @@
 		:scope[data-ui-color-base] .ui-breadcrumb-link:hover { color: var(--ui-ink-hover); }
 	}
 
+	/* ── The words mode: the names of places, each beside its mark ──
+	   The body face at the medium size with no capitals; a step is a row of
+	   mark and name with a plate's padding and corner; the separator sits
+	   closer; an ancestor lights as a plate on hover (the ghost surface's
+	   hover, the base-150 tone); the current step is bold. The knob defaults
+	   that differ here are re-paired in the frontier block below. */
+	:scope[data-labels="words"] {
+		--_ui-breadcrumb-font-size: var(--ui-breadcrumb-font-size, var(--t-md));
+		--_ui-breadcrumb-gap: var(--ui-breadcrumb-gap, 0px);
+		font-family: var(--font-sans);
+		text-transform: none;
+		letter-spacing: normal;
+	}
+	:scope[data-labels="words"] .ui-breadcrumb-step + .ui-breadcrumb-step::before {
+		padding-inline: 4px;
+	}
+	:scope[data-labels="words"] .ui-breadcrumb-link,
+	:scope[data-labels="words"] .ui-breadcrumb-here {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 3px 8px 3px 4px;
+		border-radius: var(--r-sm);
+		corner-shape: var(--s-corner);
+	}
+	:scope[data-labels="words"] .ui-breadcrumb-link {
+		transition:
+			color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+			background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+	:scope[data-labels="words"] .ui-breadcrumb-here[aria-current] {
+		font-weight: 600;
+	}
+	@media (hover: hover) {
+		:scope[data-labels="words"] .ui-breadcrumb-link:hover {
+			background: var(--color-base-150);
+		}
+	}
+
 	/* ── Frontier knob boundary (root contexts) ── */
 	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
 		:scope {
@@ -134,6 +173,10 @@
 			--_ui-breadcrumb-separator-ink: attr(data-ui-breadcrumb-separator-ink type(<color>), var(--ui-breadcrumb-separator-ink, var(--ui-ink-faint)));
 			--_ui-breadcrumb-link-ink: attr(data-ui-breadcrumb-link-ink type(<color>), var(--ui-breadcrumb-link-ink, var(--ui-ink-muted)));
 			--_ui-breadcrumb-focus-ring: attr(data-ui-breadcrumb-focus-ring type(<color>), var(--ui-breadcrumb-focus-ring, var(--ui-focus-ring)));
+		}
+		:scope[data-labels="words"] {
+			--_ui-breadcrumb-font-size: attr(data-ui-breadcrumb-font-size type(<length>), var(--ui-breadcrumb-font-size, var(--t-md)));
+			--_ui-breadcrumb-gap: attr(data-ui-breadcrumb-gap type(<length>), var(--ui-breadcrumb-gap, 0px));
 		}
 	}
 }

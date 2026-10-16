@@ -34,6 +34,14 @@
 	inherits: true;
 	initial-value: 1.1547;
 }
+/* The icon's size, derived from the mark's (about half of it, as the
+   lattice's marks are drawn): read on the face's icon, so it inherits. */
+@property --_ui-hexmark-icon {
+	syntax: "<length>";
+	inherits: true;
+	/* Dummy only — the real value derives from the size on :scope. */
+	initial-value: 18px;
+}
 
 @scope (.ui-hex-mark) {
 	:scope {
@@ -41,6 +49,7 @@
 		--_ui-hexmark-ink: var(--ui-hexmark-ink, var(--color-base-content));
 		--_ui-hexmark-clip: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
 		--_ui-hexmark-across: 1.1547;
+		--_ui-hexmark-icon: calc(var(--_ui-hexmark-size) * 0.52);
 		position: relative;
 		display: inline-block;
 		flex: none;
@@ -98,10 +107,10 @@
 	:scope[data-orientation="pointy"] .ui-hex-mark-face {
 		inset: calc(var(--s-edge-inner) * var(--_ui-hexmark-across)) var(--s-edge-inner);
 	}
-	/* A line icon on the face: half the mark's height, in the ink. */
+	/* A line icon on the face: about half the mark's height, in the ink. */
 	.ui-hex-mark-face > svg {
-		width: 50%;
-		height: 50%;
+		width: var(--_ui-hexmark-icon);
+		height: var(--_ui-hexmark-icon);
 		fill: none;
 		stroke: currentColor;
 		stroke-width: 1.9;
