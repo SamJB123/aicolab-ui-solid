@@ -1,5 +1,5 @@
 /** @jsxImportSource @solidjs/web */
-import { For, Show } from 'solid-js'
+import { For } from 'solid-js'
 import {
 	colorTreatmentData,
 	type ClassProp,
@@ -10,6 +10,10 @@ import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 export interface HexLocatorCell {
 	id: string
 	label: string
+	/** The cell's place on the lattice (axial q, r; the centre is 0, 0),
+	 *  where the ring is laid by its map — past the compass's six, or in an
+	 *  order of its own. Absent, the ring's first six take the compass. */
+	at?: { q: number; r: number }
 }
 
 /** Per-instance styling contract (see shared/knobs.ts). */
@@ -43,17 +47,28 @@ const corners = (cx: number, cy: number): string =>
 		const radius = RADIUS - INSET / (SQRT3 / 2)
 		return `${(cx + radius * Math.cos(a)).toFixed(2)},${(cy + radius * Math.sin(a)).toFixed(2)}`
 	}).join(' ')
-/* The drawing's extent: the ring's cells reach 1.5 units out sideways and
-   two cells' heights down; a margin of one radius round them. */
-const HALF_WIDTH = (SQRT3 / 2) * UNIT + RADIUS + 2
-const HALF_HEIGHT = 1.5 * UNIT + 2
-const VIEW_BOX = `${-HALF_WIDTH} ${-HALF_HEIGHT} ${2 * HALF_WIDTH} ${2 * HALF_HEIGHT}`
+/* The drawing's extent: as far as the farthest cell reaches sideways and
+   down, a margin of one radius round it. With the compass's six, the cells
+   reach 1.5 units out sideways and two cells' heights down. */
+const viewBox = (cells: readonly { q: number; r: number }[]): string => {
+	let halfWidth = (SQRT3 / 2) * UNIT
+	let halfHeight = UNIT
+	for (const at of cells) {
+		const [cx, cy] = centre(at.q, at.r)
+		halfWidth = Math.max(halfWidth, Math.abs(cx))
+		halfHeight = Math.max(halfHeight, Math.abs(cy))
+	}
+	halfWidth += RADIUS + 2
+	halfHeight += UNIT / 2 + 2
+	return `${-halfWidth} ${-halfHeight} ${2 * halfWidth} ${2 * halfHeight}`
+}
 
 /**
- * The seven-cell locator: the level the reader is at, small — the place
- * itself in the middle and the places it leads to around it, each a
- * button. A you-are-here map in miniature, drawn on the same lattice as the
- * map it stands for, so the six directions match.
+ * The locator: the level the reader is at, small — the place itself in the
+ * middle and the places it leads to around it, each a button. A
+ * you-are-here map in miniature, drawn on the same lattice as the map it
+ * stands for, so the directions match: the first six on the compass, or
+ * every cell where its map laid it (`at`), rings out as far as they go.
  */
 export function HexLocator(
 	props: {
@@ -61,13 +76,22 @@ export function HexLocator(
 		label: string
 		/** The place in the middle. */
 		centre: HexLocatorCell
-		/** The places around it, from the north clockwise; at most six. */
+		/** The places around it, from the north clockwise: the first six on
+		 *  the compass, the rest only where each says its cell (`at`). */
 		ring: readonly HexLocatorCell[]
 		onPick: (id: string) => void
 		class?: ClassProp
 	} & ColorTreatmentProps &
 		KnobProps<typeof knobs.spec>,
 ) {
+	/** Each ring cell with the lattice point it is drawn at: its own, else
+	 *  the compass's for the first six; one with neither is not drawn. */
+	const laid = () =>
+		props.ring.flatMap((item, index) => {
+			const compass = RING[index]
+			const at = item.at ?? (compass ? { q: compass[0], r: compass[1] } : undefined)
+			return at ? [{ item, at }] : []
+		})
 	const cell = (item: HexLocatorCell, q: number, r: number, here: boolean) => {
 		const [cx, cy] = centre(q, r)
 		return (
@@ -102,21 +126,14 @@ export function HexLocator(
 	return (
 		<svg
 			class={['ui-hex-locator', props.class]}
-			viewBox={VIEW_BOX}
+			viewBox={viewBox(laid().map((placed) => placed.at))}
 			role="group"
 			aria-label={props.label}
 			{...colorTreatmentData(props)}
 			{...knobs.attributes(props)}
 			style={mergeKnobStyle(knobs.style(props), undefined)}
 		>
-			<For each={props.ring.slice(0, RING.length)}>
-				{(item, index) => {
-					const at = () => RING[index()] ?? RING[0]
-					return (
-						<Show when={at()}>{(point) => cell(item, point()[0], point()[1], false)}</Show>
-					)
-				}}
-			</For>
+			<For each={laid()}>{(placed) => cell(placed.item, placed.at.q, placed.at.r, false)}</For>
 			{cell(props.centre, 0, 0, true)}
 		</svg>
 	)
