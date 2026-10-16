@@ -10,7 +10,13 @@
    background of its one pseudo-element, cut to the hexagon. A band is six
    two-stop gradients, one per side, that paint its ink from its inner edge
    outward with a half-pixel soft stop; outer bands sit above inner ones,
-   so at any point the band whose side is nearest wins. The element itself
+   so at any point the band whose side is nearest wins. The rim's soft stop
+   begins AT its inner edge and lies inside the rim: with no outer edge
+   width the rim's inner edge is the outline, and a stop straddling it
+   painted a half-pixel sliver of the rim colour just inside every plate
+   (the base ink, light on a dark plate — seen as a thin pale line round
+   the hub map's cells). The inner bands' stops straddle edges that lie
+   between bands, where a sliver is covered. The element itself
    is not cut: it casts the recipe's shadow for the hexagon beneath it, and
    it ignores the pointer, which the hexagon takes — a HexMarkButton's hit
    area is its shape. The content is the element's own, centred by its
@@ -126,7 +132,7 @@
 		   that casts it). */
 		filter: drop-shadow(
 			0 calc(10px * var(--s-shadow)) calc(12px * var(--s-shadow))
-			oklch(from var(--ui-gap-source) clamp(0, calc(l - 0.45 * var(--s-shadow)), 1) c h)
+				oklch(from var(--ui-gap-source) clamp(0, calc(l - 0.45 * var(--s-shadow)), 1) c h)
 		);
 		transition:
 			translate 0.2s,
@@ -177,12 +183,12 @@
 		   face's edge; then the bevel's highlight along the top of the face
 		   and its shade up from the bottom; then the face paint. */
 		background:
-			linear-gradient(0deg, transparent calc(50% + var(--_ui-hexmark-a-rim) - 0.5px), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
-			linear-gradient(60deg, transparent calc(50% + var(--_ui-hexmark-a-rim) - 0.5px), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
-			linear-gradient(120deg, transparent calc(50% + var(--_ui-hexmark-a-rim) - 0.5px), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
-			linear-gradient(180deg, transparent calc(50% + var(--_ui-hexmark-a-rim) - 0.5px), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
-			linear-gradient(240deg, transparent calc(50% + var(--_ui-hexmark-a-rim) - 0.5px), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
-			linear-gradient(300deg, transparent calc(50% + var(--_ui-hexmark-a-rim) - 0.5px), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
+			linear-gradient(0deg, transparent calc(50% + var(--_ui-hexmark-a-rim)), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
+			linear-gradient(60deg, transparent calc(50% + var(--_ui-hexmark-a-rim)), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
+			linear-gradient(120deg, transparent calc(50% + var(--_ui-hexmark-a-rim)), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
+			linear-gradient(180deg, transparent calc(50% + var(--_ui-hexmark-a-rim)), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
+			linear-gradient(240deg, transparent calc(50% + var(--_ui-hexmark-a-rim)), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
+			linear-gradient(300deg, transparent calc(50% + var(--_ui-hexmark-a-rim)), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
 			linear-gradient(0deg, transparent calc(50% + var(--_ui-hexmark-a-gap) - 0.5px), var(--_ui-hexmark-gap-ink) calc(50% + var(--_ui-hexmark-a-gap) + 0.5px)),
 			linear-gradient(60deg, transparent calc(50% + var(--_ui-hexmark-a-gap) - 0.5px), var(--_ui-hexmark-gap-ink) calc(50% + var(--_ui-hexmark-a-gap) + 0.5px)),
 			linear-gradient(120deg, transparent calc(50% + var(--_ui-hexmark-a-gap) - 0.5px), var(--_ui-hexmark-gap-ink) calc(50% + var(--_ui-hexmark-a-gap) + 0.5px)),
