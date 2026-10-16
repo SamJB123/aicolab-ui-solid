@@ -197,6 +197,49 @@
 		display: none;
 	}
 
+	/* Collapsed on a wide screen: a handle the width of a column of text,
+	   the label on end, the chevron pointing the way the panel opens. */
+	.ui-responsive-inspector[data-collapsed] {
+		width: 2.25rem;
+	}
+	.ui-responsive-inspector[data-collapsed] .ui-responsive-inspector-content {
+		display: none;
+	}
+	.ui-responsive-inspector-handle {
+		display: flex;
+		flex: 1 1 auto;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.6rem;
+		width: 100%;
+		padding: 0.875rem 0 0;
+		border: 0;
+		background: none;
+		font: inherit;
+		color: var(--color-base-content-muted);
+		cursor: pointer;
+	}
+	.ui-responsive-inspector-handle:hover {
+		background: var(--color-base-150);
+		color: var(--color-base-content);
+	}
+	.ui-responsive-inspector-handle:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: -2px;
+	}
+	.ui-responsive-inspector-handle-chevron {
+		font-size: var(--t-lg);
+		line-height: 1;
+	}
+	.ui-responsive-inspector-handle-word {
+		writing-mode: vertical-rl;
+		font-family: var(--font-label);
+		font-size: var(--t-2xs);
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--color-base-content-faint);
+	}
+
 	.ui-responsive-inspector-content {
 		flex: 1 1 auto;
 		min-height: 0;
@@ -343,6 +386,18 @@
 
 		.ui-responsive-inspector[data-hidden],
 		:scope[data-ui-workspace-raised] .ui-responsive-inspector {
+			display: none;
+		}
+
+		/* The sheet has its own detents: a collapsed panel is a sheet like any
+		   other here, and the wide screen's handle does not render. */
+		.ui-responsive-inspector[data-collapsed] {
+			width: auto;
+		}
+		.ui-responsive-inspector[data-collapsed] .ui-responsive-inspector-content {
+			display: flex;
+		}
+		.ui-responsive-inspector-handle {
 			display: none;
 		}
 

@@ -1,0 +1,86 @@
+/* ── HexLocator — the seven-cell locator ──
+   One knob (size, the drawing's width) on the usual two wires. The ring's
+   cells are the lead colour's wash on the strong border; the cell in the
+   middle, where the reader is, is the lead colour itself with its content
+   ink — the family's pair on a treated locator. */
+@property --_ui-hexloc-size {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 150px;
+}
+
+@scope (.ui-hex-locator) {
+	:scope {
+		--_ui-hexloc-size: var(--ui-hexloc-size, 9.5rem);
+		display: block;
+		width: var(--_ui-hexloc-size);
+		height: auto;
+		overflow: visible;
+	}
+	.ui-hex-locator-cell {
+		cursor: pointer;
+		outline: none;
+	}
+	.ui-hex-locator-cell polygon {
+		fill: var(--color-primary-soft);
+		stroke: var(--color-border-strong);
+		stroke-width: 1.2;
+		transition: fill 0.12s;
+	}
+	.ui-hex-locator-cell:is(:hover, :focus-visible) polygon {
+		fill: color-mix(in oklab, var(--color-primary) 30%, transparent);
+	}
+	.ui-hex-locator-cell:focus-visible polygon {
+		stroke: var(--color-primary);
+		stroke-width: 2;
+	}
+	.ui-hex-locator-cell[data-here] polygon {
+		fill: var(--color-primary);
+		stroke: oklch(from var(--color-primary) clamp(0, calc(l - 0.3), 1) c h);
+	}
+	/* Treated: the ring in the family's wash (the lead's own soft recipe),
+	   the middle in the family colour with its content ink. */
+	:scope[data-ui-color-base] .ui-hex-locator-cell polygon {
+		fill: color-mix(in oklab, var(--ui-color) 14%, transparent);
+		stroke: var(--ui-border);
+	}
+	:scope[data-ui-color-base] .ui-hex-locator-cell[data-here] polygon {
+		fill: var(--ui-color);
+		stroke: var(--ui-color-foreground);
+	}
+	/* The name: HTML inside the cell's box, centred, two lines at most. */
+	.ui-hex-locator-cell foreignObject {
+		pointer-events: none;
+		overflow: visible;
+	}
+	.ui-hex-locator-name {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		padding: 0 5px;
+		align-content: center;
+		overflow: hidden;
+		font-family: var(--font-sans);
+		font-size: 8.5px;
+		font-weight: 600;
+		line-height: 1.15;
+		text-align: center;
+		color: var(--color-base-content);
+	}
+	.ui-hex-locator-cell[data-here] .ui-hex-locator-name {
+		color: var(--color-primary-content);
+	}
+	:scope[data-ui-color-base] .ui-hex-locator-cell[data-here] .ui-hex-locator-name {
+		color: var(--ui-content);
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-hexloc-size: attr(data-ui-hexloc-size type(<length>), var(--ui-hexloc-size, 9.5rem));
+		}
+	}
+}

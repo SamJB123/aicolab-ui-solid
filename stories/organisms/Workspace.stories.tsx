@@ -72,6 +72,33 @@ export const Playground: Story = {
 	},
 }
 
+/* The inspector closed to a handle on the stage's edge: the host owns the
+   state and renders its own close inside the content. */
+export const CollapsibleInspector: Story = {
+	render: () => {
+		const [collapsed, setCollapsed] = createSignal(false)
+		return (
+			<div style={{ height: '32rem' }}>
+				<WorkspaceShell
+					stage={
+						<WorkspaceStage label="Map stage">
+							<div style={{ height: '100%', background: 'radial-gradient(circle at center, var(--color-primary-soft), var(--color-base-300))' }} />
+						</WorkspaceStage>
+					}
+					inspector={
+						<ResponsiveInspector label="Here" collapsed={collapsed()} onExpand={() => setCollapsed(false)}>
+							<InspectorHeader eyebrow="Here" title="Commons">
+								What is here.
+							</InspectorHeader>
+							<Button variant="text" onClick={() => setCollapsed(true)}>Hide</Button>
+						</ResponsiveInspector>
+					}
+				/>
+			</div>
+		)
+	},
+}
+
 export const CompleteWorkspace: Story = {
 	render: () => {
 		const [selected, setSelected] = createSignal('Commons')

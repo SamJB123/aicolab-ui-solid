@@ -97,6 +97,14 @@
 :scope::-webkit-scrollbar {
 	display: none;
 }
+/* Stood on end: the same track as a column, scrolling down its length. */
+:scope[data-orientation="vertical"] {
+	flex-direction: column;
+	overflow-x: visible;
+	overflow-y: auto;
+	overscroll-behavior-y: contain;
+	scroll-snap-type: y proximity;
+}
 /* The active indicator (the pill, or the active tab where anchor positioning
    is unavailable) is a PLATE: the component marks the tabs and the pill
    data-ui-plate; their surface is the active surface adapter, and inside a
@@ -143,6 +151,24 @@
 		0 4px 18px -6px var(--ui-surface-glow-hover);
 }
 :scope[data-ui-color-base] .seg-btn-active:hover { color: var(--_ui-seg-active-ink); }
+/* Icons alone: every tab the same square, the icon centred, sized from
+   the tabs' text. */
+:scope[data-icons] .seg-btn {
+	display: grid;
+	place-items: center;
+	padding: var(--_ui-seg-tab-pad-block);
+}
+.seg-icon {
+	display: block;
+	width: 1.1em;
+	height: 1.1em;
+	font-size: calc(var(--_ui-seg-font-size) * 1.25);
+}
+.seg-icon > svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
 .seg-pill {
 	display: none;
 }

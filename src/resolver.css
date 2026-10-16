@@ -482,12 +482,17 @@
 	--ui-surface-paint-active: var(--ui-surface-paint-hover);
 	--ui-surface-paint-selected: var(--ui-studs), var(--ui-shine-selected);
 	--ui-surface-paint-disabled: var(--ui-surface-disabled);
+	/* The rest rings' inks, public: a plate whose outline is not a box (a
+	   hexagonal mark) draws the same three rings from these as nested
+	   outlines, since a box-shadow cannot follow its shape. */
+	--ui-edge-inner-ink: oklch(from var(--ui-surface) clamp(0, calc(l - 0.15), 1) c h);
+	--ui-edge-gap-ink: oklch(from var(--ui-surface) clamp(0, calc(l - 0.3), 1) c h);
 	/* The bevel's two lines and the cast shadow are sized by their ladder
 	   step as well as coloured by it, so at zero they paint nothing even
 	   where a plate's background is not its surface. */
 	--ui-edge:
-		0 0 0 var(--s-edge-inner) oklch(from var(--ui-surface) clamp(0, calc(l - 0.15), 1) c h),
-		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) oklch(from var(--ui-surface) clamp(0, calc(l - 0.3), 1) c h),
+		0 0 0 var(--s-edge-inner) var(--ui-edge-inner-ink),
+		0 0 0 calc(var(--s-edge-inner) + var(--s-edge-gap)) var(--ui-edge-gap-ink),
 		0 0 0 var(--ui-edge-outset) var(--ui-edge-source),
 		inset 0 calc(1px * var(--s-bevel)) 0 oklch(from var(--ui-surface) clamp(0, calc(l + 0.22 * var(--s-bevel)), 1) c h),
 		inset 0 calc(-2px * var(--s-bevel)) calc(6px * var(--s-bevel)) oklch(from var(--ui-surface) clamp(0, calc(l - 0.16 * var(--s-bevel)), 1) c h),

@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { JSX } from '@solidjs/web'
-import { For, omit } from 'solid-js'
+import { For, omit, Show } from 'solid-js'
 import {
 	colorTreatmentData,
 	type ClassProp,
@@ -8,7 +8,14 @@ import {
 } from '../../shared/color-treatment'
 import { defineKnobs, mergeKnobStyle, type KnobProps } from '../../shared/knobs'
 
-export type SegOption<T extends string> = { id: T; label: string }
+export type SegOption<T extends string> = {
+	id: T
+	label: string
+	/** A line icon as SVG (a lazy slot, so it is made once per tab): shown
+	 *  in place of the label when the switcher shows icons only, with the
+	 *  label as the tab's name. */
+	icon?: () => JSX.Element
+}
 
 /** Per-instance styling contract (see shared/knobs.ts). Tab-consumed knobs
  * ride inheriting adapters assigned on the root. */
@@ -31,6 +38,12 @@ type SegmentedProps<T extends string> = Omit<JSX.HTMLAttributes<HTMLDivElement>,
 	options: SegOption<T>[]
 	value: T
 	onChange: (v: T) => void
+	/** The tabs in a row (the default) or stood on end in a column — the
+	 *  same inset track, for a rail too narrow for a row. */
+	orientation?: 'horizontal' | 'vertical'
+	/** Show each tab's icon alone, the label as its name: for a column in a
+	 *  narrow rail. A tab without an icon keeps its label. */
+	iconsOnly?: boolean
 } & ColorTreatmentProps &
 	KnobProps<typeof knobs.spec>
 
@@ -49,6 +62,8 @@ export function Segmented<T extends string>(props: SegmentedProps<T>) {
 		'options',
 		'value',
 		'onChange',
+		'orientation',
+		'iconsOnly',
 		'colorBase',
 		'colorLevel',
 		'variant',
@@ -72,6 +87,9 @@ export function Segmented<T extends string>(props: SegmentedProps<T>) {
 			style={mergeKnobStyle(knobs.style(props), props.style)}
 			role="tablist"
 			aria-label={props.label}
+			aria-orientation={props.orientation === 'vertical' ? 'vertical' : undefined}
+			data-orientation={props.orientation ?? 'horizontal'}
+			data-icons={props.iconsOnly ? '' : undefined}
 		>
 			<For each={props.options}>
 				{(o) => (
@@ -80,6 +98,8 @@ export function Segmented<T extends string>(props: SegmentedProps<T>) {
 						role="tab"
 						data-ui-plate=""
 						aria-selected={props.value === o.id ? 'true' : 'false'}
+						aria-label={props.iconsOnly && o.icon ? o.label : undefined}
+						title={props.iconsOnly && o.icon ? o.label : undefined}
 						onClick={(e) => {
 							props.onChange(o.id)
 							// One-shot side effect: keep the clicked tab visible when the
@@ -89,7 +109,11 @@ export function Segmented<T extends string>(props: SegmentedProps<T>) {
 						}}
 						class={['seg-btn', { 'seg-btn-active': props.value === o.id }]}
 					>
-						{o.label}
+						<Show when={props.iconsOnly && o.icon} fallback={o.label}>
+							<span class="seg-icon" aria-hidden="true">
+								{o.icon?.()}
+							</span>
+						</Show>
 					</button>
 				)}
 			</For>

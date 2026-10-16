@@ -10,6 +10,8 @@
 @import url("./molecules/date-picker/styles.css");
 @import url("./molecules/empty-state/styles.css");
 @import url("./molecules/feature-grid/styles.css");
+@import url("./molecules/hex-locator/styles.css");
+@import url("./molecules/hex-mark-rail/styles.css");
 @import url("./molecules/list-editor/styles.css");
 @import url("./molecules/logo-cloud/styles.css");
 @import url("./molecules/menu/styles.css");

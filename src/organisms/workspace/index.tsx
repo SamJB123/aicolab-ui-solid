@@ -267,6 +267,13 @@ export function ResponsiveInspector(props: {
 	/** A stable selection identity. Truthy values bind and raise the inspector. */
 	activeKey?: string | null
 	hidden?: boolean
+	/** On a wide screen the panel can close to a handle on the stage's edge
+	 *  — the label turned on end and a chevron — that opens it again; the
+	 *  host owns the state (it renders its own close inside the content) and
+	 *  is told when the handle is pressed. A narrow screen's sheet keeps its
+	 *  own detents and ignores this. */
+	collapsed?: boolean
+	onExpand?: () => void
 	/** Reports how many pixels of the stage this inspector currently COVERS
 	 * from the bottom: the sheet's target height on narrow viewports (live
 	 * during grip drags), 0 in side-panel mode where the panel shrinks the
@@ -398,11 +405,28 @@ export function ResponsiveInspector(props: {
 			data-detent={detent()}
 			data-bound={props.activeKey ? '' : undefined}
 			data-hidden={props.hidden ? '' : undefined}
+			data-collapsed={props.collapsed ? '' : undefined}
 			style={dragHeight() !== null ? { height: `${dragHeight()}px` } : undefined}
 			ref={(element) => {
 				root = element
 			}}
 		>
+			<Show when={props.collapsed && props.onExpand}>
+				{(expand) => (
+					<button
+						type="button"
+						class="ui-responsive-inspector-handle"
+						aria-expanded="false"
+						aria-label={`Show ${props.label}`}
+						onClick={() => expand()()}
+					>
+						<span class="ui-responsive-inspector-handle-chevron" aria-hidden="true">
+							‹
+						</span>
+						<span class="ui-responsive-inspector-handle-word">{props.label}</span>
+					</button>
+				)}
+			</Show>
 			<button
 				type="button"
 				class="ui-responsive-inspector-grip"

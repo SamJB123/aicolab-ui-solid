@@ -115,6 +115,43 @@ export const ManyOptions: Story = {
 	},
 }
 
+/* Stood on end with icons alone, the label each tab's name: the face
+   switch of a rail too narrow for words. */
+export const VerticalIcons: Story = {
+	name: 'Vertical, icons only',
+	render: () => {
+		const [face, setFace] = createSignal<'map' | 'page' | 'world'>('map')
+		const icon = (paths: string) => () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" innerHTML={paths} />
+		return (
+			<div style={{ display: 'flex', gap: '24px', 'align-items': 'flex-start' }}>
+				<Segmented
+					label="On the stage"
+					orientation="vertical"
+					iconsOnly
+					options={[
+						{ id: 'map', label: 'Map', icon: icon('<path d="M12 3l7.8 4.5v9L12 21l-7.8-4.5v-9z"/><circle cx="12" cy="12" r="2.2"/>') },
+						{ id: 'page', label: 'Page', icon: icon('<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>') },
+						{ id: 'world', label: 'World', icon: icon('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/>') },
+					]}
+					value={face()}
+					onChange={setFace}
+				/>
+				<Segmented
+					label="On the stage"
+					orientation="vertical"
+					options={[
+						{ id: 'map', label: 'Map' },
+						{ id: 'page', label: 'Page' },
+						{ id: 'world', label: 'World' },
+					]}
+					value={face()}
+					onChange={setFace}
+				/>
+			</div>
+		)
+	},
+}
+
 export const ColorTreatment: Story = {
 	args: {
 		colorBase: 'primary',

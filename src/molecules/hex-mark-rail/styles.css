@@ -1,0 +1,151 @@
+/* ── HexMarkRail — a rail of hexagonal marks ──
+   Knobs (openWidth, closedWidth, markSize, gap) on the usual two wires,
+   assigned on :scope; open is a mode carried by data-open. The rail is base
+   chrome (the navigation surface); the current item's row is the selected
+   surface, and its mark lights in the family (the mark's own treatment). */
+@property --_ui-hexrail-open-width {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 196px;
+}
+@property --_ui-hexrail-closed-width {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 84px;
+}
+@property --_ui-hexrail-mark-size {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 40px;
+}
+@property --_ui-hexrail-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 6px;
+}
+
+@scope (.ui-hex-mark-rail) {
+	:scope {
+		--_ui-hexrail-open-width: var(--ui-hexrail-open-width, 12.25rem);
+		--_ui-hexrail-closed-width: var(--ui-hexrail-closed-width, 5.25rem);
+		--_ui-hexrail-mark-size: var(--ui-hexrail-mark-size, 2.5rem);
+		--_ui-hexrail-gap: var(--ui-hexrail-gap, 0.375rem);
+		display: flex;
+		flex-direction: column;
+		gap: var(--_ui-hexrail-gap);
+		width: var(--_ui-hexrail-closed-width);
+		height: 100%;
+		padding: 0.5rem 0.375rem 0.875rem;
+		background: var(--color-base-100);
+		color: var(--color-base-content);
+		box-shadow: 1px 0 0 var(--color-border);
+		overflow: hidden;
+	}
+	:scope[data-open] {
+		width: var(--_ui-hexrail-open-width);
+		padding-inline: 0.5rem;
+	}
+
+	.ui-hex-mark-rail-head,
+	.ui-hex-mark-rail-foot {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.6rem;
+		flex: none;
+	}
+	.ui-hex-mark-rail-head {
+		padding: 0.125rem 0.25rem 0.6rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+	.ui-hex-mark-rail-foot {
+		margin-top: auto;
+		padding: 0.6rem 0.25rem 0;
+		border-top: 1px solid var(--color-border);
+	}
+	:scope[data-open] :is(.ui-hex-mark-rail-head, .ui-hex-mark-rail-foot) {
+		align-items: stretch;
+	}
+
+	.ui-hex-mark-rail-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--_ui-hexrail-gap);
+		min-height: 0;
+		overflow: auto;
+		scrollbar-width: none;
+	}
+	:scope[data-open] .ui-hex-mark-rail-list {
+		align-items: stretch;
+	}
+	.ui-hex-mark-rail-entry {
+		display: contents;
+	}
+	.ui-hex-mark-rail-item {
+		--_ui-radius: var(--r-md);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.55rem;
+		padding: 0.3rem;
+		border: 0;
+		border-radius: var(--_ui-radius);
+		corner-shape: var(--s-corner);
+		background: none;
+		font: inherit;
+		color: var(--color-base-content-muted);
+		text-align: left;
+		cursor: pointer;
+		transition:
+			background 0.15s,
+			color 0.15s;
+	}
+	:scope[data-open] .ui-hex-mark-rail-item {
+		justify-content: flex-start;
+		padding: 0.3rem 0.5rem 0.3rem 0.3rem;
+		width: 100%;
+	}
+	.ui-hex-mark-rail-item:hover {
+		background: var(--color-base-150);
+		color: var(--color-base-content);
+	}
+	/* The current row is the selected surface, its ink paired with it. */
+	.ui-hex-mark-rail-item[aria-current="page"] {
+		background: var(--color-primary-soft);
+		color: var(--color-base-content);
+	}
+	:scope[data-ui-color-base] .ui-hex-mark-rail-item[aria-current="page"] {
+		background: var(--ui-surface-selected);
+		color: var(--ui-ink-selected);
+	}
+	.ui-hex-mark-rail-item:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+	.ui-hex-mark-rail-mark {
+		--ui-hexmark-size: var(--_ui-hexrail-mark-size);
+	}
+	.ui-hex-mark-rail-label {
+		font-size: var(--t-sm);
+		font-weight: 600;
+		line-height: 1.15;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	/* ── Frontier knob boundary (see select-control for the pattern) ── */
+	@supports (width: attr(data-ui-compat-probe type(<length>), 0px)) {
+		:scope {
+			--_ui-hexrail-open-width: attr(data-ui-hexrail-open-width type(<length>), var(--ui-hexrail-open-width, 12.25rem));
+			--_ui-hexrail-closed-width: attr(data-ui-hexrail-closed-width type(<length>), var(--ui-hexrail-closed-width, 5.25rem));
+			--_ui-hexrail-mark-size: attr(data-ui-hexrail-mark-size type(<length>), var(--ui-hexrail-mark-size, 2.5rem));
+			--_ui-hexrail-gap: attr(data-ui-hexrail-gap type(<length>), var(--ui-hexrail-gap, 0.375rem));
+		}
+	}
+}

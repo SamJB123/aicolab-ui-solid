@@ -23,6 +23,7 @@ export {
 	Dropzone,
 	Eyebrow,
 	Field,
+	HexMark,
 	HoldButton,
 	IconButton,
 	Mark,
