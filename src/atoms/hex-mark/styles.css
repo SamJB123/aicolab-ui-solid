@@ -1,15 +1,22 @@
 /* ── HexMark — a hexagonal plate ──
-   Knobs (size, ink) on the usual two wires, assigned on :scope; the
-   orientation is an enumerated mode carried by data-orientation. The plate
-   is drawn as nested hexagons, outside in: a hairline in the theme's strong
-   border, then the three rings of the surface ladder in their own inks
-   (resolver.css "Surface paint and edge": the outer ring in the rim colour,
-   the gap ring and the inner ring in the surface's darker tones), then the
-   face in the surface paint. Each ring is the box inside the one before,
-   inset by that ring's width — across the flats by the width itself, and
-   across the corners by 2/√3 of it, which keeps every hexagon similar to
-   the outline. At the house look (every ring 0) the hairline alone
-   outlines the face. */
+   One element, as every plate is. Knobs (size, ink, turn) on the usual two
+   wires; the orientation is an enumerated mode carried by data-orientation.
+   A plate's rings are the theme's box-shadow ladder (resolver.css "Surface
+   paint and edge"), and a box-shadow follows a box; a hexagon is not one.
+   So the mark paints the same ladder — the same widths (--ui-edge-outset,
+   --s-edge-inner, --s-edge-gap, the 1px border), the same inks
+   (--ui-edge-source, --ui-edge-gap-ink, --ui-edge-inner-ink, --ui-border,
+   each per state), the same face paint and bevel lines — as bands on the
+   background of its one pseudo-element, cut to the hexagon. A band is six
+   two-stop gradients, one per side, that paint its ink from its inner edge
+   outward with a half-pixel soft stop; outer bands sit above inner ones,
+   so at any point the band whose side is nearest wins. The element itself
+   is not cut: it casts the recipe's shadow for the hexagon beneath it, and
+   it ignores the pointer, which the hexagon takes — a HexMarkButton's hit
+   area is its shape. The content is the element's own, centred by its
+   grid; the turn turns the hexagon alone, so the content stays upright.
+   Adapters the pseudo-element consumes are assigned in its own rule, from
+   the public knobs (which inherit into it). */
 @property --_ui-hexmark-size {
 	syntax: "<length>";
 	inherits: false;
@@ -22,93 +29,117 @@
 	inherits: true;
 	initial-value: currentColor;
 }
-/* The outline every ring clips to, and the ratio a ring's width grows by
-   across the corners: mandatory values the mode sets, read on the rings,
-   so they inherit. */
-@property --_ui-hexmark-clip {
-	syntax: "*";
-	inherits: true;
-}
-@property --_ui-hexmark-across {
-	syntax: "<number>";
-	inherits: true;
-	initial-value: 1.1547;
-}
 /* The icon's size, derived from the mark's (about half of it, as the
-   lattice's marks are drawn): read on the face's icon, so it inherits. */
+   lattice's marks are drawn): read on a child, so it inherits. */
 @property --_ui-hexmark-icon {
 	syntax: "<length>";
 	inherits: true;
-	/* Dummy only — the real value derives from the size on :scope. */
 	initial-value: 18px;
+}
+/* The pseudo-element's own adapters: the turn, the apothem (centre to a
+   flat side) and the bands' inner edges measured from the centre, the
+   hairline's width, and the paint of each layer by state. */
+@property --_ui-hexmark-turn {
+	syntax: "<angle>";
+	inherits: false;
+	initial-value: 0deg;
+}
+@property --_ui-hexmark-apothem {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 18px;
+}
+@property --_ui-hexmark-a-inner {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
+}
+@property --_ui-hexmark-a-gap {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
+}
+@property --_ui-hexmark-a-rim {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
+}
+@property --_ui-hexmark-a-hair {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
+}
+@property --_ui-hexmark-hair {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 1px;
+}
+@property --_ui-hexmark-surface {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --_ui-hexmark-face {
+	syntax: "*";
+	inherits: false;
+}
+@property --_ui-hexmark-inner-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --_ui-hexmark-gap-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
+}
+@property --_ui-hexmark-hair-ink {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: transparent;
 }
 
 @scope (.ui-hex-mark) {
 	:scope {
 		--_ui-hexmark-size: var(--ui-hexmark-size, 2.25rem);
 		--_ui-hexmark-ink: var(--ui-hexmark-ink, var(--color-base-content));
-		--_ui-hexmark-clip: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
-		--_ui-hexmark-across: 1.1547;
 		--_ui-hexmark-icon: calc(var(--_ui-hexmark-size) * 0.52);
 		position: relative;
-		display: inline-block;
+		display: inline-grid;
+		place-items: center;
 		flex: none;
+		box-sizing: border-box;
 		height: var(--_ui-hexmark-size);
 		/* A flat-topped hexagon is 2/√3 as wide as it is tall. */
 		aspect-ratio: 1.1547 / 1;
-		clip-path: var(--_ui-hexmark-clip);
-		background: var(--color-border-strong);
-		color: var(--_ui-hexmark-ink);
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: none;
+		font: inherit;
 		line-height: 1;
+		color: var(--_ui-hexmark-ink);
+		/* The pointer passes the element by and lands on the hexagon. */
+		pointer-events: none;
+		/* The recipe's cast shadow, for the hexagon beneath (a filter is
+		   applied before any clip, so it is the pseudo-element's silhouette
+		   that casts it). */
+		filter: drop-shadow(
+			0 calc(10px * var(--s-shadow)) calc(12px * var(--s-shadow))
+			oklch(from var(--ui-gap-source) clamp(0, calc(l - 0.45 * var(--s-shadow)), 1) c h)
+		);
+		transition:
+			translate 0.2s,
+			filter 0.2s;
 	}
 	:scope[data-orientation="pointy"] {
-		--_ui-hexmark-clip: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 		aspect-ratio: 1 / 1.1547;
 	}
 	:scope[data-ui-color-base] {
 		--_ui-hexmark-ink: var(--ui-hexmark-ink, var(--ui-ink));
 	}
-
-	.ui-hex-mark-ring,
-	.ui-hex-mark-face {
-		position: absolute;
-		clip-path: var(--_ui-hexmark-clip);
-	}
-	/* The outer ring sits inside the hairline; each ring after it inside the
-	   width of the one before. */
-	.ui-hex-mark-outer {
-		inset: 1px calc(1px * var(--_ui-hexmark-across));
-		background: var(--ui-edge-source);
-	}
-	.ui-hex-mark-gap {
-		inset: var(--s-edge-outer) calc(var(--s-edge-outer) * var(--_ui-hexmark-across));
-		background: var(--ui-edge-gap-ink);
-	}
-	.ui-hex-mark-inner {
-		inset: var(--s-edge-gap) calc(var(--s-edge-gap) * var(--_ui-hexmark-across));
-		background: var(--ui-edge-inner-ink);
-	}
-	.ui-hex-mark-face {
-		inset: var(--s-edge-inner) calc(var(--s-edge-inner) * var(--_ui-hexmark-across));
-		display: grid;
-		place-items: center;
-		background: var(--ui-surface-paint);
-	}
-	/* A pointy hexagon's flats are at its sides: the insets swap axes. */
-	:scope[data-orientation="pointy"] .ui-hex-mark-outer {
-		inset: calc(1px * var(--_ui-hexmark-across)) 1px;
-	}
-	:scope[data-orientation="pointy"] .ui-hex-mark-gap {
-		inset: calc(var(--s-edge-outer) * var(--_ui-hexmark-across)) var(--s-edge-outer);
-	}
-	:scope[data-orientation="pointy"] .ui-hex-mark-inner {
-		inset: calc(var(--s-edge-gap) * var(--_ui-hexmark-across)) var(--s-edge-gap);
-	}
-	:scope[data-orientation="pointy"] .ui-hex-mark-face {
-		inset: calc(var(--s-edge-inner) * var(--_ui-hexmark-across)) var(--s-edge-inner);
-	}
 	/* A line icon on the face: about half the mark's height, in the ink. */
-	.ui-hex-mark-face > svg {
+	:scope > svg {
 		width: var(--_ui-hexmark-icon);
 		height: var(--_ui-hexmark-icon);
 		fill: none;
@@ -116,6 +147,123 @@
 		stroke-width: 1.9;
 		stroke-linecap: round;
 		stroke-linejoin: round;
+	}
+
+	/* The hexagon: cut from the element's box, beneath the content (the
+	   filter above makes the element a stacking context, so -1 stays
+	   inside it), taking the pointer the element declines. */
+	:scope::before {
+		--_ui-hexmark-turn: var(--ui-hexmark-turn, 0deg);
+		--_ui-hexmark-apothem: calc(var(--ui-hexmark-size, 2.25rem) / 2);
+		--_ui-hexmark-a-inner: calc(var(--_ui-hexmark-apothem) - var(--ui-edge-outset));
+		--_ui-hexmark-a-gap: calc(var(--_ui-hexmark-a-inner) + var(--s-edge-inner));
+		--_ui-hexmark-a-rim: calc(var(--_ui-hexmark-a-gap) + var(--s-edge-gap));
+		--_ui-hexmark-hair: 1px;
+		--_ui-hexmark-a-hair: calc(var(--_ui-hexmark-a-inner) - var(--_ui-hexmark-hair));
+		--_ui-hexmark-surface: var(--ui-surface);
+		--_ui-hexmark-face: var(--ui-surface-paint);
+		--_ui-hexmark-inner-ink: var(--ui-edge-inner-ink);
+		--_ui-hexmark-gap-ink: var(--ui-edge-gap-ink);
+		--_ui-hexmark-hair-ink: var(--ui-border);
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		pointer-events: auto;
+		clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+		rotate: var(--_ui-hexmark-turn);
+		/* Outside in: the rim (the edge source) out to the outline, the
+		   gap ring, the inner ring, the border's hairline just inside the
+		   face's edge; then the bevel's highlight along the top of the face
+		   and its shade up from the bottom; then the face paint. */
+		background:
+			linear-gradient(0deg, transparent calc(50% + var(--_ui-hexmark-a-rim) - 0.5px), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
+			linear-gradient(60deg, transparent calc(50% + var(--_ui-hexmark-a-rim) - 0.5px), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
+			linear-gradient(120deg, transparent calc(50% + var(--_ui-hexmark-a-rim) - 0.5px), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
+			linear-gradient(180deg, transparent calc(50% + var(--_ui-hexmark-a-rim) - 0.5px), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
+			linear-gradient(240deg, transparent calc(50% + var(--_ui-hexmark-a-rim) - 0.5px), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
+			linear-gradient(300deg, transparent calc(50% + var(--_ui-hexmark-a-rim) - 0.5px), var(--ui-edge-source) calc(50% + var(--_ui-hexmark-a-rim) + 0.5px)),
+			linear-gradient(0deg, transparent calc(50% + var(--_ui-hexmark-a-gap) - 0.5px), var(--_ui-hexmark-gap-ink) calc(50% + var(--_ui-hexmark-a-gap) + 0.5px)),
+			linear-gradient(60deg, transparent calc(50% + var(--_ui-hexmark-a-gap) - 0.5px), var(--_ui-hexmark-gap-ink) calc(50% + var(--_ui-hexmark-a-gap) + 0.5px)),
+			linear-gradient(120deg, transparent calc(50% + var(--_ui-hexmark-a-gap) - 0.5px), var(--_ui-hexmark-gap-ink) calc(50% + var(--_ui-hexmark-a-gap) + 0.5px)),
+			linear-gradient(180deg, transparent calc(50% + var(--_ui-hexmark-a-gap) - 0.5px), var(--_ui-hexmark-gap-ink) calc(50% + var(--_ui-hexmark-a-gap) + 0.5px)),
+			linear-gradient(240deg, transparent calc(50% + var(--_ui-hexmark-a-gap) - 0.5px), var(--_ui-hexmark-gap-ink) calc(50% + var(--_ui-hexmark-a-gap) + 0.5px)),
+			linear-gradient(300deg, transparent calc(50% + var(--_ui-hexmark-a-gap) - 0.5px), var(--_ui-hexmark-gap-ink) calc(50% + var(--_ui-hexmark-a-gap) + 0.5px)),
+			linear-gradient(0deg, transparent calc(50% + var(--_ui-hexmark-a-inner) - 0.5px), var(--_ui-hexmark-inner-ink) calc(50% + var(--_ui-hexmark-a-inner) + 0.5px)),
+			linear-gradient(60deg, transparent calc(50% + var(--_ui-hexmark-a-inner) - 0.5px), var(--_ui-hexmark-inner-ink) calc(50% + var(--_ui-hexmark-a-inner) + 0.5px)),
+			linear-gradient(120deg, transparent calc(50% + var(--_ui-hexmark-a-inner) - 0.5px), var(--_ui-hexmark-inner-ink) calc(50% + var(--_ui-hexmark-a-inner) + 0.5px)),
+			linear-gradient(180deg, transparent calc(50% + var(--_ui-hexmark-a-inner) - 0.5px), var(--_ui-hexmark-inner-ink) calc(50% + var(--_ui-hexmark-a-inner) + 0.5px)),
+			linear-gradient(240deg, transparent calc(50% + var(--_ui-hexmark-a-inner) - 0.5px), var(--_ui-hexmark-inner-ink) calc(50% + var(--_ui-hexmark-a-inner) + 0.5px)),
+			linear-gradient(300deg, transparent calc(50% + var(--_ui-hexmark-a-inner) - 0.5px), var(--_ui-hexmark-inner-ink) calc(50% + var(--_ui-hexmark-a-inner) + 0.5px)),
+			linear-gradient(0deg, transparent calc(50% + var(--_ui-hexmark-a-hair) - 0.5px), var(--_ui-hexmark-hair-ink) calc(50% + var(--_ui-hexmark-a-hair) + 0.5px)),
+			linear-gradient(60deg, transparent calc(50% + var(--_ui-hexmark-a-hair) - 0.5px), var(--_ui-hexmark-hair-ink) calc(50% + var(--_ui-hexmark-a-hair) + 0.5px)),
+			linear-gradient(120deg, transparent calc(50% + var(--_ui-hexmark-a-hair) - 0.5px), var(--_ui-hexmark-hair-ink) calc(50% + var(--_ui-hexmark-a-hair) + 0.5px)),
+			linear-gradient(180deg, transparent calc(50% + var(--_ui-hexmark-a-hair) - 0.5px), var(--_ui-hexmark-hair-ink) calc(50% + var(--_ui-hexmark-a-hair) + 0.5px)),
+			linear-gradient(240deg, transparent calc(50% + var(--_ui-hexmark-a-hair) - 0.5px), var(--_ui-hexmark-hair-ink) calc(50% + var(--_ui-hexmark-a-hair) + 0.5px)),
+			linear-gradient(300deg, transparent calc(50% + var(--_ui-hexmark-a-hair) - 0.5px), var(--_ui-hexmark-hair-ink) calc(50% + var(--_ui-hexmark-a-hair) + 0.5px)),
+			linear-gradient(0deg, transparent calc(50% + var(--_ui-hexmark-a-hair) - 1px * var(--s-bevel)), oklch(from var(--_ui-hexmark-surface) clamp(0, calc(l + 0.22 * var(--s-bevel)), 1) c h) 0),
+			linear-gradient(0deg, oklch(from var(--_ui-hexmark-surface) clamp(0, calc(l - 0.16 * var(--s-bevel)), 1) c h) calc(50% - var(--_ui-hexmark-a-hair) + 2px * var(--s-bevel)), transparent calc(50% - var(--_ui-hexmark-a-hair) + 8px * var(--s-bevel))),
+			var(--_ui-hexmark-face);
+	}
+	/* A pointy hexagon is the flat one turned a quarter: the pseudo-element
+	   keeps the flat geometry in a box of the flat proportions and turns
+	   within the element's. */
+	:scope[data-orientation="pointy"]::before {
+		--_ui-hexmark-apothem: calc(var(--ui-hexmark-size, 2.25rem) / 2 / 1.1547);
+		inset: auto;
+		left: 50%;
+		top: 50%;
+		width: var(--ui-hexmark-size, 2.25rem);
+		height: calc(var(--ui-hexmark-size, 2.25rem) / 1.1547);
+		translate: -50% -50%;
+		rotate: calc(90deg + var(--_ui-hexmark-turn));
+	}
+
+	/* ── The plate as a button: the hexagon is pressed ── */
+	:scope:is(button)::before {
+		cursor: pointer;
+	}
+	:scope:is(button):hover:not(:disabled) {
+		translate: 0 calc(-1 * var(--s-lift));
+		filter: drop-shadow(
+			0 calc(12px * var(--s-shadow)) calc(14px * var(--s-shadow))
+			oklch(from var(--ui-gap-source) clamp(0, calc(l - 0.45 * var(--s-shadow)), 1) c h)
+		);
+	}
+	:scope:is(button):hover:not(:disabled)::before {
+		--_ui-hexmark-surface: var(--ui-surface-hover);
+		--_ui-hexmark-face: var(--ui-surface-paint-hover);
+		--_ui-hexmark-inner-ink: var(--ui-edge-inner-ink-hover);
+		--_ui-hexmark-gap-ink: var(--ui-edge-gap-ink-hover);
+	}
+	:scope:is(button):active:not(:disabled) {
+		scale: 0.97;
+	}
+	/* Focus is a ring where the hairline is, in the focus colour: an outline
+	   would follow the box, not the hexagon. */
+	:scope:is(button):focus-visible {
+		outline: none;
+	}
+	:scope:is(button):focus-visible::before {
+		--_ui-hexmark-hair: 2px;
+		--_ui-hexmark-hair-ink: var(--ui-focus-ring, color-mix(in oklab, var(--color-primary) 55%, transparent));
+	}
+	:scope[aria-pressed="true"]::before {
+		--_ui-hexmark-surface: var(--ui-surface-selected);
+		--_ui-hexmark-face: var(--ui-surface-paint-selected);
+		--_ui-hexmark-inner-ink: var(--ui-edge-inner-ink-selected);
+		--_ui-hexmark-gap-ink: var(--ui-edge-gap-ink-selected);
+	}
+	:scope:disabled::before {
+		--_ui-hexmark-face: var(--ui-surface-paint-disabled);
+		--_ui-hexmark-inner-ink: transparent;
+		--_ui-hexmark-gap-ink: transparent;
+		cursor: not-allowed;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		:scope {
+			transition: none;
+		}
 	}
 
 	/* ── Frontier knob boundary (see select-control for the pattern) ── */
@@ -126,6 +274,15 @@
 		}
 		:scope[data-ui-color-base] {
 			--_ui-hexmark-ink: attr(data-ui-hexmark-ink type(<color>), var(--ui-hexmark-ink, var(--ui-ink)));
+		}
+		:scope::before {
+			--_ui-hexmark-turn: attr(data-ui-hexmark-turn type(<angle>), var(--ui-hexmark-turn, 0deg));
+			--_ui-hexmark-apothem: calc(attr(data-ui-hexmark-size type(<length>), var(--ui-hexmark-size, 2.25rem)) / 2);
+		}
+		:scope[data-orientation="pointy"]::before {
+			--_ui-hexmark-apothem: calc(attr(data-ui-hexmark-size type(<length>), var(--ui-hexmark-size, 2.25rem)) / 2 / 1.1547);
+			width: attr(data-ui-hexmark-size type(<length>), var(--ui-hexmark-size, 2.25rem));
+			height: calc(attr(data-ui-hexmark-size type(<length>), var(--ui-hexmark-size, 2.25rem)) / 1.1547);
 		}
 	}
 }

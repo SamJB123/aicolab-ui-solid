@@ -154,6 +154,7 @@ export {
 	createResolvedAttributionColor,
 	Eyebrow,
 	HexMark,
+	HexMarkButton,
 	HoldButton,
 	Meter,
 	Notice,

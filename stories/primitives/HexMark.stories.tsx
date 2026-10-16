@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
 import type { Meta, StoryObj } from 'storybook-solidjs-vite'
-import { HexMark } from '../../src/atoms/hex-mark'
+import { HexMark, HexMarkButton } from '../../src/atoms/hex-mark'
 import { ColorTreatmentStory, treatmentArgTypes } from './color-treatment-story'
 
 /** A line icon as marks carry them: a 24-unit box, strokes in the ink. */
@@ -20,6 +20,7 @@ const meta = {
 		orientation: { control: 'radio', options: ['flat', 'pointy'] },
 		size: { control: 'text', table: { category: 'knobs' } },
 		ink: { control: 'text', table: { category: 'knobs' } },
+		turn: { control: 'text', table: { category: 'knobs' } },
 	},
 } satisfies Meta<typeof HexMark>
 
@@ -86,6 +87,32 @@ export const Sizes: Story = {
 					Hive
 				</span>
 			</HexMark>
+		</div>
+	),
+}
+
+/* The plate as the control: the hexagon is what is pressed (nothing around
+   it registers a press), it lifts on hover, casts the theme's shadow, takes
+   a focus ring where its hairline is, and reads a pressed state as the
+   selected surface. Turned, the hexagon turns and the icon stays upright. */
+export const Pressable: Story = {
+	render: () => (
+		<div style={{ display: 'flex', gap: '28px', 'align-items': 'center' }}>
+			<HexMarkButton size="64px" aria-label="Hive">
+				<HiveIcon />
+			</HexMarkButton>
+			<HexMarkButton size="64px" aria-label="Hive, picked" pressed>
+				<HiveIcon />
+			</HexMarkButton>
+			<HexMarkButton size="64px" aria-label="Hive, in the lead family" colorBase="primary">
+				<HiveIcon />
+			</HexMarkButton>
+			<HexMarkButton size="64px" aria-label="Hive, turned" turn="-19.1deg">
+				<HiveIcon />
+			</HexMarkButton>
+			<HexMarkButton size="64px" aria-label="Hive, disabled" disabled>
+				<HiveIcon />
+			</HexMarkButton>
 		</div>
 	),
 }

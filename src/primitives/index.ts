@@ -24,6 +24,7 @@ export {
 	Eyebrow,
 	Field,
 	HexMark,
+	HexMarkButton,
 	HoldButton,
 	IconButton,
 	Mark,

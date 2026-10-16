@@ -72,6 +72,13 @@ export type UiLength =
 	| `min(${string})`
 	| `max(${string})`
 export type UiLengthPercentage = UiLength | `${number}%`
+export type UiAngle =
+	| `${number}deg`
+	| `${number}rad`
+	| `${number}turn`
+	| '0'
+	| `var(--${string})`
+	| `calc(${string})`
 export type UiColor =
 	| `var(--${string})`
 	| `oklch(${string})`
@@ -88,6 +95,7 @@ interface KnobValueTypes {
 	'<length-percentage>': UiLengthPercentage
 	'<color>': UiColor
 	'<number>': number | `${number}`
+	'<angle>': UiAngle
 }
 export type KnobSyntax = keyof KnobValueTypes
 export type KnobSpec = Record<string, KnobSyntax>
