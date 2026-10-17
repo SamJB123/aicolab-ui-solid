@@ -225,6 +225,14 @@
 		rotate: calc(90deg + var(--_ui-hexmark-turn));
 	}
 
+	/* A mark whose turn is driven frame by frame (a plate on a gliding
+	   field, kolo HexCells): the hexagon is its own composited layer, so a
+	   turn is a transform the compositor applies, not a repaint of the plate
+	   and its shadow. */
+	:scope[data-ui-hexmark-live]::before {
+		will-change: transform;
+	}
+
 	/* ── The plate as a button: the hexagon is pressed ── */
 	:scope:is(button)::before {
 		cursor: pointer;
