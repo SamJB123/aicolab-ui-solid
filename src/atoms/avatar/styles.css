@@ -67,13 +67,20 @@
 
 	:scope > .ui-avatar-badge {
 		position: absolute;
-		bottom: -2px;
-		right: -2px;
+		bottom: 0;
+		right: 0;
 		display: grid;
 		place-items: center;
 		border-radius: var(--r-pill);
-		padding: 2px;
+		/* The backing ring is a spread shadow around the dot's own box, never
+		   a padded box of its own: two boxes are snapped to device pixels
+		   separately, and at a phone's fractional pixel ratio the ring came
+		   out thicker on one side than the other. One box, one edge, so the
+		   ring is concentric by construction. The 2px the padding gave are
+		   the spread, and the dot sits where it sat: its box on the corner,
+		   the ring 2px beyond it. */
 		background: var(--_ui-avatar-ring);
+		box-shadow: 0 0 0 2px var(--_ui-avatar-ring);
 		/* The dot sizes from the avatar: supply StatusDot's PUBLIC knob var,
 		   derived from the size adapter — correct however the size arrives
 		   (prop, inherited public var, or a container's re-default). */
@@ -81,6 +88,7 @@
 	}
 	:scope[data-ui-color-base] > .ui-avatar-badge {
 		background: var(--ui-surface-raised);
+		box-shadow: 0 0 0 2px var(--ui-surface-raised);
 	}
 
 	/* ── Frontier knob boundary (see select-control for the pattern) ── */
