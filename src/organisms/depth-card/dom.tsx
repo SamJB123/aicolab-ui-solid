@@ -185,17 +185,36 @@ function StructuredFront(props: {
 	content: DepthCardContent
 	schemeSignature: () => string
 }) {
-	const c = props.content
 	let bgHandle: Promise<CardBackgroundHandle | null> | null = null
 	let bgCanvas: HTMLCanvasElement | undefined
+
+	// Animated generated background, mounted once the canvas exists (client
+	// only; the TSL renderer chunk loads lazily on first card). Without an
+	// explicit scheme, the CSS→TSL bridge derives one from the resolved
+	// adapters (family when treated). The content is read in the compute
+	// phase; the apply phase works with those plain values.
+	createEffect(
+		() => ({
+			scheme: props.content.colorScheme,
+			style: props.content.backgroundStyle ?? 'gradient',
+		}),
+		(content) => {
+			const el = bgCanvas
+			if (!el || bgHandle) return
+			bgHandle = (async () => {
+				const scheme = content.scheme ?? (await resolveSchemeFromCss(el)) ?? 'emerald'
+				return mountCardBackground(el, content.style, scheme)
+			})()
+		},
+	)
 
 	// Reactive bridge: a treatment/scheme-knob change re-derives the scheme
 	// from the resolved CSS adapters and re-points the running animation.
 	// (Explicit content.colorScheme opts out — that path is caller-owned.)
 	createEffect(
-		() => props.schemeSignature(),
-		() => {
-			if (c.colorScheme || !bgCanvas || !bgHandle) return
+		() => ({ signature: props.schemeSignature(), explicit: props.content.colorScheme !== undefined }),
+		(now) => {
+			if (now.explicit || !bgCanvas || !bgHandle) return
 			const el = bgCanvas
 			void (async () => {
 				const [handle, scheme] = await Promise.all([bgHandle, resolveSchemeFromCss(el)])
@@ -213,29 +232,21 @@ function StructuredFront(props: {
 
 	return (
 		<div class="dc-sf">
-			<h4 class="dc-sf-title">{c.title}</h4>
-			<p class="dc-sf-desc">{c.description}</p>
+			<h4 class="dc-sf-title">{props.content.title}</h4>
+			<p class="dc-sf-desc">{props.content.description}</p>
 			<div class="dc-sf-media">
 				<Show
-					when={c.image}
+					when={props.content.image}
 					fallback={
 						<>
+							{/* the background mounts on it from the effect above; a ref reads nothing */}
 							<canvas
 								class="dc-sf-bgc"
 								ref={(el) => {
-									// Animated generated background (client-only mount; the
-									// TSL renderer chunk loads lazily on first card). Without
-									// an explicit scheme, the CSS→TSL bridge derives one from
-									// the resolved adapters (family when treated).
 									bgCanvas = el
-									bgHandle = (async () => {
-										const scheme =
-											c.colorScheme ?? (await resolveSchemeFromCss(el)) ?? 'emerald'
-										return mountCardBackground(el, c.backgroundStyle ?? 'gradient', scheme)
-									})()
 								}}
 							/>
-							<Show when={c.icon}>
+							<Show when={props.content.icon}>
 								{(name) => (
 									<span class="dc-sf-bg-icon" aria-hidden="true">
 										<CardIcon name={name()} size={64} />
@@ -245,10 +256,12 @@ function StructuredFront(props: {
 						</>
 					}
 				>
-					{(src) => <img class="dc-sf-img" src={src()} alt={c.imageAlt ?? c.title} />}
+					{(src) => (
+						<img class="dc-sf-img" src={src()} alt={props.content.imageAlt ?? props.content.title} />
+					)}
 				</Show>
 			</div>
-			<Show when={c.icon}>
+			<Show when={props.content.icon}>
 				{(name) => (
 					<span class="dc-sf-icon">
 						<CardIcon name={name()} size={32} />
@@ -260,10 +273,9 @@ function StructuredFront(props: {
 }
 
 function StructuredBack(props: { content: DepthCardContent; core: DepthCardCore }) {
-	const c = props.content
 	return (
 		<div class="dc-sb">
-			<Show when={c.icon}>
+			<Show when={props.content.icon}>
 				{(name) => (
 					<span class="dc-sb-watermark" aria-hidden="true">
 						<CardIcon name={name()} size={32} />
@@ -271,12 +283,12 @@ function StructuredBack(props: { content: DepthCardContent; core: DepthCardCore 
 				)}
 			</Show>
 			<div class="dc-sb-band">
-				<h4 class="dc-sb-title">{c.title}</h4>
+				<h4 class="dc-sb-title">{props.content.title}</h4>
 				<button type="button" class="dc-sb-return" onClick={() => props.core.flip()}>
 					← Back
 				</button>
 			</div>
-			<div class="dc-sb-body">{c.back?.()}</div>
+			<div class="dc-sb-body">{props.content.back?.()}</div>
 		</div>
 	)
 }

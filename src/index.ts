@@ -70,6 +70,7 @@ export {
 	ListEditor,
 	Menu,
 	MenuItem,
+	type MenuItemLinkProps,
 	MenuSeparator,
 	type MenuTriggerWiring,
 	NavLink,

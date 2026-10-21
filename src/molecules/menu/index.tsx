@@ -1,6 +1,6 @@
 /** @jsxImportSource @solidjs/web */
-import type { JSX } from '@solidjs/web'
-import { createUniqueId, omit, Show } from 'solid-js'
+import { Dynamic, type JSX } from '@solidjs/web'
+import { type Component, createUniqueId, omit, Show } from 'solid-js'
 import { IconButton } from '../../atoms/icon-button'
 import {
 	colorTreatmentData,
@@ -149,12 +149,55 @@ const itemKnobs = defineKnobs('ui-menuitem', {
 	hoverSurface: '<color>',
 })
 
-type MenuItemProps = Omit<
+/** What a `linkComponent` receives — exactly what makes its anchor a menu
+ * item: the item's class as one string, its menu role, its roving tabindex,
+ * its style, its data attributes (the knobs' and the danger mark), and the
+ * click that closes the menu. */
+export interface MenuItemLinkProps {
+	class: string
+	role: 'menuitem'
+	tabindex: number
+	style: JSX.CSSProperties | string
+	onClick: (event: MouseEvent & { currentTarget: HTMLElement }) => void
+	children: JSX.Element
+	[data: `data-${string}`]: string | undefined
+}
+
+/** A class prop as one string (for a link component that joins its own classes onto it). */
+const classText = (...parts: (ClassProp | undefined)[]): string =>
+	parts
+		.flatMap((part) =>
+			part === undefined
+				? []
+				: typeof part === 'string'
+					? [part]
+					: Object.entries(part).flatMap(([name, on]) => (on ? [name] : [])),
+		)
+		.join(' ')
+
+/** An item that is its own element: a button, or a plain `<a href>`. */
+type MenuItemElementProps = Omit<
 	JSX.ButtonHTMLAttributes<HTMLButtonElement> & JSX.AnchorHTMLAttributes<HTMLAnchorElement>,
 	'class'
 > & {
-	class?: ClassProp
 	href?: string
+	linkComponent?: undefined
+}
+
+/** An item rendered through the host's own link component (a client router's
+ * Link), so choosing it navigates in the app with no page load and the router
+ * marks the current one. The component receives MenuItemLinkProps; where it
+ * goes, and any other attribute of its anchor, is the host's, closed over by
+ * the component it passes. */
+type MenuItemLinkComponentProps = {
+	linkComponent: Component<MenuItemLinkProps>
+	href?: undefined
+	style?: JSX.CSSProperties | string
+	children?: JSX.Element
+}
+
+type MenuItemProps = (MenuItemElementProps | MenuItemLinkComponentProps) & {
+	class?: ClassProp
 	onSelect?: () => void
 	/** Destructive action styling (error family). */
 	danger?: boolean
@@ -169,6 +212,7 @@ export function MenuItem(props: MenuItemProps) {
 		'style',
 		'children',
 		'href',
+		'linkComponent',
 		'onSelect',
 		'danger',
 		'glyph',
@@ -194,36 +238,56 @@ export function MenuItem(props: MenuItemProps) {
 	}
 	return (
 		<Show
-			when={props.href !== undefined}
+			when={props.linkComponent}
 			fallback={
-				<button
-					{...attributes}
+				<Show
+					when={props.href !== undefined}
+					fallback={
+						<button
+							{...attributes}
+							{...itemKnobs.attributes(props)}
+							type="button"
+							role="menuitem"
+							tabindex={-1}
+							class={['ui-menu-item', props.class]}
+							style={mergeKnobStyle(itemKnobs.style(props), props.style)}
+							data-danger={props.danger ? '' : undefined}
+							onClick={activate}
+						>
+							{body()}
+						</button>
+					}
+				>
+					<a
+						{...attributes}
+						{...itemKnobs.attributes(props)}
+						href={props.href}
+						role="menuitem"
+						tabindex={-1}
+						class={['ui-menu-item', props.class]}
+						style={mergeKnobStyle(itemKnobs.style(props), props.style)}
+						data-danger={props.danger ? '' : undefined}
+						onClick={activate}
+					>
+						{body()}
+					</a>
+				</Show>
+			}
+		>
+			{(link) => (
+				<Dynamic
+					component={link()}
 					{...itemKnobs.attributes(props)}
-					type="button"
 					role="menuitem"
 					tabindex={-1}
-					class={['ui-menu-item', props.class]}
+					class={classText('ui-menu-item', props.class)}
 					style={mergeKnobStyle(itemKnobs.style(props), props.style)}
 					data-danger={props.danger ? '' : undefined}
 					onClick={activate}
 				>
 					{body()}
-				</button>
-			}
-		>
-			<a
-				{...attributes}
-				{...itemKnobs.attributes(props)}
-				href={props.href}
-				role="menuitem"
-				tabindex={-1}
-				class={['ui-menu-item', props.class]}
-				style={mergeKnobStyle(itemKnobs.style(props), props.style)}
-				data-danger={props.danger ? '' : undefined}
-				onClick={activate}
-			>
-				{body()}
-			</a>
+				</Dynamic>
+			)}
 		</Show>
 	)
 }
