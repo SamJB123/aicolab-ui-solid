@@ -448,11 +448,13 @@ export function InspectorHeader(props: {
 	children?: JSX.Element
 }) {
 	// Single-eval slot resolution — see WorkspaceNavigation.
+	const eyebrow = children(() => props.eyebrow)
+	const title = children(() => props.title)
 	const description = children(() => props.children)
 	return (
 		<header class="ui-inspector-header">
-			{props.eyebrow}
-			<h2 class="ui-inspector-title">{props.title}</h2>
+			{eyebrow()}
+			<h2 class="ui-inspector-title">{title()}</h2>
 			<Show when={description()}>
 				<div class="ui-inspector-description">{description()}</div>
 			</Show>
