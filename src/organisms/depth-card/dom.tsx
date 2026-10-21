@@ -17,7 +17,7 @@
 // look is byte-identical; a treated card derives its scheme from the family.
 
 import type { JSX } from '@solidjs/web'
-import { createEffect, onCleanup, Show } from 'solid-js'
+import { createEffect, onSettled, Show } from 'solid-js'
 import {
 	colorTreatmentData,
 	type ClassProp,
@@ -204,6 +204,13 @@ function StructuredFront(props: {
 		},
 	)
 
+	// The background renderer goes with the card. Registered here, not in the
+	// canvas's ref: refs run unowned, so a cleanup there never runs.
+	onSettled(() => () => {
+		void bgHandle?.then((bg) => bg?.dispose())
+		bgHandle = null
+	})
+
 	return (
 		<div class="dc-sf">
 			<h4 class="dc-sf-title">{c.title}</h4>
@@ -226,10 +233,6 @@ function StructuredFront(props: {
 											c.colorScheme ?? (await resolveSchemeFromCss(el)) ?? 'emerald'
 										return mountCardBackground(el, c.backgroundStyle ?? 'gradient', scheme)
 									})()
-									onCleanup(() => {
-										void bgHandle?.then((bg) => bg?.dispose())
-										bgHandle = null
-									})
 								}}
 							/>
 							<Show when={c.icon}>
